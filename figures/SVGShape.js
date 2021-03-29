@@ -1,4 +1,4 @@
-class SVGElement {
+class SVGShape {
   constructor(node) {
     this._node = node;
   }
@@ -8,7 +8,7 @@ class SVGElement {
   }
 }
 
-export class Line extends SVGElement {
+export class Line extends SVGShape {
   constructor({ x: startX, y: startY }, { x: endX, y: endY }, markerDef = "") {
     const node = document.createElementNS("http://www.w3.org/2000/svg", "line");
     node.setAttribute("x1", startX);
@@ -25,7 +25,7 @@ export class Line extends SVGElement {
   }
 }
 
-export class Path extends SVGElement {
+export class Path extends SVGShape {
   constructor(d) {
     const node = document.createElementNS("http://www.w3.org/2000/svg", "path");
     node.setAttribute("d", d);
@@ -38,7 +38,7 @@ export class Path extends SVGElement {
   }
 }
 
-export class Text extends SVGElement {
+export class Text extends SVGShape {
   constructor(text, { x, y }) {
     const node = document.createElementNS("http://www.w3.org/2000/svg", "text");
     node.setAttribute("x", x);

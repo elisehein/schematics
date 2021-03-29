@@ -1,6 +1,6 @@
 import Figure from "./Figure.js";
 import allPoetry from "./allPoetry.js";
-import { Line, Path, Text } from "./SVGElement.js";
+import { Line, Path, Text } from "./SVGShape.js";
 
 export default class Figure14 extends Figure {
   constructor(figure) {
