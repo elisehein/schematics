@@ -4,8 +4,9 @@ export default class Figure {
 
     const canvas = figure.querySelector("svg");
 
-    canvas.getElementsByTagName("title")[0].innerHTML = `fig. ${num}`;
-    canvas.getElementsByTagName("desc")[0].innerHTML = copy.a11yDescription;
+    canvas.querySelector("title").innerHTML = `fig. ${num}`;
+    canvas.querySelector("desc").innerHTML = copy.a11yDescription;
+
     canvas.classList.add(this._figureClass);
 
     const figcaption = figure.querySelector("figcaption");
