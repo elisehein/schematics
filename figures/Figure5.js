@@ -10,17 +10,17 @@ export default class Figure5 extends Figure {
 
   drawAxes() {
     const timeAxis = new Line({x: 149, y: 220}, {x: 149, y: 30}, "arrowhead");
-    const timeLabel = new Text("Time", {x: 175, y: 35});
+    const timeLabel = new Text("Time", {x: 157, y: 36});
     this._canvas.appendChild(timeAxis.node);
     this._canvas.appendChild(timeLabel.node);
 
     const xAxis = new Line({x: 149, y: 220}, {x: 250, y: 205}, "arrowhead");
-    const xLabel = new Text("X", {x: 262, y: 205});
+    const xLabel = new Text("X", {x: 257, y: 207});
     this._canvas.appendChild(xAxis.node);
     this._canvas.appendChild(xLabel.node);
 
     const yAxis = new Line({x: 149, y: 220}, {x: 200, y: 260}, "arrowhead");
-    const yLabel = new Text("Y", {x: 214, y: 264});
+    const yLabel = new Text("Y", {x: 207, y: 262});
     this._canvas.appendChild(yAxis.node);
     this._canvas.appendChild(yLabel.node);
   }

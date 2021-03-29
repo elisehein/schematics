@@ -50,13 +50,23 @@ h1 {
   fill: transparent;
 }
 
-marker .line {
+.figure5 line.line,
+.figure5 marker path.line {
   stroke-width: 1px;
+}
+
+.figure5 marker path.line {
+  fill: var(--color-text-light);
+}
+
+.figure5 path.line {
+  stroke-width: 2px;
 }
 
 .text {
   fill: var(--color-text-light);
   font-family: inherit;
+  letter-spacing: .1em;
 }
 
 .figure5__spiral {

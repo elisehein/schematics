@@ -47,6 +47,7 @@ export class Text extends SVGElement {
     // Setting the font size via an attribute, we get the benefit of scaling
     // according to the coordinate system specified in viewBox.
     node.setAttribute("font-size", "10");
+
     node.classList.add("text");
     node.innerHTML = text;
     super(node);
