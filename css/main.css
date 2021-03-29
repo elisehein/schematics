@@ -44,18 +44,28 @@ h1 {
 
 .line {
   stroke: var(--color-text-light);
-  stroke-width: 2px;
+  stroke-width: 1.5px;
   stroke-linecap: round;
+  stroke-linejoin: round;
   fill: transparent;
 }
 
+marker .line {
+  stroke-width: 1px;
+}
+
+.text {
+  fill: var(--color-text-light);
+  font-family: inherit;
+}
+
 .figure5__spiral {
-  stroke-dasharray: var(--figure5-spiral-length);
+  stroke-dasharray: calc(var(--figure5-spiral-length) / 2);
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 5s linear;
+  transition: stroke-dashoffset 5s linear, stroke-dasharray 5s linear;
 }
 
 .figure5__spiral--end {
+  stroke-dasharray: var(--figure5-spiral-length);
   stroke-dashoffset: calc(var(--figure5-spiral-length) * -2);
 }
-
