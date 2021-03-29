@@ -50,16 +50,16 @@ h1 {
   fill: transparent;
 }
 
-.figure5 line.line,
-.figure5 marker path.line {
+.figure14 line.line,
+.figure14 marker path.line {
   stroke-width: 1px;
 }
 
-.figure5 marker path.line {
+.figure14 marker path.line {
   fill: var(--color-text-light);
 }
 
-.figure5 path.line {
+.figure14 path.line {
   stroke-width: 2px;
 }
 
@@ -69,13 +69,13 @@ h1 {
   letter-spacing: .1em;
 }
 
-.figure5__spiral {
+.figure14__spiral {
   stroke-dasharray: calc(var(--figure5-spiral-length) / 2);
   stroke-dashoffset: 0;
   transition: stroke-dashoffset 5s linear, stroke-dasharray 5s linear;
 }
 
-.figure5__spiral--end {
+.figure14__spiral--end {
   stroke-dasharray: var(--figure5-spiral-length);
   stroke-dashoffset: calc(var(--figure5-spiral-length) * -2);
 }

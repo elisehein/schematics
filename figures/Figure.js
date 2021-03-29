@@ -1,8 +1,9 @@
 export default class Figure {
-  constructor(canvas, figureClass) {
-    canvas.classList.add(figureClass);
-    this._figureClass = figureClass;
+  constructor(canvas, num) {
+    this._figureClass = `figure${num}`;
     this._canvas = canvas;
+
+    canvas.classList.add(this._figureClass);
   }
 
   draw() {}

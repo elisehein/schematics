@@ -1,7 +1,11 @@
 import Figure from "./Figure.js";
 import { Line, Path, Text } from "./SVGElement.js";
 
-export default class Figure5 extends Figure {
+export default class Figure14 extends Figure {
+  constructor(canvas) {
+    super(canvas, 14);
+  }
+
   draw() {
     super.draw();
     this.drawAxes()
