@@ -1,9 +1,10 @@
 import Figure from "./Figure.js";
+import allPoetry from "./allPoetry.js";
 import { Line, Path, Text } from "./SVGElement.js";
 
 export default class Figure14 extends Figure {
-  constructor(canvas) {
-    super(canvas, 14);
+  constructor(figure) {
+    super(figure, 14, allPoetry[14]);
   }
 
   draw() {

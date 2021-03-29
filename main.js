@@ -1,4 +1,4 @@
 import Figure14 from "./figures/Figure14.js";
 
-const canvas = document.getElementById("canvas");
-(new Figure14(canvas)).draw();
+const figure = document.getElementById("figure");
+(new Figure14(figure)).draw();

@@ -20,8 +20,14 @@
     </header>
 
     <main>
-      <figure>
-        <svg role="img" id="canvas" viewbox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+      <figure id="figure">
+        <svg
+          role="img"
+          viewbox="0 0 300 300"
+          aria-labelledby="figure-title figure-desc"
+          xmlns="http://www.w3.org/2000/svg">
+          <title id="figure-title"></title>
+          <desc id="figure-desc"></desc>
           <defs>
             <marker
               id="arrowhead"
