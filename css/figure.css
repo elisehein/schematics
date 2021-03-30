@@ -20,3 +20,8 @@ figcaption {
   line-height: var(--baseline);
   letter-spacing: .1em;
 }
+
+#arrowhead-marker path.line {
+  stroke-width: 1px;
+  fill: var(--color-text-light);
+}

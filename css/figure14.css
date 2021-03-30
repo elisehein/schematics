@@ -12,13 +12,8 @@
   align-self: center;
 }
 
-.figure14 line.line,
-.figure14 marker path.line {
+.figure14 line.line {
   stroke-width: 1px;
-}
-
-.figure14 marker path.line {
-  fill: var(--color-text-light);
 }
 
 .figure14 path.line {
