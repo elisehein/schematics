@@ -1,0 +1,22 @@
+.diagram-container {
+}
+
+.diagram .line {
+  stroke: var(--color-text-light);
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: transparent;
+}
+
+.diagram .text {
+  fill: var(--color-text-light);
+  font-family: inherit;
+  letter-spacing: .1em;
+}
+
+figcaption {
+  font-size: var(--ms1);
+  line-height: var(--baseline);
+  letter-spacing: .1em;
+}

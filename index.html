@@ -15,35 +15,57 @@
 
   <body>
 
-    <header>
-      <h1>Schematics: A love story</h1>
-    </header>
+    <div class="grid">
 
-    <main>
-      <figure id="figure">
-        <svg
-          role="img"
-          viewbox="0 0 300 300"
-          aria-labelledby="figure-title figure-desc"
-          xmlns="http://www.w3.org/2000/svg">
-          <title id="figure-title"></title>
-          <desc id="figure-desc"></desc>
-          <defs>
-            <marker
-              id="arrowhead"
-              viewBox="0 0 8 8"
-              refX="4"
-              refY="4"
-              markerWidth="6"
-              markerHeight="6"
-              orient="auto-start-reverse">
-              <path class="line" d="M 1 1 L 5 4 L 1 7 z" />
-            </marker>
-          </defs>
-        </svg>
-        <figcaption></figcaption>
-      </figure>
-    </main>
+      <header>
+        <h1>Schematics: A love story</h1>
+      </header>
+
+      <aside>
+        <p>
+          Diagrams and poetry from the book by Julian Hibbard. SVG reproduction
+          and motion design by Elise Hein.
+        </p>
+      </aside>
+
+      <main>
+        <figure id="figure">
+          <div class="diagram-container">
+            <svg
+              class="diagram"
+              preserveAspectRatio="xMidYMin meet"
+              height="100%"
+              width="100%"
+              role="img"
+              viewbox="0 0 300 300"
+              aria-labelledby="figure-title figure-desc"
+              xmlns="http://www.w3.org/2000/svg">
+              <title id="figure-title"></title>
+              <desc id="figure-desc"></desc>
+              <defs>
+                <marker
+                  id="arrowhead"
+                  viewBox="0 0 8 8"
+                  refX="4"
+                  refY="4"
+                  markerWidth="6"
+                  markerHeight="6"
+                  orient="auto-start-reverse">
+                  <path class="line" d="M 1 1 L 5 4 L 1 7 z" />
+                </marker>
+              </defs>
+            </svg>
+          </div>
+          <figcaption></figcaption>
+        </figure>
+      </main>
+
+      <nav>
+        <a href="">fig. 9</a>
+        <a href="">fig. 26</a>
+      </nav>
+
+    </div>
 
   </body>
 </html>

@@ -1,0 +1,52 @@
+:root {
+  --grid-template-columns: repeat(12, 1fr);
+  --grid-template-rows: var(--triple-baseline) repeat(8, 1fr) var(--triple-baseline);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: var(--grid-template-columns);
+  grid-template-rows: var(--grid-template-rows);
+  width: min(90rem, calc(100vw - (2 * var(--page-padding))));
+  height: 100%;
+  padding: var(--double-baseline) 0;
+  margin: 0 auto;
+}
+
+header {
+  grid-column: 1/span 6;
+  grid-row: 1;
+}
+
+main {
+  grid-column: 1/-1;
+  grid-row: 1/-1;
+}
+
+figure {
+  display: grid;
+  grid-template-columns: var(--grid-template-columns);
+  grid-template-rows: var(--grid-template-rows);
+  width: 100%;
+  height: 100%;
+}
+
+aside {
+  grid-column: -3/-1;
+  grid-row: 3/span 3;
+}
+
+nav {
+  display: grid;
+  grid-row: 10;
+  grid-column: 1/-1;
+  grid-template-columns: var(--grid-template-columns);
+}
+
+nav a:first-child {
+  grid-column: 1 / span 3;
+}
+
+nav a:last-child {
+  grid-column: span 3 / -1;
+}

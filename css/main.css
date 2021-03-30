@@ -1,3 +1,9 @@
+@import "./reset.css";
+@import "./grid.css";
+@import "./figure.css";
+@import "./figure14.css";
+@import "./nav.css";
+
 :root {
   --color-white: #f2f2f2;
   --color-black: #2b2b2b;
@@ -6,6 +12,20 @@
   --color-bg-dark: var(--color-black);
   --color-text-light: #dcdcdc;
   --color-text-dark: var(--color-black);
+
+  --baseline: 1.6rem;
+  --half-baseline: calc(var(--baseline) * .5);
+  --double-baseline: calc(var(--baseline) * 2);
+  --triple-baseline: calc(var(--baseline) * 3);
+
+  --scale-factor: 1.2;
+  --base-font-size: 1.1rem;
+
+  --ms0: var(--base-font-size);
+  --ms1: calc(var(--ms0) * var(--scale-factor));
+  --ms2: calc(var(--ms1) * var(--scale-factor));
+
+  --page-padding: var(--double-baseline);
 }
 
 body {
@@ -40,42 +60,4 @@ h1 {
   font-weight: 400;
   line-height: 1.7em;
   padding-top: 0.1em;
-}
-
-.line {
-  stroke: var(--color-text-light);
-  stroke-width: 1.5px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: transparent;
-}
-
-.figure14 line.line,
-.figure14 marker path.line {
-  stroke-width: 1px;
-}
-
-.figure14 marker path.line {
-  fill: var(--color-text-light);
-}
-
-.figure14 path.line {
-  stroke-width: 2px;
-}
-
-.text {
-  fill: var(--color-text-light);
-  font-family: inherit;
-  letter-spacing: .1em;
-}
-
-.figure14__spiral {
-  stroke-dasharray: calc(var(--figure5-spiral-length) / 2);
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 5s linear, stroke-dasharray 5s linear;
-}
-
-.figure14__spiral--end {
-  stroke-dasharray: var(--figure5-spiral-length);
-  stroke-dashoffset: calc(var(--figure5-spiral-length) * -2);
 }

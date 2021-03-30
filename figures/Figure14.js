@@ -42,12 +42,12 @@ export default class Figure14 extends Figure {
     document.documentElement.style.setProperty(`--${this._figureClass}-spiral-length`, spiral.length);
 
     const node = spiral.node;
-    node.classList.add(`${this._figureClass}__spiral`);
+    node.classList.add("spiral");
     this._canvas.appendChild(node);
 
     // This has to happen asynchronously for the CSS transition to take effect
     setTimeout(() => {
-      node.classList.add(`${this._figureClass}__spiral--end`);
+      node.classList.add("spiral--end");
     })
   }
 }
