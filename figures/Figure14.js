@@ -14,20 +14,16 @@ export default class Figure14 extends Figure {
   }
 
   drawAxes() {
-    const timeAxis = new Line({x: 149, y: 220}, {x: 149, y: 30}, "arrowhead-marker");
-    const timeLabel = new Text("Time", {x: 157, y: 36});
-    this._canvas.appendChild(timeAxis.node);
-    this._canvas.appendChild(timeLabel.node);
+    this.drawAxisWithLabel({x: 149, y: 220}, {x: 149, y: 30}, {x: 157, y: 36}, "Time");
+    this.drawAxisWithLabel({x: 149, y: 220}, {x: 250, y: 205}, {x: 257, y: 207}, "X");
+    this.drawAxisWithLabel({x: 149, y: 220}, {x: 200, y: 260}, {x: 207, y: 262}, "Y");
+  }
 
-    const xAxis = new Line({x: 149, y: 220}, {x: 250, y: 205}, "arrowhead-marker");
-    const xLabel = new Text("X", {x: 257, y: 207});
-    this._canvas.appendChild(xAxis.node);
-    this._canvas.appendChild(xLabel.node);
-
-    const yAxis = new Line({x: 149, y: 220}, {x: 200, y: 260}, "arrowhead-marker");
-    const yLabel = new Text("Y", {x: 207, y: 262});
-    this._canvas.appendChild(yAxis.node);
-    this._canvas.appendChild(yLabel.node);
+  drawAxisWithLabel(startCoords, endCoords, labelCoords, labelText) {
+    const axis = new Line(startCoords, endCoords, "arrowhead-marker");
+    const label = new Text(labelText, labelCoords);
+    this._canvas.appendChild(axis.node);
+    this._canvas.appendChild(label.node);
   }
 
   drawSpiral() {
