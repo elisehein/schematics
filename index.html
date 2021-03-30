@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script type="module" src="/main.js"></script>
+    <script type="module" src="/SchArrow.js"></script>
 
     <link rel="stylesheet" href="/css/main.css" />
   </head>
@@ -26,7 +27,7 @@
           markerWidth="6"
           markerHeight="6"
           orient="auto-start-reverse">
-          <path class="line" d="M 1 1 L 5 4 L 1 7 z" />
+          <path class="arrowhead-marker" d="M 1 1 L 5 4 L 1 7 z" />
         </marker>
       </defs>
     </svg>
@@ -65,8 +66,14 @@
       </main>
 
       <nav>
-        <a href="">fig. 9</a>
-        <a href="">fig. 26</a>
+        <a href="">
+          <sch-arrow direction="left"></sch-arrow>
+          <span>fig. 9</span>
+        </a>
+        <a href="">
+          <span>fig. 26</span>
+          <sch-arrow direction="right"></sch-arrow>
+        </a>
       </nav>
 
     </div>

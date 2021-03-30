@@ -1,7 +1,4 @@
-.diagram-container {
-}
-
-.diagram .line {
+.line {
   stroke: var(--color-text-light);
   stroke-width: 1.5px;
   stroke-linecap: round;
@@ -9,7 +6,7 @@
   fill: transparent;
 }
 
-.diagram .text {
+.text {
   fill: var(--color-text-light);
   font-family: inherit;
   letter-spacing: .1em;
@@ -21,7 +18,7 @@ figcaption {
   letter-spacing: .1em;
 }
 
-#arrowhead-marker path.line {
-  stroke-width: 1px;
+.arrowhead-marker {
+  stroke-width: 0;
   fill: var(--color-text-light);
 }
