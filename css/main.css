@@ -20,7 +20,7 @@
   /* This page is meant to be viewed as a non-scrollable canvas.
      We lock the baseline so that our grid will stretch 100vh exactly. */
   --num-of-grid-rows: 16;
-  --baseline: calc(100vh / (var(--num-of-grid-rows) * 2));
+  --baseline: max(calc(100vh / (var(--num-of-grid-rows) * 2)), 1.5rem);
 
   --half-baseline: calc(var(--baseline) / 2);
   --double-baseline: calc(var(--baseline) * 2);
@@ -40,7 +40,7 @@
 body {
   position: relative;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   font-family: Helvetica Neue;
   background-color: var(--color-bg-mid);
   color: var(--color-text-light);
