@@ -1,4 +1,5 @@
 nav a {
   font-size: var(--ms0);
   letter-spacing: .1em;
+  align-self: center;
 }

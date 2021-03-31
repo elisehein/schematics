@@ -1,6 +1,6 @@
 :root {
-  --grid-template-columns: repeat(12, 1fr);
-  --grid-template-rows: var(--triple-baseline) repeat(8, 1fr) var(--triple-baseline);
+  --grid-template-columns: repeat(16, 1fr);
+  --grid-template-rows: repeat(12, 1fr);
 }
 
 .grid {
@@ -14,39 +14,53 @@
 }
 
 header {
-  grid-column: 1/span 6;
-  grid-row: 1;
+  grid-column: 1 / -1;
+  grid-row: 1 / span 2;
 }
 
 main {
-  grid-column: 1/-1;
-  grid-row: 1/-1;
+  --subgrid-columns: repeat(14, 1fr);
+  --subgrid-rows: repeat(10, 1fr);
+
+  display: grid;
+  grid-template-columns: var(--subgrid-columns);
+  grid-template-rows: var(--subgrid-rows);
+  grid-column: 2/-2;
+  grid-row: 3 / -1;
 }
 
 figure {
   display: grid;
-  grid-template-columns: var(--grid-template-columns);
-  grid-template-rows: var(--grid-template-rows);
-  width: 100%;
-  height: 100%;
+  grid-template-columns: var(--subgrid-columns);
+  grid-template-rows: var(--subgrid-rows);
+  grid-column: 1/-1;
+  grid-row: 1/-1;
 }
 
 aside {
-  grid-column: -3/-1;
-  grid-row: 3/span 3;
+  grid-column: span 3 / -3;
+  grid-row: 2 / -1;
+  z-index: 1;
 }
 
 nav {
   display: grid;
-  grid-row: 10;
-  grid-column: 1/-1;
-  grid-template-columns: var(--grid-template-columns);
+  grid-row: span 2 / -1;
+  grid-column: 1 / -3;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-rows: 1fr 1fr;
+}
+
+nav {
+  --nav-arrow-span: 3;
 }
 
 nav a:first-child {
-  grid-column: 2 / span 2;
+  grid-column: 1 / span var(--nav-arrow-span);
+  grid-row: 2;
 }
 
 nav a:last-child {
-  grid-column: span 2 / -2;
+  grid-column: span var(--nav-arrow-span) / -1;
+  grid-row: 1;
 }

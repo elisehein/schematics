@@ -5,12 +5,16 @@
 @import "./nav.css";
 
 :root {
-  --color-white: #f2f2f2;
-  --color-black: #2b2b2b;
+  --hue-main: 0;
+
+  --color-white: hsla(var(--hue-main), 0%, 95%, 1);
+  --color-mid: hsla(var(--hue-main), 0%, 27%, 1);
+  --color-black: hsla(var(--hue-main), 0%, 17%, 1);
 
   --color-bg-light: var(--color-white);
+  --color-bg-mid: var(--color-mid);
   --color-bg-dark: var(--color-black);
-  --color-text-light: #dcdcdc;
+  --color-text-light: hsla(var(--hue-main), 0%, 86%, 1);
   --color-text-dark: var(--color-black);
 
   --baseline: 1.6rem;
@@ -21,6 +25,7 @@
   --scale-factor: 1.2;
   --base-font-size: 1.1rem;
 
+  --ms-1: calc(var(--base-font-size) / var(--scale-factor));
   --ms0: var(--base-font-size);
   --ms1: calc(var(--ms0) * var(--scale-factor));
   --ms2: calc(var(--ms1) * var(--scale-factor));
@@ -33,7 +38,7 @@ body {
   width: 100vw;
   height: 100vh;
   font-family: Helvetica Neue;
-  background-color: var(--color-bg-dark);
+  background-color: var(--color-bg-mid);
   color: var(--color-text-light);
 }
 
@@ -50,14 +55,47 @@ body::after {
 }
 
 h1 {
-  color: var(--color-text-dark);
-  background-color: var(--color-bg-light);
   padding: 0 1em;
   text-transform: uppercase;
   letter-spacing: .4em;
-  font-size: 1rem;
+  font-size: var(--ms0);
   display: inline-block;
   font-weight: 400;
-  line-height: 1.7em;
-  padding-top: 0.1em;
+  line-height: var(--double-baseline);
+}
+
+h1 span {
+  display: inline-block;
+  text-transform: none;
+  border: 1px solid var(--color-bg-light);
+  padding: 0 1em;
+}
+
+aside {
+  font-size: var(--ms-1);
+  line-height: var(--baseline);
+  letter-spacing: .07em;
+}
+
+aside p {
+  font-family: Palatino;
+  font-style: italic;
+}
+
+aside p a {
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.read-more-link {
+  display: inline-block;
+  margin-top: var(--baseline);
+  padding: 0 .5em;
+  font-family: Helvetica Neue;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-dark);
+}
+
+main {
+  background: var(--color-bg-dark);
 }
