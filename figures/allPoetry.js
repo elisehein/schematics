@@ -5,8 +5,7 @@ const allPoetry = {
     I return and sense,
     things are not the same as before,
     but feel had I stayed,
-    everything would likely seem the same.
-    `
+    everything would likely seem the same.`
   }
 };
 

@@ -12,7 +12,7 @@
   letter-spacing: .1em;
 }
 
-figcaption {
+.figure-type {
   font-size: var(--ms1);
   line-height: var(--baseline);
   letter-spacing: .1em;
