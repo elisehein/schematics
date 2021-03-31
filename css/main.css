@@ -17,16 +17,13 @@
   --color-text-light: hsla(var(--hue-main), 0%, 86%, 1);
   --color-text-dark: var(--color-black);
 
-  /* This page is meant to be viewed as a non-scrollable canvas.
-     We lock the baseline so that our grid will stretch 100vh exactly. */
-  --num-of-grid-rows: 16;
-  --baseline: max(calc(100vh / (var(--num-of-grid-rows) * 2)), 1.5rem);
+  --baseline: 1.6rem;
 
   --half-baseline: calc(var(--baseline) / 2);
   --double-baseline: calc(var(--baseline) * 2);
   --triple-baseline: calc(var(--baseline) * 3);
 
-  --scale-factor: 1.2;
+  --scale-factor: 1.1;
   --base-font-size: 1.1rem;
 
   --ms-2: calc(var(--ms-1) / var(--scale-factor));
