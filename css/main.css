@@ -29,6 +29,7 @@
   --scale-factor: 1.2;
   --base-font-size: 1.1rem;
 
+  --ms-2: calc(var(--ms-1) / var(--scale-factor));
   --ms-1: calc(var(--base-font-size) / var(--scale-factor));
   --ms0: var(--base-font-size);
   --ms1: calc(var(--ms0) * var(--scale-factor));
@@ -59,11 +60,10 @@ body::after {
 }
 
 h1 {
-  padding: 0 1em;
+  display: inline-block;
   text-transform: uppercase;
   letter-spacing: .4em;
   font-size: var(--ms0);
-  display: inline-block;
   font-weight: 400;
   line-height: var(--double-baseline);
 }
@@ -75,31 +75,17 @@ h1 span {
   padding: 0 1em;
 }
 
-aside {
-  font-size: var(--ms-1);
-  line-height: var(--baseline);
-  letter-spacing: .07em;
-}
-
-aside p {
-  font-family: Palatino;
-  font-style: italic;
-}
-
-aside p a {
-  text-decoration: underline;
-  text-underline-position: under;
-}
-
-.read-more-link {
-  display: inline-block;
-  margin-top: var(--half-baseline);
-  padding: 0 .5em;
-  font-family: Helvetica Neue;
-  background-color: var(--color-bg-light);
-  color: var(--color-text-dark);
-}
-
 main {
   background: var(--color-bg-dark);
+}
+
+.mono-type {
+  font-family: Andale Mono;
+  font-size: var(--ms-2);
+  line-height: var(--baseline);
+}
+
+.mono-type a {
+  text-decoration: underline;
+  text-underline-position: under;
 }
