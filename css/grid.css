@@ -2,10 +2,13 @@
   --num-of-grid-columns: 18;
   --num-of-grid-rows: 16;
 
+  /* Needed to constrain the height of SVG while maintaining aspect ratio */
+  --grid-row-height: calc(100vh / var(--num-of-grid-rows));
+
   --num-of-main-area-columns: calc(var(--num-of-grid-columns) - 1);
 
   --grid-template-columns: repeat(var(--num-of-grid-columns), 1fr);
-  --grid-template-rows: repeat(var(--num-of-grid-rows), 1fr);
+  --grid-template-rows: repeat(var(--num-of-grid-rows), var(--grid-row-height));
 }
 
 .grid {
@@ -25,7 +28,7 @@ header {
 
 main {
   --subgrid-columns: repeat(var(--num-of-main-area-columns), 1fr);
-  --subgrid-rows: repeat(calc(var(--num-of-grid-rows) - 3), 1fr);
+  --subgrid-rows: repeat(calc(var(--num-of-grid-rows) - 3), var(--grid-row-height));
 
   display: grid;
   grid-template-columns: var(--subgrid-columns);
@@ -55,7 +58,7 @@ nav {
   grid-row: span 2 / -3;
   grid-column: span var(--num-of-nav-columns) / -1;
   grid-template-columns: repeat(var(--num-of-nav-columns), 1fr);
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: var(--grid-row-height) var(--grid-row-height);
 }
 
 nav {

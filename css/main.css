@@ -2,6 +2,7 @@
 @import "./grid.css";
 @import "./figure.css";
 @import "./figure14.css";
+@import "./figure18.css";
 @import "./nav.css";
 
 :root {
@@ -60,7 +61,7 @@ h1 {
   display: inline-block;
   text-transform: uppercase;
   letter-spacing: .4em;
-  font-size: var(--ms0);
+  font-size: var(--ms-1);
   font-weight: 400;
   line-height: var(--double-baseline);
 }

@@ -13,20 +13,20 @@ nav a:first-child {
   text-align: right;
 }
 
-nav sch-arrow {
+nav sc-arrow {
   width: 100%;
   transition: transform .15s linear;
 }
 
-nav a:first-child:hover sch-arrow {
+nav a:first-child:hover sc-arrow {
   transform: translateX(calc(var(--baseline) * -1));
 }
 
-nav a:last-child:hover sch-arrow {
+nav a:last-child:hover sc-arrow {
   transform: translateX(calc(var(--baseline) * 1));
 }
 
-nav sch-arrow,
+nav sc-arrow,
 nav span {
   flex: 1;
 }

@@ -1,0 +1,13 @@
+.figure18 .diagram-container {
+  grid-column: span 8 / -2;
+  grid-row: 1 / -3;
+}
+
+.figure18 figcaption {
+  grid-column: span 7 / -1;
+  grid-row: 3 / span 5;
+  align-self: center;
+}
+
+.figure18 .boxed-text {
+}
