@@ -54,7 +54,7 @@ nav {
   grid-row: span 2 / -2;
   grid-column: 1 / span var(--num-of-nav-columns);
   grid-template-columns: repeat(var(--num-of-nav-columns), 1fr);
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: var(--grid-row-height) var(--grid-row-height);
 }
 
 nav {
@@ -63,10 +63,10 @@ nav {
 
 nav a:first-child {
   grid-column: 1 / span var(--nav-arrow-span);
-  grid-row: -1;
+  grid-row: 1;
 }
 
 nav a:last-child {
   grid-column: span var(--nav-arrow-span) / -1;
-  grid-row: 1;
+  grid-row: 2;
 }
