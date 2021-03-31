@@ -1,4 +1,7 @@
-import Figure14 from "./figures/Figure14.js";
+import getFigureFactory from "./figures/FigureFactory.js";
 
-const figure = document.getElementById("figure");
-(new Figure14(figure)).draw();
+const figureNode = document.getElementById("figure");
+const figureFactory = getFigureFactory(14);
+const figure = figureFactory(figureNode);
+figure.draw();
+figure.animate();

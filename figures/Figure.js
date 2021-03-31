@@ -1,5 +1,5 @@
 export default class Figure {
-  constructor(figure, num, copy) {
+  constructor(figure, num, a11yDescription, poetry) {
     this._figureClass = `figure${num}`;
 
     // Remove figure-specific class name
@@ -9,13 +9,14 @@ export default class Figure {
     const canvas = figure.querySelector("svg");
 
     canvas.querySelector("title").innerHTML = `fig. ${num}`;
-    canvas.querySelector("desc").innerHTML = copy.a11yDescription;
+    canvas.querySelector("desc").innerHTML = a11yDescription;
 
     const figcaption = figure.querySelector("figcaption");
-    figcaption.innerText = copy.poetry;
+    figcaption.innerText = poetry;
 
     this._canvas = canvas;
   }
 
   draw() {}
+  animate() {}
 }
