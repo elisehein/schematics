@@ -8,8 +8,8 @@
   --hue-main: 0;
 
   --color-white: hsla(var(--hue-main), 0%, 95%, 1);
-  --color-mid: hsla(var(--hue-main), 0%, 27%, 1);
-  --color-black: hsla(var(--hue-main), 0%, 17%, 1);
+  --color-mid: hsla(var(--hue-main), 0%, 20%, 1);
+  --color-black: hsla(var(--hue-main), 0%, 10%, 1);
 
   --color-bg-light: var(--color-white);
   --color-bg-mid: var(--color-mid);
