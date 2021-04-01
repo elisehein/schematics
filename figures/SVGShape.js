@@ -39,14 +39,17 @@ export class Path extends SVGShape {
 }
 
 export class Text extends SVGShape {
-  constructor(text, { x, y }) {
+  constructor(text, { x, y }, fontSize = 10) {
     const node = createSVGElement("text");
     node.setAttribute("x", x);
     node.setAttribute("y", y);
 
     // Setting the font size via an attribute, we get the benefit of scaling
     // according to the coordinate system specified in viewBox.
-    node.setAttribute("font-size", "10");
+    node.setAttribute("font-size", fontSize);
+
+    // Letter-spacing causes the space between letters to not react to pointer events
+    node.setAttribute("pointer-events", "bounding-box");
 
     node.classList.add("text");
     node.innerHTML = text;

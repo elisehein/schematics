@@ -46,8 +46,9 @@ figure {
 }
 
 aside {
+  padding-top: var(--baseline);
   grid-column: 2 / span 3;
-  grid-row: 4 / -1;
+  grid-row: 3 / -1;
   z-index: 1;
 }
 
