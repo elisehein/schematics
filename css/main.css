@@ -64,6 +64,7 @@ h1 {
   font-size: var(--ms-1);
   font-weight: 400;
   line-height: var(--double-baseline);
+  white-space: nowrap;
 }
 
 h1 span {
