@@ -39,5 +39,9 @@ export default class Navigation {
       `Figure ${figureNum}`,
       `#fig${figureNum}`
      );
+
+     // Call callback manually, as pushState never triggers a hashchange event
+     // (as per spec)
+    this._onFigureChange(figureNum);
   }
 }
