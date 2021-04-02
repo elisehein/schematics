@@ -15,15 +15,18 @@ const copy = {
   }
 };
 
-export default function getFigureFactory(num) {
-  return (figureNode) => {
-    switch (num) {
-      case 14:
-        return new Figure14(figureNode, copy[num].a11yDescription, copy[num].poetry);
-      case 18:
-        return new Figure18(figureNode, copy[num].a11yDescription, copy[num].poetry);
-      default:
-        throw `Figure${num} isn't defined.`;
-    }
+export default function getFigure(figureNode, num) {
+  switch (num) {
+    case 14:
+      return new Figure14(figureNode, copy[num].a11yDescription, copy[num].poetry);
+    case 18:
+      return new Figure18(figureNode, copy[num].a11yDescription, copy[num].poetry);
+    default:
+      throw `Figure${num} isn't defined.`;
   }
 }
+
+export const orderedFigures = Object
+  .keys(copy)
+  .map(Number)
+  .sort((a, b) => a - b);
