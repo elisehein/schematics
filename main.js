@@ -1,11 +1,15 @@
-import { getPoetry, getDiagramElement, orderedFigures } from "./figures/FigureFactory.js";
-import Navigation from "./Navigation.js";
+import { getPoetry, getDiagramElement, figureExists, orderedFigures } from "./figures/FigureFactory.js";
+import HashNavigation from "./HashNavigation.js";
 
 const figureNode = document.getElementById("figure");
+const defaultFigureNum = orderedFigures[0];
 
-const nav = new Navigation({
+const nav = new HashNavigation({
   onFigureChange: (newFigureNum, oldFigureNum) => {
-    // TODO navigate back to old figure num of default if figure doesn't exist
+    if (!figureExists(newFigureNum)) {
+      nav.goToFigure(oldFigureNum || defaultFigureNum);
+      return;
+    }
 
     figureNode.className = `figure${newFigureNum}`;
     setPoetry(getPoetry(newFigureNum));
@@ -27,4 +31,4 @@ function replaceDiagram(num) {
   diagramElement.animate();
 }
 
-nav.init({ defaultFigureNum: orderedFigures[0] });
+nav.init({ defaultFigureNum });

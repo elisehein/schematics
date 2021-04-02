@@ -1,4 +1,4 @@
-export default class Navigation {
+export default class HashNavigation {
   constructor({ onFigureChange }) {
     this._onFigureChange = onFigureChange;
     window.addEventListener("hashchange", this.onNavigation.bind(this));

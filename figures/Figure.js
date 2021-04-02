@@ -46,7 +46,7 @@ export default class Figure extends HTMLElement {
   animate() {}
 
   static get observedAttributes()  {
-    return ["num", "a11yDescription"];
+    return ["num", "a11ydescription"];
   }
 
   attributeChangedCallback(attrName, oldValue, newValue) {
@@ -58,19 +58,19 @@ export default class Figure extends HTMLElement {
       case "num":
         this.renderTitle();
         break;
-      case "a11yDescription":
+      case "a11ydescription":
         this.renderDescription();
         break;
     }
   }
 
   get a11yDescription() {
-    return this.getAttribute("a11yDescription");
+    return this.getAttribute("a11ydescription");
   }
 
   set a11yDescription(newValue) {
     if (newValue !== this.a11yDescription) {
-      this.setAttribute("a11yDescription", newValue);
+      this.setAttribute("a11ydescription", newValue);
     }
   }
 

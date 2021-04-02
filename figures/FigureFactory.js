@@ -41,6 +41,10 @@ export function getPoetry(num) {
   return copy[num].poetry;
 }
 
+export function figureExists(num) {
+  return Object.keys(copy).includes(String(num));
+}
+
 export const orderedFigures = Object
   .keys(copy)
   .map(Number)
