@@ -25,12 +25,23 @@ export default class HashNavigation {
 
   onNavigation(event) {
     const newFigureNum = this.getFigureNumFromHash();
+    const oldFigureNum = this.getFigureNumFromHash((new URL(event.oldURL)).hash);
+
     if (newFigureNum) {
-      const oldFigureNum = this.getFigureNumFromHash((new URL(event.oldURL)).hash);
       this._onFigureChange(newFigureNum, oldFigureNum);
+    } else if (oldFigureNum) {
+      this.goToFigure(oldFigureNum);
     } else {
-      // What happens if we navigate to something that doesn't correspond to a figure?
+      this.clearHash();
     }
+  }
+
+  clearHash() {
+    window.history.pushState(
+      null,
+      null,
+      "#"
+    )
   }
 
   goToFigure(figureNum) {
