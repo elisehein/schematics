@@ -1,4 +1,4 @@
-class ScArrow extends HTMLElement {
+class NavigationArrow extends HTMLElement {
   connectedCallback() {
     const direction = this.getAttribute("direction");
     const arrowHeadPath = direction == "left" ?
@@ -28,4 +28,4 @@ class ScArrow extends HTMLElement {
   }
 }
 
-customElements.define("sc-arrow", ScArrow);
+customElements.define("nav-arrow", NavigationArrow);

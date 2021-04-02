@@ -14,6 +14,7 @@ const nav = new HashNavigation({
     figureNode.className = `figure${newFigureNum}`;
     setPoetry(getPoetry(newFigureNum));
     replaceDiagram(newFigureNum);
+    updateNavigation(newFigureNum);
   }
 });
 
@@ -29,6 +30,28 @@ function replaceDiagram(num) {
   const diagramElement = getDiagramElement(num);
   diagramContainerNode.appendChild(diagramElement);
   diagramElement.animate();
+}
+
+function updateNavigation(newFigureNum) {
+  const prevLink = document.getElementById("previous-figure");
+  const nextLink = document.getElementById("next-figure");
+
+  const newFigureNumIndex = orderedFigures.indexOf(newFigureNum);
+  const prevFigureNum = orderedFigures[newFigureNumIndex - 1];
+  const nextFigurNum = orderedFigures[newFigureNumIndex + 1];
+
+  prevLink.style.display = prevFigureNum ? "block" : "none";
+  nextLink.style.display = nextFigurNum ? "block" : "none";
+
+  if (prevFigureNum) {
+    prevLink.setAttribute("href", `#fig${prevFigureNum}`);
+    prevLink.querySelector("span").innerText = `fig. ${prevFigureNum}`;
+  }
+
+  if (nextFigurNum) {
+    nextLink.setAttribute("href", `#fig${nextFigurNum}`);
+    nextLink.querySelector("span").innerText = `fig. ${nextFigurNum}`;
+  }
 }
 
 nav.init({ defaultFigureNum });
