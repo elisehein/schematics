@@ -15,15 +15,30 @@ const copy = {
   }
 };
 
-export default function getFigure(figureNode, num) {
+export function getDiagramElement(num) {
+  const a11yDescription = getA11yDescription(num);
+  let el;
+
   switch (num) {
     case 14:
-      return new Figure14(figureNode, copy[num].a11yDescription, copy[num].poetry);
+      el = new Figure14;
+      break;
     case 18:
-      return new Figure18(figureNode, copy[num].a11yDescription, copy[num].poetry);
-    default:
-      throw `Figure${num} isn't defined.`;
+      el = new Figure18;
+      break
   }
+
+  el.a11yDescription = getA11yDescription(num);
+  return el;
+}
+
+// How to pass this to Figure14 constructor?
+export function getA11yDescription(num) {
+  return copy[num].a11yDescription;
+}
+
+export function getPoetry(num) {
+  return copy[num].poetry;
 }
 
 export const orderedFigures = Object

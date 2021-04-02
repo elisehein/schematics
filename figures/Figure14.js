@@ -2,8 +2,8 @@ import Figure from "./Figure.js";
 import { Line, Path, Text } from "./SVGShape.js";
 
 export default class Figure14 extends Figure {
-  constructor(figureNode, a11yDescription, poetry) {
-    super(figureNode, 14, a11yDescription, poetry);
+  constructor() {
+    super(14);
   }
 
   draw() {
@@ -21,8 +21,8 @@ export default class Figure14 extends Figure {
   drawAxisWithLabel(startCoords, endCoords, labelCoords, labelText) {
     const axis = new Line(startCoords, endCoords, "arrowhead-marker");
     const label = new Text(labelText, labelCoords);
-    this._canvas.appendChild(axis.node);
-    this._canvas.appendChild(label.node);
+    this.addSVGChildElement(axis.node);
+    this.addSVGChildElement(label.node);
   }
 
   drawSpiral() {
@@ -34,11 +34,11 @@ export default class Figure14 extends Figure {
                              C 210,95, 90,95, 90,115 \
                              C 90,135, 210,135, 210,95");
 
-    document.documentElement.style.setProperty(`--${this._figureClass}-spiral-length`, spiral.length);
+    this.style.setProperty("--spiral-length", spiral.length);
 
     const node = spiral.node;
     node.classList.add("spiral");
-    this._canvas.appendChild(node);
+    this.addSVGChildElement(node);
 
     // This has to happen asynchronously for the CSS transition to take effect
     setTimeout(() => {
@@ -46,3 +46,5 @@ export default class Figure14 extends Figure {
     })
   }
 }
+
+customElements.define("figure-14", Figure14);

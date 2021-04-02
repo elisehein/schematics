@@ -56,8 +56,8 @@ const flowChart = {
 const firstBox = "good?";
 
 export default class Figure18 extends Figure {
-  constructor(figureNode, a11yDescription, poetry) {
-    super(figureNode, 18, a11yDescription, poetry);
+  constructor() {
+    super(18);
   }
 
   draw() {
@@ -83,7 +83,7 @@ export default class Figure18 extends Figure {
     const label = new Text(option.label, { x: 0, y: 0 }, 8);
     label.node.classList.add("option-label", "option-label--active");
 
-    this._canvas.appendChild(label.node);
+    this.addSVGChildElement(label.node);
 
     this.adjustOptionLabelCoords(
       label.node,
@@ -96,6 +96,7 @@ export default class Figure18 extends Figure {
 
   bindOptionLabelClick(labelNode, targetBox) {
     labelNode.addEventListener("click", () => {
+      console.log("Clicked!");
       labelNode.classList.remove("option-label--active");
       const targetBoxData = flowChart[targetBox];
       this.drawBoxedText(targetBox, targetBoxData.position);
@@ -161,7 +162,7 @@ export default class Figure18 extends Figure {
 
     const boxedText = new BoxedText(text, fontSize, coords, boxSize);
     boxedText.node.setAttribute("class", "boxed-text");
-    this._canvas.appendChild(boxedText.node);
+    this.addSVGChildElement(boxedText.node);
   }
 
   getBoxCoords(position) {
@@ -176,3 +177,5 @@ export default class Figure18 extends Figure {
     return { x, y };
   }
 }
+
+customElements.define("figure-18", Figure18);
