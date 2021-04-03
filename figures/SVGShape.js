@@ -23,6 +23,10 @@ export class Line extends SVGShape {
 
     super(node);
   }
+
+  get length() {
+    return this.node.getTotalLength();
+  }
 }
 
 export class Path extends SVGShape {
@@ -66,7 +70,6 @@ export class BoxedText extends SVGShape {
     rectNode.setAttribute("y", y);
     rectNode.setAttribute("width", width);
     rectNode.setAttribute("height", height);
-    rectNode.setAttribute("vector-effect", "non-scaling-stroke");
     rectNode.classList.add("line");
     g.appendChild(rectNode);
 

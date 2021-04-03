@@ -1,5 +1,5 @@
 :root {
-  --skew-appear-duration: .15s;
+  --skew-appear-duration: var(--standard-animation-duration);
 }
 
 @keyframes skew-appear {

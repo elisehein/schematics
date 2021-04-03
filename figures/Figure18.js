@@ -76,7 +76,7 @@ export default class Figure18 extends Figure {
       text: boxText,
       position: boxData.position,
       onDone: () => {
-        this.drawOptions(boxData.position, boxData.options);
+        this.drawOptions(boxText, boxData.options);
       }
     });
   }
@@ -89,17 +89,17 @@ export default class Figure18 extends Figure {
     return this.querySelector(`#box-${this.boxPositionToID(position)}`) !== null;
   }
 
-  drawOptions(originBoxPosition, options) {
-    options.forEach(this.drawOption.bind(this, originBoxPosition));
+  drawOptions(originBoxText, options) {
+    options.forEach(this.drawOption.bind(this, originBoxText));
   }
 
-  drawOption(originBoxPosition, option, index) {
+  drawOption(originBoxText, option, index) {
     setTimeout(() => {
-      this.drawOptionLabel(originBoxPosition, option);
+      this.drawOptionLabel(originBoxText, option);
     }, 700 + (index * 400));
   }
 
-  drawOptionLabel(originBoxPosition, option) {
+  drawOptionLabel(originBoxText, option) {
     // Set zero origin to just get the text height at first, override coords later.
     const label = new Text(option.label, { x: 0, y: 0 }, 8);
     label.node.classList.add("option-label", "option-label--active");
@@ -108,20 +108,22 @@ export default class Figure18 extends Figure {
 
     this.adjustOptionLabelCoords(
       label.node,
-      this.getBoxCoords(originBoxPosition),
+      this.getBoxCoords(flowChart[originBoxText].position),
       option.labelPosition
     );
 
     this.removeBlurOnAnimationEnd(label.node);
     label.node.classList.add("skew-appear");
-    this.bindOptionLabelClick(label.node, option.to);
+    this.bindOptionLabelClick(label.node, originBoxText, option);
   }
 
-  bindOptionLabelClick(labelNode, targetBoxText) {
+  bindOptionLabelClick(labelNode, originBoxText, targetOption) {
     labelNode.addEventListener("click", () => {
       labelNode.classList.remove("option-label--active");
       this.drawOptionArrow({
-        onDone: () => this.drawBoxWithOptions(targetBoxText)
+        originBoxText: originBoxText,
+        option: targetOption,
+        onDone: () => this.drawBoxWithOptions(targetOption.to)
       });
     }, { once: true });
   }
@@ -173,9 +175,58 @@ export default class Figure18 extends Figure {
     }
   }
 
-  drawOptionArrow({ onDone }) {
-    // TODO
-    onDone();
+  drawOptionArrow({ originBoxText, option, onDone }) {
+    if (option.label == "" && option.to == "good?") {
+      onDone();
+      return;
+    }
+
+    if (option.label == "no" && option.to == "do it.") {
+      onDone();
+      return;
+    }
+
+    if (originBoxText == "fix it?" && option.label == "yes") {
+      onDone();
+      return;
+    }
+
+    if (originBoxText == "more?" && option.label == "no") {
+      onDone();
+      return;
+    }
+
+    this.drawStraightArrow({
+      originBoxPosition: flowChart[originBoxText].position,
+      targetBoxPosition: flowChart[option.to].position,
+      onDone: onDone
+    });
+  }
+
+  drawStraightArrow({ originBoxPosition, targetBoxPosition, onDone }) {
+    const originCoords = this.getBoxCoords(originBoxPosition);
+    const targetCoords = this.getBoxCoords(targetBoxPosition);
+    let startCoords, endCoords;
+
+    // Taking advantage of the fact that we KNOW the data is limited
+    // to arrows that go straight down or straight right.
+    if (originCoords.x == targetCoords.x) {
+      const x = originCoords.x + (boxWidth / 2);
+      startCoords = { x: x, y: originCoords.y + boxHeight }
+      endCoords = { x: x, y: targetCoords.y - 1 }
+    } else {
+      const y = originCoords.y + (boxHeight / 2);
+      startCoords = { x: originCoords.x + boxWidth, y: y }
+      endCoords = { x: targetCoords.x - 1, y: y }
+    }
+
+    const line = new Line(startCoords, endCoords);
+    this.addSVGChildElement(line.node);
+    this.style.setProperty("--animatable-line-length", line.length);
+    line.node.addEventListener("animationend", () => {
+      line.node.setAttribute("marker-end", `url(#arrowhead-marker)`);
+      onDone();
+    })
   }
 
   drawBoxedText({ text, position, onDone }) {

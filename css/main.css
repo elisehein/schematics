@@ -34,6 +34,8 @@
   --ms2: calc(var(--ms1) * var(--scale-factor));
 
   --page-padding: var(--double-baseline);
+
+  --standard-animation-duration: .15s;
 }
 
 body {

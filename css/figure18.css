@@ -8,9 +8,15 @@
   grid-row: 7 / span 2;
 }
 
-.figure18 .boxed-text {
+.figure18 .line {
+  stroke-width: .8px;
 }
 
 .figure18 .option-label--active {
   cursor: pointer;
+}
+
+.figure18 line.line {
+  stroke-dasharray: 0;
+  animation: draw-line var(--standard-animation-duration) ease-out;
 }

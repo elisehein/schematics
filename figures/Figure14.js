@@ -38,16 +38,11 @@ export default class Figure14 extends Figure {
                              C 210,95, 90,95, 90,115 \
                              C 90,135, 210,135, 210,95");
 
-    this.style.setProperty("--spiral-length", spiral.length);
+    this.style.setProperty("--animatable-line-length", spiral.length);
 
     const node = spiral.node;
     node.classList.add("spiral");
     this.addSVGChildElement(node);
-
-    // This has to happen asynchronously for the CSS transition to take effect
-    setTimeout(() => {
-      node.classList.add("spiral--end");
-    })
   }
 }
 

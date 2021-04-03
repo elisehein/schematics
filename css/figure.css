@@ -1,5 +1,16 @@
 @import "./skew-appear.css";
 
+@keyframes draw-line {
+  from {
+    stroke-dasharray: var(--animatable-line-length);
+    stroke-dashoffset: var(--animatable-line-length);
+  }
+  to {
+    stroke-dasharray: var(--animatable-line-length);
+    stroke-dashoffset: 0;
+  }
+}
+
 .diagram-container {
   display: flex;
   width: 100%;
@@ -16,9 +27,6 @@
 
 .line {
   stroke: var(--color-text-light);
-  stroke-width: 1.5px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
   fill: transparent;
 }
 

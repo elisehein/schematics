@@ -9,20 +9,17 @@
   align-self: center;
 }
 
-.figure14 line.line {
+.figure14 .line {
   stroke-width: 1px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.figure14 path.line {
+.figure14 .spiral {
   stroke-width: 2px;
 }
 
 .figure14 .spiral {
-  stroke-dasharray: var(--spiral-length);
-  stroke-dashoffset: calc(var(--spiral-length) * 1);
-  transition: stroke-dashoffset 10s linear, stroke-dasharray 5s linear;
-}
-
-.figure14 .spiral--end {
-  stroke-dashoffset: 0;
+  stroke-dasharray: var(--animatable-line-length);
+  animation: draw-line 10s linear;
 }
