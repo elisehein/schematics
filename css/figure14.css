@@ -18,8 +18,8 @@
 }
 
 .figure14 .spiral {
-  stroke-dasharray: var(--figure14-spiral-length);
-  stroke-dashoffset: calc(var(--figure14-spiral-length) * 1);
+  stroke-dasharray: var(--spiral-length);
+  stroke-dashoffset: calc(var(--spiral-length) * 1);
   transition: stroke-dashoffset 10s linear, stroke-dasharray 5s linear;
 }
 
