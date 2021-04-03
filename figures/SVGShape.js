@@ -80,6 +80,7 @@ export class BoxedText extends SVGShape {
     textNode.classList.add("text");
 
     g.appendChild(textNode);
+    g.classList.add("boxed-text");
 
     super(g);
   }

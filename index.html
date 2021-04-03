@@ -17,7 +17,7 @@
   <body>
 
     <!-- Inlined for shared defs, not visible -->
-    <svg style="display: block" width="0" height="0">
+    <svg style="display: block" width="0" height="0" hidden>
       <defs>
         <marker
           id="arrowhead-marker"
@@ -29,6 +29,9 @@
           orient="auto-start-reverse">
           <path class="arrowhead-marker" d="M 1 1 L 5 4 L 1 7 z" />
         </marker>
+        <filter id="blur">
+          <feGaussianBlur stdDeviation="2" />
+        </filter>`
       </defs>
     </svg>
 

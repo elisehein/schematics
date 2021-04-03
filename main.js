@@ -29,7 +29,8 @@ function replaceDiagram(num) {
 
   const diagramElement = getDiagramElement(num);
   diagramContainerNode.appendChild(diagramElement);
-  diagramElement.animate();
+
+  setTimeout(diagramElement.animate.bind(diagramElement), 2000);
 }
 
 function updateNavigation(newFigureNum) {

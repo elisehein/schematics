@@ -9,6 +9,10 @@ export default class Figure14 extends Figure {
   draw() {
     super.draw();
     this.drawAxes()
+  }
+
+  animate() {
+    super.animate();
     this.drawSpiral();
   }
 

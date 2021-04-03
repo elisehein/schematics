@@ -60,22 +60,43 @@ export default class Figure18 extends Figure {
     super(18);
   }
 
-  draw() {
-    super.draw();
-    this.drawBoxedText(firstBox, flowChart[firstBox].position);
-  }
-
   animate() {
-    this.drawBoxOptions(flowChart[firstBox].position, flowChart[firstBox].options);
+    this.drawBoxWithOptions(firstBox);
   }
 
-  drawBoxOptions(originBoxPosition, options) {
+  drawBoxWithOptions(boxText) {
+    const boxData = flowChart[boxText];
+
+    if (this.boxWithOptionsExists(boxData.position)) {
+      console.log(boxText, "already exists, not drawing again.");
+      return;
+    }
+
+    this.drawBoxedText({
+      text: boxText,
+      position: boxData.position,
+      onDone: () => {
+        this.drawOptions(boxData.position, boxData.options);
+      }
+    });
+  }
+
+  boxPositionToID(position) {
+    return position.toString().split(",").join("")
+  }
+
+  boxWithOptionsExists(position) {
+    return this.querySelector(`#box-${this.boxPositionToID(position)}`) !== null;
+  }
+
+  drawOptions(originBoxPosition, options) {
     options.forEach(this.drawOption.bind(this, originBoxPosition));
   }
 
-  drawOption(originBoxPosition, option) {
-    this.drawOptionLabel(originBoxPosition, option);
-    this.drawOptionArrow();
+  drawOption(originBoxPosition, option, index) {
+    setTimeout(() => {
+      this.drawOptionLabel(originBoxPosition, option);
+    }, 700 + (index * 400));
   }
 
   drawOptionLabel(originBoxPosition, option) {
@@ -91,21 +112,18 @@ export default class Figure18 extends Figure {
       option.labelPosition
     );
 
+    this.removeBlurOnAnimationEnd(label.node);
+    label.node.classList.add("skew-appear");
     this.bindOptionLabelClick(label.node, option.to);
   }
 
-  bindOptionLabelClick(labelNode, targetBox) {
+  bindOptionLabelClick(labelNode, targetBoxText) {
     labelNode.addEventListener("click", () => {
-      console.log("Clicked!");
       labelNode.classList.remove("option-label--active");
-      const targetBoxData = flowChart[targetBox];
-      this.drawBoxedText(targetBox, targetBoxData.position);
-      this.drawBoxOptions(targetBoxData.position, targetBoxData.options);
+      this.drawOptionArrow({
+        onDone: () => this.drawBoxWithOptions(targetBoxText)
+      });
     }, { once: true });
-  }
-
-  handleOptionLabelClick(labelNode, targetBox) {
-
   }
 
   adjustOptionLabelCoords(labelNode, originBoxCoords, labelPosition) {
@@ -119,6 +137,10 @@ export default class Figure18 extends Figure {
 
     labelNode.setAttribute("x", labelCoords.x);
     labelNode.setAttribute("y", labelCoords.y);
+    labelNode.setAttribute(
+      "transform-origin",
+      `${labelCoords.x + (labelSize.width / 2)} ${labelCoords.y + (labelSize.height / 2)}`
+    );
   }
 
   getOptionLabelCoords(originBoxCoords, labelPosition, labelSize) {
@@ -139,30 +161,39 @@ export default class Figure18 extends Figure {
       case labelPositions.BOTTOM_LEFT_TO_ARROW:
         return {
           x: originBoxCoords.x + (boxWidth / 2) - labelSize.width - arrowOffset,
-          y: originBoxCoords.y + boxHeight + boxOffset
+          y: originBoxCoords.y + boxHeight + boxOffset + 2
         };
       case labelPositions.BOTTOM_RIGHT_TO_ARROW:
         return {
           x: originBoxCoords.x + (boxWidth / 2) + arrowOffset,
-          y: originBoxCoords.y + boxHeight + boxOffset
+          y: originBoxCoords.y + boxHeight + boxOffset + 2
         };
       default:
         throw `No such label position: ${labelPosition}.`;
     }
   }
 
-  drawOptionArrow() {
-
+  drawOptionArrow({ onDone }) {
+    // TODO
+    onDone();
   }
 
-  drawBoxedText(text, position) {
+  drawBoxedText({ text, position, onDone }) {
     const boxSize = { width: 50, height: 30 };
     const coords = this.getBoxCoords(position);
     const fontSize = 8;
 
     const boxedText = new BoxedText(text, fontSize, coords, boxSize);
-    boxedText.node.setAttribute("class", "boxed-text");
+    boxedText.node.classList.add("skew-appear");
+    boxedText.node.setAttribute("id", `box-${this.boxPositionToID(position)}`);
+    boxedText.node.setAttribute(
+      "transform-origin",
+      `${coords.x + (boxSize.width / 2)} ${coords.y + (boxSize.height / 2)}`
+    );
     this.addSVGChildElement(boxedText.node);
+    this.removeBlurOnAnimationEnd(boxedText.node);
+
+    boxedText.node.addEventListener("animationend", onDone);
   }
 
   getBoxCoords(position) {
@@ -175,6 +206,12 @@ export default class Figure18 extends Figure {
     const y = startY + ((position[1] - 1) * yStep);
 
     return { x, y };
+  }
+
+  removeBlurOnAnimationEnd(node) {
+    node.addEventListener("animationend", () => {
+      node.style.filter = "none";
+    }, { once: true });
   }
 }
 
