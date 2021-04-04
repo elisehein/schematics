@@ -1,5 +1,5 @@
 import Figure14 from "./Figure14.js";
-import Figure18 from "./Figure18.js";
+import Figure18 from "./Figure18/Figure18.js";
 
 const copy = {
   14: {
