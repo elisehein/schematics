@@ -1,4 +1,7 @@
 @import "./skew-appear.css";
+@import "./figure14.css";
+@import "./figure18.css";
+@import "./figure43.css";
 
 @keyframes draw-line {
   from {

@@ -1,5 +1,6 @@
 import Figure14 from "./Figure14.js";
 import Figure18 from "./Figure18/Figure18.js";
+import Figure43 from "./Figure43.js";
 
 const copy = {
   14: {
@@ -12,6 +13,10 @@ const copy = {
   18: {
     a11yDescription: "A flow diagram for love.",
     poetry: "I will send you flowers, pearls, letters written in ink."
+  },
+  43: {
+    a11yDescription: "A rotating Necker cube.",
+    poetry: "Dream little one, dream."
   }
 };
 
@@ -25,6 +30,9 @@ export function getDiagramElement(num) {
       break;
     case 18:
       el = new Figure18;
+      break
+    case 43:
+      el = new Figure43;
       break
   }
 
