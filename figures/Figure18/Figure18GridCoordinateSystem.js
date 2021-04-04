@@ -41,8 +41,6 @@ export default class Figure18GridCoordinateSystem {
     const x = startX + ((position.x - 1) * xStep);
     const y = startY + ((position.y - 1) * yStep);
 
-    console.log("Xoffset is ", this._xOffset);
-
     return { x, y };
   }
 
