@@ -23,7 +23,8 @@ export default class Figure14 extends Figure {
   }
 
   drawAxisWithLabel(startCoords, endCoords, labelCoords, labelText) {
-    const axis = new Line(startCoords, endCoords, "arrowhead-marker");
+    const axis = new Line(startCoords, endCoords);
+    axis.addArrowHead();
     const label = new Text(labelText, labelCoords);
     this.addSVGChildElement(axis.node);
     this.addSVGChildElement(label.node);

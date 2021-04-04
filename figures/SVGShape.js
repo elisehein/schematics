@@ -9,19 +9,16 @@ class SVGShape {
 }
 
 export class Line extends SVGShape {
-  constructor({ x: startX, y: startY }, { x: endX, y: endY }, markerDef = "") {
-    const node = createSVGElement("line");
-    node.setAttribute("x1", startX);
-    node.setAttribute("y1", startY);
-    node.setAttribute("x2", endX);
-    node.setAttribute("y2", endY);
+  constructor(...points) {
+    const node = createSVGElement("polyline");
+    node.setAttribute("points", points.map(({x, y}) => `${x},${y}`).join(" "));
     node.classList.add("line");
 
-    if (markerDef) {
-      node.setAttribute("marker-end", `url(#${markerDef})`);
-    }
-
     super(node);
+  }
+
+  addArrowHead() {
+    this.node.setAttribute("marker-end", "url(#arrowhead-marker)");
   }
 
   get length() {

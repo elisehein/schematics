@@ -76,7 +76,9 @@ export default class Figure18 extends Figure {
       text: boxText,
       position: boxData.position,
       onDone: () => {
-        this.drawOptions(boxText, boxData.options);
+        if (boxData.options) {
+          this.drawOptions(boxText, boxData.options);
+        }
       }
     });
   }
@@ -90,31 +92,49 @@ export default class Figure18 extends Figure {
   }
 
   drawOptions(originBoxText, options) {
-    options.forEach(this.drawOption.bind(this, originBoxText));
-  }
-
-  drawOption(originBoxText, option, index) {
-    setTimeout(() => {
-      this.drawOptionLabel(originBoxText, option);
-    }, 700 + (index * 400));
+    options.forEach((option, index) => {
+      if (option.label == "") {
+        this.drawOptionArrow({ originBoxText, option, onDone: () => {}});
+      } else {
+        setTimeout(() => {
+          this.drawOptionLabel(originBoxText, option);
+        }, 700 + (index * 400));
+      }
+    });
   }
 
   drawOptionLabel(originBoxText, option) {
-    // Set zero origin to just get the text height at first, override coords later.
+    // Set zero origin to just get the text size at first, override coords later.
     const label = new Text(option.label, { x: 0, y: 0 }, 8);
     label.node.classList.add("option-label", "option-label--active");
 
     this.addSVGChildElement(label.node);
 
-    this.adjustOptionLabelCoords(
-      label.node,
-      this.getBoxCoords(flowChart[originBoxText].position),
-      option.labelPosition
+    const labelSize = label.node.getBBox();
+    const originBoxCoords = this.getBoxCoords(flowChart[originBoxText].position);
+    const { x, y } = this.getOptionLabelCoords(originBoxCoords, option.labelPosition, labelSize);
+
+    label.node.setAttribute("x", x);
+    label.node.setAttribute("y", y);
+    label.node.setAttribute(
+      "transform-origin",
+      `${x + (labelSize.width / 2)} ${y + (labelSize.height / 2)}`
     );
 
+    this.drawOptionLabelUnderline(x, y, labelSize);
     this.removeBlurOnAnimationEnd(label.node);
     label.node.classList.add("skew-appear");
     this.bindOptionLabelClick(label.node, originBoxText, option);
+  }
+
+  drawOptionLabelUnderline(labelX, labelY, labelSize) {
+    const underline = new Line(
+      { x: labelX - 1, y: labelY + 3 },
+      { x: labelX + labelSize.width + 1, y: labelY + 3 }
+    );
+    underline.node.classList.add("option-label-underline", "skew-appear");
+    this.removeBlurOnAnimationEnd(underline.node);
+    this.addSVGChildElement(underline.node);
   }
 
   bindOptionLabelClick(labelNode, originBoxText, targetOption) {
@@ -128,37 +148,21 @@ export default class Figure18 extends Figure {
     }, { once: true });
   }
 
-  adjustOptionLabelCoords(labelNode, originBoxCoords, labelPosition) {
-    const labelSize = labelNode.getBBox();
-
-    const labelCoords = this.getOptionLabelCoords(
-      originBoxCoords,
-      labelPosition,
-      labelSize
-    );
-
-    labelNode.setAttribute("x", labelCoords.x);
-    labelNode.setAttribute("y", labelCoords.y);
-    labelNode.setAttribute(
-      "transform-origin",
-      `${labelCoords.x + (labelSize.width / 2)} ${labelCoords.y + (labelSize.height / 2)}`
-    );
-  }
-
   getOptionLabelCoords(originBoxCoords, labelPosition, labelSize) {
     const boxOffset = 10;
-    const arrowOffset = 3;
+    const arrowOffset = 5;
 
     switch (labelPosition) {
       case labelPositions.RIGHT_ABOVE_ARROW:
         return {
           x: originBoxCoords.x + boxWidth + boxOffset,
-          y: originBoxCoords.y + (boxHeight / 2) - labelSize.height + 3
+          y: originBoxCoords.y + (boxHeight / 2) - arrowOffset
         };
       case labelPositions.RIGHT_BELOW_ARROW:
         return {
           x: originBoxCoords.x + boxWidth + boxOffset,
-          y: originBoxCoords.y + (boxHeight / 2) + arrowOffset
+          // No need for arrow offset along y-axis as the text is positioned at baseline within its bounding box
+          y: originBoxCoords.y + (boxHeight / 2) + labelSize.height
         };
       case labelPositions.BOTTOM_LEFT_TO_ARROW:
         return {
@@ -176,57 +180,66 @@ export default class Figure18 extends Figure {
   }
 
   drawOptionArrow({ originBoxText, option, onDone }) {
+    let arrowLine;
+
+    const originBoxCoords = this.getBoxCoords(flowChart[originBoxText].position);
+    const targetBoxCoords = this.getBoxCoords(flowChart[option.to].position);
+
     if (option.label == "" && option.to == "good?") {
-      onDone();
-      return;
+      arrowLine = new Line(
+        { x: originBoxCoords.x + boxWidth, y: originBoxCoords.y + (boxHeight / 2) },
+        { x: originBoxCoords.x + boxWidth + (arrowWidth / 2), y: originBoxCoords.y + (boxHeight / 2) },
+        { x: originBoxCoords.x + boxWidth + (arrowWidth / 2), y: originBoxCoords.y - (arrowHeight / 2) },
+        { x: targetBoxCoords.x + (boxWidth / 2), y: targetBoxCoords.y - (arrowHeight / 2) },
+        { x: targetBoxCoords.x + (boxWidth / 2), y: targetBoxCoords.y }
+      );
+    } else if (option.label == "no" && option.to == "do it.") {
+      arrowLine = new Line(
+        { x: originBoxCoords.x + boxWidth, y: originBoxCoords.y + (boxHeight / 2) },
+        { x: targetBoxCoords.x + (boxWidth / 2), y: originBoxCoords.y + (boxHeight / 2) },
+        { x: targetBoxCoords.x + (boxWidth / 2), y: targetBoxCoords.y + boxHeight }
+      );
+    } else if (originBoxText == "fix it?" && option.label == "yes") {
+      arrowLine = new Line(
+        { x: originBoxCoords.x + boxWidth, y: originBoxCoords.y + (boxHeight / 2) },
+        { x: originBoxCoords.x + boxWidth + arrowWidth + 5, y: originBoxCoords.y + (boxHeight / 2) },
+        { x: originBoxCoords.x + boxWidth + arrowWidth + 5, y: targetBoxCoords.y + boxHeight }
+      );
+    } else if (originBoxText == "more?" && option.label == "no") {
+      arrowLine = new Line(
+        { x: originBoxCoords.x + (boxWidth / 2), y: originBoxCoords.y + boxHeight },
+        { x: originBoxCoords.x + (boxWidth / 2), y: targetBoxCoords.y + 5 },
+        { x: targetBoxCoords.x + boxWidth, y: targetBoxCoords.y + 5 }
+      );
+    } else {
+      arrowLine = this.getStraightLine(originBoxCoords, targetBoxCoords);
     }
 
-    if (option.label == "no" && option.to == "do it.") {
+    this.addSVGChildElement(arrowLine.node);
+    this.style.setProperty("--animatable-line-length", arrowLine.length);
+    arrowLine.node.classList.add("option-arrow");
+    arrowLine.node.addEventListener("animationend", () => {
+      arrowLine.addArrowHead();
       onDone();
-      return;
-    }
-
-    if (originBoxText == "fix it?" && option.label == "yes") {
-      onDone();
-      return;
-    }
-
-    if (originBoxText == "more?" && option.label == "no") {
-      onDone();
-      return;
-    }
-
-    this.drawStraightArrow({
-      originBoxPosition: flowChart[originBoxText].position,
-      targetBoxPosition: flowChart[option.to].position,
-      onDone: onDone
-    });
+    })
   }
 
-  drawStraightArrow({ originBoxPosition, targetBoxPosition, onDone }) {
-    const originCoords = this.getBoxCoords(originBoxPosition);
-    const targetCoords = this.getBoxCoords(targetBoxPosition);
+  getStraightLine(originBoxCoords, targetBoxCoords) {
     let startCoords, endCoords;
 
     // Taking advantage of the fact that we KNOW the data is limited
     // to arrows that go straight down or straight right.
-    if (originCoords.x == targetCoords.x) {
-      const x = originCoords.x + (boxWidth / 2);
-      startCoords = { x: x, y: originCoords.y + boxHeight }
-      endCoords = { x: x, y: targetCoords.y - 1 }
+    if (originBoxCoords.x == targetBoxCoords.x) {
+      const x = originBoxCoords.x + (boxWidth / 2);
+      startCoords = { x: x, y: originBoxCoords.y + boxHeight }
+      endCoords = { x: x, y: targetBoxCoords.y - 1 }
     } else {
-      const y = originCoords.y + (boxHeight / 2);
-      startCoords = { x: originCoords.x + boxWidth, y: y }
-      endCoords = { x: targetCoords.x - 1, y: y }
+      const y = originBoxCoords.y + (boxHeight / 2);
+      startCoords = { x: originBoxCoords.x + boxWidth, y: y }
+      endCoords = { x: targetBoxCoords.x - 1, y: y }
     }
 
-    const line = new Line(startCoords, endCoords);
-    this.addSVGChildElement(line.node);
-    this.style.setProperty("--animatable-line-length", line.length);
-    line.node.addEventListener("animationend", () => {
-      line.node.setAttribute("marker-end", `url(#arrowhead-marker)`);
-      onDone();
-    })
+    return new Line(startCoords, endCoords);
   }
 
   drawBoxedText({ text, position, onDone }) {

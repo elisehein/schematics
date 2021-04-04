@@ -12,11 +12,20 @@
   stroke-width: .8px;
 }
 
+.figure18 .option-label + .option-label-underline {
+  visibility: hidden;
+}
+
 .figure18 .option-label--active {
   cursor: pointer;
 }
 
-.figure18 line.line {
+.figure18 .option-label.option-label--active + .option-label-underline {
+  visibility: visible;
+}
+
+.figure18 .option-arrow {
   stroke-dasharray: 0;
-  animation: draw-line var(--standard-animation-duration) ease-out;
+  animation: draw-line calc(var(--standard-animation-duration) * (var(--animatable-line-length) / 50)) ease-out;
+  pointer-events: none;
 }
