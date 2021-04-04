@@ -11,12 +11,28 @@ const nav = new HashNavigation({
       return;
     }
 
-    figureNode.className = `figure${newFigureNum}`;
-    setPoetry(getPoetry(newFigureNum));
-    replaceDiagram(newFigureNum);
-    updateNavigation(newFigureNum);
+    if (oldFigureNum) {
+      figureNode.addEventListener("transitionend", () => {
+        figureNode.classList.remove("figure--exiting");
+        handleNewFigure(newFigureNum, oldFigureNum);
+      }, { once: true });
+      figureNode.classList.add("figure--exiting");
+    } else {
+      handleNewFigure(newFigureNum);
+    }
   }
 });
+
+function handleNewFigure(newFigureNum, oldFigureNum) {
+  if (oldFigureNum) {
+    figureNode.classList.replace(`figure${oldFigureNum}`, `figure${newFigureNum}`);
+  } else {
+    figureNode.classList.add(`figure${newFigureNum}`);
+  }
+  setPoetry(getPoetry(newFigureNum));
+  replaceDiagram(newFigureNum);
+  updateNavigation(newFigureNum);
+}
 
 function setPoetry(poetry) {
   const figcaption = figureNode.querySelector("figcaption");

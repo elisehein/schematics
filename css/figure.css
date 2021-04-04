@@ -49,3 +49,17 @@
   stroke-width: 0;
   fill: var(--color-text-light);
 }
+
+.figure {
+  filter: none;
+  opacity: 1;
+  transition:
+    opacity .1s ease-out,
+    filter .1s ease-out;
+}
+
+.figure--exiting {
+  filter: blur(5px);
+  opacity: 0;
+  transition-duration: .2s;
+}
