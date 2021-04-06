@@ -11,7 +11,7 @@ export default class Figure18 extends Figure {
     this._grid = new Figure18GridCoordinateSystem();
   }
 
-  animate() {
+  draw() {
     this.drawBoxWithOptions(firstBox);
   }
 
