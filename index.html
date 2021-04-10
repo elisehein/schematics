@@ -16,6 +16,70 @@
 
   <body>
 
+    <div class="grid">
+
+      <header>
+        <h1>Schematics &rarr; <span>A Love Story</span></h1>
+      </header>
+
+      <aside>
+        <h2>About this website</h2>
+        <p>
+          “Schematics: A Love Story” is a visual poetry book by
+          <a href="http://julianhibbard.com/schematics.html">Julian&nbsp;Hibbard</a>.
+        </p>
+        <p>
+          The collection of figures here have been reproduced as SVG and
+          animated with permission by <a href="https://elisehe.in">Elise&nbsp;Hein</a>.
+        </p>
+        <a href="#about">Read more</a>
+      </aside>
+
+      <main>
+      </main>
+
+      <footer>
+        <a href="https://github.com/elisehein/schematics">View source</a>
+        <span>&#169; 2021</span>
+      </footer>
+
+    </div>
+
+    <template id="figure-list">
+      <ul>
+        <li>
+          <a href="#fig14">
+            <figure-14 preview></figure-14>
+          </a>
+        </li>
+        <li>
+          <a href="#fig18">
+            <figure-18 preview></figure-18>
+          </a>
+        </li>
+        <li>
+          <a href="#fig43">
+            <figure-43 preview></figure-43>
+          </a>
+        </li>
+      </ul>
+    </template>
+
+    <template id="single-figure">
+      <figure id="figure" class="figure">
+        <div class="diagram-container"></div>
+        <figcaption></figcaption>
+      </figure>
+      <nav>
+        <a href="#">All figures</a>
+        <ul>
+          <li>
+            <a href=""></a>
+          </li>
+        </ul>
+      </nav>
+    </template>
+
     <!-- Inlined for shared defs, not visible -->
     <svg style="display: block" width="0" height="0" hidden>
       <defs>
@@ -34,44 +98,6 @@
         </filter>`
       </defs>
     </svg>
-
-    <div class="grid">
-
-      <header>
-        <h1>Schematics &rarr; <span>A Love Story</span></h1>
-      </header>
-
-      <aside>
-        <p class="mono-type">
-          Original artwork by <a href="">Julian&nbsp;Hibbard</a>.<br/>
-          Reproduced and animated with permission by <a href="https://elisehe.in">Elise&nbsp;Hein</a>.
-        </p>
-      </aside>
-
-      <main>
-        <figure id="figure" class="figure">
-          <div class="diagram-container"></div>
-          <figcaption class="figure-type"></figcaption>
-        </figure>
-      </main>
-
-      <nav>
-        <a id="previous-figure" href="#fig14">
-          <span class="figure-type"></span>
-          <nav-arrow direction="left" aria-hidden="true"></nav-arrow>
-        </a>
-        <a id="next-figure" href="#fig18">
-          <span class="figure-type"></span>
-          <nav-arrow direction="right" aria-hidden="true"></nav-arrow>
-        </a>
-      </nav>
-
-      <footer class="mono-type">
-        <span>&#169; 2021</span>
-        <a href="">About this website</a>
-      </footer>
-
-    </div>
 
   </body>
 </html>
