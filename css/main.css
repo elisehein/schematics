@@ -45,6 +45,7 @@ body {
 }
 
 h1 {
+  position: relative;
   display: inline-block;
   padding: .3em 1em;
   text-transform: uppercase;
@@ -55,6 +56,23 @@ h1 {
   white-space: nowrap;
   color: var(--color-text-dark);
   background: var(--color-bg-light);
+}
+
+h1 span {
+  transform: scaleY(1.2);
+}
+
+h1:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.28) 49%, transparent 50%);
+  background-repeat: repeat;
+  background-size: 1px .17em;
+  filter: blur(.015em);
 }
 
 aside {
@@ -112,7 +130,7 @@ footer a:hover {
 
 footer a svg {
   width: 1.5em;
-  margin-right: 0.3em;
+  margin-right: 0.6em;
   vertical-align: middle;
 }
 
