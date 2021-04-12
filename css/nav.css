@@ -1,33 +1,4 @@
 nav {
-  z-index: 1;
-}
-
-nav a {
-  display: block;
-  align-self: center;
-  display: flex;
-  flex-direction: column;
-}
-
-nav a:first-child {
-  text-align: right;
-}
-
-nav nav-arrow {
-  width: 100%;
-  display: block;
-  transition: transform .15s linear;
-}
-
-nav a:first-child:hover nav-arrow {
-  transform: translateX(calc(var(--baseline) * -1));
-}
-
-nav a:last-child:hover nav-arrow {
-  transform: translateX(calc(var(--baseline) * 1));
-}
-
-nav nav-arrow,
-nav span {
-  flex: 1;
+  line-height: var(--triple-baseline);
+  align-self: flex-end;
 }

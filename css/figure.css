@@ -39,9 +39,9 @@
   letter-spacing: .1em;
 }
 
-.figure-type {
-  font-size: var(--ms1);
-  line-height: var(--baseline);
+figcaption {
+  font-size: var(--ms2);
+  line-height: var(--double-baseline);
   letter-spacing: .1em;
 }
 

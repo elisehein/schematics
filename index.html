@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script type="module" src="/main.js"></script>
-    <script type="module" src="/NavigationArrow.js"></script>
+    <script type="module" src="/ButtonLink.js"></script>
 
     <link rel="stylesheet" href="/css/main.css" />
   </head>
@@ -32,7 +32,7 @@
           The collection of figures here have been reproduced as SVG and
           animated with permission by <a href="https://elisehe.in">Elise&nbsp;Hein</a>.
         </p>
-        <a href="#about">Read more &rarr;</a>
+        <a is="button-link" href="#about">Read more &rarr;</a>
       </aside>
 
       <main>
@@ -48,7 +48,7 @@
 
     </div>
 
-    <template id="figure-list">
+    <template id="figure-previews-template">
       <ul>
         <li>
           <a href="#fig14">
@@ -68,19 +68,24 @@
       </ul>
     </template>
 
-    <template id="single-figure">
+    <template id="single-figure-template">
       <figure id="figure" class="figure">
         <div class="diagram-container"></div>
         <figcaption></figcaption>
       </figure>
       <nav>
-        <a href="#">All figures</a>
+        <a is="button-link" icon="grid" href="#">All figures</a>
+        <a id="previous-figure"></a>
         <ul>
-          <li>
-            <a href=""></a>
-          </li>
         </ul>
+        <a id="next-figure"></a>
       </nav>
+    </template>
+
+    <template id="figure-navigation-list-item-template">
+      <li>
+        <a>fig. <span data-num></span></a>
+      </li>
     </template>
 
     <!-- Inlined for shared defs, not visible -->
