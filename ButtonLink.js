@@ -1,7 +1,7 @@
 class ButtonLink extends HTMLAnchorElement {
   constructor(){
     super();
-    this.classList.add("button");
+    this.classList.add("button", "link-type");
   }
 
   connectedCallback() {

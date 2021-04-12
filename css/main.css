@@ -90,7 +90,8 @@ aside p a {
   text-underline-position: under;
 }
 
-aside p a:hover {
+aside p a:hover,
+aside p a:focus {
   color: #fff;
 }
 
@@ -114,7 +115,8 @@ footer > * + * {
   margin-left: calc(var(--baseline) * 4);
 }
 
-footer a:hover {
+footer a:hover,
+footer a:focus {
   color: #fff;
 }
 
@@ -133,6 +135,11 @@ footer a span {
   opacity: .6;
 }
 
+.link-type {
+  font-size: var(--ms-1);
+  letter-spacing: .05em;
+}
+
 .button {
   --button-side-padding: 1.5em;
   --button-height: var(--triple-baseline);
@@ -145,11 +152,11 @@ footer a span {
   border-radius: .3em;
   background-color: #000;
   line-height: var(--button-height);
-  letter-spacing: .05em;
   transition: filter .15s;
 }
 
-.button:hover {
+.button:hover,
+.button:focus {
   filter: invert(1);
 }
 
