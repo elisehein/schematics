@@ -12,27 +12,24 @@ const nav = new HashNavigation({
       return;
     }
 
-    mainNode.innerHTML = figureTemplate.innerHTML;
     const figureNode = mainNode.querySelector("figure");
 
     if (oldFigureNum) {
       figureNode.addEventListener("transitionend", () => {
-        figureNode.classList.remove("figure--exiting");
-        handleNewFigure(figureNode, newFigureNum, oldFigureNum);
+        handleNewFigure(mainNode, newFigureNum, oldFigureNum);
       }, { once: true });
       figureNode.classList.add("figure--exiting");
     } else {
-      handleNewFigure(figureNode, newFigureNum);
+      handleNewFigure(mainNode, newFigureNum);
     }
   }
 });
 
-function handleNewFigure(figureNode, newFigureNum, oldFigureNum) {
-  if (oldFigureNum) {
-    figureNode.classList.replace(`figure${oldFigureNum}`, `figure${newFigureNum}`);
-  } else {
-    figureNode.classList.add(`figure${newFigureNum}`);
-  }
+function handleNewFigure(mainNode, newFigureNum, oldFigureNum) {
+  mainNode.innerHTML = figureTemplate.innerHTML;
+  const figureNode = mainNode.querySelector("figure");
+  figureNode.classList.add(`figure${newFigureNum}`);
+
   setPoetry(figureNode.querySelector("figcaption"), getPoetry(newFigureNum));
 
   const diagramContainerNode = figureNode.querySelector(".diagram-container");
@@ -60,16 +57,17 @@ function updateNavigation(newFigureNum) {
   const prevFigureNum = orderedFigures[newFigureNumIndex - 1];
   const nextFigurNum = orderedFigures[newFigureNumIndex + 1];
 
-  prevLink.style.display = prevFigureNum ? "block" : "none";
-  nextLink.style.display = nextFigurNum ? "block" : "none";
+  configureDirectionalFigureLink(prevLink, prevFigureNum);
+  configureDirectionalFigureLink(nextLink, nextFigurNum);
+}
 
-  if (prevFigureNum) {
-    prevLink.setAttribute("href", `#fig${prevFigureNum}`);
+function configureDirectionalFigureLink(node, num) {
+  if (num) {
+    node.setAttribute("href", `#fig${num}`);
+  } else {
+    node.setAttribute("aria-hidden", true);
   }
 
-  if (nextFigurNum) {
-    nextLink.setAttribute("href", `#fig${nextFigurNum}`);
-  }
 }
 
 nav.init({ defaultFigureNum });
