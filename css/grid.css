@@ -1,5 +1,5 @@
 :root {
-  --grid-top-spacing: var(--double-baseline);
+  --grid-top-spacing: var(--baseline);
   --grid-bottom-spacing: var(--double-baseline);
   --grid-template-columns: repeat(3, 1fr);
   --header-row-height: calc(var(--baseline) * 3);
