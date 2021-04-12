@@ -15,9 +15,8 @@
   --color-text-light: hsla(var(--hue-main), 0%, 72%, 1);
   --color-text-dark: var(--color-black);
 
-  --baseline: 1.8rem;
+  --baseline: .9rem;
 
-  --half-baseline: calc(var(--baseline) / 2);
   --double-baseline: calc(var(--baseline) * 2);
   --triple-baseline: calc(var(--baseline) * 3);
 
@@ -52,7 +51,7 @@ h1 {
   letter-spacing: .5em;
   font-size: var(--ms-2);
   font-weight: 400;
-  line-height: var(--baseline);
+  line-height: var(--double-baseline);
   white-space: nowrap;
   color: var(--color-text-dark);
   background: var(--color-bg-light);
@@ -79,11 +78,11 @@ h1:after {
 aside {
   max-width: 32ch;
   font-size: var(--ms-1);
-  line-height: var(--baseline);
+  line-height: var(--double-baseline);
 }
 
 aside > * + * {
-  margin-top: var(--baseline);
+  margin-top: var(--double-baseline);
 }
 
 aside p a {
@@ -100,17 +99,7 @@ aside p em {
 }
 
 aside [href="#about"] {
-  display: inline-block;
-  margin-top: var(--double-baseline);
-  padding: .5em 1.5em;
-  border-radius: .3em;
-  background-color: #000;
-  letter-spacing: .05em;
-  transition: filter .15s;
-}
-
-aside [href="#about"]:hover {
-  filter: invert(1);
+  margin-top: calc(var(--baseline) * 4);
 }
 
 h2 {
@@ -122,7 +111,7 @@ footer {
 }
 
 footer > * + * {
-  margin-left: var(--double-baseline);
+  margin-left: calc(var(--baseline) * 4);
 }
 
 footer a:hover {
@@ -142,4 +131,37 @@ footer a span {
 
 #copyright {
   opacity: .6;
+}
+
+.button {
+  --button-side-padding: 1.5em;
+  --button-height: var(--triple-baseline);
+  --button-icon-size: 1.2em;
+
+
+  display: inline-block;
+  position: relative;
+  padding: 0 var(--button-side-padding);
+  border-radius: .3em;
+  background-color: #000;
+  line-height: var(--button-height);
+  letter-spacing: .05em;
+  transition: filter .15s;
+}
+
+.button:hover {
+  filter: invert(1);
+}
+
+.button__icon {
+  position: absolute;
+  left: calc(var(--button-side-padding) - .5em);
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--button-icon-size);
+  height: var(--button-icon-size);
+}
+
+.button--with-icon {
+  padding-left: calc(var(--button-side-padding) + var(--button-icon-size));
 }
