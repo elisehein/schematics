@@ -1,11 +1,19 @@
 .figure14 .diagram-container {
-  grid-column: 4 / span 8;
+  grid-column: 1 / -4;
   grid-row: 1 / -1;
 }
 
+/* We know that the spiral begins 30% from the edge,
+ * and we want to position the figure more to the left edge of the area
+ */
+.figure14 .diagram {
+  transform: translateX(-25%);
+}
+
+
 .figure14 figcaption {
-  grid-column: span 7 / -1;
-  grid-row: 3 / span 5;
+  grid-column: span 5 / -1;
+  grid-row: 1 / span 3;
   align-self: center;
 }
 
