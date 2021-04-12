@@ -4,8 +4,8 @@
 }
 
 .figure43 figcaption {
-  grid-column: 2 / -1;
-  grid-row: 6 / span 2;
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
   justify-self: center;
   align-self: center;
 }
