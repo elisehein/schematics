@@ -1,4 +1,22 @@
 nav {
+  display: flex;
   line-height: var(--triple-baseline);
   align-self: flex-end;
+  justify-content: space-between;
+}
+
+nav ul li {
+  display: inline-block;
+  margin-left: var(--triple-baseline);
+}
+
+nav li a:not([href]) {
+  opacity: .5;
+  cursor: default;
+  pointer-events: none;
+}
+
+nav li a:hover,
+nav li a:focus {
+  color: #fff;
 }
