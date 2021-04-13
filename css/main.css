@@ -48,7 +48,7 @@ body {
 h1 {
   position: relative;
   display: inline-block;
-  padding: .3em 1em;
+  padding: .3em 2em;
   text-transform: uppercase;
   letter-spacing: .5em;
   font-size: var(--ms-2);
