@@ -1,0 +1,11 @@
+.figure36 .diagram-container {
+  grid-column: 6 / span 8;
+  grid-row: 1 / -3;
+}
+
+.figure36 figcaption {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+  justify-self: center;
+  align-self: center;
+}
