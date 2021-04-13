@@ -5,15 +5,17 @@
 
 :root {
   --hue-main: 0;
+  --sat-main: 0%;
 
-  --color-white: hsla(var(--hue-main), 0%, 95%, 1);
-  --color-black: hsla(var(--hue-main), 0%, 10%, 1);
+  --color-white: hsla(var(--hue-main), var(--sat-main), 95%, 1);
+  --color-black-lightness: 10%;
 
   --color-bg-light: var(--color-white);
-  --color-bg-dark: var(--color-black);
+  --color-bg-dark-lightness: var(--color-black-lightness);
+  --color-bg-dark: hsla(var(--hue-main), var(--sat-main), var(--color-bg-dark-lightness), 1);
 
-  --color-text-light: hsla(var(--hue-main), 0%, 72%, 1);
-  --color-text-dark: var(--color-black);
+  --color-text-light: hsla(var(--hue-main), var(--sat-main), 72%, 1);
+  --color-text-dark: hsla(var(--hue-main), var(--sat-main), var(--color-black-lightness), 1);
 
   --baseline: .9rem;
 

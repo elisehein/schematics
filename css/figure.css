@@ -59,6 +59,7 @@ figcaption {
 }
 
 .figure {
+  position: relative;
   filter: none;
   opacity: 1;
   transition:
@@ -70,4 +71,18 @@ figcaption {
   filter: blur(5px);
   opacity: 0;
   transition-duration: .2s;
+}
+
+.figure::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(to bottom, hsla(var(--hue-main), var(--sat-main), var(--color-bg-dark-lightness), 0.28) 49%, transparent 50%);
+  background-repeat: repeat;
+  background-size: 1px .17em;
+  filter: blur(.015em);
+  pointer-events: none;
 }
