@@ -20,3 +20,7 @@ nav li a:hover,
 nav li a:focus {
   color: #fff;
 }
+
+.button[href="#"] {
+  background: transparent;
+}
