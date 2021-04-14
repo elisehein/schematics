@@ -1,5 +1,5 @@
 import Figure from "./Figure.js";
-import { Line } from "./SVGShape.js";
+import { Path, createSVGElement } from "./SVGShape.js";
 
 export default class Figure43 extends Figure {
   /*
@@ -31,18 +31,18 @@ export default class Figure43 extends Figure {
 
   drawCube() {
     this.drawLines([
-      { from: "A", to: "B" },
-      { from: "C", to: "D" },
-      { from: "E", to: "F" },
-      { from: "G", to: "H" },
-      { from: "A", to: "C" },
-      { from: "B", to: "D" },
-      { from: "E", to: "G" },
-      { from: "F", to: "H" },
-      { from: "A", to: "E" },
-      { from: "B", to: "F" },
-      { from: "C", to: "G" },
-      { from: "D", to: "H" }
+      { from: "A", to: "B", className: "line--moving-left" },
+      { from: "C", to: "D", className: "line--moving-right" },
+      { from: "E", to: "F", className: "line--moving-left" },
+      { from: "G", to: "H", className: "line--moving-right" },
+      { from: "A", to: "C", className: "line--rotating" },
+      { from: "B", to: "D", className: "line--rotating" },
+      { from: "E", to: "G", className: "line--rotating" },
+      { from: "F", to: "H", className: "line--rotating" },
+      { from: "A", to: "E", className: "line--moving-left" },
+      { from: "B", to: "F", className: "line--moving-left" },
+      { from: "C", to: "G", className: "line--moving-right" },
+      { from: "D", to: "H", className: "line--moving-right" }
     ]);
   }
 
@@ -51,7 +51,20 @@ export default class Figure43 extends Figure {
   }
 
   drawLine(lineDef) {
-    const line = new Line(this._baseCoords[lineDef.from], this._baseCoords[lineDef.to]);
+    // const line = new Line(this._baseCoords[lineDef.from], this._baseCoords[lineDef.to]);
+    const id = `line-${lineDef.from}${lineDef.to}`;
+    const from = this._baseCoords[lineDef.from];
+    const to = this._baseCoords[lineDef.to];
+
+    const line = new Path(`M${from.x},${from.y}L${to.x},${to.y}`);
+    line.node.classList.add(lineDef.className);
+    line.node.setAttribute("id", id);
+
+    // const animate = createSVGElement("animate");
+    // line.node.innerHTML = `
+    // <animate attributeName="d" from="M50,100L100,100L150,100" to="M50,100L100,150L150,100" dur="2s" begin="mycross.click" fill="freeze" />
+    // `;
+
     this.addSVGChildElement(line.node);
   }
 }

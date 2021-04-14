@@ -5,7 +5,7 @@ import Figure43 from "./Figure43.js";
 
 const copy = {
   14: {
-    a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system.",
+    a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system (the space-time continuum).",
     poetry: `I return and sense,
     things are not the same as before,
     but feel had I stayed,

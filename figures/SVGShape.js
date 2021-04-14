@@ -86,6 +86,6 @@ export class BoxedText extends SVGShape {
   }
 }
 
-function createSVGElement(elementName) {
+export function createSVGElement(elementName) {
   return document.createElementNS("http://www.w3.org/2000/svg", elementName);
 }

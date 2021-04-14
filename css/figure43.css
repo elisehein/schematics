@@ -9,3 +9,52 @@
   justify-self: center;
   align-self: center;
 }
+
+.figure43 .line {
+
+}
+
+@keyframes move-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-90px); }
+}
+
+@keyframes move-right {
+  from { transform: translateX(0); }
+  to { transform: translateX(90px); }
+}
+
+@keyframes rotate-and-scale {
+  0%: {
+    transform: skewX(0deg);
+  }
+
+  100% {
+    transform: skewX(75deg);
+  }
+}
+    /*transform: scaleY(0.45) rotate(63.7deg);
+    transform: scaleY(1) rotate(233deg);*/
+
+.figure43 .line--rotating {
+  transform-box: fill-box;
+  transform-origin: center center;
+  /*animation: rotate-and-scale 5s linear infinite;*/
+  animation-direction: alternate;
+}
+
+.figure43 .line--moving-left,
+.figure43 .line--moving-right {
+  animation-direction: alternate;
+  animation-duration: 5s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.figure43 .line--moving-left {
+  /*animation-name: move-left;*/
+}
+
+.figure43 .line--moving-right {
+  /*animation-name: move-right;*/
+}
