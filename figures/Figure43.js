@@ -28,7 +28,69 @@ export default class Figure43 extends Figure {
 
   draw() {
     super.draw();
-    this.drawCube();
+    // this.drawCube();
+    this.drawSinglePathCube();
+  }
+
+  drawSinglePathCube() {
+    const { A, B, C, D, E, F, G, H } = this._baseCoords;
+
+    const pathDef = `
+    M${A.x},${A.y}
+    L${B.x},${B.y}
+    L${D.x},${D.y}
+    L${C.x},${C.y}
+    L${A.x},${A.y}
+    L${E.x},${E.y}
+    L${F.x},${F.y}
+    L${H.x},${H.y}
+    L${G.x},${G.y}
+    L${E.x},${E.y}
+    M${C.x},${C.y}
+    L${G.x},${G.y}
+    M${D.x},${D.y}
+    L${H.x},${H.y}
+    M${B.x},${B.y}
+    L${F.x},${F.y}
+    Z
+    `;
+
+    const skewAmount = this._cubeFaceSize / 2;
+    const skewedPathDef = `
+    M${A.x - skewAmount},${A.y}
+    L${B.x - skewAmount},${B.y}
+    L${D.x + skewAmount},${D.y}
+    L${C.x + skewAmount},${C.y}
+    L${A.x - skewAmount},${A.y}
+    L${E.x - skewAmount},${E.y}
+    L${F.x - skewAmount},${F.y}
+    L${H.x + skewAmount},${H.y}
+    L${G.x + skewAmount},${G.y}
+    L${E.x - skewAmount},${E.y}
+    M${C.x + skewAmount},${C.y}
+    L${G.x + skewAmount},${G.y}
+    M${D.x + skewAmount},${D.y}
+    L${H.x + skewAmount},${H.y}
+    M${B.x - skewAmount},${B.y}
+    L${F.x - skewAmount},${F.y}
+    Z
+    `;
+
+    const rhombus = new Path(pathDef);
+    // const id = `rhombus-${rhombusDef}`;
+    // rhombus.node.setAttribute("id", id);
+
+    rhombus.node.innerHTML = `
+    <animate
+      attributeName="d"
+      values="${pathDef};${skewedPathDef};${pathDef}"
+      dur="10s"
+      begin="0s"
+      repeatCount="indefinite"
+      fill="freeze" />
+    `;
+
+    this.addSVGChildElement(rhombus.node);
   }
 
   drawCube() {
@@ -77,7 +139,7 @@ export default class Figure43 extends Figure {
     const pathDef = `
     M${pointsInOrder[0].x},${pointsInOrder[0].y}
     L${pointsInOrder[1].x},${pointsInOrder[1].y}
-    L${pointsInOrder[2].x},${pointsInOrder[2].y}
+    M${pointsInOrder[2].x},${pointsInOrder[2].y}
     L${pointsInOrder[3].x},${pointsInOrder[3].y}
     Z
     `;
@@ -86,7 +148,7 @@ export default class Figure43 extends Figure {
     const skewedPathDef = `
     M${pointsInOrder[0].x - skewAmount},${pointsInOrder[0].y}
     L${pointsInOrder[1].x - skewAmount},${pointsInOrder[1].y}
-    L${pointsInOrder[2].x + skewAmount},${pointsInOrder[2].y}
+    M${pointsInOrder[2].x + skewAmount},${pointsInOrder[2].y}
     L${pointsInOrder[3].x + skewAmount},${pointsInOrder[3].y}
     Z
     `;
@@ -102,7 +164,6 @@ export default class Figure43 extends Figure {
       dur="10s"
       begin="0s"
       repeatCount="indefinite"
-      keyTimes="0;1"
       fill="freeze" />
     `;
 
