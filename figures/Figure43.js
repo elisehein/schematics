@@ -22,6 +22,8 @@ export default class Figure43 extends Figure {
       G: { x: 15, y: 262.5 },
       H: { x: 195, y: 262.5 },
     }
+
+    this._cubeFaceSize = 180;
   }
 
   draw() {
@@ -31,18 +33,15 @@ export default class Figure43 extends Figure {
 
   drawCube() {
     this.drawLines([
-      { from: "A", to: "B", className: "line--moving-left" },
-      { from: "C", to: "D", className: "line--moving-right" },
-      { from: "E", to: "F", className: "line--moving-left" },
-      { from: "G", to: "H", className: "line--moving-right" },
-      { from: "A", to: "C", className: "line--rotating" },
-      { from: "B", to: "D", className: "line--rotating" },
-      { from: "E", to: "G", className: "line--rotating" },
-      { from: "F", to: "H", className: "line--rotating" },
       { from: "A", to: "E", className: "line--moving-left" },
       { from: "B", to: "F", className: "line--moving-left" },
       { from: "C", to: "G", className: "line--moving-right" },
       { from: "D", to: "H", className: "line--moving-right" }
+    ]);
+
+    this.drawSkewingRhombi([
+      "ABDC",
+      "EFHG"
     ]);
   }
 
@@ -66,6 +65,48 @@ export default class Figure43 extends Figure {
     // `;
 
     this.addSVGChildElement(line.node);
+  }
+
+  drawSkewingRhombi(rhombusDefs) {
+    rhombusDefs.forEach(this.drawRhombus.bind(this));
+  }
+
+  drawRhombus(rhombusDef) {
+    const pointsInOrder = rhombusDef.split("").map(point => this._baseCoords[point]);
+
+    const pathDef = `
+    M${pointsInOrder[0].x},${pointsInOrder[0].y}
+    L${pointsInOrder[1].x},${pointsInOrder[1].y}
+    L${pointsInOrder[2].x},${pointsInOrder[2].y}
+    L${pointsInOrder[3].x},${pointsInOrder[3].y}
+    Z
+    `;
+
+    const skewAmount = this._cubeFaceSize / 2;
+    const skewedPathDef = `
+    M${pointsInOrder[0].x - skewAmount},${pointsInOrder[0].y}
+    L${pointsInOrder[1].x - skewAmount},${pointsInOrder[1].y}
+    L${pointsInOrder[2].x + skewAmount},${pointsInOrder[2].y}
+    L${pointsInOrder[3].x + skewAmount},${pointsInOrder[3].y}
+    Z
+    `;
+
+    const rhombus = new Path(pathDef);
+    const id = `rhombus-${rhombusDef}`;
+    rhombus.node.setAttribute("id", id);
+
+    rhombus.node.innerHTML = `
+    <animate
+      attributeName="d"
+      values="${pathDef};${skewedPathDef};${pathDef}"
+      dur="10s"
+      begin="0s"
+      repeatCount="indefinite"
+      keyTimes="0;1"
+      fill="freeze" />
+    `;
+
+    this.addSVGChildElement(rhombus.node);
   }
 }
 
