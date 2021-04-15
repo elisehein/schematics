@@ -23,7 +23,8 @@ export default class Figure43 extends Figure {
       H: { x: 195, y: 262.5 },
     }
 
-    this._cubeFaceSize = 180;
+    const cubeFaceSize = 180;
+    this._skewAmount = cubeFaceSize / 2;
   }
 
   draw() {
@@ -32,9 +33,15 @@ export default class Figure43 extends Figure {
   }
 
   drawSinglePathCubeWithAnimation() {
+    const cube = new Path(this.getInitialCubePath());
+    cube.node.innerHTML = this.getAnimationNode();
+    this.addSVGChildElement(cube.node);
+  }
+
+  getInitialCubePath() {
     const { A, B, C, D, E, F, G, H } = this._baseCoords;
 
-    const pathDef = `
+    return `
     M${A.x},${A.y}
     L${B.x},${B.y}
     L${D.x},${D.y}
@@ -53,44 +60,47 @@ export default class Figure43 extends Figure {
     L${F.x},${F.y}
     Z
     `;
+  }
 
-    const skewAmount = this._cubeFaceSize / 2;
-    const skewedPathDef = `
-    M${A.x - skewAmount},${A.y}
-    L${B.x - skewAmount},${B.y}
-    L${D.x + skewAmount},${D.y}
-    L${C.x + skewAmount},${C.y}
-    L${A.x - skewAmount},${A.y}
-    L${E.x - skewAmount},${E.y}
-    L${F.x - skewAmount},${F.y}
-    L${H.x + skewAmount},${H.y}
-    L${G.x + skewAmount},${G.y}
-    L${E.x - skewAmount},${E.y}
-    M${C.x + skewAmount},${C.y}
-    L${G.x + skewAmount},${G.y}
-    M${D.x + skewAmount},${D.y}
-    L${H.x + skewAmount},${H.y}
-    M${B.x - skewAmount},${B.y}
-    L${F.x - skewAmount},${F.y}
+  getMirroredCubePath() {
+    const { A, B, C, D, E, F, G, H } = this._baseCoords;
+
+    return `
+    M${A.x - this._skewAmount},${A.y}
+    L${B.x - this._skewAmount},${B.y}
+    L${D.x + this._skewAmount},${D.y}
+    L${C.x + this._skewAmount},${C.y}
+    L${A.x - this._skewAmount},${A.y}
+    L${E.x - this._skewAmount},${E.y}
+    L${F.x - this._skewAmount},${F.y}
+    L${H.x + this._skewAmount},${H.y}
+    L${G.x + this._skewAmount},${G.y}
+    L${E.x - this._skewAmount},${E.y}
+    M${C.x + this._skewAmount},${C.y}
+    L${G.x + this._skewAmount},${G.y}
+    M${D.x + this._skewAmount},${D.y}
+    L${H.x + this._skewAmount},${H.y}
+    M${B.x - this._skewAmount},${B.y}
+    L${F.x - this._skewAmount},${F.y}
     Z
     `;
+  }
 
-    const rhombus = new Path(pathDef);
+  getAnimationNode() {
+    const cubicBezier = `.3 0 .7 1`;
 
-    rhombus.node.innerHTML = `
+    return `
     <animate
       attributeName="d"
-      values="${pathDef};${skewedPathDef};${pathDef}"
+      values="${this.getInitialCubePath()};${this.getMirroredCubePath()};${this.getInitialCubePath()}"
       keyTimes="0;0.5;1"
       calcMode="spline"
-      keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"
+      keySplines="${cubicBezier}; ${cubicBezier}"
       dur="10s"
       begin="0s"
       repeatCount="indefinite"
       fill="freeze" />
     `;
-
-    this.addSVGChildElement(rhombus.node);
   }
 }
 
