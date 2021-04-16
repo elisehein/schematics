@@ -1,30 +1,27 @@
 import Figure from "./Figure.js";
-import { Path, createSVGElement } from "./SVGShape.js";
+import { Path } from "./SVGShape.js";
 
 export default class Figure43 extends Figure {
   /*
-   *          A--------B
-   *     C----|---D    |
-   *     |    |   |    |
-   *     |    E---|----F
-   *     G--------H
+   *          A-------B   A-------B   A-------B
+   *     C----|--D    |   C-------D   |   C---|---D
+   *     |    |  |    | → |       | → |   |   |   |
+   *     |    E--|----F   E       F   E---|---F   |
+   *     G-------H        G-------H       G-------H
    */
   constructor() {
     super(43);
 
-    this._baseCoords = {
-      A: { x: 105, y: 37.5 },
-      B: { x: 285, y: 37.5 },
-      C: { x: 15, y: 82.5 },
-      D: { x: 195, y: 82.5 },
-      E: { x: 105, y: 217.5 },
-      F: { x: 285, y: 217.5 },
-      G: { x: 15, y: 262.5 },
-      H: { x: 195, y: 262.5 },
+    this._leftwardCoords = {
+      A: { x: 150, y: 37.5 },
+      B: { x: 270, y: 37.5 },
+      C: { x: 30, y: 82.5 },
+      D: { x: 150, y: 82.5 },
+      E: { x: 150, y: 217.5 },
+      F: { x: 270, y: 217.5 },
+      G: { x: 30, y: 262.5 },
+      H: { x: 150, y: 262.5 },
     }
-
-    const cubeFaceSize = 180;
-    this._skewAmount = cubeFaceSize / 2;
   }
 
   draw() {
@@ -33,13 +30,13 @@ export default class Figure43 extends Figure {
   }
 
   drawSinglePathCubeWithAnimation() {
-    const cube = new Path(this.getInitialCubePath());
+    const cube = new Path(this.getLeftwardCubePath());
     cube.node.innerHTML = this.getAnimationNode();
     this.addSVGChildElement(cube.node);
   }
 
-  getInitialCubePath() {
-    const { A, B, C, D, E, F, G, H } = this._baseCoords;
+  getLeftwardCubePath() {
+    const { A, B, C, D, E, F, G, H } = this._leftwardCoords;
 
     return `
     M${A.x},${A.y}
@@ -62,40 +59,72 @@ export default class Figure43 extends Figure {
     `;
   }
 
-  getMirroredCubePath() {
-    const { A, B, C, D, E, F, G, H } = this._baseCoords;
+  getRightwardCubePath() {
+    const { A, B, C, D, E, F, G, H } = this._leftwardCoords;
+    const skewAmount = 120;
 
     return `
-    M${A.x - this._skewAmount},${A.y}
-    L${B.x - this._skewAmount},${B.y}
-    L${D.x + this._skewAmount},${D.y}
-    L${C.x + this._skewAmount},${C.y}
-    L${A.x - this._skewAmount},${A.y}
-    L${E.x - this._skewAmount},${E.y}
-    L${F.x - this._skewAmount},${F.y}
-    L${H.x + this._skewAmount},${H.y}
-    L${G.x + this._skewAmount},${G.y}
-    L${E.x - this._skewAmount},${E.y}
-    M${C.x + this._skewAmount},${C.y}
-    L${G.x + this._skewAmount},${G.y}
-    M${D.x + this._skewAmount},${D.y}
-    L${H.x + this._skewAmount},${H.y}
-    M${B.x - this._skewAmount},${B.y}
-    L${F.x - this._skewAmount},${F.y}
+    M${A.x - skewAmount},${A.y}
+    L${B.x - skewAmount},${B.y}
+    L${D.x + skewAmount},${D.y}
+    L${C.x + skewAmount},${C.y}
+    L${A.x - skewAmount},${A.y}
+    L${E.x - skewAmount},${E.y}
+    L${F.x - skewAmount},${F.y}
+    L${H.x + skewAmount},${H.y}
+    L${G.x + skewAmount},${G.y}
+    L${E.x - skewAmount},${E.y}
+    M${C.x + skewAmount},${C.y}
+    L${G.x + skewAmount},${G.y}
+    M${D.x + skewAmount},${D.y}
+    L${H.x + skewAmount},${H.y}
+    M${B.x - skewAmount},${B.y}
+    L${F.x - skewAmount},${F.y}
+    Z
+    `;
+  }
+
+  getMiddleCubePath() {
+    const { A, B, C, D, E, F, G, H } = this._leftwardCoords;
+
+    return `
+    M${A.x - 90},${A.y}
+    L${B.x - 30},${B.y}
+    L${D.x + 90},${D.y}
+    L${C.x + 30},${C.y}
+    L${A.x - 90},${A.y}
+    L${E.x - 90},${E.y}
+    L${F.x - 30},${F.y}
+    L${H.x + 90},${H.y}
+    L${G.x + 30},${G.y}
+    L${E.x - 90},${E.y}
+    M${C.x + 30},${C.y}
+    L${G.x + 30},${G.y}
+    M${D.x + 90},${D.y}
+    L${H.x + 90},${H.y}
+    M${B.x - 30},${B.y}
+    L${F.x - 30},${F.y}
     Z
     `;
   }
 
   getAnimationNode() {
-    const cubicBezier = `.3 0 .7 1`;
+    const easeIn = ".12 0 .39 0";
+    const linear = "0 0 1 1"
+    const easeOut = ".61 1 .88 1"
 
     return `
     <animate
       attributeName="d"
-      values="${this.getInitialCubePath()};${this.getMirroredCubePath()};${this.getInitialCubePath()}"
-      keyTimes="0;0.5;1"
+      values="
+        ${this.getLeftwardCubePath()};
+        ${this.getMiddleCubePath()};
+        ${this.getRightwardCubePath()};
+        ${this.getMiddleCubePath()};
+        ${this.getLeftwardCubePath()}"
+      keyTimes="0; 0.25; 0.5; 0.75; 1"
       calcMode="spline"
-      keySplines="${cubicBezier}; ${cubicBezier}"
+      keySplines="${easeIn}; ${easeOut}; ${easeIn}; ${easeOut}"
       dur="10s"
       begin="0s"
       repeatCount="indefinite"
