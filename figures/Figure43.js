@@ -8,18 +8,20 @@ export default class Figure43 extends Figure {
    *     |    |  |    | → |       | → |   |   |   |
    *     |    E--|----F   E       F   E---|---F   |
    *     G-------H        G-------H       G-------H
+   *
+   *       leftward        middle       rightward
    */
   constructor() {
     super(43);
 
     this._leftwardCoords = {
       A: { x: 150, y: 37.5 },
-      B: { x: 270, y: 37.5 },
-      C: { x: 30, y: 82.5 },
+      B: { x: 290, y: 37.5 },
+      C: { x: 10, y: 82.5 },
       D: { x: 150, y: 82.5 },
       E: { x: 150, y: 217.5 },
-      F: { x: 270, y: 217.5 },
-      G: { x: 30, y: 262.5 },
+      F: { x: 290, y: 217.5 },
+      G: { x: 10, y: 262.5 },
       H: { x: 150, y: 262.5 },
     }
   }
@@ -61,7 +63,7 @@ export default class Figure43 extends Figure {
 
   getRightwardCubePath() {
     const { A, B, C, D, E, F, G, H } = this._leftwardCoords;
-    const skewAmount = 120;
+    const skewAmount = 140;
 
     return `
     M${A.x - skewAmount},${A.y}
@@ -88,20 +90,20 @@ export default class Figure43 extends Figure {
     const { A, B, C, D, E, F, G, H } = this._leftwardCoords;
 
     return `
-    M${A.x - 90},${A.y}
+    M${A.x - 110},${A.y}
     L${B.x - 30},${B.y}
-    L${D.x + 90},${D.y}
+    L${D.x + 110},${D.y}
     L${C.x + 30},${C.y}
-    L${A.x - 90},${A.y}
-    L${E.x - 90},${E.y}
+    L${A.x - 110},${A.y}
+    L${E.x - 110},${E.y}
     L${F.x - 30},${F.y}
-    L${H.x + 90},${H.y}
+    L${H.x + 110},${H.y}
     L${G.x + 30},${G.y}
-    L${E.x - 90},${E.y}
+    L${E.x - 110},${E.y}
     M${C.x + 30},${C.y}
     L${G.x + 30},${G.y}
-    M${D.x + 90},${D.y}
-    L${H.x + 90},${H.y}
+    M${D.x + 110},${D.y}
+    L${H.x + 110},${H.y}
     M${B.x - 30},${B.y}
     L${F.x - 30},${F.y}
     Z
