@@ -127,7 +127,7 @@ export default class Figure43 extends Figure {
       keyTimes="0; 0.25; 0.5; 0.75; 1"
       calcMode="spline"
       keySplines="${easeIn}; ${easeOut}; ${easeIn}; ${easeOut}"
-      dur="10s"
+      dur="15s"
       begin="0s"
       repeatCount="indefinite"
       fill="freeze" />
