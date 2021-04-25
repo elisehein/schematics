@@ -18,10 +18,15 @@ export default class Figure extends HTMLElement {
         xmlns="http://www.w3.org/2000/svg">
         <title id="figure-title">${this.num}</title>
         <desc id="figure-desc">${this.a11yDescription}</desc>
+        <defs></defs>
       </svg>
     `;
 
     this.draw();
+  }
+
+  defineMarker(markerNode) {
+    this.querySelector("defs").appendChild(markerNode);
   }
 
   renderTitle() {

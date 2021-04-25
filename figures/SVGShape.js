@@ -8,6 +8,22 @@ class SVGShape {
   }
 }
 
+export class Marker extends SVGShape {
+  constructor(id, width, height, x, y) {
+    const node = createSVGElement("marker");
+    node.setAttribute("id", id);
+    node.setAttribute("markerWidth", width);
+    node.setAttribute("markerHeight", height);
+    node.setAttribute("refX", x || width / 2.0);
+    node.setAttribute("refY", y || height / 2.0);
+    super(node);
+  }
+
+  addShape(shapeNode) {
+    this.node.appendChild(shapeNode);
+  }
+}
+
 export class Line extends SVGShape {
   constructor(...points) {
     const node = createSVGElement("polyline");
@@ -23,6 +39,17 @@ export class Line extends SVGShape {
 
   get length() {
     return this.node.getTotalLength();
+  }
+}
+
+export class Circle extends SVGShape {
+  constructor(cx, cy, r) {
+    const node = createSVGElement("circle");
+    node.classList.add("line");
+    node.setAttribute("cx", cx);
+    node.setAttribute("cy", cy);
+    node.setAttribute("r", r);
+    super(node);
   }
 }
 
