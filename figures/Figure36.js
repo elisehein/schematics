@@ -2,12 +2,13 @@ import Figure from "./Figure.js";
 import { Marker, Circle, Line } from "./SVGShape.js";
 
 const markerID = "circle-marker";
+const markerIDAnchor = "circle-marker--anchor";
 
 export default class Figure36 extends Figure {
   constructor() {
     super(36);
 
-    this._pendulumLength = 190;
+    this._pendulumLength = 170;
     this._initialAngle = 30;
     this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 };
     this._totalAnimationFrames = 10;
@@ -15,108 +16,99 @@ export default class Figure36 extends Figure {
 
   draw() {
     super.draw();
-    this.defineCircleMarker();
-    this.drawPendulum();
+    this.defineCircleMarker({ anchor: false });
+    this.defineCircleMarker({ anchor: true });
+    this.drawStaticArm();
+    this.drawSwingingArm();
   }
 
-  defineCircleMarker() {
+  drawStaticArm() {
+    const staticArm = this.getDownwardArm();
+
+    staticArm.node.setAttribute(
+      "transform",
+      `rotate(${this._initialAngle * -1} ${this._anchorPoint.x} ${this._anchorPoint.y})`
+    );
+
+    const markerURL = id => `url(#${id})`;
+    staticArm.node.setAttribute("marker-start", markerURL(markerIDAnchor));
+    staticArm.node.setAttribute("marker-end", markerURL(markerID));
+    this.addSVGChildElement(staticArm.node);
+  }
+
+  drawSwingingArm() {
+    const swingingArm = this.getDownwardArm();
+
+    const markerURL = `url(#${markerID})`;
+    swingingArm.node.setAttribute("marker-end", markerURL);
+
+    swingingArm.node.innerHTML = this.getAnimationNodeString();
+
+    this.addSVGChildElement(swingingArm.node);
+  }
+
+  getDownwardArm() {
+    return new Line(
+      this._anchorPoint,
+      { x: this._anchorPoint.x, y: this._anchorPoint.y + this._pendulumLength }
+    )
+  }
+
+  defineCircleMarker({ anchor }) {
     const radius = 20;
     const diameter = radius * 2;
     const safeArea = 4;
     const markerSize = diameter + (safeArea * 2);
 
-    const marker = new Marker(markerID, markerSize, markerSize);
+    const markerX = markerSize / 2.0;
+    const markerY = anchor ? markerX : markerX - radius;
+
+    const marker = new Marker(
+      anchor ? markerIDAnchor : markerID,
+      markerSize,
+      markerSize,
+      markerX,
+      markerY);
     const circle = new Circle(radius + safeArea, radius + safeArea, radius);
+
     marker.addShape(circle.node);
     this.defineMarker(marker.node);
   }
 
-  drawPendulum() {
-    const pendulum = new Line(...this.getPointsWithSwingingArm(0));
-
-    pendulum.node.innerHTML = this.getAnimationNodeString();
-
-    const markerURL = `url(#${markerID})`;
-    pendulum.node.setAttribute("marker-mid", markerURL);
-    pendulum.node.setAttribute("marker-start", markerURL);
-    pendulum.node.setAttribute("marker-end", markerURL);
-    this.addSVGChildElement(pendulum.node);
-  }
-
   getAnimationNodeString() {
-    const easeIn = ".12 0 .39 0";
-    const easeOut = ".61 1 .88 1"
+    const easeInOut = ".4 0 .6 1"
 
-    const values = [
-      this.getPointsWithSwingingArm(0).map(({ x, y }) => `${x},${y}`).join(" "),
-      this.getPointsWithSwingingArm(1).map(({ x, y }) => `${x},${y}`).join(" "),
-      this.getPointsWithSwingingArm(2).map(({ x, y }) => `${x},${y}`).join(" ")
-    ];
+    const totalFrames = 30;
+    const frameDuration = 1.5;
+
+    const rotationValue = deg => `${deg} ${this._anchorPoint.x} ${this._anchorPoint.y}`;
+    const angleChangeStep = this._initialAngle / totalFrames;
+    const swingAngle = frameIndex => angleChangeStep * (totalFrames - (frameIndex + 1));
+
+    const rotationValues = Array(totalFrames).fill().map((value, animationFrameIndex) => {
+      const mirroringFactor = animationFrameIndex % 2 == 0 ? 1 : -1;
+      return rotationValue(swingAngle(animationFrameIndex) * mirroringFactor);
+    });
+
+    const times = Array(totalFrames).fill().map((value, index) => {
+      return 0 + (1 / (totalFrames - 1) * index);
+    });
 
     return `
-    <animate
-      attributeName="points"
-      values="${values.join(";")}"
-      keyTimes="0; 0.5; 1"
+    <animateTransform
+      attributeName="transform"
+      attributeType="XML"
+      type="rotate"
+      values="${rotationValues.join("; ")}"
+      keyTimes="${times.join("; ")}"
       calcMode="spline"
-      keySplines="${easeIn}; ${easeOut}"
-      dur="15s"
+      keySplines="${Array(totalFrames - 1).fill(easeInOut).join("; ")}"
+      dur="${totalFrames * frameDuration}s"
       begin="0s"
-      repeatCount="indefinite"
+      repeatCount="1"
       fill="freeze" />
     `;
   }
-
-  getPointsWithSwingingArm(animationFrameIndex) {
-    const swingAngle =
-      this._initialAngle / this._totalAnimationFrames *
-      (this._totalAnimationFrames - (animationFrameIndex + 1));
-
-    let swingingPoint;
-
-    if (animationFrameIndex % 2 == 0) {
-      // Swinging back (left, towards initial position)
-      swingingPoint = Figure36.getPendulumCoordinates(this._anchorPoint, swingAngle, this._pendulumLength);
-    } else {
-      // Swinging forward (right)
-      swingingPoint = Figure36.getMirroredPendulumCoordinates(this._anchorPoint, swingAngle, this._pendulumLength);
-    }
-
-    return [
-      swingingPoint,
-      this._anchorPoint,
-      Figure36.getMirroredPendulumCoordinates(this._anchorPoint, this._initialAngle, this._pendulumLength)
-    ]
-  }
-
-  static getPendulumCoordinates(anchorPoint, angle, length) {
-    const { x, y } = this.translationFromOrigin(angle, length);
-    return {
-      x: anchorPoint.x - x,
-      y: anchorPoint.y + y
-    }
-  }
-
-  static getMirroredPendulumCoordinates(anchorPoint, angle, length) {
-    const { x, y } = this.translationFromOrigin(angle, length);
-    return {
-      x: anchorPoint.x + x,
-      y: anchorPoint.y + y
-    }
-  }
-
-  static translationFromOrigin(angle, length) {
-    const alpha = 90 - angle;
-    const alphaRad = degreesToRadians(alpha);
-    const x = Math.cos(alphaRad) * length;
-    const y = Math.sin(alphaRad) * length;
-
-    return { x, y };
-  }
-}
-
-function degreesToRadians(deg) {
-  return deg * (Math.PI / 180);
 }
 
 customElements.define("figure-36", Figure36);
