@@ -50,25 +50,10 @@ function setDiagram(diagramContainerNode, num) {
 }
 
 function updateNavigation(newFigureNum) {
-  const prevLink = document.getElementById("previous-figure");
-  const nextLink = document.getElementById("next-figure");
-
-  document.querySelector("[data-current-figure-num]").innerText = newFigureNum;
-
-  const newFigureNumIndex = orderedFigures.indexOf(newFigureNum);
-  const prevFigureNum = orderedFigures[newFigureNumIndex - 1];
-  const nextFigurNum = orderedFigures[newFigureNumIndex + 1];
-
-  configureDirectionalFigureLink(prevLink, prevFigureNum);
-  configureDirectionalFigureLink(nextLink, nextFigurNum);
-}
-
-function configureDirectionalFigureLink(node, num) {
-  if (num) {
-    node.setAttribute("href", `#fig${num}`);
-  } else {
-    node.setAttribute("aria-hidden", true);
-  }
+  document.querySelectorAll("[data-figure-link]").forEach(figureLink => {
+    figureLink.classList.remove("active");
+  });
+  document.querySelector(`[data-figure-link="${newFigureNum}"]`).classList.add("active");
 }
 
 nav.init({ defaultFigureNum });

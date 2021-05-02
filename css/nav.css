@@ -7,18 +7,22 @@ nav {
 
 nav ul li {
   display: inline-block;
+}
+
+nav ul li + li {
   margin-left: var(--triple-baseline);
 }
 
-nav li a:not([href]) {
+nav li:not(.active) a:not(:focus):not(:hover) {
   opacity: .5;
-  cursor: default;
-  pointer-events: none;
 }
 
-nav li a:hover,
+nav li.active a {
+  cursor: default;
+}
+
 nav li a:focus {
-  color: #fff;
+  outline-offset: 1em;
 }
 
 .button[href="#"] {
