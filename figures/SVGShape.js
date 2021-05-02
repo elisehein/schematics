@@ -66,6 +66,30 @@ export class Path extends SVGShape {
   }
 }
 
+export class Arc extends Path {
+  constructor({ x, y }, radius, startAngle, endAngle) {
+    const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
+      var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+
+      return {
+        x: centerX + (radius * Math.cos(angleInRadians)),
+        y: centerY + (radius * Math.sin(angleInRadians))
+      };
+    }
+
+    const describeArc = (x, y, radius, startAngle, endAngle) => {
+      var start = polarToCartesian(x, y, radius, endAngle);
+      var end = polarToCartesian(x, y, radius, startAngle);
+
+      var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+      return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
+    }
+
+    super(describeArc(x, y, radius, startAngle, endAngle));
+  }
+}
+
 export class Text extends SVGShape {
   constructor(text, { x, y }, fontSize = 10) {
     const node = createSVGElement("text");

@@ -1,5 +1,5 @@
 import Figure from "./Figure.js";
-import { Marker, Circle, Line } from "./SVGShape.js";
+import { Marker, Circle, Line, Arc } from "./SVGShape.js";
 
 const markerID = "circle-marker";
 const anchorMarkerID = "circle-marker--anchor";
@@ -9,6 +9,7 @@ export default class Figure36 extends Figure {
     super(36);
 
     this._pendulumLength = 200;
+    this._markerRadius = 20;
     this._initialAngle = 30;
     this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 };
     this._swingDuration = 2;
@@ -21,6 +22,10 @@ export default class Figure36 extends Figure {
     this.defineCircleMarker({ anchor: false });
     this.defineCircleMarker({ anchor: true });
     this.drawSwingingArm();
+
+    const arcRadius = this._pendulumLength + (this._markerRadius * 2);
+    const arc = new Arc(this._anchorPoint, arcRadius, 150, 210);
+    this.addSVGChildElement(arc.node);
 
     setTimeout(() => {
       this.drawStaticArm();
@@ -68,13 +73,12 @@ export default class Figure36 extends Figure {
   }
 
   defineCircleMarker({ anchor }) {
-    const radius = 20;
-    const diameter = radius * 2;
+    const diameter = this._markerRadius * 2;
     const safeArea = 4;
     const markerSize = diameter + (safeArea * 2);
 
     const markerX = markerSize / 2.0;
-    const markerY = anchor ? markerX : markerX - radius;
+    const markerY = anchor ? markerX : markerX - this._markerRadius;
 
     const marker = new Marker(
       anchor ? anchorMarkerID : markerID,
@@ -82,7 +86,7 @@ export default class Figure36 extends Figure {
       markerSize,
       markerX,
       markerY);
-    const circle = new Circle(radius + safeArea, radius + safeArea, radius);
+    const circle = new Circle(this._markerRadius + safeArea, this._markerRadius + safeArea, this._markerRadius);
 
     marker.addShape(circle.node);
     this.defineMarker(marker.node);
