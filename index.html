@@ -38,6 +38,27 @@
       <main>
       </main>
 
+      <nav>
+        <ul>
+          <li>
+            <a class="directional-link" aria-labelledby="previous-link-label" id="previous-figure-link">
+              &larr;
+              <span class="directional-link__label" id="previous-link-label">Previous figure</span>
+            </a>
+          </li>
+          <li data-figure-link="14"><a href="#fig14">fig. 14</a></li>
+          <li data-figure-link="18"><a href="#fig18">fig. 18</a></li>
+          <li data-figure-link="36"><a href="#fig36">fig. 36</a></li>
+          <li data-figure-link="43"><a href="#fig43">fig. 43</a></li>
+          <li>
+            <a class="directional-link" aria-labelledby="next-link-label" id="next-figure-link">
+              <span class="directional-link__label" id="next-link-label">Next figure</span>
+              &rarr;
+            </a>
+          </li>
+        </ul>
+      </nav>
+
       <footer>
         <a href="https://github.com/elisehein/schematics">
           <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-code"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
@@ -73,15 +94,6 @@
         <div class="diagram-container"></div>
         <figcaption></figcaption>
       </figure>
-      <nav>
-        <a is="button-link" icon="grid" href="#">All figures</a>
-        <ul>
-          <li data-figure-link="14"><a href="#fig14">fig. 14</a></li>
-          <li data-figure-link="18"><a href="#fig18">fig. 18</a></li>
-          <li data-figure-link="36"><a href="#fig36">fig. 36</a></li>
-          <li data-figure-link="43"><a href="#fig43">fig. 43</a></li>
-        </ul>
-      </nav>
     </template>
 
     <template id="figure-navigation-list-item-template">

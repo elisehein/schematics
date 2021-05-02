@@ -1,6 +1,6 @@
 :root {
   --grid-top-spacing: var(--double-baseline);
-  --grid-bottom-spacing: calc(var(--baseline) * 4);
+  --grid-bottom-spacing: calc(var(--baseline) * 3);
   --grid-template-columns: repeat(3, 1fr);
   --header-row-height: calc(var(--double-baseline) * 3);
 }
@@ -42,8 +42,8 @@ figure {
 }
 
 nav {
-  grid-row: 8;
-  grid-column: 1 / -1;
+  grid-row: 2;
+  grid-column: 2 / -1;
 }
 
 aside {

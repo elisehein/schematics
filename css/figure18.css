@@ -28,6 +28,6 @@
 
 .figure18 .option-arrow {
   stroke-dasharray: 0;
-  animation: draw-line calc(var(--standard-animation-duration) * (var(--animatable-line-length) / 50)) ease-out;
+  animation: draw-line calc(.15s * (var(--animatable-line-length) / 50)) ease-out;
   pointer-events: none;
 }

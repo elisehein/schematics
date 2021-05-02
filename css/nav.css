@@ -1,30 +1,54 @@
 nav {
+  --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 20%), 1);
+
   display: flex;
   line-height: var(--triple-baseline);
   align-self: flex-end;
-  justify-content: space-between;
+  justify-content: flex-end;
+  letter-spacing: .05em;
+  color: var(--faded-nav-link-color);
 }
 
-nav ul li {
+nav li {
   display: inline-block;
 }
 
-nav ul li + li {
+nav li + li {
   margin-left: var(--triple-baseline);
 }
 
-nav li:not(.active) a:not(:focus):not(:hover) {
-  opacity: .5;
+/* Increase hit area */
+nav a {
+  display: inline-block;
+  padding: 0 1em;
+  margin: 0 -1em;
 }
 
-nav li.active a {
-  cursor: default;
+nav .active a,
+nav a:hover,
+nav a:focus {
+  color: var(--color-text-light);
+  transition: transform var(--micro-interaction-animation-duration) ease;
 }
 
-nav li a:focus {
+nav .active {
+  border-bottom: .2em solid var(--color-text-light);
+}
+
+nav a:focus {
   outline-offset: 1em;
 }
 
-.button[href="#"] {
-  background: transparent;
+/* Disabled arrow link */
+.directional-link:not([href]) {
+  opacity: .4;
+}
+
+nav .active a,
+.directional-link:not([href]) {
+  cursor: default;
+}
+
+.directional-link__label {
+  display: none;
 }
