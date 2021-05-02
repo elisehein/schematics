@@ -53,6 +53,8 @@ function updateNavigation(newFigureNum) {
   const prevLink = document.getElementById("previous-figure");
   const nextLink = document.getElementById("next-figure");
 
+  document.querySelector("[data-current-figure-num]").innerText = newFigureNum;
+
   const newFigureNumIndex = orderedFigures.indexOf(newFigureNum);
   const prevFigureNum = orderedFigures[newFigureNumIndex - 1];
   const nextFigurNum = orderedFigures[newFigureNumIndex + 1];
@@ -67,7 +69,6 @@ function configureDirectionalFigureLink(node, num) {
   } else {
     node.setAttribute("aria-hidden", true);
   }
-
 }
 
 nav.init({ defaultFigureNum });
