@@ -2,45 +2,58 @@ import Figure from "./Figure.js";
 import { Marker, Circle, Line } from "./SVGShape.js";
 
 const markerID = "circle-marker";
-const markerIDAnchor = "circle-marker--anchor";
+const anchorMarkerID = "circle-marker--anchor";
 
 export default class Figure36 extends Figure {
   constructor() {
     super(36);
 
-    this._pendulumLength = 170;
+    this._pendulumLength = 200;
     this._initialAngle = 30;
     this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 };
-    this._totalAnimationFrames = 10;
+    this._swingDuration = 2;
+    this._totalSwings = 30;
+    this._angleChangeStep = this._initialAngle / (this._totalSwings - 1);
   }
 
   draw() {
     super.draw();
     this.defineCircleMarker({ anchor: false });
     this.defineCircleMarker({ anchor: true });
-    this.drawStaticArm();
     this.drawSwingingArm();
+
+    setTimeout(() => {
+      this.drawStaticArm();
+    }, this._swingDuration * 1000);
+  }
+
+  rotateArm(armNode, angle) {
+    armNode.setAttribute(
+      "transform",
+      `rotate(${angle} ${this._anchorPoint.x} ${this._anchorPoint.y})`
+    );
+  }
+
+  setMarkers(armNode, anchor = false) {
+    const markerURL = id => `url(#${id})`;
+    armNode.setAttribute("marker-end", markerURL(markerID));
+
+    if (anchor) {
+      armNode.setAttribute("marker-start", markerURL(anchorMarkerID));
+    }
   }
 
   drawStaticArm() {
     const staticArm = this.getDownwardArm();
-
-    staticArm.node.setAttribute(
-      "transform",
-      `rotate(${this._initialAngle * -1} ${this._anchorPoint.x} ${this._anchorPoint.y})`
-    );
-
-    const markerURL = id => `url(#${id})`;
-    staticArm.node.setAttribute("marker-start", markerURL(markerIDAnchor));
-    staticArm.node.setAttribute("marker-end", markerURL(markerID));
+    this.rotateArm(staticArm.node, (this._initialAngle - this._angleChangeStep) * -1);
+    this.setMarkers(staticArm.node);
     this.addSVGChildElement(staticArm.node);
   }
 
   drawSwingingArm() {
     const swingingArm = this.getDownwardArm();
-
-    const markerURL = `url(#${markerID})`;
-    swingingArm.node.setAttribute("marker-end", markerURL);
+    this.setMarkers(swingingArm.node, true);
+    this.rotateArm(swingingArm.node, this._initialAngle);
 
     swingingArm.node.innerHTML = this.getAnimationNodeString();
 
@@ -64,7 +77,7 @@ export default class Figure36 extends Figure {
     const markerY = anchor ? markerX : markerX - radius;
 
     const marker = new Marker(
-      anchor ? markerIDAnchor : markerID,
+      anchor ? anchorMarkerID : markerID,
       markerSize,
       markerSize,
       markerX,
@@ -78,20 +91,16 @@ export default class Figure36 extends Figure {
   getAnimationNodeString() {
     const easeInOut = ".4 0 .6 1"
 
-    const totalFrames = 30;
-    const frameDuration = 1.5;
-
     const rotationValue = deg => `${deg} ${this._anchorPoint.x} ${this._anchorPoint.y}`;
-    const angleChangeStep = this._initialAngle / totalFrames;
-    const swingAngle = frameIndex => angleChangeStep * (totalFrames - (frameIndex + 1));
+    const swingAngle = swingIndex => this._angleChangeStep * (this._totalSwings - (swingIndex + 1));
 
-    const rotationValues = Array(totalFrames).fill().map((value, animationFrameIndex) => {
-      const mirroringFactor = animationFrameIndex % 2 == 0 ? 1 : -1;
-      return rotationValue(swingAngle(animationFrameIndex) * mirroringFactor);
+    const rotationValues = Array(this._totalSwings).fill().map((_, swingIndex) => {
+      const mirroringFactor = swingIndex % 2 == 0 ? 1 : -1;
+      return rotationValue(swingAngle(swingIndex) * mirroringFactor);
     });
 
-    const times = Array(totalFrames).fill().map((value, index) => {
-      return 0 + (1 / (totalFrames - 1) * index);
+    const times = Array(this._totalSwings).fill().map((value, index) => {
+      return 0 + (1 / (this._totalSwings - 1) * index);
     });
 
     return `
@@ -102,8 +111,8 @@ export default class Figure36 extends Figure {
       values="${rotationValues.join("; ")}"
       keyTimes="${times.join("; ")}"
       calcMode="spline"
-      keySplines="${Array(totalFrames - 1).fill(easeInOut).join("; ")}"
-      dur="${totalFrames * frameDuration}s"
+      keySplines="${Array(this._totalSwings - 1).fill(easeInOut).join("; ")}"
+      dur="${this._totalSwings * this._swingDuration}s"
       begin="0s"
       repeatCount="1"
       fill="freeze" />
