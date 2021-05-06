@@ -80,12 +80,13 @@ export default class Figure36 extends Figure {
     const markerX = markerSize / 2.0;
     const markerY = anchor ? markerX : markerX - this._markerRadius;
 
-    const marker = new Marker(
-      anchor ? anchorMarkerID : markerID,
-      markerSize,
-      markerSize,
-      markerX,
-      markerY);
+    const marker = new Marker({
+      id: anchor ? anchorMarkerID : markerID,
+      width: markerSize,
+      height: markerSize,
+      x: markerX,
+      y: markerY
+    });
     const circle = new Circle(this._markerRadius + safeArea, this._markerRadius + safeArea, this._markerRadius);
 
     marker.addShape(circle.node);

@@ -10,7 +10,6 @@
   transform: translateX(-25%);
 }
 
-
 .figure14 figcaption {
   grid-column: span 5 / -1;
   grid-row: 1 / span 3;

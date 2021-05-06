@@ -104,7 +104,7 @@ export default class Figure18 extends Figure {
     this.style.setProperty("--animatable-line-length", arrowLine.length);
 
     arrowLine.node.addEventListener("animationend", () => {
-      arrowLine.addArrowHead();
+      arrowLine.addArrowHead(this);
       onDone();
     })
   }

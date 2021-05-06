@@ -47,15 +47,15 @@
   letter-spacing: .1em;
 }
 
+.arrowhead {
+  stroke-width: 0;
+  fill: var(--color-text-light);
+}
+
 figcaption {
   font-size: var(--ms2);
   line-height: var(--double-baseline);
   letter-spacing: .1em;
-}
-
-.arrowhead-marker {
-  stroke-width: 0;
-  fill: var(--color-text-light);
 }
 
 .figure {

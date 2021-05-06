@@ -9,13 +9,19 @@ class SVGShape {
 }
 
 export class Marker extends SVGShape {
-  constructor(id, width, height, x, y) {
+  constructor({ id, width, height, x, y, viewBox }) {
     const node = createSVGElement("marker");
     node.setAttribute("id", id);
     node.setAttribute("markerWidth", width);
     node.setAttribute("markerHeight", height);
     node.setAttribute("refX", x || width / 2.0);
     node.setAttribute("refY", y || height / 2.0);
+    node.setAttribute("orient", "auto-start-reverse");
+
+    if (viewBox) {
+      node.setAttribute("viewBox", viewBox);
+    }
+
     super(node);
   }
 
@@ -31,10 +37,28 @@ export class Line extends SVGShape {
     node.classList.add("line");
 
     super(node);
+
+    this._arrowheadMarkerID = "arrowhead-marker";
   }
 
-  addArrowHead() {
-    this.node.setAttribute("marker-end", "url(#arrowhead-marker)");
+  addArrowHead(markerDefiner) {
+    this.defineArrowHeadMarker(markerDefiner);
+    this.node.setAttribute("marker-end", `url(#${this._arrowheadMarkerID})`);
+  }
+
+  defineArrowHeadMarker(markerDefiner) {
+    const marker = new Marker({
+      id: this._arrowheadMarkerID,
+      width: 6,
+      height: 6,
+      x: 4,
+      y: 4,
+      viewBox: "0 0 8 8"
+    });
+    const arrow = new Path("M 1 1 L 5 4 L 1 7 z");
+    arrow.node.classList.add("arrowhead");
+    marker.addShape(arrow.node);
+    markerDefiner.defineMarker(marker.node);
   }
 
   get length() {
