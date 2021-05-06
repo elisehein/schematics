@@ -69,8 +69,6 @@ export default class Figure18 extends Figure {
     );
 
     this.drawOptionLabelUnderline(x, y, labelSize);
-    this.removeBlurOnAnimationEnd(label.node);
-    label.node.classList.add("skew-appear");
     this.bindOptionLabelClick(label.node, originBoxText, option);
   }
 
@@ -79,8 +77,7 @@ export default class Figure18 extends Figure {
       { x: labelX - 1, y: labelY + 3 },
       { x: labelX + labelSize.width + 1, y: labelY + 3 }
     );
-    underline.node.classList.add("option-label-underline", "skew-appear");
-    this.removeBlurOnAnimationEnd(underline.node);
+    underline.node.classList.add("option-label-underline");
     this.addSVGChildElement(underline.node);
   }
 
@@ -105,6 +102,7 @@ export default class Figure18 extends Figure {
     arrowLine.node.classList.add("option-arrow");
 
     this.style.setProperty("--animatable-line-length", arrowLine.length);
+
     arrowLine.node.addEventListener("animationend", () => {
       arrowLine.addArrowHead();
       onDone();
@@ -117,22 +115,11 @@ export default class Figure18 extends Figure {
     const fontSize = 8;
 
     const boxedText = new BoxedText(text, fontSize, coords, boxSize);
-    boxedText.node.classList.add("skew-appear");
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
-    boxedText.node.setAttribute(
-      "transform-origin",
-      `${coords.x + (boxSize.width / 2)} ${coords.y + (boxSize.height / 2)}`
-    );
+
     this.addSVGChildElement(boxedText.node);
-    this.removeBlurOnAnimationEnd(boxedText.node);
-
-    boxedText.node.addEventListener("animationend", onDone);
-  }
-
-  removeBlurOnAnimationEnd(node) {
-    node.addEventListener("animationend", () => {
-      node.style.filter = "none";
-    }, { once: true });
+    onDone();
+    // boxedText.node.addEventListener("animationend", onDone);
   }
 }
 
