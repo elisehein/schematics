@@ -44,7 +44,7 @@ body {
   position: relative;
   width: 100vw;
   min-height: 100vh;
-  font-family: Helvetica Neue;
+  font-family: helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
   background-color: var(--color-bg-dark);
   color: var(--color-text-light);
 }
