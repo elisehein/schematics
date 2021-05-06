@@ -1,54 +1,4 @@
-const strokeable = ({ node }) => ({
-  stroke() {
-    node.style.fill = "transparent";
-    node.style.stroke = "currentColor";
-  }
-});
-
-const fillable = ({ node }) => ({
-  fill() {
-    node.style.fill = "currentColor";
-    node.style.stroke = "transparent";
-  }
-});
-
-const havingLength = ({ node }) => ({
-  getLength() {
-    return node.getTotalLength();
-  }
-});
-
-const stylable = ({ node }) => ({
-  addClass(className) {
-    node.classList.add(className);
-  }
-});
-
-const allowingArrowHead = ({ node }) => {
-  return {
-    addArrowHead(registerMarker) {
-      const markerID = "arrowhead-marker";
-      defineArrowHeadMarker(markerID, registerMarker);
-      node.setAttribute("marker-end", `url(#${markerID})`);
-    }
-  }
-
-  function defineArrowHeadMarker(markerID, registerMarker) {
-    const marker = new Marker({
-      id: markerID,
-      width: 6,
-      height: 6,
-      x: 4,
-      y: 4,
-      viewBox: "0 0 8 8",
-      autoOrient: true
-    });
-    const arrow = new Path("M 1 1 L 5 4 L 1 7 z");
-    arrow.fill();
-    marker.addShape(arrow.node);
-    registerMarker(marker.node);
-  }
-};
+import { strokeable, fillable, havingLength, withOptionalArrowHead } from "./svgShapeFeatures.js";
 
 export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
   const node = createSVGElement("marker");
@@ -73,6 +23,22 @@ export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
   return { node, addShape };
 }
 
+Marker.arrowHead = (() => {
+  const marker = new Marker({
+    id: "arrowhead-marker",
+    width: 6,
+    height: 6,
+    x: 4,
+    y: 4,
+    viewBox: "0 0 8 8",
+    autoOrient: true
+  });
+  const arrow = new Path("M 1 1 L 5 4 L 1 7 z");
+  arrow.fill();
+  marker.addShape(arrow.node);
+  return marker;
+})();
+
 export function Line(...points) {
   const node = createSVGElement("polyline");
   node.setAttribute("points", points.map(({x, y}) => `${x},${y}`).join(" "));
@@ -81,10 +47,9 @@ export function Line(...points) {
 
   const result = Object.assign(
     self,
-    stylable(self),
     strokeable(self),
     havingLength(self),
-    allowingArrowHead(self)
+    withOptionalArrowHead(self, Marker.arrowHead)
   );
 
   result.stroke();
@@ -101,7 +66,6 @@ export function Circle(cx, cy, r) {
 
   return Object.assign(
     self,
-    stylable(self),
     strokeable(self),
     fillable(self)
   );
@@ -114,11 +78,10 @@ export function Path(d) {
 
   return Object.assign(
     self,
-    stylable(self),
     strokeable(self),
     fillable(self),
     havingLength(self),
-    allowingArrowHead(self)
+    withOptionalArrowHead(self, Marker.arrowHead)
   )
 }
 
@@ -156,16 +119,15 @@ export function Text(text, { x, y }, fontSize = 10) {
   // Letter-spacing causes the space between letters to not react to pointer events
   node.setAttribute("pointer-events", "bounding-box");
   node.innerHTML = text;
+  node.classList.add("text");
 
   const self = { node };
 
   const result = Object.assign(
     self,
-    fillable(self),
-    stylable(self)
+    fillable(self)
   );
 
-  result.addClass("text");
   result.fill();
   return result;
 }
@@ -191,12 +153,7 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
   g.appendChild(textShape.node);
   g.classList.add("boxed-text");
 
-  const self = { node: g };
-
-  return Object.assign(
-    self,
-    stylable(self)
-  )
+  return { node: g };
 }
 
 export function createSVGElement(elementName) {

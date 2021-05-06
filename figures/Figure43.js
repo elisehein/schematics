@@ -1,5 +1,5 @@
 import Figure from "./Figure.js";
-import { Path } from "./SVGShape.js";
+import { Path } from "./svgShapes.js";
 
 export default class Figure43 extends Figure {
   /*

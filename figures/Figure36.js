@@ -1,5 +1,5 @@
 import Figure from "./Figure.js";
-import { Marker, Circle, Line, Arc } from "./SVGShape.js";
+import { Marker, Circle, Line, Arc } from "./svgShapes.js";
 
 const markerID = "circle-marker";
 const anchorMarkerID = "circle-marker--anchor";

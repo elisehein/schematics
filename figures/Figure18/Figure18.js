@@ -1,7 +1,7 @@
 import Figure from "../Figure.js";
 import data from "./data.js";
 import Figure18GridCoordinateSystem, { Figure18GridPosition } from "./Figure18GridCoordinateSystem.js";
-import { Line, BoxedText, Text } from "../SVGShape.js";
+import { Line, BoxedText, Text } from "../svgShapes.js";
 
 const firstBox = "good?";
 
@@ -97,7 +97,7 @@ export default class Figure18 extends Figure {
     const targetPosition = data[option.to].position;
     const arrowPoints = this._grid.getArrowCoordinatePoints(originPosition, targetPosition);
     const arrowLine = new Line(...arrowPoints);
-    arrowLine.addClass("arrow");
+    arrowLine.node.classList.add("arrow");
 
     this.addSVGChildElement(arrowLine.node);
     arrowLine.node.classList.add("option-arrow");
@@ -116,7 +116,7 @@ export default class Figure18 extends Figure {
     const fontSize = 8;
 
     const boxedText = new BoxedText(text, fontSize, coords, boxSize);
-    boxedText.addClass("boxed-text");
+    boxedText.node.classList.add("boxed-text");
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
 
     this.addSVGChildElement(boxedText.node);
