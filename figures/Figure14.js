@@ -24,7 +24,8 @@ export default class Figure14 extends Figure {
 
   drawAxisWithLabel(startCoords, endCoords, labelCoords, labelText) {
     const axis = new Line(startCoords, endCoords);
-    axis.addArrowHead(this);
+    axis.addClass("axis");
+    axis.addArrowHead(this.registerMarker.bind(this));
     const label = new Text(labelText, labelCoords);
     this.addSVGChildElement(axis.node);
     this.addSVGChildElement(label.node);
@@ -38,11 +39,12 @@ export default class Figure14 extends Figure {
                              C 90,175, 210,175, 210,135 \
                              C 210,95, 90,95, 90,115 \
                              C 90,135, 210,135, 210,95");
+    spiral.addClass("spiral");
+    spiral.stroke();
 
-    this.style.setProperty("--animatable-line-length", spiral.length);
+    this.style.setProperty("--animatable-line-length", spiral.getLength());
 
     const node = spiral.node;
-    node.classList.add("spiral");
     this.addSVGChildElement(node);
   }
 }

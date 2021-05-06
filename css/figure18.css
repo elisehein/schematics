@@ -10,7 +10,8 @@
   justify-self: flex-end;
 }
 
-.figure18 .line {
+.figure18 .boxed-text rect,
+.figure18 .arrow {
   stroke-width: .8px;
 }
 

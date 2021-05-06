@@ -25,6 +25,7 @@ export default class Figure36 extends Figure {
 
     const arcRadius = this._pendulumLength + (this._markerRadius * 2);
     const arc = new Arc(this._anchorPoint, arcRadius, 150, 210);
+    arc.stroke();
     this.addSVGChildElement(arc.node);
 
     setTimeout(() => {
@@ -88,9 +89,10 @@ export default class Figure36 extends Figure {
       y: markerY
     });
     const circle = new Circle(this._markerRadius + safeArea, this._markerRadius + safeArea, this._markerRadius);
+    circle.stroke();
 
     marker.addShape(circle.node);
-    this.defineMarker(marker.node);
+    this.registerMarker(marker.node);
   }
 
   getAnimationNodeString() {

@@ -1,164 +1,202 @@
-class SVGShape {
-  constructor(node) {
-    this._node = node;
+const strokeable = ({ node }) => ({
+  stroke() {
+    node.style.fill = "transparent";
+    node.style.stroke = "currentColor";
   }
+});
 
-  get node() {
-    return this._node;
+const fillable = ({ node }) => ({
+  fill() {
+    node.style.fill = "currentColor";
+    node.style.stroke = "transparent";
   }
-}
+});
 
-export class Marker extends SVGShape {
-  constructor({ id, width, height, x, y, viewBox }) {
-    const node = createSVGElement("marker");
-    node.setAttribute("id", id);
-    node.setAttribute("markerWidth", width);
-    node.setAttribute("markerHeight", height);
-    node.setAttribute("refX", x || width / 2.0);
-    node.setAttribute("refY", y || height / 2.0);
-    node.setAttribute("orient", "auto-start-reverse");
+const havingLength = ({ node }) => ({
+  getLength() {
+    return node.getTotalLength();
+  }
+});
 
-    if (viewBox) {
-      node.setAttribute("viewBox", viewBox);
+const stylable = ({ node }) => ({
+  addClass(className) {
+    node.classList.add(className);
+  }
+});
+
+const allowingArrowHead = ({ node }) => {
+  return {
+    addArrowHead(registerMarker) {
+      const markerID = "arrowhead-marker";
+      defineArrowHeadMarker(markerID, registerMarker);
+      node.setAttribute("marker-end", `url(#${markerID})`);
     }
-
-    super(node);
   }
 
-  addShape(shapeNode) {
-    this.node.appendChild(shapeNode);
-  }
-}
-
-export class Line extends SVGShape {
-  constructor(...points) {
-    const node = createSVGElement("polyline");
-    node.setAttribute("points", points.map(({x, y}) => `${x},${y}`).join(" "));
-    node.classList.add("line");
-
-    super(node);
-
-    this._arrowheadMarkerID = "arrowhead-marker";
-  }
-
-  addArrowHead(markerDefiner) {
-    this.defineArrowHeadMarker(markerDefiner);
-    this.node.setAttribute("marker-end", `url(#${this._arrowheadMarkerID})`);
-  }
-
-  defineArrowHeadMarker(markerDefiner) {
+  function defineArrowHeadMarker(markerID, registerMarker) {
     const marker = new Marker({
-      id: this._arrowheadMarkerID,
+      id: markerID,
       width: 6,
       height: 6,
       x: 4,
       y: 4,
-      viewBox: "0 0 8 8"
+      viewBox: "0 0 8 8",
+      autoOrient: true
     });
     const arrow = new Path("M 1 1 L 5 4 L 1 7 z");
-    arrow.node.classList.add("arrowhead");
+    arrow.fill();
     marker.addShape(arrow.node);
-    markerDefiner.defineMarker(marker.node);
+    registerMarker(marker.node);
+  }
+};
+
+export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
+  const node = createSVGElement("marker");
+  node.setAttribute("id", id);
+  node.setAttribute("markerWidth", width);
+  node.setAttribute("markerHeight", height);
+  node.setAttribute("refX", x || width / 2.0);
+  node.setAttribute("refY", y || height / 2.0);
+
+  if (autoOrient) {
+    node.setAttribute("orient", "auto-start-reverse");
   }
 
-  get length() {
-    return this.node.getTotalLength();
+  if (viewBox) {
+    node.setAttribute("viewBox", viewBox);
   }
+
+  const addShape = shapeNode => {
+    node.appendChild(shapeNode);
+  }
+
+  return { node, addShape };
 }
 
-export class Circle extends SVGShape {
-  constructor(cx, cy, r) {
-    const node = createSVGElement("circle");
-    node.classList.add("line");
-    node.setAttribute("cx", cx);
-    node.setAttribute("cy", cy);
-    node.setAttribute("r", r);
-    super(node);
-  }
+export function Line(...points) {
+  const node = createSVGElement("polyline");
+  node.setAttribute("points", points.map(({x, y}) => `${x},${y}`).join(" "));
+
+  const self = { node };
+
+  const result = Object.assign(
+    self,
+    stylable(self),
+    strokeable(self),
+    havingLength(self),
+    allowingArrowHead(self)
+  );
+
+  result.stroke();
+  return result;
 }
 
-export class Path extends SVGShape {
-  constructor(d) {
-    const node = createSVGElement("path");
-    node.setAttribute("d", d);
-    node.classList.add("line");
-    super(node);
-  }
+export function Circle(cx, cy, r) {
+  const node = createSVGElement("circle");
+  node.setAttribute("cx", cx);
+  node.setAttribute("cy", cy);
+  node.setAttribute("r", r);
 
-  get length() {
-    return this._node.getTotalLength();
-  }
+  const self = { node };
+
+  return Object.assign(
+    self,
+    stylable(self),
+    strokeable(self),
+    fillable(self)
+  );
 }
 
-export class Arc extends Path {
-  constructor({ x, y }, radius, startAngle, endAngle) {
-    const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
-      var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+export function Path(d) {
+  const node = createSVGElement("path");
+  node.setAttribute("d", d);
+  const self = { node };
 
-      return {
-        x: centerX + (radius * Math.cos(angleInRadians)),
-        y: centerY + (radius * Math.sin(angleInRadians))
-      };
-    }
-
-    const describeArc = (x, y, radius, startAngle, endAngle) => {
-      var start = polarToCartesian(x, y, radius, endAngle);
-      var end = polarToCartesian(x, y, radius, startAngle);
-
-      var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-      return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
-    }
-
-    super(describeArc(x, y, radius, startAngle, endAngle));
-  }
+  return Object.assign(
+    self,
+    stylable(self),
+    strokeable(self),
+    fillable(self),
+    havingLength(self),
+    allowingArrowHead(self)
+  )
 }
 
-export class Text extends SVGShape {
-  constructor(text, { x, y }, fontSize = 10) {
-    const node = createSVGElement("text");
-    node.setAttribute("x", x);
-    node.setAttribute("y", y);
+export function Arc({ x, y }, radius, startAngle, endAngle) {
+  const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
+    var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
 
-    // Setting the font size via an attribute, we get the benefit of scaling
-    // according to the coordinate system specified in viewBox.
-    node.setAttribute("font-size", fontSize);
-
-    // Letter-spacing causes the space between letters to not react to pointer events
-    node.setAttribute("pointer-events", "bounding-box");
-
-    node.classList.add("text");
-    node.innerHTML = text;
-    super(node);
+    return {
+      x: centerX + (radius * Math.cos(angleInRadians)),
+      y: centerY + (radius * Math.sin(angleInRadians))
+    };
   }
+
+  const describeArc = (x, y, radius, startAngle, endAngle) => {
+    var start = polarToCartesian(x, y, radius, endAngle);
+    var end = polarToCartesian(x, y, radius, startAngle);
+
+    var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+    return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
+  }
+
+  return new Path(describeArc(x, y, radius, startAngle, endAngle));
 }
 
-export class BoxedText extends SVGShape {
-  constructor(text, fontSize, { x, y }, { width, height }) {
-    const g = createSVGElement("g");
+export function Text(text, { x, y }, fontSize = 10) {
+  const node = createSVGElement("text");
+  node.setAttribute("x", x);
+  node.setAttribute("y", y);
 
-    const rectNode = createSVGElement("rect");
-    rectNode.setAttribute("x", x);
-    rectNode.setAttribute("y", y);
-    rectNode.setAttribute("width", width);
-    rectNode.setAttribute("height", height);
-    rectNode.classList.add("line");
-    g.appendChild(rectNode);
+  // Setting the font size via an attribute, we get the benefit of scaling
+  // according to the coordinate system specified in viewBox.
+  node.setAttribute("font-size", fontSize);
 
-    const textNode = createSVGElement("text");
-    textNode.innerHTML = text;
-    textNode.setAttribute("font-size", fontSize);
-    textNode.setAttribute("x", (x + (width / 2.0)));
-    textNode.setAttribute("y", (y + (height / 2.0)));
-    textNode.setAttribute("dominant-baseline", "middle");
-    textNode.setAttribute("text-anchor", "middle");
-    textNode.classList.add("text");
+  // Letter-spacing causes the space between letters to not react to pointer events
+  node.setAttribute("pointer-events", "bounding-box");
+  node.innerHTML = text;
 
-    g.appendChild(textNode);
-    g.classList.add("boxed-text");
+  const self = { node };
 
-    super(g);
-  }
+  const result = Object.assign(
+    self,
+    fillable(self),
+    stylable(self)
+  );
+
+  result.addClass("text");
+  result.fill();
+  return result;
+}
+
+export function BoxedText(text, fontSize, { x, y }, { width, height }) {
+  const g = createSVGElement("g");
+
+  const rectNode = createSVGElement("rect");
+  rectNode.setAttribute("x", x);
+  rectNode.setAttribute("y", y);
+  rectNode.setAttribute("width", width);
+  rectNode.setAttribute("height", height);
+  strokeable({ node: rectNode }).stroke();
+  g.appendChild(rectNode);
+
+  const textShape = new Text(
+    text,
+    { x: x + (width / 2.0), y: y + (height / 2.0) },
+    fontSize);
+  textShape.node.setAttribute("dominant-baseline", "middle");
+  textShape.node.setAttribute("text-anchor", "middle");
+
+  g.appendChild(textShape.node);
+  g.classList.add("boxed-text");
+
+  const self = { node: g };
+
+  return Object.assign(
+    self,
+    stylable(self)
+  )
 }
 
 export function createSVGElement(elementName) {

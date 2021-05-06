@@ -25,9 +25,8 @@ export default class Figure extends HTMLElement {
     this.draw();
   }
 
-  defineMarker(markerNode) {
-    this.querySelector("defs").appendChild(markerNode);
-  }
+  draw() {}
+  animate() {}
 
   renderTitle() {
     const node = this.querySelector("#figure-title");
@@ -44,11 +43,12 @@ export default class Figure extends HTMLElement {
   }
 
   addSVGChildElement(el) {
-    this.querySelector("svg").appendChild(el);
+    this.svgNode.appendChild(el);
   }
 
-  draw() {}
-  animate() {}
+  registerMarker(markerNode) {
+    this.querySelector("defs").appendChild(markerNode);
+  }
 
   static get observedAttributes()  {
     return ["num", "a11ydescription"];
@@ -87,5 +87,9 @@ export default class Figure extends HTMLElement {
     if (newValue !== this.num) {
       this.setAttribute("num", newValue);
     }
+  }
+
+  get svgNode() {
+    return this.querySelector("svg");
   }
 }

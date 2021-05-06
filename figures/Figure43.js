@@ -33,6 +33,7 @@ export default class Figure43 extends Figure {
 
   drawSinglePathCubeWithAnimation() {
     const cube = new Path(this.getLeftwardCubePath());
+    cube.stroke();
     cube.node.innerHTML = this.getAnimationNode();
     this.addSVGChildElement(cube.node);
   }

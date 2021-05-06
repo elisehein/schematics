@@ -97,14 +97,15 @@ export default class Figure18 extends Figure {
     const targetPosition = data[option.to].position;
     const arrowPoints = this._grid.getArrowCoordinatePoints(originPosition, targetPosition);
     const arrowLine = new Line(...arrowPoints);
+    arrowLine.addClass("arrow");
 
     this.addSVGChildElement(arrowLine.node);
     arrowLine.node.classList.add("option-arrow");
 
-    this.style.setProperty("--animatable-line-length", arrowLine.length);
+    this.style.setProperty("--animatable-line-length", arrowLine.getLength());
 
     arrowLine.node.addEventListener("animationend", () => {
-      arrowLine.addArrowHead(this);
+      arrowLine.addArrowHead(this.registerMarker.bind(this));
       onDone();
     })
   }
@@ -115,6 +116,7 @@ export default class Figure18 extends Figure {
     const fontSize = 8;
 
     const boxedText = new BoxedText(text, fontSize, coords, boxSize);
+    boxedText.addClass("boxed-text");
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
 
     this.addSVGChildElement(boxedText.node);
