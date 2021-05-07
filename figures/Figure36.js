@@ -184,8 +184,9 @@ export default class Figure36 extends Figure {
 
   getPulseAnimationNodeString() {
     const keyTimes = "0; 0.3; 1";
-    const duration = "2s";
+    const duration = "2.2s";
     const begin = "2s;"
+    const pulseEasing = ".25 1 .5 1";
 
     return `
     <animate
@@ -193,7 +194,9 @@ export default class Figure36 extends Figure {
       begin="${begin}"
       dur="${duration}"
       repeatCount="indefinite"
-      values="${this._markerRadius}; ${this._markerRadius * 1.6}; ${this._markerRadius}"
+      values="${this._markerRadius}; ${this._markerRadius * 1.7}; ${this._markerRadius}"
+      calcMode="spline"
+      keySplines="${pulseEasing}; 0 0 1 1"
       keyTimes="${keyTimes}" />
     <animate
       attributeType="xml"
