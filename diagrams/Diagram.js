@@ -14,10 +14,12 @@ export default class Diagram extends HTMLElement {
         preserveAspectRatio="xMidYMin meet"
         role="img"
         viewbox="0 0 300 300"
-        aria-labelledby="figure-title figure-desc"
+        aria-labelledby="figure-desc"
         xmlns="http://www.w3.org/2000/svg">
-        <title id="figure-title">${this.num}</title>
-        <desc id="figure-desc">${this.a11yDescription}</desc>
+        <desc id="figure-desc">
+          fig. <span id="figure-num">${this.num}</span>.
+          <span id="figure-a11y-description">${this.a11yDescription}</span>
+        </desc>
         <defs></defs>
       </svg>
     `;
@@ -29,14 +31,14 @@ export default class Diagram extends HTMLElement {
   animate() {}
 
   renderTitle() {
-    const node = this.querySelector("#figure-title");
+    const node = this.querySelector("#figure-num");
     if (node) {
-      node.innerHTML = `fig. ${this.num}`;
+      node.innerHTML = this.num;
     }
   }
 
   renderDescription() {
-    const node = this.querySelector("#figure-desc");
+    const node = this.querySelector("#figure-a11y-description");
     if (node) {
       node.innerHTML = this.a11yDescription;
     }

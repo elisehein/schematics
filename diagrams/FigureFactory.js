@@ -12,7 +12,7 @@ const copy = {
     everything would likely seem the same.`
   },
   18: {
-    a11yDescription: "A flow diagram for love.",
+    a11yDescription: "A flow diagram for love. Good? Yes. More? Yes. Do it.",
     poetry: "I will send you flowers, pearls, letters written in ink."
   },
   36: {
