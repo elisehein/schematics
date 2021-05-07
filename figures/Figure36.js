@@ -38,12 +38,28 @@ export default class Figure36 extends Figure {
   }
 
   drawDashedArrow() {
-    const arcRadius = this._pendulumLength + (this._markerRadius * 2) + 10;
-    const arc = new Arc(this._anchorPoint, arcRadius, 160, 200);
-    arc.stroke();
+    const arc = this.getArrowArc(10);
     arc.addArrowHead(this.registerMarker.bind(this));
     arc.node.classList.add("arrow");
+    arc.stroke();
     this.addSVGChildElement(arc.node);
+  }
+
+  drawOverlayArrow() {
+    const arc = this.getArrowArc();
+    arc.node.classList.add("arrow", "arrow--overlay");
+    this.style.setProperty("--animatable-line-length", arc.getLength());
+    this.addSVGChildElement(arc.node);
+  }
+
+  getArrowArc(insetAngle = 0) {
+    const arcRadius = this._pendulumLength + (this._markerRadius * 2) + 10;
+    const arc = new Arc(
+      this._anchorPoint,
+      arcRadius,
+      180 - this._initialAngle + insetAngle,
+      180 + this._initialAngle - insetAngle);
+    return arc;
   }
 
   addRotation(node, angle) {
@@ -85,10 +101,12 @@ export default class Figure36 extends Figure {
   swing(swingingArm, markerClickOverlay) {
     swingingArm.node.querySelector("animateTransform").beginElement();
     markerClickOverlay.node.remove();
+    this.drawOverlayArrow();
 
+    const swingDurationInMS = this._swingDuration * 1000;
     setTimeout(() => {
       this.drawStaticArm();
-    }, this._swingDuration * 1000);
+    }, swingDurationInMS);
   }
 
   drawStaticArm() {
@@ -134,6 +152,7 @@ export default class Figure36 extends Figure {
 
   getSwingAnimationNodeString() {
     const easeInOut = ".4 0 .6 1"
+    this.style.setProperty("--swing-easing", `cubic-bezier(${easeInOut.split(" ").join(",")})`);
 
     const rotationValue = deg => `${deg} ${this._anchorPoint.x} ${this._anchorPoint.y}`;
     const swingAngle = swingIndex => this._angleChangeStep * (this._totalSwings - (swingIndex + 1));

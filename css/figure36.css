@@ -21,3 +21,17 @@
 .figure36 .arrow {
   stroke-dasharray: 5px;
 }
+
+@keyframes hide-arrow {
+  from { stroke-dashoffset: var(--animatable-line-length); }
+  to { stroke-dashoffset: 0; }
+}
+
+.figure36 .arrow.arrow--overlay {
+  stroke-dasharray: var(--animatable-line-length);
+  stroke-dashoffset: 0;
+  stroke: var(--color-bg-dark);
+  stroke-width: 4px;
+  fill: transparent;
+  animation: hide-arrow 2s var(--swing-easing);
+}
