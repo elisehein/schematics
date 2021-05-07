@@ -26,15 +26,30 @@ export default class Figure36 extends Figure {
     super.draw();
     this.defineCircleMarker({ anchor: false });
     this.defineCircleMarker({ anchor: true });
-    this.drawDashedArrow();
 
+    const arrow = this.drawDashedArrow();
     const swingingArm = this.drawSwingingArm();
 
     const pointAtMarker = swingingArm.node.getPointAtLength(this._pendulumLength);
     pointAtMarker.y += this._markerRadius;
-
     const markerClickOverlay = this.drawMarkerClickOverlay(pointAtMarker);
-    markerClickOverlay.node.addEventListener("click", () => this.swing(swingingArm, markerClickOverlay));
+
+    let overlayArrow;
+
+    markerClickOverlay.node.addEventListener("click", () => {
+      this.swing({
+        onStart: () => {
+          swingingArm.node.querySelector("animateTransform").beginElement();
+          markerClickOverlay.node.remove();
+          overlayArrow = this.drawOverlayArrow();
+        },
+        onEnd: () => {
+          arrow.node.remove();
+          overlayArrow.node.remove();
+          this.drawStaticArm();
+        }
+      });
+    });
   }
 
   drawDashedArrow() {
@@ -43,6 +58,7 @@ export default class Figure36 extends Figure {
     arc.node.classList.add("arrow");
     arc.stroke();
     this.addSVGChildElement(arc.node);
+    return arc;
   }
 
   drawOverlayArrow() {
@@ -50,6 +66,7 @@ export default class Figure36 extends Figure {
     arc.node.classList.add("arrow", "arrow--overlay");
     this.style.setProperty("--animatable-line-length", arc.getLength());
     this.addSVGChildElement(arc.node);
+    return arc;
   }
 
   getArrowArc(insetAngle = 0) {
@@ -98,14 +115,12 @@ export default class Figure36 extends Figure {
     return markerClickOverlay;
   }
 
-  swing(swingingArm, markerClickOverlay) {
-    swingingArm.node.querySelector("animateTransform").beginElement();
-    markerClickOverlay.node.remove();
-    this.drawOverlayArrow();
+  swing({ onStart, onEnd }) {
+    onStart();
 
     const swingDurationInMS = this._swingDuration * 1000;
     setTimeout(() => {
-      this.drawStaticArm();
+      onEnd();
     }, swingDurationInMS);
   }
 
