@@ -26,14 +26,14 @@ export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
 Marker.arrowHead = (() => {
   const marker = new Marker({
     id: "arrowhead-marker",
-    width: 6,
-    height: 6,
-    x: 4,
-    y: 4,
-    viewBox: "0 0 8 8",
+    width: 8,
+    height: 8,
+    x: 5,
+    y: 5,
+    viewBox: "0 0 10 10",
     autoOrient: true
   });
-  const arrow = new Path("M 1 1 L 5 4 L 1 7 z");
+  const arrow = new Path("M 1 1 L 7 5 L 1 9 z");
   arrow.fill();
   marker.addShape(arrow.node);
   return marker;
