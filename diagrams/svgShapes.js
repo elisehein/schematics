@@ -28,7 +28,7 @@ Marker.arrowHead = (() => {
     id: "arrowhead-marker",
     width: 8,
     height: 8,
-    x: 5,
+    x: 6,
     y: 5,
     viewBox: "0 0 10 10",
     autoOrient: true
