@@ -9,6 +9,15 @@
 }
 
 .figure36 polyline,
+.figure36 .arrow,
 .figure36 circle {
   stroke-width: 1px;
+}
+
+.figure .marker-click-overlay {
+  cursor: pointer;
+}
+
+.figure36 .arrow {
+  stroke-dasharray: 5px;
 }
