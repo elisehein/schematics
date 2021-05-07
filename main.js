@@ -1,52 +1,27 @@
-import { getPoetry, getDiagramElement, figureExists, orderedFigures } from "./diagrams/FigureFactory.js";
+import { figureExists, orderedFigures } from "./diagrams/FigureFactory.js";
 import HashNavigation from "./HashNavigation.js";
 
-const mainNode = document.querySelector("main");
-const figureTemplate = document.getElementById("single-figure-template");
 const defaultFigureNum = orderedFigures[0];
 
-const nav = new HashNavigation({
-  onFigureChange: (newFigureNum, oldFigureNum) => {
-    if (!figureExists(newFigureNum)) {
-      nav.goToFigure(oldFigureNum || defaultFigureNum);
-      return;
-    }
-
-    const figureNode = mainNode.querySelector("figure");
-
-    if (oldFigureNum) {
-      figureNode.addEventListener("transitionend", () => {
-        handleNewFigure(mainNode, newFigureNum, oldFigureNum);
-      }, { once: true });
-      figureNode.classList.add("figure--exiting");
-    } else {
-      handleNewFigure(mainNode, newFigureNum);
-    }
-  }
+document.addEventListener("DOMContentLoaded",function(){
+  const schematicsFigure = document.querySelector("schematics-figure");
+  initNav(schematicsFigure);
 });
 
-function handleNewFigure(mainNode, newFigureNum, oldFigureNum) {
-  mainNode.innerHTML = figureTemplate.innerHTML;
-  const figureNode = mainNode.querySelector("figure");
-  figureNode.classList.add(`figure${newFigureNum}`);
+function initNav(schematicsFigure) {
+  const nav = new HashNavigation({
+    onFigureChange: (newFigureNum, oldFigureNum) => {
+      if (!figureExists(newFigureNum)) {
+        nav.goToFigure(oldFigureNum || defaultFigureNum);
+        return;
+      }
 
-  setPoetry(figureNode.querySelector("figcaption"), getPoetry(newFigureNum));
+      schematicsFigure.num = newFigureNum;
+      updateNavigation(newFigureNum);
+    }
+  });
 
-  const diagramContainerNode = figureNode.querySelector(".diagram-container");
-  setDiagram(diagramContainerNode, newFigureNum);
-
-  updateNavigation(newFigureNum);
-}
-
-function setPoetry(figcaptionNode, poetry) {
-  figcaptionNode.innerText = poetry;
-}
-
-function setDiagram(diagramContainerNode, num) {
-  const diagramElement = getDiagramElement(num);
-  diagramContainerNode.appendChild(diagramElement);
-
-  setTimeout(diagramElement.animate.bind(diagramElement), 2000);
+  nav.init({ defaultFigureNum });
 }
 
 function updateNavigation(newFigureNum) {
@@ -74,5 +49,3 @@ function configureDirectionalFigureLink(node, num) {
     node.removeAttribute("href");
   }
 }
-
-nav.init({ defaultFigureNum });
