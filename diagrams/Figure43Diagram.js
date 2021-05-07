@@ -1,7 +1,7 @@
-import Figure from "./Figure.js";
+import Diagram from "./Diagram.js";
 import { Path } from "./svgShapes.js";
 
-export default class Figure43 extends Figure {
+export default class Figure43Diagram extends Diagram {
   /*
    *          A-------B   A-------B   A-------B
    *     C----|--D    |   C-------D   |   C---|---D
@@ -136,4 +136,4 @@ export default class Figure43 extends Figure {
   }
 }
 
-customElements.define("figure-43", Figure43);
+customElements.define("figure-43-diagram", Figure43Diagram);

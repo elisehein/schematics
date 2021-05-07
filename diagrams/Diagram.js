@@ -1,4 +1,4 @@
-export default class Figure extends HTMLElement {
+export default class Diagram extends HTMLElement {
   constructor(num) {
     super();
     this.num = num;

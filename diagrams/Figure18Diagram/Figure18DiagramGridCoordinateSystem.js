@@ -1,6 +1,6 @@
 import { labelPositions } from "./data.js";
 
-export default class Figure18GridCoordinateSystem {
+export default class Figure18DiagramGridCoordinateSystem {
   /* Think of the canvas for fig. 18 as a grid:
    *    1 2 3
    *    -----
@@ -129,7 +129,7 @@ export default class Figure18GridCoordinateSystem {
   }
 }
 
-export class Figure18GridPosition {
+export class Figure18DiagramGridPosition {
   constructor(x, y) {
     this._x = x;
     this._y = y;

@@ -1,7 +1,7 @@
-import Figure from "./Figure.js";
+import Diagram from "./Diagram.js";
 import { Line, Path, Text } from "./svgShapes.js";
 
-export default class Figure14 extends Figure {
+export default class Figure14Diagram extends Diagram {
   constructor() {
     super(14);
   }
@@ -48,4 +48,4 @@ export default class Figure14 extends Figure {
   }
 }
 
-customElements.define("figure-14", Figure14);
+customElements.define("figure-14-diagram", Figure14Diagram);

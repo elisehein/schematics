@@ -1,14 +1,14 @@
-import Figure from "../Figure.js";
+import Diagram from "../Diagram.js";
 import data from "./data.js";
-import Figure18GridCoordinateSystem, { Figure18GridPosition } from "./Figure18GridCoordinateSystem.js";
+import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import { Line, BoxedText, Text } from "../svgShapes.js";
 
 const firstBox = "good?";
 
-export default class Figure18 extends Figure {
+export default class Figure18Diagram extends Diagram {
   constructor() {
     super(18);
-    this._grid = new Figure18GridCoordinateSystem();
+    this._grid = new Figure18DiagramGridCoordinateSystem();
   }
 
   draw() {
@@ -125,4 +125,4 @@ export default class Figure18 extends Figure {
   }
 }
 
-customElements.define("figure-18", Figure18);
+customElements.define("figure-18-diagram", Figure18Diagram);

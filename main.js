@@ -1,4 +1,4 @@
-import { getPoetry, getDiagramElement, figureExists, orderedFigures } from "./figures/FigureFactory.js";
+import { getPoetry, getDiagramElement, figureExists, orderedFigures } from "./diagrams/FigureFactory.js";
 import HashNavigation from "./HashNavigation.js";
 
 const mainNode = document.querySelector("main");

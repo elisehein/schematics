@@ -1,7 +1,7 @@
-import Figure14 from "./Figure14.js";
-import Figure18 from "./Figure18/Figure18.js";
-import Figure36 from "./Figure36.js";
-import Figure43 from "./Figure43.js";
+import Figure14Diagram from "./Figure14Diagram.js";
+import Figure18Diagram from "./Figure18Diagram/Figure18Diagram.js";
+import Figure36Diagram from "./Figure36Diagram.js";
+import Figure43Diagram from "./Figure43Diagram.js";
 
 const copy = {
   14: {
@@ -32,16 +32,16 @@ export function getDiagramElement(num) {
 
   switch (num) {
     case 14:
-      el = new Figure14;
+      el = new Figure14Diagram;
       break;
     case 18:
-      el = new Figure18;
+      el = new Figure18Diagram;
       break
     case 36:
-      el = new Figure36;
+      el = new Figure36Diagram;
       break
     case 43:
-      el = new Figure43;
+      el = new Figure43Diagram;
       break
   }
 

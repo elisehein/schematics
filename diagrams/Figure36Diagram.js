@@ -1,10 +1,10 @@
-import Figure from "./Figure.js";
+import Diagram from "./Diagram.js";
 import { Marker, Circle, Line, Arc } from "./svgShapes.js";
 
 const markerID = "circle-marker";
 const anchorMarkerID = "circle-marker--anchor";
 
-export default class Figure36 extends Figure {
+export default class Figure36Diagram extends Diagram {
   constructor() {
     super(36);
 
@@ -225,4 +225,4 @@ export default class Figure36 extends Figure {
   }
 }
 
-customElements.define("figure-36", Figure36);
+customElements.define("figure-36-diagram", Figure36Diagram);
