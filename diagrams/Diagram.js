@@ -28,6 +28,7 @@ export default class Diagram extends HTMLElement {
   }
 
   draw() {}
+
   animate() {}
 
   renderTitle() {
@@ -67,6 +68,8 @@ export default class Diagram extends HTMLElement {
         break;
       case "a11ydescription":
         this.renderDescription();
+        break;
+      default:
         break;
     }
   }

@@ -72,10 +72,13 @@ export default class Figure36Diagram extends Diagram {
   getArrowArc(insetAngle = 0) {
     const arcRadius = this._pendulumLength + (this._markerRadius * 2) + 10;
     const arc = new Arc(
-      this._anchorPoint,
-      arcRadius,
-      180 - this._initialAngle + insetAngle,
-      180 + this._initialAngle - insetAngle);
+      { radius: arcRadius, ...this._anchorPoint },
+      {
+        startAngle: 180 - this._initialAngle + insetAngle,
+        endAngle: 180 + this._initialAngle - insetAngle
+      }
+    );
+
     return arc;
   }
 

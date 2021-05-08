@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import { strokeable, fillable, havingLength, withOptionalArrowHead } from "./svgShapeFeatures.js";
 
 export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
@@ -41,7 +42,7 @@ Marker.arrowHead = (() => {
 
 export function Line(...points) {
   const node = createSVGElement("polyline");
-  node.setAttribute("points", points.map(({x, y}) => `${x},${y}`).join(" "));
+  node.setAttribute("points", points.map(({ x, y }) => `${x},${y}`).join(" "));
 
   const self = { node };
 
@@ -85,26 +86,23 @@ export function Path(d) {
   )
 }
 
-export function Arc({ x, y }, radius, startAngle, endAngle) {
-  const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
-    var angleInRadians = (angleInDegrees-90) * Math.PI / 180.0;
+export function Arc({ x, y, radius }, { startAngle, endAngle }) {
+  const polarToCartesian = angleInDegrees => {
+    const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
 
     return {
-      x: centerX + (radius * Math.cos(angleInRadians)),
-      y: centerY + (radius * Math.sin(angleInRadians))
+      x: x + (radius * Math.cos(angleInRadians)),
+      y: y + (radius * Math.sin(angleInRadians))
     };
   }
 
-  const describeArc = (x, y, radius, startAngle, endAngle) => {
-    var start = polarToCartesian(x, y, radius, endAngle);
-    var end = polarToCartesian(x, y, radius, startAngle);
+  const start = polarToCartesian(endAngle);
+  const end = polarToCartesian(startAngle);
+  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
 
-    var largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+  const d = `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
 
-    return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
-  }
-
-  return new Path(describeArc(x, y, radius, startAngle, endAngle));
+  return new Path(d);
 }
 
 export function Text(text, { x, y }, fontSize = 10) {
@@ -146,7 +144,8 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
   const textShape = new Text(
     text,
     { x: x + (width / 2.0), y: y + (height / 2.0) },
-    fontSize);
+    fontSize
+  );
   textShape.node.setAttribute("dominant-baseline", "middle");
   textShape.node.setAttribute("text-anchor", "middle");
 
