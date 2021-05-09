@@ -1,4 +1,4 @@
-import { getPoetry, getDiagramElement } from "./diagrams/FigureFactory.js";
+import { getPoetry, getDiagramElement } from "../../diagrams/FigureFactory.js";
 
 export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
@@ -7,7 +7,7 @@ export default class SchematicsFigure extends HTMLElement {
   }
 
   connectedCallback() {
-    this.innerHTML = document.getElementById("single-figure-template").innerHTML;
+    this.innerHTML = document.getElementById("schematics-figure-template").innerHTML;
     this.renderDiagram();
     this.renderCaption();
   }
@@ -31,10 +31,10 @@ export default class SchematicsFigure extends HTMLElement {
   }
 
   updateWithTransition(oldNum) {
-    this.figureNode.classList.add("figure--exiting");
+    this.figureNode.classList.add("schematics-figure__figure--exiting");
 
     const stopExitingAndUpdate = () => {
-      this.figureNode.classList.remove("figure--exiting");
+      this.figureNode.classList.remove("schematics-figure__figure--exiting");
       this.update(oldNum);
     }
 
@@ -49,9 +49,9 @@ export default class SchematicsFigure extends HTMLElement {
 
   update(oldNum) {
     if (Number.isInteger(oldNum)) {
-      this.figureNode.classList.replace(this.className(oldNum), this.className(this.num));
+      this.classList.replace(this.className(oldNum), this.className(this.num));
     } else {
-      this.figureNode.classList.add(this.className(this.num));
+      this.classList.add(this.className(this.num));
     }
 
     this.renderDiagram();
@@ -64,7 +64,7 @@ export default class SchematicsFigure extends HTMLElement {
     }
 
     const diagramElement = getDiagramElement(this.num);
-    this.querySelector(".diagram-container").replaceChildren(diagramElement);
+    this.querySelector(".schematics-figure__figure__diagram-container").replaceChildren(diagramElement);
     setTimeout(diagramElement.animate.bind(diagramElement), 2000);
   }
 
@@ -73,15 +73,15 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    this.querySelector("figcaption").innerText = getPoetry(this.num);
+    this.querySelector(".schematics-figure__figure__figcaption").innerText = getPoetry(this.num);
   }
 
   className(num) {
-    return `figure${num}`;
+    return `schematics-figure--${num}`;
   }
 
   get figureNode() {
-    return this.querySelector("figure");
+    return this.querySelector(".schematics-figure__figure");
   }
 
   get num() {

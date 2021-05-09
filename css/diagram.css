@@ -1,0 +1,25 @@
+@import "./figure14.css";
+@import "./figure18.css";
+@import "./figure36.css";
+@import "./figure43.css";
+
+@keyframes draw-line {
+  from {
+    stroke-dasharray: var(--animatable-line-length);
+    stroke-dashoffset: var(--animatable-line-length);
+  }
+  to {
+    stroke-dasharray: var(--animatable-line-length);
+    stroke-dashoffset: 0;
+  }
+}
+
+.diagram {
+  width: 100%;
+  height: 100%;
+}
+
+.text {
+  font-family: inherit;
+  letter-spacing: .1em;
+}

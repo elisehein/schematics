@@ -1,6 +1,7 @@
 @import "./reset.css";
 @import "./grid.css";
-@import "./figure.css";
+@import "../components/SchematicsFigure/schematics-figure.css";
+@import "./diagram.css";
 @import "./nav.css";
 
 :root {

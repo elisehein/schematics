@@ -1,20 +1,4 @@
-@import "./figure14.css";
-@import "./figure18.css";
-@import "./figure36.css";
-@import "./figure43.css";
-
-@keyframes draw-line {
-  from {
-    stroke-dasharray: var(--animatable-line-length);
-    stroke-dashoffset: var(--animatable-line-length);
-  }
-  to {
-    stroke-dasharray: var(--animatable-line-length);
-    stroke-dashoffset: 0;
-  }
-}
-
-.diagram-container {
+.schematics-figure__figure__diagram-container {
   display: flex;
   width: 100%;
   height: 100%;
@@ -23,7 +7,7 @@
   justify-content: center;
 }
 
-.diagram-container > * {
+.schematics-figure__figure__diagram-container > * {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,23 +15,13 @@
   height: 100%;
 }
 
-.diagram {
-  width: 100%;
-  height: 100%;
-}
-
-.text {
-  font-family: inherit;
-  letter-spacing: .1em;
-}
-
-figcaption {
+.schematics-figure__figure__figcaption {
   font-size: var(--ms2);
   line-height: var(--double-baseline);
   letter-spacing: .1em;
 }
 
-.figure {
+.schematics-figure__figure {
   position: relative;
   filter: none;
   opacity: 1;
@@ -56,13 +30,13 @@ figcaption {
     filter .1s ease-out;
 }
 
-.figure--exiting {
+.schematics-figure__figure--exiting {
   filter: blur(5px);
   opacity: 0;
   transition-duration: .2s;
 }
 
-.figure::after {
+.schematics-figure__figure::after {
   content: "";
   position: absolute;
   top: 0;

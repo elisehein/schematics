@@ -1,9 +1,9 @@
-.figure43 .diagram-container {
+.schematics-figure--43 .schematics-figure__figure__diagram-container {
   grid-column: 1 / -1;
   grid-row: 1 / -1;
 }
 
-.figure43 figcaption {
+.schematics-figure--43 .schematics-figure__figure__figcaption {
   grid-column: 1 / -1;
   grid-row: 1 / -1;
   justify-self: center;

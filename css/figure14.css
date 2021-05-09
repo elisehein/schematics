@@ -1,4 +1,4 @@
-.figure14 .diagram-container {
+.schematics-figure--14 .schematics-figure__figure__diagram-container {
   grid-column: 1 / -4;
   grid-row: 1 / -1;
 }
@@ -6,27 +6,27 @@
 /* We know that the spiral begins 30% from the edge,
  * and we want to position the figure more to the left edge of the area
  */
-.figure14 .diagram {
+.schematics-figure--14 .diagram {
   transform: translateX(-25%);
 }
 
-.figure14 figcaption {
+.schematics-figure--14 .schematics-figure__figure__figcaption {
   grid-column: span 5 / -1;
   grid-row: 1 / span 3;
   align-self: center;
 }
 
-.figure14 .axis {
+.schematics-figure--14 .axis {
   stroke-width: 1px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.figure14 .spiral {
+.schematics-figure--14 .spiral {
   stroke-width: 2px;
 }
 
-.figure14 .spiral {
+.schematics-figure--14 .spiral {
   stroke-dasharray: var(--animatable-line-length);
   animation: draw-line 10s linear;
 }
