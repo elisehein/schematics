@@ -1,5 +1,11 @@
 /* eslint-disable id-length */
-import { strokeable, fillable, havingLength, withOptionalArrowHead } from "./svgShapeFeatures.js";
+import { strokeable, fillable, havingLength, withOptionalArrowHead } from "./SVGShapeFeatures.js";
+
+/*
+ * The components here are not Web Components but rather your vanilla
+ * JS function-based objects, because you cannot extend SVGElement.
+ * For all intents and purposes, they act as other ui components.
+ */
 
 export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
   const node = createSVGElement("marker");

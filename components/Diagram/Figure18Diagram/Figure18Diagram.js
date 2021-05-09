@@ -2,7 +2,7 @@
 import Diagram from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
-import { Line, BoxedText, Text } from "../svgShapes.js";
+import { Line, BoxedText, Text } from "../../SVGShapes/SVGShapes.js";
 
 const firstBox = "good?";
 

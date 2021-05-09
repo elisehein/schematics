@@ -1,4 +1,4 @@
-import { figureExists, orderedFigures } from "./diagrams/FigureFactory.js";
+import { figureExists, orderedFigures } from "./figureData.js";
 import HashNavigation from "./HashNavigation.js";
 
 const defaultFigureNum = orderedFigures[0];

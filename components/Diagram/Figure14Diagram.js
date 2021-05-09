@@ -1,6 +1,6 @@
 /* eslint-disable id-length */
 import Diagram from "./Diagram.js";
-import { Line, Path, Text } from "./svgShapes.js";
+import { Line, Path, Text } from "../SVGShapes/SVGShapes.js";
 
 export default class Figure14Diagram extends Diagram {
   constructor() {

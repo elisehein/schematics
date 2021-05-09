@@ -1,6 +1,6 @@
 /* eslint-disable id-length */
 import Diagram from "./Diagram.js";
-import { Path } from "./svgShapes.js";
+import { Path } from "../SVGShapes/SVGShapes.js";
 
 export default class Figure43Diagram extends Diagram {
 

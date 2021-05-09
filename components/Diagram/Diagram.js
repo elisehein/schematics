@@ -1,7 +1,10 @@
+import { getA11yDescription } from "../../figureData.js";
+
 export default class Diagram extends HTMLElement {
   constructor(num) {
     super();
     this.num = num;
+    this.a11yDescription = getA11yDescription(num);
   }
 
   connectedCallback() {

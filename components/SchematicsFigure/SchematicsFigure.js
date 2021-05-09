@@ -1,4 +1,9 @@
-import { getPoetry, getDiagramElement } from "../../diagrams/FigureFactory.js";
+import Figure14Diagram from "../Diagram/Figure14Diagram.js";
+import Figure18Diagram from "../Diagram/Figure18Diagram/Figure18Diagram.js";
+import Figure36Diagram from "../Diagram/Figure36Diagram.js";
+import Figure43Diagram from "../Diagram/Figure43Diagram.js";
+
+import { getPoetry } from "../../figureData.js";
 
 export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
@@ -63,7 +68,7 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    const diagramElement = getDiagramElement(this.num);
+    const diagramElement = this.getDiagram(this.num);
     this.querySelector(".schematics-figure__figure__diagram-container").replaceChildren(diagramElement);
     setTimeout(diagramElement.animate.bind(diagramElement), 2000);
   }
@@ -92,6 +97,29 @@ export default class SchematicsFigure extends HTMLElement {
     if (newValue !== this.num) {
       this.setAttribute("num", newValue);
     }
+  }
+
+  getDiagram(num) {
+    let el;
+
+    switch (num) {
+      case 14:
+        el = new Figure14Diagram();
+        break;
+      case 18:
+        el = new Figure18Diagram();
+        break
+      case 36:
+        el = new Figure36Diagram();
+        break
+      case 43:
+        el = new Figure43Diagram();
+        break
+      default:
+        throw new Error(`No diagram element specified for figure ${num}.`);
+    }
+
+    return el;
   }
 }
 
