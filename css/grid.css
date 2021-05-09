@@ -38,7 +38,7 @@ schematics-figure {
   grid-column: 1 / -1;
 }
 
-figure {
+.schematics-figure__figure {
   display: grid;
   width: 100%;
   height: 100%;
@@ -55,9 +55,6 @@ aside {
   grid-column: 1;
   grid-row: 2;
   align-self: flex-end;
-}
-
-nav {
 }
 
 footer {
