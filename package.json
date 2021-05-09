@@ -1,0 +1,25 @@
+{
+  "name": "schematics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^7.26.0",
+    "stylelint": "^13.13.1",
+    "stylelint-config-standard": "^22.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elisehein/schematics.git"
+  },
+  "author": "Elise Hein",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elisehein/schematics/issues"
+  },
+  "homepage": "https://github.com/elisehein/schematics#readme"
+}
