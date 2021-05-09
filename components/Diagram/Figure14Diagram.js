@@ -41,13 +41,10 @@ export default class Figure14Diagram extends Diagram {
                              C 210,95, 90,95, 90,115 \
                              C 90,135, 210,135, 210,95");
     spiral.stroke(2);
-    spiral.node.style.strokeLinecap = "round";
 
     this.style.setProperty("--animatable-line-length", spiral.getLength());
-
     spiral.node.style.animation = "draw-line 10s linear";
 
-    spiral.node.classList.add("spiral");
     this.addSVGChildElement(spiral.node);
   }
 }

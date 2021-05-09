@@ -3,6 +3,7 @@ export const strokeable = ({ node }) => ({
     node.style.fill = "transparent";
     node.style.stroke = strokeColor;
     node.style.strokeWidth = strokeWidth;
+    node.style.strokeLinecap = "round";
   },
 
   dash(dashWidth) {
