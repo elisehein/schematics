@@ -123,7 +123,6 @@ export function Text(text, { x, y }, fontSize = 10) {
   // Letter-spacing causes the space between letters to not react to pointer events
   node.setAttribute("pointer-events", "bounding-box");
   node.innerHTML = text;
-  node.classList.add("svg-shape--text");
   node.style.fontFamily = "inherit";
   node.style.letterSpacing = ".1em";
 
@@ -158,7 +157,6 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
   textShape.node.setAttribute("text-anchor", "middle");
 
   g.appendChild(textShape.node);
-  g.classList.add("svg-shape--boxed-text");
 
   return { node: g };
 }

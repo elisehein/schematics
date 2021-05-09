@@ -119,7 +119,6 @@ export default class Figure18Diagram extends Diagram {
     const fontSize = 8;
 
     const boxedText = new BoxedText(text, fontSize, coords, boxSize);
-    boxedText.node.classList.add("boxed-text");
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
 
     this.addSVGChildElement(boxedText.node);
