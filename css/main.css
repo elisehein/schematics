@@ -18,6 +18,8 @@
   --color-bg-dark: hsla(var(--hue-main), var(--sat-main), var(--color-bg-dark-lightness), 1);
   --color-bg-light: hsla(var(--hue-main), var(--sat-main), var(--color-bg-light-lightness), 1);
 
+  --color-page-bg: var(--color-bg-dark);
+
   --color-text-light-lightness: 72%;
 
   --color-text-light: hsla(var(--hue-main), var(--sat-main), var(--color-text-light-lightness), 1);
