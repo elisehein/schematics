@@ -1,7 +1,8 @@
 @import "./reset.css";
 @import "./grid.css";
 @import "../components/SchematicsFigure/schematics-figure.css";
-@import "./diagram.css";
+@import "../components/SchematicsFigure/schematics-figure-placements.css";
+@import "../components/Diagram/diagram.css";
 @import "./nav.css";
 
 :root {
@@ -46,7 +47,7 @@ body {
   width: 100vw;
   min-height: 100vh;
   font-family: helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
-  background-color: var(--color-bg-dark);
+  background-color: var(--color-page-bg);
   color: var(--color-text-light);
 }
 

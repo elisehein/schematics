@@ -54,7 +54,6 @@ export default class Figure18Diagram extends Diagram {
   drawOptionLabel(originBoxText, option) {
     // Set zero origin to just get the text size at first, override coords later.
     const label = new Text(option.label, { x: 0, y: 0 }, 8);
-    label.node.classList.add("option-label", "option-label--active");
 
     this.addSVGChildElement(label.node);
 
@@ -68,9 +67,10 @@ export default class Figure18Diagram extends Diagram {
       "transform-origin",
       `${x + (labelSize.width / 2)} ${y + (labelSize.height / 2)}`
     );
+    label.node.style.cursor = "pointer";
 
-    this.drawOptionLabelUnderline(x, y, labelSize);
-    this.bindOptionLabelClick(label.node, originBoxText, option);
+    const underline = this.drawOptionLabelUnderline(x, y, labelSize);
+    this.bindOptionLabelClick(label.node, underline.node, originBoxText, option);
   }
 
   drawOptionLabelUnderline(labelX, labelY, labelSize) {
@@ -78,13 +78,14 @@ export default class Figure18Diagram extends Diagram {
       { x: labelX - 1, y: labelY + 3 },
       { x: labelX + labelSize.width + 1, y: labelY + 3 }
     );
-    underline.node.classList.add("option-label-underline");
     this.addSVGChildElement(underline.node);
+    return underline;
   }
 
-  bindOptionLabelClick(labelNode, originBoxText, targetOption) {
+  bindOptionLabelClick(labelNode, underlineNode, originBoxText, targetOption) {
     labelNode.addEventListener("click", () => {
-      labelNode.classList.remove("option-label--active");
+      labelNode.style.cursor = "default";
+      underlineNode.remove();
       this.drawOptionArrow({
         originBoxText,
         option: targetOption,
@@ -98,12 +99,13 @@ export default class Figure18Diagram extends Diagram {
     const targetPosition = data[option.to].position;
     const arrowPoints = this._grid.getArrowCoordinatePoints(originPosition, targetPosition);
     const arrowLine = new Line(...arrowPoints);
-    arrowLine.node.classList.add("arrow");
+    arrowLine.stroke(0.8);
+    arrowLine.node.setAttribute("pointer-events", "none");
 
     this.addSVGChildElement(arrowLine.node);
-    arrowLine.node.classList.add("option-arrow");
 
     this.style.setProperty("--animatable-line-length", arrowLine.getLength());
+    arrowLine.node.style.animation = "draw-line calc(.15s * (var(--animatable-line-length) / 50)) ease-out";
 
     arrowLine.node.addEventListener("animationend", () => {
       arrowLine.addArrowHead(this.registerMarker.bind(this));

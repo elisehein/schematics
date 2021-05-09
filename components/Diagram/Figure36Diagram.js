@@ -18,6 +18,7 @@ export default class Figure36Diagram extends Diagram {
     this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 - offset };
 
     this._swingDuration = 2;
+    this._swingEasing = ".4 0 .6 1"
     this._totalSwings = 30;
     this._angleChangeStep = this._initialAngle / (this._totalSwings - 1);
   }
@@ -55,16 +56,18 @@ export default class Figure36Diagram extends Diagram {
   drawDashedArrow() {
     const arc = this.getArrowArc(10);
     arc.addArrowHead(this.registerMarker.bind(this));
-    arc.node.classList.add("arrow");
     arc.stroke();
+    arc.dash(5);
     this.addSVGChildElement(arc.node);
     return arc;
   }
 
   drawOverlayArrow() {
     const arc = this.getArrowArc();
-    arc.node.classList.add("arrow", "arrow--overlay");
+    arc.stroke(8, "var(--color-page-bg)");
     this.style.setProperty("--animatable-line-length", arc.getLength());
+    const cssEasing = `cubic-bezier(${this._swingEasing.split(" ").join(",")})`;
+    arc.node.style.animation = `draw-line ${this._swingDuration}s ${cssEasing}`;
     this.addSVGChildElement(arc.node);
     return arc;
   }
@@ -109,7 +112,7 @@ export default class Figure36Diagram extends Diagram {
 
   drawMarkerClickOverlay({ x, y }) {
     const markerClickOverlay = this.getMarkerCircle(x, y);
-    markerClickOverlay.node.classList.add("marker-click-overlay");
+    markerClickOverlay.node.style.cursor = "pointer";
     this.addRotation(markerClickOverlay.node, this._initialAngle);
     markerClickOverlay.node.innerHTML = this.getPulseAnimationNodeString();
 
@@ -169,9 +172,6 @@ export default class Figure36Diagram extends Diagram {
   }
 
   getSwingAnimationNodeString() {
-    const easeInOut = ".4 0 .6 1"
-    this.style.setProperty("--swing-easing", `cubic-bezier(${easeInOut.split(" ").join(",")})`);
-
     const rotationValue = deg => `${deg} ${this._anchorPoint.x} ${this._anchorPoint.y}`;
     const swingAngle = swingIndex => this._angleChangeStep * (this._totalSwings - (swingIndex + 1));
 
@@ -192,7 +192,7 @@ export default class Figure36Diagram extends Diagram {
       values="${rotationValues.join("; ")}"
       keyTimes="${times.join("; ")}"
       calcMode="spline"
-      keySplines="${Array(this._totalSwings - 1).fill(easeInOut).join("; ")}"
+      keySplines="${Array(this._totalSwings - 1).fill(this._swingEasing).join("; ")}"
       dur="${this._totalSwings * this._swingDuration}s"
       begin="indefinite"
       repeatCount="1"

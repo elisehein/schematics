@@ -123,7 +123,9 @@ export function Text(text, { x, y }, fontSize = 10) {
   // Letter-spacing causes the space between letters to not react to pointer events
   node.setAttribute("pointer-events", "bounding-box");
   node.innerHTML = text;
-  node.classList.add("text");
+  node.classList.add("svg-shape--text");
+  node.style.fontFamily = "inherit";
+  node.style.letterSpacing = ".1em";
 
   const self = { node };
 
@@ -144,7 +146,7 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
   rectNode.setAttribute("y", y);
   rectNode.setAttribute("width", width);
   rectNode.setAttribute("height", height);
-  strokeable({ node: rectNode }).stroke();
+  strokeable({ node: rectNode }).stroke(0.8);
   g.appendChild(rectNode);
 
   const textShape = new Text(
@@ -156,7 +158,7 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
   textShape.node.setAttribute("text-anchor", "middle");
 
   g.appendChild(textShape.node);
-  g.classList.add("boxed-text");
+  g.classList.add("svg-shape--boxed-text");
 
   return { node: g };
 }
