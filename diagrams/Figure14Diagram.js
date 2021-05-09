@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import Diagram from "./Diagram.js";
 import { Line, Path, Text } from "./svgShapes.js";
 
@@ -17,9 +18,9 @@ export default class Figure14Diagram extends Diagram {
   }
 
   drawAxes() {
-    this.drawAxisWithLabel({x: 149, y: 220}, {x: 149, y: 30}, {x: 157, y: 36}, "Time");
-    this.drawAxisWithLabel({x: 149, y: 220}, {x: 250, y: 205}, {x: 257, y: 207}, "X");
-    this.drawAxisWithLabel({x: 149, y: 220}, {x: 200, y: 260}, {x: 207, y: 262}, "Y");
+    this.drawAxisWithLabel({ x: 149, y: 220 }, { x: 149, y: 30 }, { x: 157, y: 36 }, "Time");
+    this.drawAxisWithLabel({ x: 149, y: 220 }, { x: 250, y: 205 }, { x: 257, y: 207 }, "X");
+    this.drawAxisWithLabel({ x: 149, y: 220 }, { x: 200, y: 260 }, { x: 207, y: 262 }, "Y");
   }
 
   drawAxisWithLabel(startCoords, endCoords, labelCoords, labelText) {

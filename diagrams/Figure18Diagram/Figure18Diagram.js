@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import Diagram from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
@@ -41,7 +42,7 @@ export default class Figure18Diagram extends Diagram {
   drawOptions(originBoxText, options) {
     options.forEach((option, index) => {
       if (option.label == "") {
-        this.drawOptionArrow({ originBoxText, option, onDone: () => {}});
+        this.drawOptionArrow({ originBoxText, option, onDone: () => {} });
       } else {
         setTimeout(() => {
           this.drawOptionLabel(originBoxText, option);
@@ -85,7 +86,7 @@ export default class Figure18Diagram extends Diagram {
     labelNode.addEventListener("click", () => {
       labelNode.classList.remove("option-label--active");
       this.drawOptionArrow({
-        originBoxText: originBoxText,
+        originBoxText,
         option: targetOption,
         onDone: () => this.drawBoxWithOptions(targetOption.to)
       });

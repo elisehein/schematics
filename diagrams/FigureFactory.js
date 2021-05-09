@@ -1,3 +1,4 @@
+/* eslint-disable id-length */
 import Figure14Diagram from "./Figure14Diagram.js";
 import Figure18Diagram from "./Figure18Diagram/Figure18Diagram.js";
 import Figure36Diagram from "./Figure36Diagram.js";
@@ -32,17 +33,19 @@ export function getDiagramElement(num) {
 
   switch (num) {
     case 14:
-      el = new Figure14Diagram;
+      el = new Figure14Diagram();
       break;
     case 18:
-      el = new Figure18Diagram;
+      el = new Figure18Diagram();
       break
     case 36:
-      el = new Figure36Diagram;
+      el = new Figure36Diagram();
       break
     case 43:
-      el = new Figure43Diagram;
+      el = new Figure43Diagram();
       break
+    default:
+      throw new Error(`No diagram element specified for figure ${num}.`);
   }
 
   el.a11yDescription = copy[num].a11yDescription;

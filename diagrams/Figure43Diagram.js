@@ -1,7 +1,9 @@
+/* eslint-disable id-length */
 import Diagram from "./Diagram.js";
 import { Path } from "./svgShapes.js";
 
 export default class Figure43Diagram extends Diagram {
+
   /*
    *          A-------B   A-------B   A-------B
    *     C----|--D    |   C-------D   |   C---|---D
@@ -22,7 +24,7 @@ export default class Figure43Diagram extends Diagram {
       E: { x: 150, y: 217.5 },
       F: { x: 290, y: 217.5 },
       G: { x: 10, y: 262.5 },
-      H: { x: 150, y: 262.5 },
+      H: { x: 150, y: 262.5 }
     }
   }
 
@@ -113,7 +115,6 @@ export default class Figure43Diagram extends Diagram {
 
   getAnimationNode() {
     const easeIn = ".12 0 .39 0";
-    const linear = "0 0 1 1"
     const easeOut = ".61 1 .88 1"
 
     return `

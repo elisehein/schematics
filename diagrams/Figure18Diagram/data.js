@@ -4,7 +4,7 @@ export const labelPositions = {
   RIGHT_ABOVE_ARROW: "RIGHT_ABOVE_ARROW",
   RIGHT_BELOW_ARROW: "RIGHT_BELOW_ARROW",
   BOTTOM_LEFT_TO_ARROW: "BOTTOM_LEFT_TO_ARROW",
-  BOTTOM_RIGHT_TO_ARROW: "BOTTOM_RIGHT_TO_ARROW",
+  BOTTOM_RIGHT_TO_ARROW: "BOTTOM_RIGHT_TO_ARROW"
 }
 
 const flowChartData = {
@@ -13,14 +13,14 @@ const flowChartData = {
     options: [
       { label: "yes", to: "more?", labelPosition: labelPositions.RIGHT_ABOVE_ARROW },
       { label: "no", to: "fix it?", labelPosition: labelPositions.BOTTOM_LEFT_TO_ARROW }
-    ],
+    ]
   },
   "fix it?": {
     position: new Figure18DiagramGridPosition(1, 2),
     options: [
       { label: "yes", to: "more?", labelPosition: labelPositions.RIGHT_ABOVE_ARROW },
       { label: "no", to: "stopit.", labelPosition: labelPositions.BOTTOM_LEFT_TO_ARROW }
-    ],
+    ]
   },
   "stopit.": {
     position: new Figure18DiagramGridPosition(1, 3),

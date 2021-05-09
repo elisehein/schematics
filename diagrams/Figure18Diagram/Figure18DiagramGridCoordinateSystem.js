@@ -1,6 +1,8 @@
+/* eslint-disable id-length */
 import { labelPositions } from "./data.js";
 
 export default class Figure18DiagramGridCoordinateSystem {
+
   /* Think of the canvas for fig. 18 as a grid:
    *    1 2 3
    *    -----
@@ -17,7 +19,8 @@ export default class Figure18DiagramGridCoordinateSystem {
     arrowWidth = 50,
     arrowHeight = 30,
     canvasWidth = 300,
-    canvasHeight = 300) {
+    canvasHeight = 300
+  ) {
     this._boxWidth = boxWidth;
     this._halfBoxWidth = boxWidth / 2;
     this._boxHeight = boxHeight;
@@ -33,10 +36,10 @@ export default class Figure18DiagramGridCoordinateSystem {
   }
 
   getBoxCoords(position) {
-    let startX = this._xOffset + this._halfArrowWidth;
-    let xStep = this._boxWidth + this._arrowWidth;
-    let startY = this._yOffset + this._halfArrowHeight;
-    let yStep = this._boxHeight + this._arrowHeight;
+    const startX = this._xOffset + this._halfArrowWidth;
+    const xStep = this._boxWidth + this._arrowWidth;
+    const startY = this._yOffset + this._halfArrowHeight;
+    const yStep = this._boxHeight + this._arrowHeight;
 
     const x = startX + ((position.x - 1) * xStep);
     const y = startY + ((position.y - 1) * yStep);
@@ -71,7 +74,7 @@ export default class Figure18DiagramGridCoordinateSystem {
           y: originBoxCoords.y + this._boxHeight + boxOffset + 2
         };
       default:
-        throw `No such label position: ${labelPosition}.`;
+        throw new Error(`No such label position: ${labelPosition}.`);
     }
   }
 
@@ -116,14 +119,14 @@ export default class Figure18DiagramGridCoordinateSystem {
     if (originBoxCoords.x == targetBoxCoords.x) {
       const x = originBoxCoords.x + this._halfBoxWidth;
       return [
-        { x: x, y: originBoxCoords.y + this._boxHeight },
-        { x: x, y: targetBoxCoords.y - 1 }
+        { x, y: originBoxCoords.y + this._boxHeight },
+        { x, y: targetBoxCoords.y - 1 }
       ];
     } else {
       const y = originBoxCoords.y + this._halfBoxHeight;
       return [
-        { x: originBoxCoords.x + this._boxWidth, y: y },
-        { x: targetBoxCoords.x - 1, y: y }
+        { x: originBoxCoords.x + this._boxWidth, y },
+        { x: targetBoxCoords.x - 1, y }
       ];
     }
   }
