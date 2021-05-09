@@ -3,6 +3,7 @@
     stroke-dasharray: var(--animatable-line-length);
     stroke-dashoffset: var(--animatable-line-length);
   }
+
   to {
     stroke-dasharray: var(--animatable-line-length);
     stroke-dashoffset: 0;

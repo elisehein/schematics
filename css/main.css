@@ -91,14 +91,14 @@ h2 span {
   transform: scaleY(1.1);
 }
 
-h1:after {
+h1::after {
   content: "";
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.28) 49%, transparent 50%);
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, .28) 49%, transparent 50%);
   background-repeat: repeat;
   background-size: 1px .17em;
   filter: blur(.015em);
@@ -119,8 +119,8 @@ aside p a {
   text-underline-position: under;
 }
 
-aside p a:hover,
-aside p a:focus {
+a:hover,
+a:focus {
   color: #fff;
 }
 
@@ -144,14 +144,9 @@ footer > * + * {
   margin-left: calc(var(--baseline) * 4);
 }
 
-footer a:hover,
-footer a:focus {
-  color: #fff;
-}
-
 footer a svg {
   width: 1.5em;
-  margin-right: 0.6em;
+  margin-right: .6em;
   vertical-align: middle;
 }
 
@@ -168,7 +163,6 @@ footer a span {
   --button-side-padding: 1.5em;
   --button-height: var(--triple-baseline);
   --button-icon-size: 1.2em;
-
 
   display: inline-block;
   position: relative;
