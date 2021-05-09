@@ -2,6 +2,7 @@
   "extends": "stylelint-config-standard",
   "rules": {
     "number-leading-zero": "never",
-    "custom-property-empty-line-before": null
+    "custom-property-empty-line-before": null,
+    "unit-disallowed-list": ["px"]
   }
 }

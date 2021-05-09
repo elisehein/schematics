@@ -76,7 +76,7 @@ h2 {
   margin-top: var(--baseline);
   margin-left: calc(var(--baseline) * 8);
   letter-spacing: .2em;
-  border: 1px solid var(--color-text-light);
+  border: .12em solid var(--color-text-light);
 }
 
 h2::before {
@@ -100,6 +100,7 @@ h1::after {
   left: 0;
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, .28) 49%, transparent 50%);
   background-repeat: repeat;
+  /* stylelint-disable-next-line unit-disallowed-list */
   background-size: 1px .17em;
   filter: blur(.015em);
 }

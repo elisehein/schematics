@@ -31,7 +31,7 @@
 }
 
 .schematics-figure__figure--exiting {
-  filter: blur(5px);
+  filter: blur(1em);
   opacity: 0;
   transition-duration: .2s;
 }
@@ -45,6 +45,7 @@
   left: 0;
   background-image: linear-gradient(to bottom, hsla(var(--hue-main), var(--sat-main), var(--color-bg-dark-lightness), .28) 49%, transparent 50%);
   background-repeat: repeat;
+  /* stylelint-disable-next-line unit-disallowed-list */
   background-size: 1px .17em;
   filter: blur(.015em);
   pointer-events: none;
