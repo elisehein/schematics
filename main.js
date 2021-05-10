@@ -1,3 +1,11 @@
+// Safari doesn't support customizable built-in elements.
+// This polyfill fixes that.
+import "https://unpkg.com/@ungap/custom-elements";
+
+import "./components/SchematicsFigure/SchematicsFigure.js";
+import "./components/FigureList/FigureList.js";
+import "./components/ButtonLink.js";
+
 import { figureExists, orderedFigures } from "./figureData.js";
 import HashNavigation from "./HashNavigation.js";
 
@@ -27,4 +35,3 @@ function initNav(schematicsFigure, figureList) {
 
   nav.init({ defaultFigureNum });
 }
-
