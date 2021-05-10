@@ -13,10 +13,10 @@ export default class Figure18Diagram extends Diagram {
   }
 
   draw() {
-    this.drawBoxWithOptions(firstBox);
+    this.drawBoxWithOptions(firstBox, false);
   }
 
-  drawBoxWithOptions(boxText) {
+  drawBoxWithOptions(boxText, animated = true) {
     const boxData = data[boxText];
 
     if (this.boxWithOptionsExists(boxData.position)) {
@@ -29,7 +29,7 @@ export default class Figure18Diagram extends Diagram {
       position: boxData.position,
       onDone: () => {
         if (boxData.options) {
-          this.drawOptions(boxText, boxData.options);
+          this.drawOptions(boxText, boxData.options, animated);
         }
       }
     });
@@ -39,14 +39,16 @@ export default class Figure18Diagram extends Diagram {
     return this.querySelector(`#box-${position.toString()}`) !== null;
   }
 
-  drawOptions(originBoxText, options) {
+  drawOptions(originBoxText, options, animated = true) {
     options.forEach((option, index) => {
       if (option.label == "") {
         this.drawOptionArrow({ originBoxText, option, onDone: () => {} });
-      } else {
+      } else if (animated) {
         setTimeout(() => {
           this.drawOptionLabel(originBoxText, option);
         }, 700 + (index * 400));
+      } else {
+        this.drawOptionLabel(originBoxText, option);
       }
     });
   }
