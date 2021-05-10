@@ -5,7 +5,7 @@
   overflow: hidden;
   align-items: center;
   justify-content: center;
-  z-index: 1; // To ensure interactive figures get pointer events even if partially covered by the caption
+  z-index: 1; /* To ensure interactive figures get pointer events even if partially covered by the caption */
 }
 
 .schematics-figure__figure__diagram-container > * {
