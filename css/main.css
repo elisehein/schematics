@@ -3,7 +3,7 @@
 @import "../components/SchematicsFigure/schematics-figure.css";
 @import "../components/SchematicsFigure/schematics-figure-placements.css";
 @import "../components/Diagram/diagram.css";
-@import "./nav.css";
+@import "../components/FigureList/figure-list.css";
 
 :root {
   --hue-main: 0;

@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script type="module" src="/components/SchematicsFigure/SchematicsFigure.js"></script>
+    <script type="module" src="/components/FigureList/FigureList.js"></script>
     <script type="module" src="/components/ButtonLink.js"></script>
     <script type="module" src="/main.js"></script>
 
@@ -41,26 +42,7 @@
         <schematics-figure></schematics-figure>
       </main>
 
-      <nav>
-        <ul>
-          <li>
-            <a class="directional-link" aria-labelledby="previous-link-label" id="previous-figure-link">
-              &larr;
-              <span class="directional-link__label" id="previous-link-label">Previous figure</span>
-            </a>
-          </li>
-          <li data-figure-link="14"><a href="#fig14">fig. 14</a></li>
-          <li data-figure-link="18"><a href="#fig18">fig. 18</a></li>
-          <li data-figure-link="36"><a href="#fig36">fig. 36</a></li>
-          <li data-figure-link="43"><a href="#fig43">fig. 43</a></li>
-          <li>
-            <a class="directional-link" aria-labelledby="next-link-label" id="next-figure-link">
-              <span class="directional-link__label" id="next-link-label">Next figure</span>
-              &rarr;
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <figure-list></figure-list>
 
       <footer>
         <a href="https://github.com/elisehein/schematics">
@@ -97,12 +79,6 @@
         <div class="schematics-figure__figure__diagram-container"></div>
         <figcaption class="schematics-figure__figure__figcaption"></figcaption>
       </figure>
-    </template>
-
-    <template id="figure-navigation-list-item-template">
-      <li>
-        <a>fig. <span data-num></span></a>
-      </li>
     </template>
 
   </body>
