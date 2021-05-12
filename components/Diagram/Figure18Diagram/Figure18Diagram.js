@@ -27,6 +27,7 @@ export default class Figure18Diagram extends Diagram {
     this.drawBoxedText({
       text: boxText,
       position: boxData.position,
+      animated,
       onDone: () => {
         if (boxData.options) {
           this.drawOptions(boxText, boxData.options, animated);
@@ -106,16 +107,15 @@ export default class Figure18Diagram extends Diagram {
 
     this.addSVGChildElement(arrowLine.node);
 
-    this.style.setProperty("--animatable-line-length", arrowLine.getLength());
-    arrowLine.node.style.animation = "draw-line calc(.15s * (var(--animatable-line-length) / 50)) ease-out";
-
-    arrowLine.node.addEventListener("animationend", () => {
-      arrowLine.addArrowHead(this.registerMarker.bind(this));
-      onDone();
+    this.animateLineDrawing(arrowLine.node, {
+      onDone: () => {
+        arrowLine.addArrowHead(this.registerMarker.bind(this));
+        onDone();
+      }
     })
   }
 
-  drawBoxedText({ text, position, onDone }) {
+  drawBoxedText({ text, position, animated, onDone }) {
     const boxSize = { width: 50, height: 30 };
     const coords = this._grid.getBoxCoords(position);
     const fontSize = 8;
@@ -124,8 +124,18 @@ export default class Figure18Diagram extends Diagram {
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
 
     this.addSVGChildElement(boxedText.node);
-    onDone();
-    // boxedText.node.addEventListener("animationend", onDone);
+
+    if (animated) {
+      this.animateLineDrawing(boxedText.rectNode, { onDone });
+    } else {
+      onDone();
+    }
+  }
+
+  animateLineDrawing(node, { onDone }) {
+    this.style.setProperty("--animatable-line-length", node.getTotalLength());
+    node.style.animation = "draw-line calc(.15s * (var(--animatable-line-length) / 50)) ease-out";
+    node.addEventListener("animationend", onDone);
   }
 }
 

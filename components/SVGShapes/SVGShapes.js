@@ -158,7 +158,11 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
 
   g.appendChild(textShape.node);
 
-  return { node: g };
+  return {
+    node: g,
+    rectNode,
+    textNode: textShape.node
+  };
 }
 
 export function createSVGElement(elementName) {
