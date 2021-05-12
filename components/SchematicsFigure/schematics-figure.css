@@ -1,27 +1,3 @@
-.schematics-figure__figure__diagram-container {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-  z-index: 1; /* To ensure interactive figures get pointer events even if partially covered by the caption */
-}
-
-.schematics-figure__figure__diagram-container > * {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.schematics-figure__figure__figcaption {
-  font-size: var(--ms2);
-  line-height: var(--double-baseline);
-  letter-spacing: .1em;
-}
-
 .schematics-figure__figure {
   position: relative;
   filter: none;
@@ -50,4 +26,34 @@
   background-size: 1px .17em;
   filter: blur(.015em);
   pointer-events: none;
+}
+
+.schematics-figure__figure__diagram-container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+}
+
+.schematics-figure__figure__diagram-container > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.schematics-figure__figure__figcaption {
+  font-size: var(--ms2);
+  line-height: var(--double-baseline);
+  letter-spacing: .1em;
+  z-index: 1;
+}
+
+/* To ensure both the caption and figure are able to receive pointer events */
+.schematics-figure__figure__diagram-container:hover,
+.schematics-figure__figure__figcaption:hover {
+  z-index: 1;
 }
