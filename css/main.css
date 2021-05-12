@@ -161,9 +161,8 @@ footer a span {
 }
 
 .button {
-  --button-side-padding: 1.5em;
+  --button-side-padding: var(--double-baseline);
   --button-height: var(--triple-baseline);
-  --button-icon-size: 1.2em;
 
   display: inline-block;
   position: relative;
@@ -173,23 +172,10 @@ footer a span {
   font-size: var(--ms-1);
   line-height: var(--button-height);
   letter-spacing: .05em;
-  transition: filter .15s;
+  transition: filter .1s;
 }
 
 .button:hover,
 .button:focus {
   filter: invert(1);
-}
-
-.button__icon {
-  position: absolute;
-  left: calc(var(--button-side-padding) - .5em);
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--button-icon-size);
-  height: var(--button-icon-size);
-}
-
-.button--with-icon {
-  padding-left: calc(var(--button-side-padding) + var(--button-icon-size));
 }

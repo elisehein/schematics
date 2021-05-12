@@ -2,9 +2,10 @@ figure-list {
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 20%), 1);
 
   display: flex;
-  line-height: var(--triple-baseline);
   align-self: flex-end;
   justify-content: flex-end;
+  font-size: var(--ms-1);
+  line-height: var(--triple-baseline);
   letter-spacing: .05em;
   color: var(--faded-nav-link-color);
 }
