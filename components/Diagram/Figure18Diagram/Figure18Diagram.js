@@ -20,7 +20,6 @@ export default class Figure18Diagram extends Diagram {
     const boxData = data[boxText];
 
     if (this.boxWithOptionsExists(boxData.position)) {
-      console.log(boxText, "already exists, not drawing again.");
       return;
     }
 
