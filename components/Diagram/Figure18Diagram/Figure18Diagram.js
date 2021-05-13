@@ -2,7 +2,8 @@
 import Diagram from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
-import { Line, BoxedText, Text } from "../../SVGShapes/SVGShapes.js";
+import BoxedText from "./Figure18BoxedText.js";
+import { Line, Text } from "../../SVGShapes/SVGShapes.js";
 
 const firstBox = "good?";
 
@@ -13,10 +14,10 @@ export default class Figure18Diagram extends Diagram {
   }
 
   draw() {
-    this.drawBoxWithOptions(firstBox, false);
+    this.drawBoxWithOptions(firstBox, null, false);
   }
 
-  drawBoxWithOptions(boxText, animated = true) {
+  drawBoxWithOptions(boxText, boxOriginPoint, animated = true) {
     const boxData = data[boxText];
 
     if (this.boxWithOptionsExists(boxData.position)) {
@@ -27,6 +28,7 @@ export default class Figure18Diagram extends Diagram {
       text: boxText,
       position: boxData.position,
       animated,
+      originPoint: boxOriginPoint,
       onDone: () => {
         if (boxData.options) {
           this.drawOptions(boxText, boxData.options, animated);
@@ -84,21 +86,21 @@ export default class Figure18Diagram extends Diagram {
     return underline;
   }
 
-  bindOptionLabelClick(labelNode, underlineNode, originBoxText, targetOption) {
+  bindOptionLabelClick(labelNode, underlineNode, originBoxText, option) {
     labelNode.addEventListener("click", () => {
       labelNode.style.cursor = "default";
       underlineNode.remove();
       this.drawOptionArrow({
         originBoxText,
-        option: targetOption,
-        onDone: () => this.drawBoxWithOptions(targetOption.to)
+        option,
+        onDone: () => this.drawBoxWithOptions(option.target, option.touchPoint)
       });
     }, { once: true });
   }
 
   drawOptionArrow({ originBoxText, option, onDone }) {
     const originPosition = data[originBoxText].position;
-    const targetPosition = data[option.to].position;
+    const targetPosition = data[option.target].position;
     const arrowPoints = this._grid.getArrowCoordinatePoints(originPosition, targetPosition);
     const arrowLine = new Line(...arrowPoints);
     arrowLine.stroke(0.8);
@@ -114,12 +116,18 @@ export default class Figure18Diagram extends Diagram {
     })
   }
 
-  drawBoxedText({ text, position, animated, onDone }) {
+  drawBoxedText({ text, position, animated, originPoint, onDone }) {
     const boxSize = { width: 50, height: 30 };
     const coords = this._grid.getBoxCoords(position);
     const fontSize = 8;
 
-    const boxedText = new BoxedText(text, fontSize, coords, boxSize);
+    const boxGeometry = {
+      ...coords,
+      ...boxSize
+    };
+    console.log("drawing boxed text origin point is", originPoint);
+    const boxedText = new BoxedText(text, fontSize, boxGeometry, originPoint);
+    boxedText.stroke(0.8);
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
 
     this.addSVGChildElement(boxedText.node);
