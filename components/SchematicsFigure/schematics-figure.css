@@ -13,20 +13,16 @@
   transition-duration: .2s;
 }
 
-.schematics-figure__figure::after {
+.schematics-figure__scan-lines {
   content: "";
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background-image: linear-gradient(to bottom, hsla(var(--hue-main), var(--sat-main), var(--color-bg-dark-lightness), .28) 49%, transparent 50%);
-  background-repeat: repeat;
-  /* stylelint-disable-next-line unit-disallowed-list */
-  background-size: 1px .17em;
-  filter: blur(.015em);
-  pointer-events: none;
+  color: var(--color-bg-dark);
   z-index: 2;
+  pointer-events: none;
 }
 
 .schematics-figure__figure__diagram-container {

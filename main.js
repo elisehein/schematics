@@ -1,5 +1,6 @@
 import "./components/SchematicsFigure/SchematicsFigure.js";
 import "./components/FigureList/FigureList.js";
+import "./components/ScanLines.js";
 
 import { figureExists, orderedFigures } from "./figureData.js";
 import HashNavigation from "./HashNavigation.js";

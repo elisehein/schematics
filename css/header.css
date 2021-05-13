@@ -1,0 +1,54 @@
+h1,
+h2 {
+  display: inline-block;
+  padding: .3em 2em;
+  font-size: var(--ms-2);
+  font-weight: 400;
+  line-height: var(--double-baseline);
+  white-space: nowrap;
+}
+
+h1 {
+  position: relative;
+  background: var(--color-bg-light);
+  text-transform: uppercase;
+  letter-spacing: .5em;
+  color: var(--color-text-dark);
+}
+
+h2 {
+  --h2-border-width: .12em;
+
+  position: absolute; /* So that h1 is the anchor, vertically centered */
+  margin-top: var(--baseline);
+  margin-left: calc(var(--baseline) * 8);
+  border: var(--h2-border-width) solid var(--color-text-light);
+  letter-spacing: .2em;
+}
+
+h2::before {
+  content: "\2192";
+  position: absolute;
+  right: calc(100% + var(--baseline));
+}
+
+h1 span,
+h2 span {
+  display: inline-block;
+  transform: scaleY(1.1);
+}
+
+h1 scan-lines,
+h2 scan-lines {
+  position: absolute;
+  top: 0;
+  right: calc(var(--h2-border-width) * -1);
+  bottom: 0;
+  left: calc(var(--triple-baseline) * -1);
+  color: var(--color-text-dark);
+  pointer-events: none;
+}
+
+h1 scan-lines {
+  opacity: .6;
+}
