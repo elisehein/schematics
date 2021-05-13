@@ -34,8 +34,8 @@
 }
 
 .schematics-figure--36 .schematics-figure__figure__figcaption {
-  grid-column: 1 / -1;
-  grid-row: 2 / -1;
+  grid-column: 1 / span 4;
+  grid-row: 2 / span 3;
 }
 
 .schematics-figure--43 .schematics-figure__figure__diagram-container {
