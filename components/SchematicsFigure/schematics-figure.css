@@ -26,6 +26,7 @@
   background-size: 1px .17em;
   filter: blur(.015em);
   pointer-events: none;
+  z-index: 2;
 }
 
 .schematics-figure__figure__diagram-container {
