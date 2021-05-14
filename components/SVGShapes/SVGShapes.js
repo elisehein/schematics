@@ -78,9 +78,13 @@ export function Circle(cx, cy, r) {
   );
 }
 
-export function Path(d = "") {
+export function Path(d) {
   const node = createSVGElement("path");
-  node.setAttribute("d", d);
+
+  if (d) {
+    node.setAttribute("d", d);
+  }
+
   const self = { node };
 
   return Object.assign(
@@ -165,44 +169,50 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
   };
 }
 
-export function TypingText(text, coords, animationDuration, fontSize = 10) {
+export function TypingText(text, fontSize = 10) {
   const g = createSVGElement("g");
-  const id = `text-path-${text.replace(" ", "-")}`;
 
-  const textShape = new Text(text, coords, fontSize);
+  const textShape = new Text(text, { x: 0, y: 0 }, fontSize);
   const textSize = textShape.getSize();
 
-  textShape.node.innerHTML = `
-  <textPath href="#${id}">${text}</textPath>
-  `;
+  textShape.node.innerHTML = `<textPath>${text}</textPath>`;
 
   const textPath = new Path();
   textPath.node.setAttribute("stroke", "red");
-  textPath.node.setAttribute("id", id);
 
-  const setCoords = ({ x, y }) => {
-    const startPathD = `M ${x},${y} h 0`;
-    const endPathD = `M ${x},${y} h ${textSize.width}`;
-    textPath.node.setAttribute("d", endPathD);
-    textPath.node.innerHTML = `
-    <animate
-      attributeName="d"
-      from="${startPathD}"
-      to="${endPathD}"
-      dur="${animationDuration}s"
-      fill="freeze"
-      begin="0s" />
-    `;
+  let startPathD, endPathD;
+
+  const configure = ({ x, y }) => {
+    const id = `text-path-${Math.round(x)}-${Math.round(y)}`;
+    startPathD = `M ${x},${y} h 0`;
+    endPathD = `M ${x},${y} h ${textSize.width}`;
+    textPath.node.setAttribute("id", id);
+    textShape.node.querySelector("textPath").setAttribute("href", `#${id}`);
   };
 
-  setCoords(coords);
+  const animate = duration => {
+    if (duration == 0) {
+      textPath.node.setAttribute("d", endPathD);
+    } else {
+      textPath.node.innerHTML = `
+      <animate
+        attributeName="d"
+        from="${startPathD}"
+        to="${endPathD}"
+        dur="${duration}s"
+        fill="freeze" />
+      `;
+      textPath.node.querySelector("animate").beginElement();
+    }
+  };
 
   g.appendChild(textPath.node);
   g.appendChild(textShape.node);
 
   return {
     node: g,
-    setCoords,
+    configure,
+    animate,
     textNode: textShape.node,
     intrinsicSize: textSize
   };

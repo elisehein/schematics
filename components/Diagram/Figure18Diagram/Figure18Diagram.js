@@ -47,27 +47,27 @@ export default class Figure18Diagram extends Diagram {
         this.drawOptionArrow({ originBoxText, option, onDone: () => {} });
       } else if (animated) {
         setTimeout(() => {
-          this.drawOptionLabel(originBoxText, option, 0.2 + (0.4 * index));
+          this.drawOptionLabel(originBoxText, option, 4);
         }, 700 + (index * 400));
       } else {
-        this.drawOptionLabel(originBoxText, option, 5);
+        this.drawOptionLabel(originBoxText, option, 0);
       }
     });
   }
 
   drawOptionLabel(originBoxText, option, animationDuration) {
-    // Set zero origin to just get the text size at first, override coords later.
-    const label = new TypingText(option.label, { x: 0, y: 0 }, animationDuration, 8);
+    const label = new TypingText(option.label, 8);
     label.textNode.style.cursor = "pointer";
 
     const originBoxCoords = this._grid.getBoxCoords(data[originBoxText].position);
     const { x, y } = this._grid.getOptionLabelCoords(originBoxCoords, option.labelPosition, label.intrinsicSize);
 
-    label.setCoords({ x, y });
+    label.configure({ x, y });
     this.addSVGChildElement(label.node);
+    label.animate(animationDuration);
 
     const underline = this.drawOptionLabelUnderline(x, y, label.intrinsicSize);
-    this.bindOptionLabelClick(label.node, underline.node, originBoxText, option);
+    this.bindOptionLabelClick(label, underline.node, originBoxText, option);
   }
 
   drawOptionLabelUnderline(labelX, labelY, labelSize) {
@@ -79,9 +79,9 @@ export default class Figure18Diagram extends Diagram {
     return underline;
   }
 
-  bindOptionLabelClick(labelNode, underlineNode, originBoxText, option) {
-    labelNode.addEventListener("click", () => {
-      labelNode.style.cursor = "default";
+  bindOptionLabelClick(label, underlineNode, originBoxText, option) {
+    label.node.addEventListener("click", () => {
+      label.textNode.style.cursor = "default";
       underlineNode.remove();
       this.drawOptionArrow({
         originBoxText,
@@ -118,7 +118,6 @@ export default class Figure18Diagram extends Diagram {
       ...coords,
       ...boxSize
     };
-    console.log("drawing boxed text origin point is", originPoint);
     const boxedText = new BoxedText(text, fontSize, boxGeometry, originPoint);
     boxedText.stroke(0.8);
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
