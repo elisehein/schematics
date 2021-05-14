@@ -1,5 +1,5 @@
 /* eslint-disable id-length */
-import { strokeable, fillable, havingLength, withOptionalArrowHead } from "./SVGShapeFeatures.js";
+import { strokeable, fillable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
 
 /*
  * The components here are not Web Components but rather your vanilla
@@ -78,7 +78,7 @@ export function Circle(cx, cy, r) {
   );
 }
 
-export function Path(d) {
+export function Path(d = "") {
   const node = createSVGElement("path");
   node.setAttribute("d", d);
   const self = { node };
@@ -127,10 +127,10 @@ export function Text(text, { x, y }, fontSize = 10) {
   node.style.letterSpacing = ".1em";
 
   const self = { node };
-
   const result = Object.assign(
     self,
-    fillable(self)
+    fillable(self),
+    havingIntrinsicSize(self)
   );
 
   result.fill();
@@ -162,6 +162,49 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
     node: g,
     rectNode,
     textNode: textShape.node
+  };
+}
+
+export function TypingText(text, coords, animationDuration, fontSize = 10) {
+  const g = createSVGElement("g");
+  const id = `text-path-${text.replace(" ", "-")}`;
+
+  const textShape = new Text(text, coords, fontSize);
+  const textSize = textShape.getSize();
+
+  textShape.node.innerHTML = `
+  <textPath href="#${id}">${text}</textPath>
+  `;
+
+  const textPath = new Path();
+  textPath.node.setAttribute("stroke", "red");
+  textPath.node.setAttribute("id", id);
+
+  const setCoords = ({ x, y }) => {
+    const startPathD = `M ${x},${y} h 0`;
+    const endPathD = `M ${x},${y} h ${textSize.width}`;
+    textPath.node.setAttribute("d", endPathD);
+    textPath.node.innerHTML = `
+    <animate
+      attributeName="d"
+      from="${startPathD}"
+      to="${endPathD}"
+      dur="${animationDuration}s"
+      fill="freeze"
+      begin="0s" />
+    `;
+  };
+
+  setCoords(coords);
+
+  g.appendChild(textPath.node);
+  g.appendChild(textShape.node);
+
+  return {
+    node: g,
+    setCoords,
+    textNode: textShape.node,
+    intrinsicSize: textSize
   };
 }
 

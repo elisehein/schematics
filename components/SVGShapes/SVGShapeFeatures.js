@@ -30,3 +30,24 @@ export const withOptionalArrowHead = ({ node }, arrowHeadMarker) => ({
     node.setAttribute("marker-end", `url(#${arrowHeadMarker.node.id})`);
   }
 });
+
+export const havingIntrinsicSize = ({ node }) => ({
+  // Temporarily render the node off-screen to get the size via bounding box
+  getSize() {
+    const tmp = node.cloneNode(true);
+
+    tmp.style.position = "absolute";
+    tmp.style.left = "-1000px";
+    tmp.style.top = "-1000px";
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.appendChild(tmp);
+    document.body.appendChild(svg);
+
+    const { width, height } = tmp.getBBox();
+
+    svg.remove();
+
+    return { width, height };
+  }
+});

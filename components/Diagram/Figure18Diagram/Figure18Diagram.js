@@ -3,7 +3,7 @@ import Diagram from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
-import { Line, Text } from "../../SVGShapes/SVGShapes.js";
+import { Line, TypingText, Text } from "../../SVGShapes/SVGShapes.js";
 
 const firstBox = "good?";
 
@@ -47,33 +47,26 @@ export default class Figure18Diagram extends Diagram {
         this.drawOptionArrow({ originBoxText, option, onDone: () => {} });
       } else if (animated) {
         setTimeout(() => {
-          this.drawOptionLabel(originBoxText, option);
+          this.drawOptionLabel(originBoxText, option, 0.2 + (0.4 * index));
         }, 700 + (index * 400));
       } else {
-        this.drawOptionLabel(originBoxText, option);
+        this.drawOptionLabel(originBoxText, option, 5);
       }
     });
   }
 
-  drawOptionLabel(originBoxText, option) {
+  drawOptionLabel(originBoxText, option, animationDuration) {
     // Set zero origin to just get the text size at first, override coords later.
-    const label = new Text(option.label, { x: 0, y: 0 }, 8);
+    const label = new TypingText(option.label, { x: 0, y: 0 }, animationDuration, 8);
+    label.textNode.style.cursor = "pointer";
 
+    const originBoxCoords = this._grid.getBoxCoords(data[originBoxText].position);
+    const { x, y } = this._grid.getOptionLabelCoords(originBoxCoords, option.labelPosition, label.intrinsicSize);
+
+    label.setCoords({ x, y });
     this.addSVGChildElement(label.node);
 
-    const labelSize = label.node.getBBox();
-    const originBoxCoords = this._grid.getBoxCoords(data[originBoxText].position);
-    const { x, y } = this._grid.getOptionLabelCoords(originBoxCoords, option.labelPosition, labelSize);
-
-    label.node.setAttribute("x", x);
-    label.node.setAttribute("y", y);
-    label.node.setAttribute(
-      "transform-origin",
-      `${x + (labelSize.width / 2)} ${y + (labelSize.height / 2)}`
-    );
-    label.node.style.cursor = "pointer";
-
-    const underline = this.drawOptionLabelUnderline(x, y, labelSize);
+    const underline = this.drawOptionLabelUnderline(x, y, label.intrinsicSize);
     this.bindOptionLabelClick(label.node, underline.node, originBoxText, option);
   }
 
