@@ -31,6 +31,36 @@ export const withOptionalArrowHead = ({ node }, arrowHeadMarker) => ({
   }
 });
 
+export const animatable = ({ node }) => ({
+  animateAttribute(attributeName, { from, to, durSeconds, values, fill, begin }) {
+    const animate = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+
+    animate.setAttribute("attributeName", attributeName);
+    animate.setAttribute("dur", `${durSeconds}s`);
+
+    if (from && to) {
+      animate.setAttribute("from", from);
+      animate.setAttribute("to", to);
+    } else if (values) {
+      animate.setAttribute("values", values);
+    }
+
+    if (begin) {
+      animate.setAttribute("begin", begin);
+    }
+
+    if (fill) {
+      animate.setAttribute("fill", fill);
+    }
+
+    node.appendChild(animate);
+  },
+
+  beginAnimation() {
+    node.querySelector("animate").beginElement();
+  }
+});
+
 export const havingIntrinsicSize = ({ node }) => ({
   // Temporarily render the node off-screen to get the size via bounding box
   getSize() {

@@ -1,5 +1,5 @@
 /* eslint-disable id-length */
-import { strokeable, fillable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
+import { strokeable, fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
 
 /*
  * The components here are not Web Components but rather your vanilla
@@ -56,6 +56,7 @@ export function Line(...points) {
     self,
     strokeable(self),
     havingLength(self),
+    animatable(self),
     withOptionalArrowHead(self, Marker.arrowHead)
   );
 
@@ -73,6 +74,7 @@ export function Circle(cx, cy, r) {
 
   return Object.assign(
     self,
+    animatable(self),
     strokeable(self),
     fillable(self)
   );
@@ -89,6 +91,7 @@ export function Path(d) {
 
   return Object.assign(
     self,
+    animatable(self),
     strokeable(self),
     fillable(self),
     havingLength(self),
@@ -194,15 +197,8 @@ export function TypingText(text, fontSize = 10) {
     if (duration == 0) {
       textPath.node.setAttribute("d", endPathD);
     } else {
-      textPath.node.innerHTML = `
-      <animate
-        attributeName="d"
-        from="${startPathD}"
-        to="${endPathD}"
-        dur="${duration}s"
-        fill="freeze" />
-      `;
-      textPath.node.querySelector("animate").beginElement();
+      textPath.animateAttribute("d", { from: startPathD, to: endPathD, durSeconds: duration, fill: "freeze" });
+      textPath.beginAnimation();
     }
   };
 
