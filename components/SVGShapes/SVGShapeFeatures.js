@@ -87,18 +87,27 @@ export const animatable = ({ node }) => ({
     });
   },
 
-  beginAnimation(id) {
+  beginAnimation(id = null, callback = () => {}) {
+    const animationNode = this.getTargetAnimationNode(id);
+
+    if (animationNode) {
+      animationNode.addEventListener("endEvent", callback, false);
+      animationNode.beginElement();
+    }
+  },
+
+  getTargetAnimationNode(id) {
     if (id) {
-      node.querySelector(`[id="${id}"]`).beginElement();
+      return node.querySelector(`[id="${id}"]`);
     } else {
       // If no ID is given, assume that the node holds a single animation node
       const animationNode = node.firstChild;
 
-      if (animationNode) {
-        animationNode.beginElement();
-      } else {
+      if (!animationNode) {
         console.warn("No animation node to trigger.");
       }
+
+      return animationNode;
     }
   }
 });

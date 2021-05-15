@@ -49,7 +49,7 @@ export default class Figure18Diagram extends Diagram {
       }
 
       const typingDurationSeconds = animated ? 0.2 + (index * 0.3 ): 0;
-      const labelAppearanceDelayMS = animated ?  300 + (index * 600 ) : 0;
+      const labelAppearanceDelayMS = animated ? 200 + (index * 600 ) : 0;
 
       setTimeout(() => {
         this.drawOptionLabel(originBoxText, option, typingDurationSeconds);
@@ -66,7 +66,7 @@ export default class Figure18Diagram extends Diagram {
     this.addSVGChildElement(label.node);
     label.textNode.style.cursor = "pointer";
 
-    label.animate()
+    label.animateTyping();
 
     setTimeout(() => {
       const underline = this.drawOptionLabelUnderline(x, y, label.intrinsicSize);
@@ -105,11 +105,9 @@ export default class Figure18Diagram extends Diagram {
 
     this.addSVGChildElement(arrowLine.node);
 
-    this.animateLineDrawing(arrowLine.node, {
-      onDone: () => {
-        arrowLine.addArrowHead(this.registerMarker.bind(this));
-        onDone();
-      }
+    this.animateLineDrawing(arrowLine.node, () => {
+      arrowLine.addArrowHead(this.registerMarker.bind(this));
+      onDone();
     })
   }
 
@@ -122,6 +120,7 @@ export default class Figure18Diagram extends Diagram {
       ...coords,
       ...boxSize
     };
+
     const boxedText = new BoxedText(text, fontSize, boxGeometry, originPoint);
     boxedText.stroke(0.8);
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
@@ -129,13 +128,14 @@ export default class Figure18Diagram extends Diagram {
     this.addSVGChildElement(boxedText.node);
 
     if (animated) {
-      this.animateLineDrawing(boxedText.rectNode, { onDone });
+      this.animateLineDrawing(boxedText.rectNode);
+      boxedText.animateTyping(onDone);
     } else {
       onDone();
     }
   }
 
-  animateLineDrawing(node, { onDone }) {
+  animateLineDrawing(node, onDone = () => {}) {
     this.style.setProperty("--animatable-line-length", node.getTotalLength());
     node.style.animation = "draw-line calc(.15s * (var(--animatable-line-length) / 50)) ease-out";
     node.addEventListener("animationend", onDone);

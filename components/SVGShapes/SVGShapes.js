@@ -202,7 +202,8 @@ export function TypingText(text, { x, y }, animationDuration, fontSize = 10) {
 
   return {
     node: g,
-    animate: () => textPath.beginAnimation(),
+    animateTyping: (...args) => textPath.beginAnimation(...args),
+    onDone: textPath.onDone,
     textNode: textShape.node,
     intrinsicSize: textSize
   };

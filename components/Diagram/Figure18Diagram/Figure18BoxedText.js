@@ -1,6 +1,6 @@
 /* eslint-disable id-length */
 import { havingLength, strokeable } from "../../SVGShapes/SVGShapeFeatures.js";
-import { Text, Path, createSVGElement } from "../../SVGShapes/SVGShapes.js";
+import { TypingText, Path, createSVGElement, Text } from "../../SVGShapes/SVGShapes.js";
 import { targetSideTouchPoints } from "./data.js";
 
 export default function Figure18BoxedText(text, fontSize, { x, y, width, height }, targetSideTouchPoint) {
@@ -9,19 +9,26 @@ export default function Figure18BoxedText(text, fontSize, { x, y, width, height 
   const rect = getRectAsPathWithOriginPoint({ x, y, width, height, originPoint: targetSideTouchPoint });
   g.appendChild(rect.node);
 
-  const textShape = new Text(
-    text,
-    { x: x + (width / 2.0), y: y + (height / 2.0) },
-    fontSize
-  );
-  textShape.node.setAttribute("dominant-baseline", "middle");
-  textShape.node.setAttribute("text-anchor", "middle");
+  const sizerText = new Text(text, { x: 0, y: 0 }, fontSize);
+  const textSize = sizerText.getSize();
+
+  // 4.0 is a magic number that results in the text being vertically aligned
+  const textY = y + (height / 2.0) + (textSize.height / 4.0);
+  const textX = x + (width / 2.0) - (textSize.width / 2.0);
+
+  const typingDuration = Math.floor(Math.random() * (0.6 - 0.3 + 1)) + 0.3;
+  const textShape = new TypingText(text, { x: textX, y: textY }, typingDuration, fontSize);
 
   g.appendChild(textShape.node);
+
+  const animateTyping = onDone => {
+    textShape.animateTyping(null, onDone);
+  }
 
   return Object.assign(
     {
       node: g,
+      animateTyping,
       rectNode: rect.node,
       textNode: textShape.node
     },
