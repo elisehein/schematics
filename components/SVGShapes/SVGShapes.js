@@ -194,7 +194,7 @@ export function TypingText(text, { x, y }, animationDuration, fontSize = 10) {
     textPath.node.setAttribute("d", endPathD);
   } else {
     textPath.animateAttribute("d", {
-      from: startPathD, to: endPathD, dur: animationDuration, fill: "freeze"
+      from: startPathD, to: endPathD, dur: animationDuration, fill: "freeze", begin: "indefinite"
     });
   }
 
@@ -203,7 +203,6 @@ export function TypingText(text, { x, y }, animationDuration, fontSize = 10) {
   return {
     node: g,
     animateTyping: (...args) => textPath.beginAnimation(...args),
-    onDone: textPath.onDone,
     textNode: textShape.node,
     intrinsicSize: textSize
   };

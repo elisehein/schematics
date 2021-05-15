@@ -3,7 +3,7 @@ import { havingLength, strokeable } from "../../SVGShapes/SVGShapeFeatures.js";
 import { TypingText, Path, createSVGElement, Text } from "../../SVGShapes/SVGShapes.js";
 import { targetSideTouchPoints } from "./data.js";
 
-export default function Figure18BoxedText(text, fontSize, { x, y, width, height }, targetSideTouchPoint) {
+export default function Figure18BoxedText(text, fontSize, { x, y, width, height }, animated, targetSideTouchPoint) {
   const g = createSVGElement("g");
 
   const rect = getRectAsPathWithOriginPoint({ x, y, width, height, originPoint: targetSideTouchPoint });
@@ -16,7 +16,7 @@ export default function Figure18BoxedText(text, fontSize, { x, y, width, height 
   const textY = y + (height / 2.0) + (textSize.height / 4.0);
   const textX = x + (width / 2.0) - (textSize.width / 2.0);
 
-  const typingDuration = Math.floor(Math.random() * (0.6 - 0.3 + 1)) + 0.3;
+  const typingDuration = animated ? Math.floor(Math.random() * (0.6 - 0.3 + 1)) + 0.3 : 0;
   const textShape = new TypingText(text, { x: textX, y: textY }, typingDuration, fontSize);
 
   g.appendChild(textShape.node);

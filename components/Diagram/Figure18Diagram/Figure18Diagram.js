@@ -121,7 +121,7 @@ export default class Figure18Diagram extends Diagram {
       ...boxSize
     };
 
-    const boxedText = new BoxedText(text, fontSize, boxGeometry, originPoint);
+    const boxedText = new BoxedText(text, fontSize, boxGeometry, animated, originPoint);
     boxedText.stroke(0.8);
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
 
