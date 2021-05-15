@@ -58,15 +58,15 @@ export default class Figure18Diagram extends Diagram {
   }
 
   drawOptionLabel(originBoxText, option, animationDurationSeconds) {
-    const label = new TypingText(option.label, 8);
+    const sizerLabel = new Text(option.label, { x: 0, y: 0 }, 8);
+    const originBoxCoords = this._grid.getBoxCoords(data[originBoxText].position);
+    const { x, y } = this._grid.getOptionLabelCoords(originBoxCoords, option.labelPosition, sizerLabel.getSize());
+
+    const label = new TypingText(option.label, { x, y }, animationDurationSeconds, 8);
+    this.addSVGChildElement(label.node);
     label.textNode.style.cursor = "pointer";
 
-    const originBoxCoords = this._grid.getBoxCoords(data[originBoxText].position);
-    const { x, y } = this._grid.getOptionLabelCoords(originBoxCoords, option.labelPosition, label.intrinsicSize);
-
-    label.configure({ x, y });
-    this.addSVGChildElement(label.node);
-    label.animate(animationDurationSeconds);
+    label.animate()
 
     setTimeout(() => {
       const underline = this.drawOptionLabelUnderline(x, y, label.intrinsicSize);

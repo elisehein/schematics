@@ -120,8 +120,11 @@ export function Arc({ x, y, radius }, { startAngle, endAngle }) {
 
 export function Text(text, { x, y }, fontSize = 10) {
   const node = createSVGElement("text");
-  node.setAttribute("x", x);
-  node.setAttribute("y", y);
+
+  if (x !== null && y !== null) {
+    node.setAttribute("x", x);
+    node.setAttribute("y", y);
+  }
 
   // Setting the font size via an attribute, we get the benefit of scaling
   // according to the coordinate system specified in viewBox.
@@ -172,45 +175,30 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
   };
 }
 
-export function TypingText(text, fontSize = 10) {
+export function TypingText(text, { x, y }, animationDuration, fontSize = 10) {
   const g = createSVGElement("g");
+  const id = `text-path-${Math.round(x)}-${Math.round(y)}`;
 
-  const textShape = new Text(text, { x: 0, y: 0 }, fontSize);
+  const textShape = new Text(text, { x: null, y: null }, fontSize);
   const textSize = textShape.getSize();
-
-  textShape.node.innerHTML = `<textPath>${text}</textPath>`;
+  textShape.node.innerHTML = `<textPath href="#${id}">${text}</textPath>`;
 
   const textPath = new Path();
-  textPath.node.setAttribute("stroke", "transparent");
+  textPath.node.setAttribute("stroke", "red");
+  textPath.node.setAttribute("id", id);
 
-  let startPathD, endPathD;
+  const startPathD = `M ${x},${y} h 0`;
+  const endPathD = `M ${x},${y} h ${textSize.width}`;
 
-  const configure = ({ x, y }) => {
-    const id = `text-path-${Math.round(x)}-${Math.round(y)}`;
-    startPathD = `M ${x},${y} h 0`;
-    endPathD = `M ${x},${y} h ${textSize.width}`;
-    textPath.node.setAttribute("id", id);
-    textShape.node.querySelector("textPath").setAttribute("href", `#${id}`);
-  };
+  textPath.animateAttribute("d", {
+    from: startPathD, to: endPathD, dur: animationDuration, fill: "freeze"
+  });
 
-  const animate = duration => {
-    if (duration == 0) {
-      textPath.node.setAttribute("d", endPathD);
-    } else {
-      textPath.animateAttribute("d", {
-        from: startPathD, to: endPathD, dur: duration, fill: "freeze"
-      });
-      textPath.beginAnimation();
-    }
-  };
-
-  g.appendChild(textPath.node);
-  g.appendChild(textShape.node);
+  g.append(textPath.node, textShape.node);
 
   return {
     node: g,
-    configure,
-    animate,
+    animate: () => textPath.beginAnimation(),
     textNode: textShape.node,
     intrinsicSize: textSize
   };
