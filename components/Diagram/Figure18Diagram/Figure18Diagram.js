@@ -45,18 +45,19 @@ export default class Figure18Diagram extends Diagram {
     options.forEach((option, index) => {
       if (option.label == "") {
         this.drawOptionArrow({ originBoxText, option, onDone: () => {} });
+        return;
       }
 
-      const typingDuration = animated ? 0.2 + (index * 0.3 ): 0;
-      const labelAppearanceDelay = animated ?  300 + (index * 600 ) : 0;
+      const typingDurationSeconds = animated ? 0.2 + (index * 0.3 ): 0;
+      const labelAppearanceDelayMS = animated ?  300 + (index * 600 ) : 0;
 
       setTimeout(() => {
-        this.drawOptionLabel(originBoxText, option, typingDuration);
-      }, labelAppearanceDelay);
+        this.drawOptionLabel(originBoxText, option, typingDurationSeconds);
+      }, labelAppearanceDelayMS);
     });
   }
 
-  drawOptionLabel(originBoxText, option, animationDuration) {
+  drawOptionLabel(originBoxText, option, animationDurationSeconds) {
     const label = new TypingText(option.label, 8);
     label.textNode.style.cursor = "pointer";
 
@@ -65,10 +66,12 @@ export default class Figure18Diagram extends Diagram {
 
     label.configure({ x, y });
     this.addSVGChildElement(label.node);
-    label.animate(animationDuration);
+    label.animate(animationDurationSeconds);
 
-    const underline = this.drawOptionLabelUnderline(x, y, label.intrinsicSize);
-    this.bindOptionLabelClick(label, underline.node, originBoxText, option);
+    setTimeout(() => {
+      const underline = this.drawOptionLabelUnderline(x, y, label.intrinsicSize);
+      this.bindOptionLabelClick(label, underline.node, originBoxText, option);
+    }, animationDurationSeconds * 1000)
   }
 
   drawOptionLabelUnderline(labelX, labelY, labelSize) {
