@@ -32,7 +32,9 @@ export const withOptionalArrowHead = ({ node }, arrowHeadMarker) => ({
 });
 
 export const animatable = ({ node }) => ({
-  animateAttribute(attributeName, { from, to, durSeconds, values, fill, begin }) {
+  animateAttribute(attributeName, {
+    from, to, durSeconds, values, keyTimes, calcMode, keySplines, repeatCount, fill, begin
+  }) {
     const animate = document.createElementNS("http://www.w3.org/2000/svg", "animate");
 
     animate.setAttribute("attributeName", attributeName);
@@ -45,13 +47,12 @@ export const animatable = ({ node }) => ({
       animate.setAttribute("values", values);
     }
 
-    if (begin) {
-      animate.setAttribute("begin", begin);
-    }
-
-    if (fill) {
-      animate.setAttribute("fill", fill);
-    }
+    const remainingAttributes = { keyTimes, calcMode, keySplines, repeatCount, fill, begin };
+    Object.keys(remainingAttributes).forEach(key => {
+      if (remainingAttributes[key]) {
+        animate.setAttribute(key, remainingAttributes[key]);
+      }
+    });
 
     node.appendChild(animate);
   },

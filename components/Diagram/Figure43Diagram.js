@@ -36,7 +36,7 @@ export default class Figure43Diagram extends Diagram {
   drawSinglePathCubeWithAnimation() {
     const cube = new Path(this.getLeftwardCubePath());
     cube.stroke();
-    cube.node.innerHTML = this.getAnimationNode();
+    this.configureAnimation(cube);
     this.addSVGChildElement(cube.node);
   }
 
@@ -113,27 +113,26 @@ export default class Figure43Diagram extends Diagram {
     `;
   }
 
-  getAnimationNode() {
+  configureAnimation(cube) {
     const easeIn = ".12 0 .39 0";
     const easeOut = ".61 1 .88 1"
 
-    return `
-    <animate
-      attributeName="d"
-      values="
-        ${this.getLeftwardCubePath()};
-        ${this.getMiddleCubePath()};
-        ${this.getRightwardCubePath()};
-        ${this.getMiddleCubePath()};
-        ${this.getLeftwardCubePath()}"
-      keyTimes="0; 0.25; 0.5; 0.75; 1"
-      calcMode="spline"
-      keySplines="${easeIn}; ${easeOut}; ${easeIn}; ${easeOut}"
-      dur="15s"
-      begin="0s"
-      repeatCount="indefinite"
-      fill="freeze" />
-    `;
+    cube.animateAttribute("d", {
+      values: `
+       ${this.getLeftwardCubePath()};
+       ${this.getMiddleCubePath()};
+       ${this.getRightwardCubePath()};
+       ${this.getMiddleCubePath()};
+       ${this.getLeftwardCubePath()}"
+      `,
+      keyTimes: "0; 0.25; 0.5; 0.75; 1",
+      calcMode: "spline",
+      keySplines: `${easeIn}; ${easeOut}; ${easeIn}; ${easeOut}`,
+      durSeconds: 15,
+      begin: "0s",
+      repeatCount: "infinite",
+      fill: "freeze"
+    });
   }
 }
 
