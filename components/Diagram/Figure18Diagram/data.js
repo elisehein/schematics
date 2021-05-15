@@ -41,7 +41,7 @@ const flowChartData = {
       label: "no",
       target: "stopit.",
       labelPosition: labelPositions.BOTTOM_LEFT_TO_ARROW,
-      touchPoint: targetSideTouchPoints.RIGHT_SIDE_TOP
+      touchPoint: targetSideTouchPoints.TOP_SIDE_MIDDLE
    }]
   },
   "stopit.": {
