@@ -47,15 +47,15 @@ const flowChartData = {
   "stopit.": {
     position: new Figure18DiagramGridPosition(1, 3),
     options: [{
-      label: "OK",
-      target: "good.",
-      labelPosition: labelPositions.BOTTOM_LEFT_TO_ARROW,
-      touchPoint: targetSideTouchPoints.TOP_SIDE_MIDDLE
-    }, {
       label: "no",
       target: "do it.",
       labelPosition: labelPositions.RIGHT_BELOW_ARROW,
       touchPoint: targetSideTouchPoints.BOTTOM_SIDE_MIDDLE
+    }, {
+      label: "OK",
+      target: "good.",
+      labelPosition: labelPositions.BOTTOM_LEFT_TO_ARROW,
+      touchPoint: targetSideTouchPoints.TOP_SIDE_MIDDLE
     }]
   },
   "good.": {
