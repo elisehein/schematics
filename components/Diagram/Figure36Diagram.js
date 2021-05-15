@@ -3,6 +3,7 @@ import { Marker, Circle, Line, Arc } from "../SVGShapes/SVGShapes.js";
 
 const markerID = "circle-marker";
 const anchorMarkerID = "circle-marker--anchor";
+const swingAnimationID = "swing-animation"
 
 export default class Figure36Diagram extends Diagram {
   constructor() {
@@ -40,7 +41,7 @@ export default class Figure36Diagram extends Diagram {
     markerClickOverlay.node.addEventListener("click", () => {
       this.swing({
         onStart: () => {
-          swingingArm.node.querySelector("animateTransform").beginElement();
+          swingingArm.beginAnimation(swingAnimationID);
           markerClickOverlay.node.remove();
           overlayArrow = this.drawOverlayArrow();
         },
@@ -105,7 +106,7 @@ export default class Figure36Diagram extends Diagram {
     const swingingArm = this.getDownwardArm();
     this.setMarkers(swingingArm.node, true);
     this.addRotation(swingingArm.node, this._initialAngle);
-    swingingArm.node.innerHTML = this.getSwingAnimationNodeString();
+    this.configureSwingAnimation(swingingArm);
     this.addSVGChildElement(swingingArm.node);
     return swingingArm;
   }
@@ -114,8 +115,7 @@ export default class Figure36Diagram extends Diagram {
     const markerClickOverlay = this.getMarkerCircle(x, y);
     markerClickOverlay.node.style.cursor = "pointer";
     this.addRotation(markerClickOverlay.node, this._initialAngle);
-    markerClickOverlay.node.innerHTML = this.getPulseAnimationNodeString();
-
+    this.configurePulseAnimation(markerClickOverlay);
     this.addSVGChildElement(markerClickOverlay.node);
 
     return markerClickOverlay;
@@ -171,7 +171,7 @@ export default class Figure36Diagram extends Diagram {
     return circle;
   }
 
-  getSwingAnimationNodeString() {
+  configureSwingAnimation(axis) {
     const rotationValue = deg => `${deg} ${this._anchorPoint.x} ${this._anchorPoint.y}`;
     const swingAngle = swingIndex => this._angleChangeStep * (this._totalSwings - (swingIndex + 1));
 
@@ -184,47 +184,42 @@ export default class Figure36Diagram extends Diagram {
       return 0 + (1 / (this._totalSwings - 1) * index);
     });
 
-    return `
-    <animateTransform
-      attributeName="transform"
-      attributeType="XML"
-      type="rotate"
-      values="${rotationValues.join("; ")}"
-      keyTimes="${times.join("; ")}"
-      calcMode="spline"
-      keySplines="${Array(this._totalSwings - 1).fill(this._swingEasing).join("; ")}"
-      dur="${this._totalSwings * this._swingDuration}s"
-      begin="indefinite"
-      repeatCount="1"
-      fill="freeze" />
-    `;
+    axis.animateTransform("rotate", {
+      values: rotationValues.join("; "),
+      keyTimes: times.join("; "),
+      calcMode: "spline",
+      keySplines: Array(this._totalSwings - 1).fill(this._swingEasing).join("; "),
+      dur: this._totalSwings * this._swingDuration,
+      begin: "indefinite",
+      repeatCount: "1",
+      fill: "freeze",
+      id: swingAnimationID
+    });
   }
 
-  getPulseAnimationNodeString() {
+  configurePulseAnimation(clickOverlay) {
     const keyTimes = "0; 0.3; 1";
-    const duration = "2.2s";
+    const dur = 2.2;
     const begin = "2s;"
     const pulseEasing = ".25 1 .5 1";
 
-    return `
-    <animate
-      attributeName="r"
-      begin="${begin}"
-      dur="${duration}"
-      repeatCount="indefinite"
-      values="${this._markerRadius}; ${this._markerRadius * 1.7}; ${this._markerRadius}"
-      calcMode="spline"
-      keySplines="${pulseEasing}; 0 0 1 1"
-      keyTimes="${keyTimes}" />
-    <animate
-      attributeType="xml"
-      attributeName="stroke-opacity"
-      begin="${begin}"
-      dur="${duration}"
-      values="1; 0; 0"
-      keyTimes="${keyTimes}"
-      repeatCount="indefinite" />
-    `;
+    clickOverlay.animateAttribute("r", {
+      begin,
+      dur,
+      repeatCount: "indefinite",
+      values: `${this._markerRadius}; ${this._markerRadius * 1.7}; ${this._markerRadius}`,
+      calcMode: "spline",
+      keySplines: `${pulseEasing}; 0 0 1 1`,
+      keyTimes
+    });
+
+    clickOverlay.animateAttribute({ type: "xml", name: "stroke-opacity" }, {
+      begin,
+      dur,
+      values: "1; 0; 0",
+      repeatCount: "indefinite",
+      keyTimes
+    });
   }
 }
 

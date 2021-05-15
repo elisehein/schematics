@@ -31,14 +31,24 @@ export const withOptionalArrowHead = ({ node }, arrowHeadMarker) => ({
   }
 });
 
+// eslint-disable-next-line max-lines-per-function
 export const animatable = ({ node }) => ({
-  animateAttribute(attributeName, {
-    from, to, durSeconds, values, keyTimes, calcMode, keySplines, repeatCount, fill, begin
+  animateAttribute(attribute, {
+    from, to, dur, values, keyTimes, calcMode, keySplines, repeatCount, fill, begin, id
   }) {
     const animate = document.createElementNS("http://www.w3.org/2000/svg", "animate");
 
+    let attributeName, attributeType;
+
+    if (typeof attribute == "string") {
+      attributeName = attribute;
+    } else {
+      attributeName = attribute.name;
+      attributeType = attribute.type;
+    }
+
     animate.setAttribute("attributeName", attributeName);
-    animate.setAttribute("dur", `${durSeconds}s`);
+    animate.setAttribute("dur", `${dur}s`);
 
     if (from && to) {
       animate.setAttribute("from", from);
@@ -47,18 +57,43 @@ export const animatable = ({ node }) => ({
       animate.setAttribute("values", values);
     }
 
-    const remainingAttributes = { keyTimes, calcMode, keySplines, repeatCount, fill, begin };
-    Object.keys(remainingAttributes).forEach(key => {
-      if (remainingAttributes[key]) {
-        animate.setAttribute(key, remainingAttributes[key]);
-      }
-    });
+    this.setAttributesIfPresent({
+      attributeType, keyTimes, calcMode, keySplines, repeatCount, fill, begin, id
+    }, animate);
 
     node.appendChild(animate);
   },
 
-  beginAnimation() {
-    node.querySelector("animate").beginElement();
+  animateTransform(type, { values, keyTimes, calcMode, keySplines, dur, begin, repeatCount, fill, id }) {
+    const animate = document.createElementNS("http://www.w3.org/2000/svg", "animateTransform");
+    animate.setAttribute("attributeName", "transform");
+    animate.setAttribute("attributeType", "XML");
+    animate.setAttribute("type", type);
+    animate.setAttribute("values", values);
+    animate.setAttribute("dur", `${dur}s`);
+
+    this.setAttributesIfPresent({
+      keyTimes, calcMode, keySplines, begin, repeatCount, fill, id
+    }, animate);
+
+    node.appendChild(animate);
+  },
+
+  setAttributesIfPresent(optionalAttributes, animateNode) {
+    Object.keys(optionalAttributes).forEach(key => {
+      if (optionalAttributes[key]) {
+        animateNode.setAttribute(key, optionalAttributes[key]);
+      }
+    });
+  },
+
+  beginAnimation(id) {
+    if (id) {
+      node.querySelector(`[id="${id}"]`).beginElement();
+    } else {
+      // If no ID is given, assume that the node holds a single animation node
+      node.firstChild.beginElement();
+    }
   }
 });
 

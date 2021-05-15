@@ -128,7 +128,7 @@ export default class Figure43Diagram extends Diagram {
       keyTimes: "0; 0.25; 0.5; 0.75; 1",
       calcMode: "spline",
       keySplines: `${easeIn}; ${easeOut}; ${easeIn}; ${easeOut}`,
-      durSeconds: 15,
+      dur: 15,
       begin: "0s",
       repeatCount: "infinite",
       fill: "freeze"

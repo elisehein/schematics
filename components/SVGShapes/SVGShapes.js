@@ -198,7 +198,7 @@ export function TypingText(text, fontSize = 10) {
       textPath.node.setAttribute("d", endPathD);
     } else {
       textPath.animateAttribute("d", {
-        from: startPathD, to: endPathD, durSeconds: duration, fill: "freeze"
+        from: startPathD, to: endPathD, dur: duration, fill: "freeze"
       });
       textPath.beginAnimation();
     }
