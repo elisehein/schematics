@@ -181,7 +181,7 @@ export function TypingText(text, fontSize = 10) {
   textShape.node.innerHTML = `<textPath>${text}</textPath>`;
 
   const textPath = new Path();
-  textPath.node.setAttribute("stroke", "red");
+  textPath.node.setAttribute("stroke", "transparent");
 
   let startPathD, endPathD;
 

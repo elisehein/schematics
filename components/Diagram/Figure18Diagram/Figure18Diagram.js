@@ -45,13 +45,14 @@ export default class Figure18Diagram extends Diagram {
     options.forEach((option, index) => {
       if (option.label == "") {
         this.drawOptionArrow({ originBoxText, option, onDone: () => {} });
-      } else if (animated) {
-        setTimeout(() => {
-          this.drawOptionLabel(originBoxText, option, 4);
-        }, 700 + (index * 400));
-      } else {
-        this.drawOptionLabel(originBoxText, option, 0);
       }
+
+      const typingDuration = animated ? 0.2 + (index * 0.3 ): 0;
+      const labelAppearanceDelay = animated ?  300 + (index * 600 ) : 0;
+
+      setTimeout(() => {
+        this.drawOptionLabel(originBoxText, option, typingDuration);
+      }, labelAppearanceDelay);
     });
   }
 
