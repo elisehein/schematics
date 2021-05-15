@@ -92,7 +92,13 @@ export const animatable = ({ node }) => ({
       node.querySelector(`[id="${id}"]`).beginElement();
     } else {
       // If no ID is given, assume that the node holds a single animation node
-      node.firstChild.beginElement();
+      const animationNode = node.firstChild;
+
+      if (animationNode) {
+        animationNode.beginElement();
+      } else {
+        console.warn("No animation node to trigger.");
+      }
     }
   }
 });

@@ -184,15 +184,19 @@ export function TypingText(text, { x, y }, animationDuration, fontSize = 10) {
   textShape.node.innerHTML = `<textPath href="#${id}">${text}</textPath>`;
 
   const textPath = new Path();
-  textPath.node.setAttribute("stroke", "red");
+  textPath.stroke(0);
   textPath.node.setAttribute("id", id);
 
   const startPathD = `M ${x},${y} h 0`;
   const endPathD = `M ${x},${y} h ${textSize.width}`;
 
-  textPath.animateAttribute("d", {
-    from: startPathD, to: endPathD, dur: animationDuration, fill: "freeze"
-  });
+  if (animationDuration == 0) {
+    textPath.node.setAttribute("d", endPathD);
+  } else {
+    textPath.animateAttribute("d", {
+      from: startPathD, to: endPathD, dur: animationDuration, fill: "freeze"
+    });
+  }
 
   g.append(textPath.node, textShape.node);
 
