@@ -42,9 +42,7 @@ export default class Figure14Diagram extends Diagram {
                              C 90,135, 210,135, 210,95");
     spiral.stroke(2);
 
-    this.style.setProperty("--animatable-line-length", spiral.getLength());
-    spiral.node.style.animation = "draw-line 10s linear";
-
+    spiral.animateStroke("10s", "linear");
     this.addSVGChildElement(spiral.node);
   }
 }

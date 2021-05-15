@@ -29,9 +29,7 @@ export default function Figure18BoxedText(text, fontSize, { x, y, width, height 
   return Object.assign(
     {
       node: g,
-      animateTyping,
-      rectNode: rect.node,
-      textNode: textShape.node
+      animateTyping
     },
     havingLength({ node: rect.node }),
     strokeable({ node: rect.node })

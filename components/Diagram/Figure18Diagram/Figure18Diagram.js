@@ -105,7 +105,7 @@ export default class Figure18Diagram extends Diagram {
 
     this.addSVGChildElement(arrowLine.node);
 
-    this.animateLineDrawing(arrowLine.node, () => {
+    this.animateBasedOnLength(arrowLine, () => {
       arrowLine.addArrowHead(this.registerMarker.bind(this));
       onDone();
     })
@@ -128,17 +128,16 @@ export default class Figure18Diagram extends Diagram {
     this.addSVGChildElement(boxedText.node);
 
     if (animated) {
-      this.animateLineDrawing(boxedText.rectNode);
+      this.animateBasedOnLength(boxedText);
       boxedText.animateTyping(onDone);
     } else {
       onDone();
     }
   }
 
-  animateLineDrawing(node, onDone = () => {}) {
-    this.style.setProperty("--animatable-line-length", node.getTotalLength());
-    node.style.animation = "draw-line calc(.15s * (var(--animatable-line-length) / 50)) ease-out";
-    node.addEventListener("animationend", onDone);
+  animateBasedOnLength(path, onDone = () => {}) {
+    const durationExpression = lengthCSSProperty => `calc(.15s * (var(${lengthCSSProperty}) / 50))`;
+    path.animateStroke(durationExpression, "ease-out", onDone);
   }
 }
 

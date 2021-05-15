@@ -8,6 +8,19 @@ export const strokeable = ({ node }) => ({
 
   dash(dashWidth) {
     node.style.strokeDasharray = dashWidth;
+  },
+
+  animateStroke(durationExpression, easing, onDone = () => {}) {
+    const cssProperty = "--animatable-line-length";
+    let duration = durationExpression;
+
+    if (typeof durationExpression == "function") {
+      duration = durationExpression(cssProperty);
+    }
+
+    node.style.setProperty(cssProperty, node.getTotalLength());
+    node.style.animation = `draw-line ${duration} ${easing}`;
+    node.addEventListener("animationend", onDone);
   }
 });
 

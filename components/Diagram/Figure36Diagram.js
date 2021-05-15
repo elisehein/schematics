@@ -66,9 +66,8 @@ export default class Figure36Diagram extends Diagram {
   drawOverlayArrow() {
     const arc = this.getArrowArc();
     arc.stroke(8, "var(--color-page-bg)");
-    this.style.setProperty("--animatable-line-length", arc.getLength());
     const cssEasing = `cubic-bezier(${this._swingEasing.split(" ").join(",")})`;
-    arc.node.style.animation = `draw-line ${this._swingDuration}s ${cssEasing}`;
+    arc.animateStroke(`${this._swingDuration}s`, cssEasing);
     this.addSVGChildElement(arc.node);
     return arc;
   }
