@@ -40,9 +40,9 @@ export default class FigureList extends HTMLElement {
     `;
 
     return `
-    <li class="${this.itemClass()} ${this.itemClass()}--directional">
+    <li class="${this.itemClass()} ${this.directionalItemClass()}">
       <a id="${this.directionalLinkID(direction)}" class="figure-list__directional-link" aria-labelledby="${labelID}">
-        ${isNext ? `${label} &rarr;` : `&larr; ${label}`}
+        ${isNext ? `${label}<span>&rarr;</span>` : `<span>&larr;</span>${label}`}
       </a>
     </li>
     `;
@@ -69,13 +69,15 @@ export default class FigureList extends HTMLElement {
 
   configureDirectionalLink(direction) {
     const linkNode = document.getElementById(this.directionalLinkID(direction));
+    const itemNode = linkNode.closest(`.${this.directionalItemClass()}`);
     const targetNum = this.nums[this.activeNumIndex + (direction == DIRECTION.next ? 1 : -1)];
 
     if (targetNum) {
       linkNode.setAttribute("href", `#fig${targetNum}`);
+      itemNode.setAttribute("aria-hidden", false);
     } else {
-      linkNode.setAttribute("aria-hidden", true);
       linkNode.removeAttribute("href");
+      itemNode.setAttribute("aria-hidden", true);
     }
   }
 
@@ -85,6 +87,10 @@ export default class FigureList extends HTMLElement {
 
   itemClass(active = false) {
     return `figure-list__item${active ? "--active" : ""}`;
+  }
+
+  directionalItemClass() {
+    return `${this.itemClass()}--directional`;
   }
 
   get activeNumIndex() {
