@@ -24,6 +24,7 @@ h2 {
   margin-left: calc(var(--baseline) * 8);
   border: var(--h2-border-width) solid var(--color-text-light);
   letter-spacing: .2em;
+  text-shadow: var(--schematics-text-shadow);
 }
 
 h2::before {

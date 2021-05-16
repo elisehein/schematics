@@ -46,6 +46,7 @@
   font-size: var(--ms2);
   line-height: var(--double-baseline);
   letter-spacing: .1em;
+  text-shadow: var(--schematics-text-shadow);
   z-index: 1;
 }
 

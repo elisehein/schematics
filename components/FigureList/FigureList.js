@@ -11,7 +11,8 @@ export default class FigureList extends HTMLElement {
   render() {
     this.innerHTML = `
     <nav>
-      <ul></ul>
+      <ul data-active-item-index></ul>
+      <scan-lines class="figure-list__scan-lines"></scan-lines>
     </nav>
     `;
 
@@ -23,6 +24,7 @@ export default class FigureList extends HTMLElement {
       ${this.renderDirectionalLink(-1)}
       ${this.renderFigureLinks()}
       ${this.renderDirectionalLink(1)}
+      <span class="figure-list__active-underline" role="presentation"></span>
     `;
   }
 
@@ -38,7 +40,7 @@ export default class FigureList extends HTMLElement {
     `;
 
     return `
-    <li class="${this.itemClass()}">
+    <li class="${this.itemClass()} ${this.itemClass()}--directional">
       <a id="${this.directionalLinkID(direction)}" class="figure-list__directional-link" aria-labelledby="${labelID}">
         ${isNext ? `${label} &rarr;` : `&larr; ${label}`}
       </a>
@@ -58,6 +60,7 @@ export default class FigureList extends HTMLElement {
     this.querySelectorAll("[data-figure-link]").forEach(figureLink => {
       figureLink.classList.remove(this.itemClass(true));
     });
+    this.querySelector("[data-active-item-index]").dataset.activeItemIndex = this.activeNumIndex;
     this.querySelector(`[data-figure-link="${num}"]`).classList.add(this.itemClass(true));
 
     this.configureDirectionalLink(DIRECTION.next);
@@ -66,8 +69,7 @@ export default class FigureList extends HTMLElement {
 
   configureDirectionalLink(direction) {
     const linkNode = document.getElementById(this.directionalLinkID(direction));
-    const activeNumIndex = this.nums.indexOf(this.active);
-    const targetNum = this.nums[activeNumIndex + (direction == DIRECTION.next ? 1 : -1)];
+    const targetNum = this.nums[this.activeNumIndex + (direction == DIRECTION.next ? 1 : -1)];
 
     if (targetNum) {
       linkNode.setAttribute("href", `#fig${targetNum}`);
@@ -83,6 +85,10 @@ export default class FigureList extends HTMLElement {
 
   itemClass(active = false) {
     return `figure-list__item${active ? "--active" : ""}`;
+  }
+
+  get activeNumIndex() {
+    return this.nums.indexOf(this.active);
   }
 
   static get observedAttributes()  {

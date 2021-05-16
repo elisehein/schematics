@@ -40,9 +40,11 @@
   --ms1: calc(var(--ms0) * var(--scale-factor));
   --ms2: calc(var(--ms1) * var(--scale-factor));
 
-  --page-padding: 4rem;
+  --page-padding: var(--triple-baseline);
 
-  --standard-animation-duration: .15s;
+  --micro-interaction-animation-duration: .15s;
+
+  --schematics-text-shadow: 0 0 .05em var(--color-text-light);
 }
 
 body {
@@ -91,7 +93,7 @@ footer {
 }
 
 footer > * + * {
-  margin-left: calc(var(--baseline) * 4);
+  margin-left: calc(var(--baseline) * 3);
 }
 
 footer a svg {
@@ -106,7 +108,7 @@ footer a span {
 }
 
 #copyright {
-  opacity: .6;
+  opacity: .9;
 }
 
 .button {

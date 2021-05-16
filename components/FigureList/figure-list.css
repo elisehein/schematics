@@ -1,25 +1,74 @@
 figure-list {
-  --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 20%), 1);
+  --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
 
   display: flex;
+  position: relative;
   align-self: flex-end;
   justify-content: flex-end;
-  font-size: var(--ms-1);
+  font-size: var(--ms0);
   line-height: var(--triple-baseline);
-  letter-spacing: .05em;
+  letter-spacing: .1em;
   color: var(--faded-nav-link-color);
+  text-shadow: var(--schematics-text-shadow);
+}
+
+.figure-list__scan-lines {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  color: var(--color-bg-dark);
+  z-index: 2;
+  pointer-events: none;
+}
+
+figure-list ul {
+  --item-width: 4em;
+  --directional-item-width: 2em;
+  --item-spacing: var(--double-baseline);
+
+  position: relative;
+  overflow: hidden;
+}
+
+figure-list [data-active-item-index="0"] { --active-item-index: 0; }
+figure-list [data-active-item-index="1"] { --active-item-index: 1; }
+figure-list [data-active-item-index="2"] { --active-item-index: 2; }
+figure-list [data-active-item-index="3"] { --active-item-index: 3; }
+figure-list [data-active-item-index="4"] { --active-item-index: 4; }
+
+.figure-list__active-underline {
+  display: block;
+  position: absolute;
+  left:
+    calc(
+      var(--directional-item-width) +
+      ((var(--active-item-index) + 1) * var(--item-spacing)) +
+      (var(--active-item-index) * var(--item-width))
+    );
+  bottom: 0;
+  width: var(--item-width);
+  height: .2em;
+  font-size: var(--ms0);
+  background-color: var(--color-text-light);
+  transition: left var(--micro-interaction-animation-duration) ease-out;
 }
 
 .figure-list__item {
   display: inline-block;
+  float: left;
+  width: var(--item-width);
+  text-align: center;
+}
+
+.figure-list__item--directional {
+  width: 2em;
 }
 
 .figure-list__item + .figure-list__item {
-  margin-left: var(--triple-baseline);
-}
-
-.figure-list__item--active {
-  border-bottom: .2em solid var(--color-text-light);
+  margin-left: var(--item-spacing);
 }
 
 .figure-list__item a {
