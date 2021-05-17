@@ -3,7 +3,7 @@ import Figure18Diagram from "../Diagram/Figure18Diagram/Figure18Diagram.js";
 import Figure36Diagram from "../Diagram/Figure36Diagram.js";
 import Figure43Diagram from "../Diagram/Figure43Diagram.js";
 
-import { getPoetry } from "../../figureData.js";
+import { getPoetry, getTypingDirectives, directives } from "../../figureData.js";
 
 export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
@@ -78,7 +78,12 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    this.querySelector(".schematics-figure__figure__figcaption").innerText = getPoetry(this.num);
+    const captionNode = this.querySelector(".schematics-figure__figure__figcaption");
+    const wrappedPoetry = getPoetry(this.num)
+      .replace(/[^\s]/g, "<span style=\"visibility: hidden\">$&</span>")
+      .replace(/\n/g, "<br/>");
+    captionNode.innerHTML = wrappedPoetry;
+    typeCaption(captionNode, this.num);
   }
 
   className(num) {
@@ -124,3 +129,52 @@ export default class SchematicsFigure extends HTMLElement {
 }
 
 customElements.define("schematics-figure", SchematicsFigure);
+
+function typeCaption(node, figureNum) {
+  const allSpans = node.querySelectorAll("span");
+  const typingDirectives = getTypingDirectives(figureNum);
+
+  handleDirective(0, typingDirectives, allSpans);
+}
+
+function handleDirective(directiveIndex, allDirectives, allSpans, nextUnhandledCharacterIndex = 0) {
+  const directive = allDirectives[directiveIndex];
+
+  if (!directive) {
+    return;
+  }
+
+  const type = directive[0];
+  const data = directive[1];
+
+  if (type == directives.PAUSE) {
+    setTimeout(() => {
+      handleDirective(directiveIndex + 1, allDirectives, allSpans, nextUnhandledCharacterIndex);
+    }, data.durationMS);
+  } else if (type == directives.TYPE) {
+    const delay = 1000 / data.charactersPerSecond;
+    const toIndex = nextUnhandledCharacterIndex + data.numberOfCharacters - 1;
+
+    revealSpans({
+      delay,
+      fromIndex: nextUnhandledCharacterIndex,
+      toIndex,
+      allSpans,
+      onDone: () => {
+        handleDirective(directiveIndex + 1, allDirectives, allSpans, toIndex + 1);
+      }
+    });
+  }
+}
+
+function revealSpans({ delay, fromIndex, toIndex, allSpans, onDone }) {
+  setTimeout(() => {
+    allSpans[fromIndex].style.visibility = "visible";
+
+    if (fromIndex < toIndex) {
+      revealSpans({ delay, fromIndex: fromIndex + 1, toIndex, allSpans, onDone });
+    } else {
+      onDone();
+    }
+  }, delay);
+}
