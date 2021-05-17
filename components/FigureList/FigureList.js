@@ -10,21 +10,24 @@ export default class FigureList extends HTMLElement {
 
   render() {
     this.innerHTML = `
-    <nav>
-      <ul data-active-item-index></ul>
+    <nav data-active-item-index>
+      <ul>${this.renderLinks()}</ul>
+      <span class="figure-list__active-underline" role="presentation"></span>
       <scan-lines class="figure-list__scan-lines"></scan-lines>
     </nav>
     `;
+  }
 
+  renderLinks() {
     if (this.nums === null || !this.nums.length) {
       return;
     }
 
-    this.querySelector("ul").innerHTML = `
+    // eslint-disable-next-line consistent-return
+    return `
       ${this.renderDirectionalLink(-1)}
       ${this.renderFigureLinks()}
       ${this.renderDirectionalLink(1)}
-      <span class="figure-list__active-underline" role="presentation"></span>
     `;
   }
 
@@ -32,6 +35,7 @@ export default class FigureList extends HTMLElement {
     const isNext = direction == DIRECTION.next;
     const labelID = `${isNext ? "next" : "previous"}-link-label`
     const labelText = isNext ? "Next" : "Previous";
+    const targetNum = this.nums[this.activeNumIndex + (isNext ? 1 : -1)];
 
     const label = `
     <span class="figure-list__directional-link__label" id="${labelID}">
@@ -39,10 +43,18 @@ export default class FigureList extends HTMLElement {
     </span>
     `;
 
+    const anchorContents = isNext ? `${label}<span>&rarr;</span>` : `<span>&larr;</span>${label}`;
+
     return `
-    <li class="${this.itemClass()} ${this.directionalItemClass()}">
-      <a id="${this.directionalLinkID(direction)}" class="figure-list__directional-link" aria-labelledby="${labelID}">
-        ${isNext ? `${label}<span>&rarr;</span>` : `<span>&larr;</span>${label}`}
+    <li
+      class="${this.itemClass()} ${this.directionalItemClass()}"
+      aria-hidden="${targetNum ? "false" : "true"}" >
+      <a
+        id="${this.directionalLinkID(direction)}"
+        class="figure-list__directional-link"
+        aria-labelledby="${labelID}"
+        ${targetNum ? `href="#fig${targetNum}"` : ""} >
+        ${anchorContents}
       </a>
     </li>
     `;
@@ -50,35 +62,15 @@ export default class FigureList extends HTMLElement {
 
   renderFigureLinks() {
     return this.nums.map(num => `
-      <li class="${this.itemClass()}" data-figure-link="${num}">
+      <li class="${this.itemClass(num == this.active)}" data-figure-link="${num}">
         <a href="#fig${num}">fig. ${num}</a>
       </li>
     `).join("");
   }
 
-  switchActiveLink(num) {
-    this.querySelectorAll("[data-figure-link]").forEach(figureLink => {
-      figureLink.classList.remove(this.itemClass(true));
-    });
+  update() {
     this.querySelector("[data-active-item-index]").dataset.activeItemIndex = this.activeNumIndex;
-    this.querySelector(`[data-figure-link="${num}"]`).classList.add(this.itemClass(true));
-
-    this.configureDirectionalLink(DIRECTION.next);
-    this.configureDirectionalLink(DIRECTION.previous);
-  }
-
-  configureDirectionalLink(direction) {
-    const linkNode = document.getElementById(this.directionalLinkID(direction));
-    const itemNode = linkNode.closest(`.${this.directionalItemClass()}`);
-    const targetNum = this.nums[this.activeNumIndex + (direction == DIRECTION.next ? 1 : -1)];
-
-    if (targetNum) {
-      linkNode.setAttribute("href", `#fig${targetNum}`);
-      itemNode.setAttribute("aria-hidden", false);
-    } else {
-      linkNode.removeAttribute("href");
-      itemNode.setAttribute("aria-hidden", true);
-    }
+    this.querySelector("ul").innerHTML = this.renderLinks();
   }
 
   directionalLinkID(direction) {
@@ -86,7 +78,8 @@ export default class FigureList extends HTMLElement {
   }
 
   itemClass(active = false) {
-    return `figure-list__item${active ? "--active" : ""}`;
+    const baseClass = "figure-list__item";
+    return `${baseClass}${active ? ` ${baseClass}--active` : ""}`;
   }
 
   directionalItemClass() {
@@ -111,7 +104,7 @@ export default class FigureList extends HTMLElement {
         this.render();
         break;
       case "active":
-        this.switchActiveLink(newValue);
+        this.update();
         break;
       default:
         break;

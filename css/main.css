@@ -42,7 +42,8 @@
 
   --page-padding: var(--triple-baseline);
 
-  --micro-interaction-animation-duration: .15s;
+  --micro-interaction-animation-duration: .2s;
+  --micro-interaction-animation-ease-out: cubic-bezier(.22, 1, .36, 1);
 
   --schematics-text-shadow: 0 0 .05em var(--color-text-light);
 }
