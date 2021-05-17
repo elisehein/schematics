@@ -7,15 +7,10 @@ export const directives = {
 const figures = {
   14: {
     a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system (the space-time continuum).",
-    poetry: `I return and sense,
-things are not the same as before,
-but feel had I stayed,
-everything would likely seem the same.`,
-    typingDirectives: [
-      [directives.TYPE, { charactersPerSecond: 100, numberOfCharacters: 16 }],
-      [directives.PAUSE, { durationMS: 3000 }],
-      [directives.TYPE, { charactersPerSecond: 50, numberOfCharacters: 28 }]
-    ]
+    poetry: `[TYPE:NORMAL]I return [PAUSE:SHORT]and sense,
+[PAUSE:LONG]things are not the same as before,
+[PAUSE:LONG][TYPE:FAST]but feel had I stayed,
+[PAUSE:MEDIUM]everything would likely seem the same.`
   },
   18: {
     a11yDescription: "A flow diagram for love. Good? Yes. More? Yes. Do it.",

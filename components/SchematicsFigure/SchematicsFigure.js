@@ -5,6 +5,8 @@ import Figure43Diagram from "../Diagram/Figure43Diagram.js";
 
 import { getPoetry, getTypingDirectives, directives } from "../../figureData.js";
 
+import CaptionTyping from "./CaptionTyping.js";
+
 export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
     super();
@@ -59,8 +61,8 @@ export default class SchematicsFigure extends HTMLElement {
       this.classList.add(this.className(this.num));
     }
 
-    this.renderDiagram();
-    this.renderCaption();
+    const diagramElement = this.renderDiagram();
+    this.renderCaption({ onDone: () => diagramElement.animate() });
   }
 
   renderDiagram() {
@@ -70,20 +72,16 @@ export default class SchematicsFigure extends HTMLElement {
 
     const diagramElement = this.getDiagram(this.num);
     this.querySelector(".schematics-figure__figure__diagram-container").replaceChildren(diagramElement);
-    setTimeout(diagramElement.animate.bind(diagramElement), 2000);
   }
 
-  renderCaption() {
+  renderCaption(onDone) {
     if (!Number.isInteger(this.num)) {
       return;
     }
 
     const captionNode = this.querySelector(".schematics-figure__figure__figcaption");
-    const wrappedPoetry = getPoetry(this.num)
-      .replace(/[^\s]/g, "<span style=\"visibility: hidden\">$&</span>")
-      .replace(/\n/g, "<br/>");
-    captionNode.innerHTML = wrappedPoetry;
-    typeCaption(captionNode, this.num);
+    const captionTyping = new CaptionTyping(getPoetry(this.num));
+    captionTyping.animate(captionNode, onDone);
   }
 
   className(num) {
