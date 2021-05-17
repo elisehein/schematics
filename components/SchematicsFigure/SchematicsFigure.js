@@ -46,7 +46,7 @@ export default class SchematicsFigure extends HTMLElement {
     // figure--exiting may or may not trigger transitions/animations;
     // we don't want to depend on that.
     if (this.figureNode.getAnimations().length > 0) {
-      this.figureNode.addEventListener("transitionend", stopExitingAndUpdate);
+      this.figureNode.addEventListener("transitionend", stopExitingAndUpdate, { once: true });
     } else {
       stopExitingAndUpdate();
     }
