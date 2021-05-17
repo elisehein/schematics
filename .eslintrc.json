@@ -1,8 +1,10 @@
 {
     "env": {
         "browser": true,
-        "es6": true
+        "es6": true,
+        "jest/globals": true
     },
+    "plugins": ["jest"],
     "extends": "eslint:recommended",
     "parserOptions": {
         "ecmaVersion": 2015,
@@ -69,7 +71,10 @@
         "guard-for-in": "error",
         "handle-callback-err": "error",
         "id-blacklist": "error",
-        "id-length": "error",
+        "id-length": [
+            "error",
+            { "exceptions": "_" }
+        ],
         "id-match": "error",
         "implicit-arrow-linebreak": [
             "error",
