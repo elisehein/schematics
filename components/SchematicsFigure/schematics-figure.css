@@ -51,11 +51,28 @@
 }
 
 .schematics-figure__figure__figcaption__character {
+  position: relative;
   visibility: hidden;
 }
 
 .schematics-figure__figure__figcaption__character--visible {
   visibility: visible;
+}
+
+@keyframes blink {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.schematics-figure__figure__figcaption__character--latest-visible::after {
+  content: "_";
+  animation: blink .5s cubic-bezier(0, .55, .45, 1) infinite;
+  animation-delay: .13s;
+}
+
+.schematics-figure__figure__figcaption__character--latest-visible:last-child::after {
+  opacity: 0;
+  animation-iteration-count: 3;
 }
 
 /* To ensure both the caption and figure are able to receive pointer events */

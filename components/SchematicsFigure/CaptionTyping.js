@@ -107,7 +107,7 @@ export default class CaptionTyping {
     }
 
     const revealThisSpanAndNext = () => {
-      captionSpans[index].classList.add("schematics-figure__figure__figcaption__character--visible");
+      this.updateVisibility(index, captionSpans);
       this.revealSpan({ index: index + 1, captionSpans, onDone });
     }
 
@@ -117,6 +117,18 @@ export default class CaptionTyping {
     } else {
       setTimeout(() => revealThisSpanAndNext(), delay);
     }
+  }
+
+  updateVisibility(index, captionSpans) {
+    if (index > 0) {
+      captionSpans[index - 1].classList.remove(
+        "schematics-figure__figure__figcaption__character--latest-visible",
+        );
+    }
+    captionSpans[index].classList.add(
+      "schematics-figure__figure__figcaption__character--visible",
+      "schematics-figure__figure__figcaption__character--latest-visible",
+      );
   }
 
   getActiveDelayAtSpan(index) {
