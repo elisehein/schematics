@@ -50,6 +50,14 @@
   z-index: 1;
 }
 
+.schematics-figure__figure__figcaption__character {
+  visibility: hidden;
+}
+
+.schematics-figure__figure__figcaption__character--visible {
+  visibility: visible;
+}
+
 /* To ensure both the caption and figure are able to receive pointer events */
 .schematics-figure__figure__diagram-container:hover,
 .schematics-figure__figure__figcaption:hover {

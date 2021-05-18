@@ -88,9 +88,10 @@ export default class CaptionTyping {
   }
 
   wrapIndividualCharacters(caption) {
+    const wrap = str => `<span class="schematics-figure__figure__figcaption__character">${str}</span>`;
     return caption
-      .replace(/[^\n]/g, `<span style="visibility: hidden;">$&</span>`)
-      .replace(/\n/g, `<span style="visibility: hidden;"><br/></span>`);
+      .replace(/[^\n]/g, wrap("$&"))
+      .replace(/\n/g, wrap("<br/>"));
   }
 
   animate(captionNode, onDone) {
