@@ -3,149 +3,100 @@ const captionAnimationFlagActions = {
   TYPE: "TYPE"
 }
 
+const captionAnimationTypingSpeeds = {
+  SLOWEST: 130,
+  SLOW: 110,
+  NORMAL: 70,
+  FAST: 45,
+  FASTEST: 20
+};
+
+const captionAnimationPauseDurations = {
+  SHORT: 300,
+  MEDIUM: 800,
+  LONG: 1300
+}
+
 export default class CaptionTyping {
   constructor(unparsedCaption) {
-    const { parsedAndWrappedCaption, animationDirectives } = this.parse(unparsedCaption);
+    this.defaultDelay = 0;
+
+    const { parsedAndWrappedCaption, typingDelayChanges } = this.parse(unparsedCaption);
 
     this.parsedAndWrappedCaption = parsedAndWrappedCaption;
-    this.animationDirectives = animationDirectives;
-
-    this.typingDelays = [];
-
-    // eslint-disable-next-line no-useless-escape
-    this.flagRegex = /\[[^\[]*\]/g;
+    this.typingDelayChanges = typingDelayChanges;
   }
 
   parse(unparsedCaption) {
-    let match;
-    let captionWithoutFlags = unparsedCaption;
-    const animationDirectives = [];
+    // eslint-disable-next-line no-useless-escape
+    this.flagRegex = /\[[^\[]*\]/g;
+    let latestTypingDelay = this.defaultDelay;
 
-    // eslint-disable-next-line no-cond-assign
-    while (match = this.flagRegex.exec(captionWithoutFlags)) {
-      const { captionWithoutMatchedFlag, directives } = constructDirectives(captionWithoutFlags, match);
-      directives.forEach(directive => animationDirectives.push(directive));
-      captionWithoutFlags = captionWithoutMatchedFlag;
-    }
+    let captionWithoutFlagsSoFar = unparsedCaption;
+    const typingDelayChanges = [{ index: 0, delay: latestTypingDelay }];
 
-    const parsedAndWrappedCaption = captionWithoutFlags
-      .replace(/[^\n]/g, "<span style=\"visibility: hidden\">$&</span>")
-      .replace(/\n/g, "<br/>");
+    const matchesInUnparsedCaption = unparsedCaption.match(this.flagRegex);
 
-    return { parsedAndWrappedCaption, animationDirectives };
-  }
+    (matchesInUnparsedCaption || []).forEach(matchedFlag => {
+      const flagIndex = captionWithoutFlagsSoFar.indexOf(matchedFlag);
+      captionWithoutFlagsSoFar = captionWithoutFlagsSoFar.replace(matchedFlag, "");
 
-  constructDirectives(caption, match) {
-    const flag = match[0];
-    const { action, setting } = this.actionAndSettingFromFlag(flag);
-    const captionWithoutMatchedFlag =
-      caption.slice(0, match.index) + caption.slice(match.index + flag.length);
+      const { action, setting } = this.actionAndSettingFromFlag(matchedFlag);
+      if (action == captionAnimationFlagActions.PAUSE) {
+        typingDelayChanges.push({ index: flagIndex, delay: captionAnimationPauseDurations[setting] });
+        // TODO: Only push if next index exists
+        if (captionWithoutFlagsSoFar[flagIndex] != "[") {
+          typingDelayChanges.push({ index: flagIndex + 1, delay: latestTypingDelay });
+        }
+      } else {
+        latestTypingDelay = captionAnimationTypingSpeeds[setting];
+        const delayChange = { index: flagIndex, delay: latestTypingDelay };
+        const length = typingDelayChanges.length;
+        if (typingDelayChanges[length - 1] && typingDelayChanges[length - 1].index == flagIndex) {
+          typingDelayChanges[length - 1] = delayChange
+        } else {
+          typingDelayChanges.push(delayChange);
+        }
+      }
+    });
 
-    const range = this.constructRangeForDirective(match.index, action, captionWithoutMatchedFlag);
-    const directives = [ new CaptionAnimationDirective(action, setting, range) ];
-
-    const continuingDirectiveAfterPauseIfNeeded = this.constructContinuingDirective(action);
-    if (continuingDirectiveAfterPauseIfNeeded) {
-      directives.push(continuingDirectiveAfterPauseIfNeeded);
-    }
-
-    return { captionWithoutMatchedFlag, directives };
-  }
-
-  constructRangeForDirective(fromIndex, action, captionWithoutMatchedFlag) {
-    if (action == captionAnimationFlagActions.PAUSE) {
-      return { fromIndex, toIndex: fromIndex };
-    }
-
-    const nextMatch = this.flagRegex.exec(captionWithoutMatchedFlag);
-
-    if (!nextMatch) {
-      return { fromIndex, toIndex: captionWithoutMatchedFlag.length - 1 };
-    }
-
-    return { fromIndex, toIndex: nextMatch.index - 1 };
-  }
-
-  constructContinuingDirective(previousDirectiveAction, captionWithoutPreviousFlag) {
-    if (previousDirectiveAction != captionAnimationFlagActions.PAUSE) {
-      return null;
-    }
-
-
+    const parsedAndWrappedCaption = captionWithoutFlagsSoFar
+      .replace(/[^\n]/g, `<span style="visibility: hidden;">$&</span>`)
+      .replace(/\n/g, `<span style="visibility: hidden;"><br/></span>`);
+    return { parsedAndWrappedCaption, typingDelayChanges };
   }
 
   animate(captionNode, onDone) {
     captionNode.innerHTML = this.parsedAndWrappedCaption;
     const captionSpans = captionNode.querySelectorAll("span");
-    this.handleDirective(0, this.animationDirectives, captionSpans, onDone);
+    const firstDelayChange = this.typingDelayChanges[0];
+    const initialDelay = firstDelayChange.index == 0 ? firstDelayChange.delay : this.defaultDelay;
+    this.revealSpans({ index: 0, captionSpans, delay: initialDelay, onDone });
   }
 
-  handleDirective(directiveIndex, allDirectives, captionSpans, onDone) {
-    const directive = allDirectives[directiveIndex];
-
-    if (!directive) {
+  revealSpans({ index, captionSpans, delay, onDone }) {
+    if (index >= captionSpans.length) {
       onDone();
       return;
     }
 
-    directive.execute(captionSpans, () => {
-      this.handleDirective(directiveIndex + 1, allDirectives, captionSpans, onDone);
-    });
+    const revealThisSpanAndNextIfNeeded = () => {
+      captionSpans[index].style.visibility = "visible";
+      const nextIndex = index + 1;
+      const nextDelayChange = this.typingDelayChanges.find(delayChange => delayChange.index == nextIndex);
+      const nextDelay = nextDelayChange ? nextDelayChange.delay : delay;
+      this.revealSpans({ index: nextIndex, captionSpans, delay: nextDelay, onDone });
+    }
+
+    if (delay == 0) {
+      revealThisSpanAndNextIfNeeded();
+    } else {
+      setTimeout(revealThisSpanAndNextIfNeeded, delay);
+    }
   }
 
   actionAndSettingFromFlag(flagString) {
     const [_, action, setting] = flagString.match(/^\[(.*):(.*)\]$/);
     return { action, setting };
   };
-}
-
-const captionAnimationTypingSpeeds = {
-  SLOWEST: 600,
-  SLOW: 400,
-  NORMAL: 300,
-  FAST: 200,
-  FASTEST: 100
-};
-
-const captionAnimationPauseDurations = {
-  SHORT: 500,
-  MEDIUM: 1000,
-  LONG: 1500
-}
-
-class CaptionAnimationDirective {
-  constructor(action, setting, { fromIndex, toIndex }) {
-    this._action = captionAnimationFlagActions[action];
-    this._range = { fromIndex, toIndex };
-
-    if (this._action == captionAnimationFlagActions.PAUSE) {
-      this._pauseDuration = captionAnimationPauseDurations[setting];
-    } else if (this._action == captionAnimationFlagActions.TYPE) {
-      this._spanRevealDelay = captionAnimationTypingSpeeds[setting];
-    }
-  }
-
-  execute(captionSpans, onDone) {
-    if (this._action == captionAnimationFlagActions.PAUSE) {
-      this.animateTyping(captionSpans, onDone);
-    } else if (this._action == captionAnimationFlagActions.TYPE) {
-      setTimeout(() => { onDone() }, this._pauseDuration);
-    }
-  }
-
-  animateTyping(captionSpans, onDone) {
-    this.revealSpans({ fromIndex: this.fromIndex, toIndex: this.toIndex, captionSpans, onDone });
-  }
-
-  revealSpans({ fromIndex, toIndex, captionSpans, onDone }) {
-    setTimeout(() => {
-      captionSpans[fromIndex].style.visibility = "visible";
-
-      if (fromIndex < toIndex) {
-        this.revealSpans({ fromIndex: fromIndex + 1, toIndex, captionSpans, onDone });
-      } else {
-        onDone();
-      }
-    }, this._spanRevealDelay);
-  }
 }

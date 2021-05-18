@@ -15,8 +15,8 @@ export default class SchematicsFigure extends HTMLElement {
 
   connectedCallback() {
     this.innerHTML = document.getElementById("schematics-figure-template").innerHTML;
-    this.renderDiagram();
-    this.renderCaption();
+    const diagramElement = this.renderDiagram();
+    this.renderCaption({ onDone: () => diagramElement.animate() });
   }
 
   static get observedAttributes()  {
@@ -72,9 +72,10 @@ export default class SchematicsFigure extends HTMLElement {
 
     const diagramElement = this.getDiagram(this.num);
     this.querySelector(".schematics-figure__figure__diagram-container").replaceChildren(diagramElement);
+    return diagramElement;
   }
 
-  renderCaption(onDone) {
+  renderCaption({ onDone }) {
     if (!Number.isInteger(this.num)) {
       return;
     }
