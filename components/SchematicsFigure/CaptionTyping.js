@@ -20,56 +20,83 @@ const captionAnimationPauseDurations = {
 export default class CaptionTyping {
   constructor(unparsedCaption) {
     this.defaultDelay = 0;
+    // eslint-disable-next-line no-useless-escape
+    this.flagRegex = /\[[^\[]*\]/g;
 
-    const { parsedAndWrappedCaption, typingDelayChanges } = this.parse(unparsedCaption);
+    const { parsedAndWrappedCaption, singleCharacterDelayRanges } = this.parse(unparsedCaption);
 
     this.parsedAndWrappedCaption = parsedAndWrappedCaption;
-    this.typingDelayChanges = typingDelayChanges;
+    this.singleCharacterDelayRanges = singleCharacterDelayRanges;
   }
 
   parse(unparsedCaption) {
-    // eslint-disable-next-line no-useless-escape
-    this.flagRegex = /\[[^\[]*\]/g;
-    let latestTypingDelay = this.defaultDelay;
+    let activeDelay = this.defaultDelay;
 
-    let captionWithoutFlagsSoFar = unparsedCaption;
-    const typingDelayChanges = [{ index: 0, delay: latestTypingDelay }];
+    let parsedCaptionSoFar = unparsedCaption;
+    const delayRanges = [{ index: 0, delay: activeDelay }];
 
-    const matchesInUnparsedCaption = unparsedCaption.match(this.flagRegex);
+    const allFlags = unparsedCaption.match(this.flagRegex) || [];
+    allFlags.forEach(flag => {
+      const { flagIndex, updatedCaption } = this.discardFlag(flag, parsedCaptionSoFar);
+      parsedCaptionSoFar = updatedCaption;
 
-    (matchesInUnparsedCaption || []).forEach(matchedFlag => {
-      const flagIndex = captionWithoutFlagsSoFar.indexOf(matchedFlag);
-      captionWithoutFlagsSoFar = captionWithoutFlagsSoFar.replace(matchedFlag, "");
-
-      const { action, setting } = this.actionAndSettingFromFlag(matchedFlag);
-      if (action == captionAnimationFlagActions.PAUSE) {
-        typingDelayChanges.push({ index: flagIndex, delay: captionAnimationPauseDurations[setting] });
-        // TODO: Only push if next index exists
-        if (captionWithoutFlagsSoFar[flagIndex] != "[") {
-          typingDelayChanges.push({ index: flagIndex + 1, delay: latestTypingDelay });
-        }
-      } else {
-        latestTypingDelay = captionAnimationTypingSpeeds[setting];
-        const delayChange = { index: flagIndex, delay: latestTypingDelay };
-        const length = typingDelayChanges.length;
-        if (typingDelayChanges[length - 1] && typingDelayChanges[length - 1].index == flagIndex) {
-          typingDelayChanges[length - 1] = delayChange
-        } else {
-          typingDelayChanges.push(delayChange);
-        }
-      }
+      const { updatedDelay, extractedRanges } = this.extractDelayRangesFromFlag(flag, flagIndex, activeDelay);
+      activeDelay = updatedDelay;
+      extractedRanges.forEach(delayRange => this.appendRange(delayRange, delayRanges));
     });
 
-    const parsedAndWrappedCaption = captionWithoutFlagsSoFar
+    return {
+      parsedAndWrappedCaption: this.wrapIndividualCharacters(parsedCaptionSoFar),
+      singleCharacterDelayRanges: delayRanges
+    };
+  }
+
+  discardFlag(flag, caption) {
+    const flagIndex = caption.indexOf(flag);
+    return { flagIndex, updatedCaption: caption.replace(flag, "") };
+  }
+
+  extractDelayRangesFromFlag(flag, flagIndex, latestActiveDelay) {
+    const { action, delay: delayForCurrentFlag } = this.actionAndDelayFromFlag(flag);
+    const extractedRanges = [{ index: flagIndex, delay: delayForCurrentFlag }];
+    let updatedDelay = latestActiveDelay;
+
+    // After a pause, the delay needs to be reset to the currently active typing delay
+    if (action == captionAnimationFlagActions.PAUSE) {
+      extractedRanges.push({ index: flagIndex + 1, delay: latestActiveDelay })
+    } else {
+      updatedDelay = delayForCurrentFlag;
+    }
+
+    return { updatedDelay, extractedRanges };
+  }
+
+  appendRange(newRange, existingRanges) {
+    const latestDelayRange = existingRanges[existingRanges.length - 1];
+
+    if (!latestDelayRange) {
+      existingRanges.push(newRange);
+      return;
+    }
+
+    if (latestDelayRange.index == newRange.index) {
+      existingRanges[existingRanges.length - 1] = newRange;
+      return;
+    }
+
+    existingRanges.push(newRange);
+  }
+
+  wrapIndividualCharacters(caption) {
+    return caption
       .replace(/[^\n]/g, `<span style="visibility: hidden;">$&</span>`)
       .replace(/\n/g, `<span style="visibility: hidden;"><br/></span>`);
-    return { parsedAndWrappedCaption, typingDelayChanges };
   }
 
   animate(captionNode, onDone) {
     captionNode.innerHTML = this.parsedAndWrappedCaption;
     const captionSpans = captionNode.querySelectorAll("span");
-    const firstDelayChange = this.typingDelayChanges[0];
+    const firstDelayChange = this.singleCharacterDelayRanges[0];
     const initialDelay = firstDelayChange.index == 0 ? firstDelayChange.delay : this.defaultDelay;
     this.revealSpans({ index: 0, captionSpans, delay: initialDelay, onDone });
   }
@@ -83,7 +110,7 @@ export default class CaptionTyping {
     const revealThisSpanAndNextIfNeeded = () => {
       captionSpans[index].style.visibility = "visible";
       const nextIndex = index + 1;
-      const nextDelayChange = this.typingDelayChanges.find(delayChange => delayChange.index == nextIndex);
+      const nextDelayChange = this.singleCharacterDelayRanges.find(delayChange => delayChange.index == nextIndex);
       const nextDelay = nextDelayChange ? nextDelayChange.delay : delay;
       this.revealSpans({ index: nextIndex, captionSpans, delay: nextDelay, onDone });
     }
@@ -95,8 +122,19 @@ export default class CaptionTyping {
     }
   }
 
-  actionAndSettingFromFlag(flagString) {
+  actionAndDelayFromFlag(flagString) {
     const [_, action, setting] = flagString.match(/^\[(.*):(.*)\]$/);
-    return { action, setting };
+    let delay;
+
+    switch (action) {
+      case captionAnimationFlagActions.PAUSE:
+        delay = captionAnimationPauseDurations[setting];
+        break;
+      case captionAnimationFlagActions.TYPE:
+        delay = captionAnimationTypingSpeeds[setting];
+        break;
+    }
+
+    return { action, delay };
   };
 }
