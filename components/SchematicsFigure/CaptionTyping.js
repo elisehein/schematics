@@ -96,30 +96,33 @@ export default class CaptionTyping {
   animate(captionNode, onDone) {
     captionNode.innerHTML = this.parsedAndWrappedCaption;
     const captionSpans = captionNode.querySelectorAll("span");
-    const firstDelayChange = this.singleCharacterDelayRanges[0];
-    const initialDelay = firstDelayChange.index == 0 ? firstDelayChange.delay : this.defaultDelay;
-    this.revealSpans({ index: 0, captionSpans, delay: initialDelay, onDone });
+    this.revealSpan({ index: 0, captionSpans, onDone });
   }
 
-  revealSpans({ index, captionSpans, delay, onDone }) {
+  revealSpan({ index, captionSpans, onDone }) {
     if (index >= captionSpans.length) {
       onDone();
       return;
     }
 
-    const revealThisSpanAndNextIfNeeded = () => {
-      captionSpans[index].style.visibility = "visible";
-      const nextIndex = index + 1;
-      const nextDelayChange = this.singleCharacterDelayRanges.find(delayChange => delayChange.index == nextIndex);
-      const nextDelay = nextDelayChange ? nextDelayChange.delay : delay;
-      this.revealSpans({ index: nextIndex, captionSpans, delay: nextDelay, onDone });
+    const revealThisSpanAndNext = () => {
+      captionSpans[index].classList.add("schematics-figure__figure__figcaption__character--visible");
+      this.revealSpan({ index: index + 1, captionSpans, onDone });
     }
 
+    const delay = this.getActiveDelayAtSpan(index);
     if (delay == 0) {
-      revealThisSpanAndNextIfNeeded();
+      revealThisSpanAndNext();
     } else {
-      setTimeout(revealThisSpanAndNextIfNeeded, delay);
+      setTimeout(() => revealThisSpanAndNext(), delay);
     }
+  }
+
+  getActiveDelayAtSpan(index) {
+    const rangeApplyingAtIndex = this.singleCharacterDelayRanges
+      .filter(range => range.index <= index)
+      .pop();
+    return rangeApplyingAtIndex.delay;
   }
 
   actionAndDelayFromFlag(flagString) {
