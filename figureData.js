@@ -14,7 +14,7 @@ but feel[PAUSE:SHORT] had I stayed,
   },
   18: {
     a11yDescription: "A flow diagram for love. Good? Yes. More? Yes. Do it.",
-    poetry: "I will send you flowers, pearls, letters written in ink."
+    poetry: "[TYPE:NORMAL]I will send [PAUSE:SHORT]you flowers[PAUSE:MEDIUM], [TYPE:SLOWEST]pearls[PAUSE:LONG], [TYPE:NORMAL]letters[TYPE:FAST][PAUSE:SHORT] written in[TYPE:SLOW] ink."
   },
   36: {
     a11yDescription: "A swinging pendulum.",
