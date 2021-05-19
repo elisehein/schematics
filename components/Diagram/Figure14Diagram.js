@@ -20,14 +20,11 @@ export default class Figure14Diagram extends Diagram {
     this.drawAxis({ x: 149, y: 220 }, { x: 149, y: 30 });
     this.drawAxis({ x: 149, y: 220 }, { x: 250, y: 205 });
     this.drawAxis({ x: 149, y: 220 }, { x: 200, y: 260 });
-    this.drawLabel("X", { x: 257, y: 207 }, false);
-    this.drawLabel("Y", { x: 207, y: 262 }, false);
+    this.drawLabel("X", { x: 257, y: 207 });
+    this.drawLabel("Y", { x: 207, y: 262 });
+    this.drawLabel("Time", { x: 157, y: 36 });
 
-    runEachActionWhenPreviousDone([
-      waitBeforeNextAction(1000),
-      this.drawLabel.bind(this, "Time", { x: 157, y: 36 }, true),
-      waitBeforeNextAction(1000)
-    ], onAllDone);
+    setTimeout(onAllDone, 1000);
   }
 
   drawAxis(startCoords, endCoords) {
@@ -57,7 +54,6 @@ export default class Figure14Diagram extends Diagram {
                              C 210,95, 90,95, 90,115 \
                              C 90,135, 210,135, 210,95");
     spiral.stroke(2);
-    // spiral.animateStroke("16s", "linear");
     this.addSVGChildElement(spiral.node);
     this.animateSpiralInSteps(spiral.node);
   }
