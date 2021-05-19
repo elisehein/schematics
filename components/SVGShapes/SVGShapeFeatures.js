@@ -106,6 +106,8 @@ export const animatable = ({ node }) => ({
     if (animationNode) {
       animationNode.addEventListener("endEvent", callback, false);
       animationNode.beginElement();
+    } else {
+      callback();
     }
   },
 
