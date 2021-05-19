@@ -16,7 +16,7 @@ export default function Figure18BoxedText(text, fontSize, { x, y, width, height 
   const textY = y + (height / 2.0) + (textSize.height / 4.0);
   const textX = x + (width / 2.0) - (textSize.width / 2.0);
 
-  const typingDuration = animated ? randomIntBetween(3, 8) / 10.0 : 0;
+  const typingDuration = animated ? randomIntBetween(5, 1.2) / 10.0 : 0;
   const textShape = new TypingText(text, { x: textX, y: textY }, typingDuration, fontSize);
 
   g.appendChild(textShape.node);

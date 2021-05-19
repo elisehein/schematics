@@ -13,9 +13,9 @@ export default class Figure18Diagram extends Diagram {
     this._grid = new Figure18DiagramGridCoordinateSystem();
   }
 
-  drawAlongsideCaption() {
-    super.drawAlongsideCaption();
-    this.drawBoxWithOptions(firstBox, null, false);
+  drawAfterCaption() {
+    super.drawAfterCaption();
+    setTimeout(() => this.drawBoxWithOptions(firstBox), 1000);
   }
 
   drawBoxWithOptions(boxText, boxOriginPoint, animated = true) {
@@ -50,7 +50,7 @@ export default class Figure18Diagram extends Diagram {
       }
 
       const typingDurationSeconds = animated ? 0.2 + (index * 0.3 ): 0;
-      const labelAppearanceDelayMS = animated ? 200 + (index * 600 ) : 0;
+      const labelAppearanceDelayMS = animated ? 700 + (index * 600 ) : 0;
 
       setTimeout(() => {
         this.drawOptionLabel(originBoxText, option, typingDurationSeconds);
@@ -137,7 +137,7 @@ export default class Figure18Diagram extends Diagram {
   }
 
   animateBasedOnLength(path, onDone = () => {}) {
-    const durationExpression = lengthCSSProperty => `calc(.15s * (var(${lengthCSSProperty}) / 50))`;
+    const durationExpression = lengthCSSProperty => `calc(.15s * (var(${lengthCSSProperty}) / 30))`;
     path.animateStroke(durationExpression, "ease-out", onDone);
   }
 }
