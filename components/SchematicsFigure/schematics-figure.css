@@ -1,5 +1,6 @@
 .schematics-figure__figure {
   position: relative;
+  color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) + 5%), 1);
   filter: none;
   opacity: 1;
   transition:
