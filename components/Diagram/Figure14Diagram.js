@@ -13,26 +13,23 @@ export default class Figure14Diagram extends Diagram {
 
   drawAlongsideCaption() {
     super.drawAlongsideCaption();
-    this.drawSpiral();
+
+    setTimeout(() => {
+      this.drawSpiral();
+    }, 1000);
   }
 
-  drawAxes(onDone) {
-    this.drawAxis({ x: 149, y: 220 }, { x: 149, y: 30 }, 3, { onDone: () => {
-      setTimeout(() => {
-        this.drawAxis({ x: 149, y: 220 }, { x: 250, y: 205 }, 1, { onDone: () => {
-          this.drawAxis({ x: 149, y: 220 }, { x: 200, y: 260 }, 1.5, { onDone: () => {
-
-            this.drawLabel("Time", { x: 157, y: 36 }, { onDone: () => {
-              this.drawLabel("X", { x: 257, y: 207 }, { onDone: () => {
-                this.drawLabel("Y", { x: 207, y: 262 }, { onDone: () => {
-                  setTimeout(onDone, 1000);
-                }})
-              }});
-            }});
-          }});
-        }});
-      }, 500);
-    }});
+  drawAxes(onAllDone) {
+    runEachActionWhenPreviousDone([
+      this.drawAxis.bind(this, { x: 149, y: 220 }, { x: 149, y: 30 }, 3),
+      waitBeforeNextAction(500),
+      this.drawAxis.bind(this, { x: 149, y: 220 }, { x: 250, y: 205 }, 1),
+      this.drawLabel.bind(this, "X", { x: 257, y: 207 }),
+      this.drawAxis.bind(this, { x: 149, y: 220 }, { x: 200, y: 260 }, 1.5),
+      this.drawLabel.bind(this, "Y", { x: 207, y: 262 }),
+      this.drawLabel.bind(this, "Time", { x: 157, y: 36 }),
+      waitBeforeNextAction(1000)
+    ], onAllDone);
   }
 
   drawAxis(startCoords, endCoords, durationSeconds, { onDone }) {
@@ -77,3 +74,18 @@ export default class Figure14Diagram extends Diagram {
 }
 
 customElements.define("figure-14-diagram", Figure14Diagram);
+
+// Each orderedAction must be a function that takes { onDone }
+function runEachActionWhenPreviousDone(orderedActions, onAllDone) {
+  const runActions = index => {
+    const nextIndex = index + 1;
+    const onActionDone = nextIndex >= orderedActions.length ? onAllDone : runActions.bind(this, nextIndex);
+    orderedActions[index]({ onDone: onActionDone });
+  }
+
+  runActions(0);
+}
+
+function waitBeforeNextAction(delay) {
+  return ({ onDone }) => setTimeout(onDone, delay);
+};

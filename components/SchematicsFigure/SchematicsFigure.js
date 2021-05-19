@@ -25,6 +25,8 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
+    this.querySelector(".schematics-figure__figure__figcaption").innerText = "";
+
     diagramElement.drawBeforeCaption({ onDone: () => {
       diagramElement.drawAlongsideCaption();
       this.renderCaption({ onDone: () => diagramElement.drawAfterCaption() });
