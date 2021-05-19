@@ -1,6 +1,6 @@
 /* eslint-disable id-length */
 import Diagram from "./Diagram.js";
-import { Line, Path, TypingText } from "../SVGShapes/SVGShapes.js";
+import { Line, Path, TypingText, Text } from "../SVGShapes/SVGShapes.js";
 
 export default class Figure14Diagram extends Diagram {
   constructor() {
@@ -13,49 +13,39 @@ export default class Figure14Diagram extends Diagram {
 
   drawAlongsideCaption() {
     super.drawAlongsideCaption();
-
-    setTimeout(() => {
-      this.drawSpiral();
-    }, 1000);
+    this.drawSpiral();
   }
 
   drawAxes(onAllDone) {
+    this.drawAxis({ x: 149, y: 220 }, { x: 149, y: 30 });
+    this.drawAxis({ x: 149, y: 220 }, { x: 250, y: 205 });
+    this.drawAxis({ x: 149, y: 220 }, { x: 200, y: 260 });
+    this.drawLabel("X", { x: 257, y: 207 }, false);
+    this.drawLabel("Y", { x: 207, y: 262 }, false);
+
     runEachActionWhenPreviousDone([
-      this.drawAxis.bind(this, { x: 149, y: 220 }, { x: 149, y: 30 }, 3),
-      waitBeforeNextAction(500),
-      this.drawAxis.bind(this, { x: 149, y: 220 }, { x: 250, y: 205 }, 1),
-      this.drawLabel.bind(this, "X", { x: 257, y: 207 }),
-      this.drawAxis.bind(this, { x: 149, y: 220 }, { x: 200, y: 260 }, 1.5),
-      this.drawLabel.bind(this, "Y", { x: 207, y: 262 }),
-      this.drawLabel.bind(this, "Time", { x: 157, y: 36 }),
+      waitBeforeNextAction(1000),
+      this.drawLabel.bind(this, "Time", { x: 157, y: 36 }, true),
       waitBeforeNextAction(1000)
     ], onAllDone);
   }
 
-  drawAxis(startCoords, endCoords, durationSeconds, { onDone }) {
-    const axis = new Line(startCoords, startCoords);
-    axis.animateAttribute("points", {
-      from: `${startCoords.x},${startCoords.y} ${startCoords.x},${startCoords.y}`,
-      to: `${startCoords.x},${startCoords.y} ${endCoords.x},${endCoords.y}`,
-      dur: durationSeconds,
-      keyTimes: "0; 1",
-      calcMode: "spline",
-      keySplines: "0.33 1 0.68 1",
-      fill: "freeze"
-    });
+  drawAxis(startCoords, endCoords) {
+    const axis = new Line(startCoords, endCoords);
     axis.stroke();
+    axis.addArrowHead(this.registerMarker.bind(this));
     this.addSVGChildElement(axis.node);
-
-    axis.beginAnimation(null, () => {
-      axis.addArrowHead(this.registerMarker.bind(this));
-      onDone();
-    });
   }
 
-  drawLabel(text, coords, { onDone }) {
-    const label = new TypingText(text, coords, 2);
-    this.addSVGChildElement(label.node);
-    label.animateTyping(null, onDone);
+  drawLabel(text, coords, animated = false, { onDone } = {}) {
+    if (animated) {
+      const label = new TypingText(text, coords, 2);
+      this.addSVGChildElement(label.node);
+      label.animateTyping(null, onDone);
+    } else {
+      const label = new Text(text, coords);
+      this.addSVGChildElement(label.node);
+    }
   }
 
   drawSpiral() {
@@ -67,9 +57,39 @@ export default class Figure14Diagram extends Diagram {
                              C 210,95, 90,95, 90,115 \
                              C 90,135, 210,135, 210,95");
     spiral.stroke(2);
-
-    spiral.animateStroke("16s", "linear");
+    // spiral.animateStroke("16s", "linear");
     this.addSVGChildElement(spiral.node);
+    this.animateSpiralInSteps(spiral.node);
+  }
+
+  animateSpiralInSteps(spiralNode) {
+    const spiralLength = spiralNode.getTotalLength();
+    const sixthOfLength = spiralLength / 6.0;
+
+    spiralNode.style.strokeDasharray = spiralLength;
+    spiralNode.style.strokeDashoffset = spiralLength;
+
+    // Update the style asynchronously so the transition isn't applied to the initial styles
+    setTimeout(() => {
+      spiralNode.style.transition = "stroke-dashoffset 2.6s cubic-bezier(0.65, 0, 0.35, 1)";
+      spiralNode.style.strokeDashoffset = spiralLength - sixthOfLength;
+    }, 1700);
+
+    runEachActionWhenPreviousDone([
+      this.transitionSpiral.bind(this, spiralNode, spiralLength - (3 * sixthOfLength), 4600, 1400),
+      this.transitionSpiral.bind(this, spiralNode, spiralLength - (4 * sixthOfLength), 2600, 2400),
+      this.transitionSpiral.bind(this, spiralNode, spiralLength - (6 * sixthOfLength), 4600, 3400)
+    ], () => {});
+  }
+
+  transitionSpiral(spiralNode, strokeDashoffset, duration, delay, { onDone }) {
+    spiralNode.addEventListener("transitionend", () => {
+      setTimeout(() => {
+        spiralNode.style.transitionDuration = `${duration}ms`;
+        spiralNode.style.strokeDashoffset = strokeDashoffset;
+        onDone();
+      }, delay);
+    }, { once: true });
   }
 }
 
