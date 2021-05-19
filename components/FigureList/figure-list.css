@@ -57,7 +57,7 @@ figure-list ul {
   height: .2em;
   font-size: var(--ms0);
   background-color: var(--color-text-light);
-  transition: left var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
+  transition: left var(--figure-exit-transition-duration) var(--micro-interaction-animation-ease-out);
 }
 
 .figure-list__item {

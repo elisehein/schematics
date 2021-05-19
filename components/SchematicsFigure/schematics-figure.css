@@ -1,17 +1,26 @@
+@keyframes jitter {
+  0% { transform: translateX(.08em) translateY(.05em); }
+  10% { transform: translateX(.02em) translateY(.01em); }
+  10% { transform: translateX(.06em) translateY(.05em); }
+  30% { transform: translateX(.05em) translateY(.07em); }
+  50% { transform: translateX(0) translateY(.04em); }
+  70% { transform: translateX(.06em) translateY(0); }
+  80% { transform: translateX(.03em) translateY(.02); }
+  90% { transform: translateX(.01em) translateY(.05); }
+  100% { transform: translateX(.05em) translateY(.08em); }
+}
+
 .schematics-figure__figure {
   position: relative;
   color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) + 5%), 1);
-  filter: none;
   opacity: 1;
-  transition:
-    opacity .1s ease-out,
-    filter .1s ease-out;
+  transition: opacity .1s ease-out;
 }
 
 .schematics-figure__figure--exiting {
-  filter: blur(1em);
   opacity: 0;
-  transition-duration: .2s;
+  transition: opacity calc(var(--figure-exit-transition-duration) - .2s) cubic-bezier(.55, 0, 1, .45);
+  transition-delay: .2s;
 }
 
 .schematics-figure__scan-lines {
@@ -33,6 +42,13 @@
   overflow: hidden;
   align-items: center;
   justify-content: center;
+  transition: filter var(--figure-exit-transition-duration), color var(--figure-exit-transition-duration);
+}
+
+.schematics-figure__figure--exiting .schematics-figure__figure__diagram-container {
+  filter: blur(.06em);
+  color: #fff;
+  animation: jitter var(--figure-exit-transition-duration);
 }
 
 .schematics-figure__figure__diagram-container > * {
@@ -43,12 +59,48 @@
   height: 100%;
 }
 
+@keyframes text-shadow-flicker {
+  0% {
+    text-shadow: 0 0 .2em var(--color-text-light);
+    color: #fff;
+  }
+
+  30% {
+    text-shadow: 0 0 .03em var(--color-text-light);
+  }
+
+  40% {
+    text-shadow: 0 0 .3em var(--color-text-light);
+    color: #fff;
+  }
+
+  55% {
+    text-shadow: 0 0 .02em var(--color-text-light);
+  }
+
+  70% {
+    text-shadow: 0 0 .1em var(--color-text-light);
+    color: #fff;
+  }
+
+  100% {
+    text-shadow: 0 0 .07em var(--color-text-light);
+    color: var(--page-bg-color);
+  }
+}
+
 .schematics-figure__figure__figcaption {
   font-size: var(--ms2);
   line-height: var(--double-baseline);
   letter-spacing: .1em;
   text-shadow: var(--schematics-text-shadow);
   z-index: 1;
+}
+
+.schematics-figure__figure--exiting .schematics-figure__figure__figcaption {
+  animation:
+    text-shadow-flicker var(--figure-exit-transition-duration) ease-out,
+    jitter var(--figure-exit-transition-duration);
 }
 
 .schematics-figure__figure__figcaption__character {
