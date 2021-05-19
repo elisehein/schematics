@@ -15,8 +15,20 @@ export default class SchematicsFigure extends HTMLElement {
 
   connectedCallback() {
     this.innerHTML = document.getElementById("schematics-figure-template").innerHTML;
+    this.renderFigure();
+  }
+
+  renderFigure() {
     const diagramElement = this.renderDiagram();
-    this.renderCaption({ onDone: () => diagramElement.animate() });
+
+    if (!diagramElement) {
+      return;
+    }
+
+    diagramElement.drawBeforeCaption({ onDone: () => {
+      diagramElement.drawAlongsideCaption();
+      this.renderCaption({ onDone: () => diagramElement.drawAfterCaption() });
+    }});
   }
 
   static get observedAttributes()  {
@@ -41,8 +53,10 @@ export default class SchematicsFigure extends HTMLElement {
     this.figureNode.classList.add("schematics-figure__figure--exiting");
 
     const stopExitingAndUpdate = () => {
-      this.figureNode.classList.remove("schematics-figure__figure--exiting");
-      this.update(oldNum);
+      setTimeout(() => {
+        this.figureNode.classList.remove("schematics-figure__figure--exiting");
+        this.update(oldNum);
+      }, 1000);
     }
 
     // figure--exiting may or may not trigger transitions/animations;
@@ -61,8 +75,7 @@ export default class SchematicsFigure extends HTMLElement {
       this.classList.add(this.className(this.num));
     }
 
-    const diagramElement = this.renderDiagram();
-    this.renderCaption({ onDone: () => diagramElement.animate() });
+    this.renderFigure();
   }
 
   renderDiagram() {

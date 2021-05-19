@@ -24,8 +24,8 @@ export default class Figure36Diagram extends Diagram {
     this._angleChangeStep = this._initialAngle / (this._totalSwings - 1);
   }
 
-  draw() {
-    super.draw();
+  drawAlongsideCaption() {
+    super.drawAlongsideCaption();
     this.defineCircleMarker({ anchor: false });
     this.defineCircleMarker({ anchor: true });
 

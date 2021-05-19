@@ -1,35 +1,64 @@
 /* eslint-disable id-length */
 import Diagram from "./Diagram.js";
-import { Line, Path, Text } from "../SVGShapes/SVGShapes.js";
+import { Line, Path, TypingText } from "../SVGShapes/SVGShapes.js";
 
 export default class Figure14Diagram extends Diagram {
   constructor() {
     super(14);
   }
 
-  draw() {
-    super.draw();
-    this.drawAxes()
+  drawBeforeCaption({ onDone }) {
+    this.drawAxes(onDone)
   }
 
-  animate() {
-    super.animate();
+  drawAlongsideCaption() {
+    super.drawAlongsideCaption();
     this.drawSpiral();
   }
 
-  drawAxes() {
-    this.drawAxisWithLabel({ x: 149, y: 220 }, { x: 149, y: 30 }, { x: 157, y: 36 }, "Time");
-    this.drawAxisWithLabel({ x: 149, y: 220 }, { x: 250, y: 205 }, { x: 257, y: 207 }, "X");
-    this.drawAxisWithLabel({ x: 149, y: 220 }, { x: 200, y: 260 }, { x: 207, y: 262 }, "Y");
+  drawAxes(onDone) {
+    this.drawAxis({ x: 149, y: 220 }, { x: 149, y: 30 }, 3, { onDone: () => {
+      setTimeout(() => {
+        this.drawAxis({ x: 149, y: 220 }, { x: 250, y: 205 }, 1, { onDone: () => {
+          this.drawAxis({ x: 149, y: 220 }, { x: 200, y: 260 }, 1.5, { onDone: () => {
+
+            this.drawLabel("Time", { x: 157, y: 36 }, { onDone: () => {
+              this.drawLabel("X", { x: 257, y: 207 }, { onDone: () => {
+                this.drawLabel("Y", { x: 207, y: 262 }, { onDone: () => {
+                  setTimeout(onDone, 1000);
+                }})
+              }});
+            }});
+          }});
+        }});
+      }, 500);
+    }});
   }
 
-  drawAxisWithLabel(startCoords, endCoords, labelCoords, labelText) {
-    const axis = new Line(startCoords, endCoords);
+  drawAxis(startCoords, endCoords, durationSeconds, { onDone }) {
+    const axis = new Line(startCoords, startCoords);
+    axis.animateAttribute("points", {
+      from: `${startCoords.x},${startCoords.y} ${startCoords.x},${startCoords.y}`,
+      to: `${startCoords.x},${startCoords.y} ${endCoords.x},${endCoords.y}`,
+      dur: durationSeconds,
+      keyTimes: "0; 1",
+      calcMode: "spline",
+      keySplines: "0.33 1 0.68 1",
+      fill: "freeze"
+    });
     axis.stroke();
-    axis.addArrowHead(this.registerMarker.bind(this));
-    const label = new Text(labelText, labelCoords);
     this.addSVGChildElement(axis.node);
+
+    axis.beginAnimation(null, () => {
+      axis.addArrowHead(this.registerMarker.bind(this));
+      onDone();
+    });
+  }
+
+  drawLabel(text, coords, { onDone }) {
+    const label = new TypingText(text, coords, 2);
     this.addSVGChildElement(label.node);
+    label.animateTyping(null, onDone);
   }
 
   drawSpiral() {
@@ -42,7 +71,7 @@ export default class Figure14Diagram extends Diagram {
                              C 90,135, 210,135, 210,95");
     spiral.stroke(2);
 
-    spiral.animateStroke("10s", "linear");
+    spiral.animateStroke("16s", "linear");
     this.addSVGChildElement(spiral.node);
   }
 }

@@ -13,7 +13,8 @@ export default class Figure18Diagram extends Diagram {
     this._grid = new Figure18DiagramGridCoordinateSystem();
   }
 
-  draw() {
+  drawAlongsideCaption() {
+    super.drawAlongsideCaption();
     this.drawBoxWithOptions(firstBox, null, false);
   }
 

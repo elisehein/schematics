@@ -26,13 +26,14 @@ export default class Diagram extends HTMLElement {
         <defs></defs>
       </svg>
     `;
-
-    this.draw();
   }
 
-  draw() {}
+  drawBeforeCaption({ onDone }) {
+    onDone();
+  }
 
-  animate() {}
+  drawAlongsideCaption() {}
+  drawAfterCaption() {}
 
   renderTitle() {
     const node = this.querySelector("#figure-num");

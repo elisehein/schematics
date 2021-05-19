@@ -28,8 +28,8 @@ export default class Figure43Diagram extends Diagram {
     }
   }
 
-  draw() {
-    super.draw();
+  drawAlongsideCaption() {
+    super.drawAlongsideCaption();
     this.drawSinglePathCubeWithAnimation();
   }
 
