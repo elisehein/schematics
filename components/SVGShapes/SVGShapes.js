@@ -1,6 +1,8 @@
 /* eslint-disable id-length */
 import { strokeable, fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
 
+import { getArcPathD } from "/helpers/arcCalculations.js";
+
 /*
  * The components here are not Web Components but rather your vanilla
  * JS function-based objects, because you cannot extend SVGElement.
@@ -100,22 +102,7 @@ export function Path(d) {
 }
 
 export function Arc({ x, y, radius }, { startAngle, endAngle }) {
-  const polarToCartesian = angleInDegrees => {
-    const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
-
-    return {
-      x: x + (radius * Math.cos(angleInRadians)),
-      y: y + (radius * Math.sin(angleInRadians))
-    };
-  }
-
-  const start = polarToCartesian(endAngle);
-  const end = polarToCartesian(startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-
-  const d = `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
-
-  return new Path(d);
+  return new Path(getArcPathD({ x, y, radius }, { startAngle, endAngle }));
 }
 
 export function Text(text, { x, y }, fontSize = 10) {
