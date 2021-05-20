@@ -1,6 +1,7 @@
 /* eslint-disable id-length */
 import Diagram from "./Diagram.js";
 import { Line, Path, TypingText, Text } from "../SVGShapes/SVGShapes.js";
+import { runActionsSequentially } from "/helpers/sequentialActionRunning.js";
 
 export default class Figure14Diagram extends Diagram {
   constructor() {
@@ -71,7 +72,7 @@ export default class Figure14Diagram extends Diagram {
       spiralNode.style.strokeDashoffset = spiralLength - sixthOfLength;
     }, 1700);
 
-    runEachActionWhenPreviousDone([
+    runActionsSequentially([
       this.transitionSpiral.bind(this, spiralNode, spiralLength - (3 * sixthOfLength), 4600, 1400),
       this.transitionSpiral.bind(this, spiralNode, spiralLength - (4 * sixthOfLength), 2600, 2400),
       this.transitionSpiral.bind(this, spiralNode, spiralLength - (6 * sixthOfLength), 4600, 3400)
@@ -90,18 +91,3 @@ export default class Figure14Diagram extends Diagram {
 }
 
 customElements.define("figure-14-diagram", Figure14Diagram);
-
-// Each orderedAction must be a function that takes { onDone }
-function runEachActionWhenPreviousDone(orderedActions, onAllDone) {
-  const runActions = index => {
-    const nextIndex = index + 1;
-    const onActionDone = nextIndex >= orderedActions.length ? onAllDone : runActions.bind(this, nextIndex);
-    orderedActions[index]({ onDone: onActionDone });
-  }
-
-  runActions(0);
-}
-
-function waitBeforeNextAction(delay) {
-  return ({ onDone }) => setTimeout(onDone, delay);
-};
