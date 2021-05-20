@@ -1,12 +1,8 @@
 import Diagram from "./Diagram.js";
-import { Marker, Circle, Line, Path } from "../SVGShapes/SVGShapes.js";
+import { Circle, Line, Path } from "../SVGShapes/SVGShapes.js";
 
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 import { getArcPathD } from "/helpers/arcCalculations.js";
-
-const markerID = "circle-marker";
-const anchorMarkerID = "circle-marker--anchor";
-const swingAnimationID = "swing-animation"
 
 export default class Figure36Diagram extends Diagram {
   constructor() {
@@ -21,57 +17,49 @@ export default class Figure36Diagram extends Diagram {
     const offset = 10;
     this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 - offset };
 
-    this._swingDuration = 2;
+    this._swingDurationSec = 2;
     this._swingEasing = ".4 0 .6 1"
     this._totalSwings = 30;
     this._angleChangeStep = this._initialAngle / (this._totalSwings - 1);
-
   }
 
   drawBeforeCaption({ onDone }) {
-    this._markerCircles = {};
-    this.defineCircleMarker({ anchor: false });
-    this.defineCircleMarker({ anchor: true });
-
-    this._swingingArm = this.drawSwingingArm();
+    this.drawAnchor();
+    this.drawSwingingArm();
     onDone();
   }
 
   drawAfterCaption() {
     super.drawAfterCaption();
 
-    const markerClickOverlay = this.drawMarkerClickOverlay();
-
-    const animateDashedArrowInSteps = () => {
-      this.animateDashedArrowInSteps({ numberOfSteps: 18, onAllDone: arrowArc => {
-        this.addMarkerOverlayEventHandlers(markerClickOverlay, arrowArc);
-        setTimeout(() => {
-          this.configurePulseAnimation(markerClickOverlay);
-        }, 1000);
-      }});
-    }
-
-    setTimeout(animateDashedArrowInSteps, 1000);
+    runActionsSequentially([
+      waitBeforeNextAction(1000),
+      this.animateDashedArrowInSteps.bind(this, 18),
+      this.enableUserTriggeredSwinging.bind(this),
+      waitBeforeNextAction(1000),
+      this.configurePulseAnimation.bind(this)
+    ]);
   }
 
-  animateDashedArrowInSteps({ numberOfSteps, onAllDone }) {
-    const { arrowArc, endAngle, arcLengthForSingleStep } = this.drawInitialDashedArrow(numberOfSteps);
+  animateDashedArrowInSteps(numberOfSteps, { onDone }) {
+    const { dashedArrow, endAngle, arcLengthForSingleStep } = this.drawInitialDashedArrow(numberOfSteps);
+    this._dashedArrow = dashedArrow;
 
     const setArrowArcStartAngle = startAngle => {
-      return ({ onDone }) => {
-        arrowArc.node.setAttribute("d", this.getArrowArcD({ startAngle, endAngle }));
-        onDone();
+      return (objectWithDoneHandler) => {
+        dashedArrow.node.setAttribute("d", this.getArrowArcD({ startAngle, endAngle }));
+        objectWithDoneHandler.onDone();
       }
     }
 
     const steppedArrowIncrementActions = Array(numberOfSteps - 1).fill().map((_, index) => {
       return [
-        waitBeforeNextAction(300),
+        waitBeforeNextAction(200),
         setArrowArcStartAngle(endAngle - ((index + 2) * arcLengthForSingleStep)),
       ];
     }).flat();
 
-    runActionsSequentially(steppedArrowIncrementActions, onAllDone.bind(this, arrowArc));
+    runActionsSequentially(steppedArrowIncrementActions, onDone);
   }
 
   drawInitialDashedArrow(intendedAnimationSteps) {
@@ -89,14 +77,14 @@ export default class Figure36Diagram extends Diagram {
     arc.dash(5);
     this.addSVGChildElement(arc.node);
 
-    return { arrowArc: arc, endAngle: finalAngles.endAngle, arcLengthForSingleStep };
+    return { dashedArrow: arc, endAngle: finalAngles.endAngle, arcLengthForSingleStep };
   }
 
   drawOverlayArrow() {
     const arc = this.getArrowArc();
     arc.stroke(8, "var(--color-page-bg)");
     const cssEasing = `cubic-bezier(${this._swingEasing.split(" ").join(",")})`;
-    arc.animateStroke(`${this._swingDuration}s`, cssEasing);
+    arc.animateStroke(`${this._swingDurationSec}s`, cssEasing);
     this.addSVGChildElement(arc.node);
     return arc;
   }
@@ -124,66 +112,81 @@ export default class Figure36Diagram extends Diagram {
     );
   }
 
-  setMarkers(armNode, anchor = false) {
-    const markerURL = id => `url(#${id})`;
-    armNode.setAttribute("marker-end", markerURL(markerID));
-
-    if (anchor) {
-      armNode.setAttribute("marker-start", markerURL(anchorMarkerID));
-    }
-  }
-
   drawSwingingArm() {
-    const swingingArm = this.getDownwardArm();
-    this.setMarkers(swingingArm.node, true);
-    this.addRotation(swingingArm.node, this._initialAngle);
-    this.configureSwingAnimation(swingingArm);
-    this.addSVGChildElement(swingingArm.node);
-    return swingingArm;
+    const rotationAngle = this._initialAngle;
+    this._swingingArm = this.drawArm(rotationAngle);
+    this._swingTriggerCircle = this.drawEndOfArmCircle(rotationAngle);
+    this.configureSwingAnimation(this._swingingArm);
+    this.configureSwingAnimation(this._swingTriggerCircle);
   }
 
-  drawMarkerClickOverlay() {
-    const pointAtMarker = this._swingingArm.node.getPointAtLength(this._pendulumLength);
-    pointAtMarker.y += this._markerRadius;
-
-    const markerClickOverlay = this.getMarkerCircle(pointAtMarker.x, pointAtMarker.y);
-    markerClickOverlay.node.style.cursor = "pointer";
-    this.addRotation(markerClickOverlay.node, this._initialAngle);
-    this.addSVGChildElement(markerClickOverlay.node);
-
-    return markerClickOverlay;
+  drawTriggerOverlayCircle() {
+    const circle = this.drawEndOfArmCircle(this._initialAngle);
+    circle.node.style.pointerEvents = "none";
+    return circle
   }
 
-  addMarkerOverlayEventHandlers(markerClickOverlay, arrowArc) {
-    let overlayArrow;
+  enableUserTriggeredSwinging({ onDone }) {
+    this._triggerOverlayCircle = this.drawTriggerOverlayCircle();
+    const trigger = this._swingTriggerCircle;
+    trigger.node.style.cursor = "pointer";
 
     const toggleFill = (isFilled) => {
-      this._markerCircles[markerID].style.fill = isFilled ? "currentcolor" : "transparent";
+      trigger.node.style.fill = isFilled ? "currentcolor" : "transparent";
     }
+    const fill = toggleFill.bind(this, true);
+    const unfill = toggleFill.bind(this, false);
 
-    markerClickOverlay.node.addEventListener("mouseover", toggleFill.bind(this, true));
-    markerClickOverlay.node.addEventListener("mouseleave", toggleFill.bind(this, false));
+    trigger.node.addEventListener("mouseover", fill);
+    trigger.node.addEventListener("mouseleave", unfill);
 
-    markerClickOverlay.node.addEventListener("click", () => {
-      toggleFill(false);
-      markerClickOverlay.node.remove();
-      overlayArrow = this.drawOverlayArrow();
-      this._swingingArm.beginAnimation(swingAnimationID);
+    trigger.node.addEventListener("click", () => {
+      unfill();
+      trigger.node.removeEventListener("mouseover", fill);
+      trigger.node.removeEventListener("mouseleave", unfill);
+      trigger.node.style.cursor = "default";
+      this._triggerOverlayCircle.node.remove();
 
-      const swingDurationInMS = this._swingDuration * 1000;
-      setTimeout(() => {
-        arrowArc.node.remove();
+      const overlayArrow = this.drawOverlayArrow();
+
+      this.beginSwinging({ afterFirstSwing: () => {
+        this._dashedArrow.node.remove();
         overlayArrow.node.remove();
         this.drawStaticArm();
-      }, swingDurationInMS);
+      }})
     });
+
+    onDone();
+  }
+
+  beginSwinging({ afterFirstSwing }) {
+    this._swingingArm.beginAnimation();
+    this._swingTriggerCircle.beginAnimation();
+    setTimeout(afterFirstSwing, this._swingDurationSec * 1000);
   }
 
   drawStaticArm() {
-    const staticArm = this.getDownwardArm();
-    this.addRotation(staticArm.node, (this._initialAngle - this._angleChangeStep) * -1);
-    this.setMarkers(staticArm.node);
-    this.addSVGChildElement(staticArm.node);
+    const rotationAngle = (this._initialAngle - this._angleChangeStep) * -1;
+    this.drawArm(rotationAngle);
+    this.drawEndOfArmCircle(rotationAngle);
+  }
+
+  drawArm(rotationAngle) {
+    const arm = this.getDownwardArm();
+    this.addRotation(arm.node, rotationAngle);
+    this.addSVGChildElement(arm.node);
+    return arm;
+  }
+
+  drawEndOfArmCircle(rotationAngle) {
+    const pointAtMarker = this._swingingArm.node.getPointAtLength(this._pendulumLength);
+    pointAtMarker.y += this._markerRadius;
+
+    const circle = this.getCircle(pointAtMarker.x, pointAtMarker.y);
+    circle.stroke();
+    this.addRotation(circle.node, rotationAngle);
+    this.addSVGChildElement(circle.node);
+    return circle;
   }
 
   getDownwardArm() {
@@ -193,37 +196,20 @@ export default class Figure36Diagram extends Diagram {
     )
   }
 
-  defineCircleMarker({ anchor }) {
-    const diameter = this._markerRadius * 2;
-    const safeArea = 4;
-    const markerSize = diameter + (safeArea * 2);
-
-    const markerX = markerSize / 2.0;
-    const markerY = anchor ? markerX : markerX - this._markerRadius;
-    const id = anchor ? anchorMarkerID : markerID;
-
-    const marker = new Marker({
-      id,
-      width: markerSize,
-      height: markerSize,
-      x: markerX,
-      y: markerY
-    });
-    const circle = this.getMarkerCircle(this._markerRadius + safeArea, this._markerRadius + safeArea);
-    circle.node.style.transition = "fill var(--micro-interaction-animation-duration)";
-    this._markerCircles[id] = circle.node;
-
-    marker.addShape(circle.node);
-    this.registerMarker(marker.node);
+  drawAnchor() {
+    const { x, y } = this._anchorPoint;
+    const circle = new Circle(x, y, this._markerRadius);
+    circle.stroke();
+    this.addSVGChildElement(circle.node);
   }
 
-  getMarkerCircle(cx, cy) {
+  getCircle(cx, cy) {
     const circle = new Circle(cx, cy, this._markerRadius);
     circle.stroke();
     return circle;
   }
 
-  configureSwingAnimation(axis) {
+  configureSwingAnimation(node) {
     const rotationValue = deg => `${deg} ${this._anchorPoint.x} ${this._anchorPoint.y}`;
     const swingAngle = swingIndex => this._angleChangeStep * (this._totalSwings - (swingIndex + 1));
 
@@ -236,26 +222,25 @@ export default class Figure36Diagram extends Diagram {
       return 0 + (1 / (this._totalSwings - 1) * index);
     });
 
-    axis.animateTransform("rotate", {
+    node.animateTransform("rotate", {
       values: rotationValues.join("; "),
       keyTimes: times.join("; "),
       calcMode: "spline",
       keySplines: Array(this._totalSwings - 1).fill(this._swingEasing).join("; "),
-      dur: this._totalSwings * this._swingDuration,
+      dur: this._totalSwings * this._swingDurationSec,
       begin: "indefinite",
       repeatCount: "1",
-      fill: "freeze",
-      id: swingAnimationID
+      fill: "freeze"
     });
   }
 
-  configurePulseAnimation(clickOverlay) {
+  configurePulseAnimation() {
     const keyTimes = "0; 0.3; 1";
     const dur = 2.2;
     const begin = "2s;"
     const pulseEasing = ".25 1 .5 1";
 
-    clickOverlay.animateAttribute("r", {
+    this._triggerOverlayCircle.animateAttribute("r", {
       begin,
       dur,
       repeatCount: "indefinite",
@@ -265,7 +250,7 @@ export default class Figure36Diagram extends Diagram {
       keyTimes
     });
 
-    clickOverlay.animateAttribute({ type: "xml", name: "stroke-opacity" }, {
+    this._triggerOverlayCircle.animateAttribute({ type: "xml", name: "stroke-opacity" }, {
       begin,
       dur,
       values: "1; 0; 0",
