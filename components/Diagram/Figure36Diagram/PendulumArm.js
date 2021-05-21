@@ -1,13 +1,12 @@
 import { Line, Circle, createSVGElement } from "../../SVGShapes/SVGShapes.js";
 
-export default function PendulumArm(targetNode, anchorPoint, initialAngle, length, radius) {
+export default function PendulumArm(anchorPoint, initialAngle, length, radius) {
   const groupNode = createSVGElement("g");
-  targetNode.appendChild(groupNode);
 
   const arm = drawArm(anchorPoint, initialAngle, length);
   groupNode.appendChild(arm.node);
 
-  const circle = drawEndOfArmCircle(arm.node, initialAngle, radius);
+  const circle = drawEndOfArmCircle(length, anchorPoint, initialAngle, radius);
   groupNode.appendChild(circle.node);
 
   const self = { node: groupNode, arm, circle };
@@ -32,14 +31,10 @@ function addRotation(node, angle, anchorPoint) {
   );
 }
 
-function drawEndOfArmCircle(armNode, rotationAngle, radius) {
-  const armStartPoint = armNode.getPointAtLength(0);
-  const armEndPoint = armNode.getPointAtLength(armNode.getTotalLength());
-  armEndPoint.y += radius;
-
-  const circle = new Circle(armEndPoint.x, armEndPoint.y, radius);
+function drawEndOfArmCircle(armLength, anchorPoint, rotationAngle, radius) {
+  const circle = new Circle(anchorPoint.x, anchorPoint.y + armLength + radius, radius);
   circle.stroke();
-  addRotation(circle.node, rotationAngle, armStartPoint);
+  addRotation(circle.node, rotationAngle, anchorPoint);
   return circle;
 }
 

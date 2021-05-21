@@ -1,9 +1,9 @@
 import Diagram from "../Diagram.js";
-import { Circle, Path } from "../../SVGShapes/SVGShapes.js";
+import { Circle } from "../../SVGShapes/SVGShapes.js";
 import PendulumArm from "./PendulumArm.js";
+import PendulumTrajectoryArrow from "./PendulumTrajectoryArrow.js";
 
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
-import { getArcPathD } from "/helpers/arcCalculations.js";
 
 export default class Figure36Diagram extends Diagram {
   constructor() {
@@ -32,88 +32,32 @@ export default class Figure36Diagram extends Diagram {
   drawAfterCaption() {
     super.drawAfterCaption();
 
+    const arrow = this.drawArrow();
+
     runActionsSequentially([
       waitBeforeNextAction(1000),
-      this.animateDashedArrowInSteps.bind(this, 18),
+      arrow.appearInSteps,
     ], () => {
-      this.enableUserTriggeredSwinging();
+      this.enableUserTriggeredSwinging(arrow);
     });
   }
 
-  animateDashedArrowInSteps(numberOfSteps, { onDone }) {
-    const { dashedArrow, endAngle, arcLengthForSingleStep } = this.drawInitialDashedArrow(numberOfSteps);
-    this._dashedArrow = dashedArrow;
-
-    const setArrowArcStartAngle = startAngle => {
-      return (objectWithDoneHandler) => {
-        dashedArrow.node.setAttribute("d", this.getArrowArcD({ startAngle, endAngle }));
-        objectWithDoneHandler.onDone();
-      }
-    }
-
-    const steppedArrowIncrementActions = Array(numberOfSteps - 1).fill().map((_, index) => {
-      return [
-        waitBeforeNextAction(200),
-        setArrowArcStartAngle(endAngle - ((index + 2) * arcLengthForSingleStep)),
-      ];
-    }).flat();
-
-    runActionsSequentially(steppedArrowIncrementActions, onDone);
+  drawArrow() {
+    const arrowArcRadius = this._pendulumLength + (this._circleRadius * 2) + 10;
+    const arrow = new PendulumTrajectoryArrow(this._anchorPoint, arrowArcRadius, {
+      startAngle: 180 - this._initialAngle + 10,
+      endAngle: 180 + this._initialAngle - 10
+    }, this.registerMarker.bind(this));
+    this.addSVGChildElement(arrow.node);
+    return arrow;
   }
 
-  drawInitialDashedArrow(intendedAnimationSteps) {
-    const finalAngles = this.getArrowArcAngles(10);
-    const arcLength = finalAngles.endAngle - finalAngles.startAngle;
-    const arcLengthForSingleStep = arcLength / intendedAnimationSteps;
-
-    const arc = this.getArrowArc({
-      startAngle: finalAngles.endAngle - arcLengthForSingleStep,
-      endAngle: finalAngles.endAngle
-    });
-
-    arc.addArrowHead(this.registerMarker.bind(this));
-    arc.stroke();
-    arc.dash(5);
-    this.addSVGChildElement(arc.node);
-
-    return { dashedArrow: arc, endAngle: finalAngles.endAngle, arcLengthForSingleStep };
-  }
-
-  drawOverlayArrow() {
-    const arc = this.getArrowArc();
-    arc.stroke(8, "var(--color-page-bg)");
-    const cssEasing = `cubic-bezier(${this._swingEasing.split(" ").join(",")})`;
-    arc.animateStroke(`${this._swingDurationSec}s`, cssEasing);
-    this.addSVGChildElement(arc.node);
-    return arc;
-  }
-
-  getArrowArc(angles) {
-    return new Path(this.getArrowArcD(angles || this.getArrowArcAngles()));
-  }
-
-  getArrowArcAngles(insetAngle = 0) {
-    return {
-      startAngle: 180 - this._initialAngle + insetAngle,
-      endAngle: 180 + this._initialAngle - insetAngle
-    }
-  }
-
-  getArrowArcD({ startAngle, endAngle }) {
-    const arcRadius = this._pendulumLength + (this._circleRadius * 2) + 10;
-    return getArcPathD({ radius: arcRadius, ...this._anchorPoint }, { startAngle, endAngle })
-  }
-
-  enableUserTriggeredSwinging() {
+  enableUserTriggeredSwinging(arrow) {
     this._swingingArm.onClick(() => {
-      const overlayArrow = this.drawOverlayArrow();
+      arrow.disappearWithEasing(this._swingEasing, this._swingDurationSec);
 
       this._swingingArm.beginSwinging({
-        atFirstAmplitude: (angle) => {
-          this._dashedArrow.node.remove();
-          overlayArrow.node.remove();
-          this.drawPendulumArm(angle);
-        }
+        atFirstAmplitude: (angle) => this.drawPendulumArm(angle)
       });
     });
   }
@@ -125,7 +69,9 @@ export default class Figure36Diagram extends Diagram {
   }
 
   drawPendulumArm(rotationAngle) {
-    return new PendulumArm(this.svgNode, this._anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
+    const arm = PendulumArm(this._anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
+    this.addSVGChildElement(arm.node);
+    return arm;
   }
 
   drawAnchor() {
