@@ -161,7 +161,7 @@ function configurePulseAnimation(circle) {
   const radius = circle.node.getAttribute("r");
   const keyTimes = "0; 0.3; 1";
   const dur = 2.2;
-  const begin = "2s;"
+  const begin = "3s"
   const pulseEasing = ".25 1 .5 1";
 
   circle.animateAttribute("r", {

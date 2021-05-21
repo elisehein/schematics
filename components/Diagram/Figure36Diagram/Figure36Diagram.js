@@ -36,7 +36,7 @@ export default class Figure36Diagram extends Diagram {
 
     runActionsSequentially([
       waitBeforeNextAction(1000),
-      arrow.appearInSteps,
+      arrow.appearInSteps.bind(arrow, 1000),
     ], () => {
       this.enableUserTriggeredSwinging(arrow);
     });
