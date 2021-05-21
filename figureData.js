@@ -18,9 +18,9 @@ but feel[PAUSE:SHORT] had I stayed,
   },
   36: {
     a11yDescription: "A swinging pendulum.",
-    poetry: `I miss you.
-I would reach out and touch you,
-if I could.`
+    poetry: `[TYPE:SLOW]I miss [PAUSE:SHORT]you.[PAUSE:LONG]
+[TYPE:NORMAL]I would reach out[PAUSE:MEDIUM] [TYPE:SLOWEST]and [PAUSE:SHORT]touch [TYPE:NORMAL][PAUSE:SHORT]you,
+[TYPE:FAST][PAUSE:LONG]if [PAUSE:SHORT]I[TYPE:SLOW] could.`
   },
   43: {
     a11yDescription: "A rotating Necker cube.",
