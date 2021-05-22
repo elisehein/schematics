@@ -19,7 +19,7 @@ export default class ScanLines extends HTMLElement {
 
     svg.innerHTML = `
     <defs>
-      ${renderScanLinePatternDef(id, "currentcolor")}
+      ${renderScanLinePatternDef(id, "var(--color-bg-dark)")}
     </defs>
     <rect x="0" y="0" width="100%" height="100%" fill="url(#${id})"></rect>
     `;
