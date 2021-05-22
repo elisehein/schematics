@@ -25,7 +25,7 @@ export default class Figure36Diagram extends Diagram {
 
   drawBeforeCaption({ onDone }) {
     this.drawAnchor();
-    this._swingingArm = this.drawSwingingArm();
+    this._swingingArm = this.drawPendulumArm(this._initialAngle);
     this._arrow = this.drawArrow();
 
     runActionsSequentially([
@@ -53,18 +53,14 @@ export default class Figure36Diagram extends Diagram {
     this._swingingArm.onClick(() => {
       this._arrow.disappearWithEasing(this._swingEasing, this._swingDurationSec);
 
-      this._swingingArm.beginSwinging({
-        atFirstAmplitude: (angle) => this._staticArm = this.drawPendulumArm(angle),
-        justBeforeEachSubsequentPeriod: () => this._staticArm.buzz(0.2),
-        justAfterEachSubsequentPeriod: () => this._staticArm.removeBuzz(0.2)
+      this._swingingArm.swing(this._totalSwings, this._swingEasing, this._swingDurationSec, {
+        onSwing: (index, angle) => {
+          if (index == 0) {
+            this.drawPendulumArm(angle);
+          }
+        }
       });
     });
-  }
-
-  drawSwingingArm() {
-    const swingingArm = this.drawPendulumArm(this._initialAngle);
-    swingingArm.configureSwingAnimation(this._totalSwings, this._swingEasing, this._swingDurationSec);
-    return swingingArm;
   }
 
   drawPendulumArm(rotationAngle) {
