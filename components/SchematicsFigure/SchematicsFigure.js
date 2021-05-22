@@ -3,7 +3,7 @@ import Figure18Diagram from "../Diagram/Figure18Diagram/Figure18Diagram.js";
 import Figure36Diagram from "../Diagram/Figure36Diagram/Figure36Diagram.js";
 import Figure43Diagram from "../Diagram/Figure43Diagram.js";
 
-import { getPoetry, getTypingDirectives, directives } from "../../figureData.js";
+import { getPoetry } from "../../figureData.js";
 
 import CaptionTyping from "./CaptionTyping.js";
 

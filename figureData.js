@@ -36,10 +36,6 @@ export function getA11yDescription(num) {
   return figures[num].a11yDescription;
 }
 
-export function getTypingDirectives(num) {
-  return figures[num].typingDirectives;
-}
-
 export function figureExists(num) {
   return Object.keys(figures).includes(String(num));
 }
