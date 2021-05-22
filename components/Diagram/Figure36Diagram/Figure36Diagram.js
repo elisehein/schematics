@@ -26,20 +26,17 @@ export default class Figure36Diagram extends Diagram {
   drawBeforeCaption({ onDone }) {
     this.drawAnchor();
     this._swingingArm = this.drawSwingingArm();
-    onDone();
-  }
-
-  drawAfterCaption() {
-    super.drawAfterCaption();
-
-    const arrow = this.drawArrow();
+    this._arrow = this.drawArrow();
 
     runActionsSequentially([
       waitBeforeNextAction(1000),
-      arrow.appearInSteps.bind(arrow, 1000),
-    ], () => {
-      this.enableUserTriggeredSwinging(arrow);
-    });
+      this._arrow.appearInSteps.bind(this._arrow, 3000),
+      waitBeforeNextAction(1000),
+    ], onDone);
+  }
+
+  drawAfterCaption() {
+    this.enableUserTriggeredSwinging();
   }
 
   drawArrow() {
@@ -52,9 +49,9 @@ export default class Figure36Diagram extends Diagram {
     return arrow;
   }
 
-  enableUserTriggeredSwinging(arrow) {
+  enableUserTriggeredSwinging() {
     this._swingingArm.onClick(() => {
-      arrow.disappearWithEasing(this._swingEasing, this._swingDurationSec);
+      this._arrow.disappearWithEasing(this._swingEasing, this._swingDurationSec);
 
       this._swingingArm.beginSwinging({
         atFirstAmplitude: (angle) => this.drawPendulumArm(angle)

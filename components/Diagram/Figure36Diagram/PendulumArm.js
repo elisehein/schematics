@@ -151,6 +151,7 @@ function drawPulsingCircle(groupNode, originalCircleNode) {
   const radius = originalCircleNode.getAttribute("r");
   const circle = new Circle(cx, cy, radius);
   circle.node.setAttribute("transform", originalCircleNode.getAttribute("transform"));
+  circle.node.setAttribute("stroke-opacity", 0);
   circle.stroke();
   circle.node.style.pointerEvents = "none";
   groupNode.appendChild(circle.node);
@@ -161,7 +162,7 @@ function configurePulseAnimation(circle) {
   const radius = circle.node.getAttribute("r");
   const keyTimes = "0; 0.3; 1";
   const dur = 2.2;
-  const begin = "3s"
+  const begin = "2s";
   const pulseEasing = ".25 1 .5 1";
 
   circle.animateAttribute("r", {
