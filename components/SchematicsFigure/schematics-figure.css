@@ -68,7 +68,7 @@
 }
 
 .schematics-figure__figure--exiting .schematics-figure__figure__diagram-container {
-  filter: blur(.06em);
+  filter: drop-shadow(0 0 .15em #fff);
   color: #fff;
   animation: jitter var(--figure-exit-transition-duration);
 }
