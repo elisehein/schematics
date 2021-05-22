@@ -4,8 +4,8 @@ const captionAnimationFlagActions = {
 }
 
 const captionAnimationTypingSpeeds = {
-  SLOWEST: 130,
-  SLOW: 110,
+  SLOWEST: 200,
+  SLOW: 130,
   NORMAL: 70,
   FAST: 45,
   FASTEST: 20
