@@ -35,8 +35,8 @@ export default class Figure36Diagram extends Diagram {
     ], onDone);
   }
 
-  drawAfterCaption() {
-    this.enableUserTriggeredSwinging();
+  drawAfterCaption({ onLightUp }) {
+    this.enableUserTriggeredSwinging(onLightUp);
   }
 
   drawArrow() {
@@ -49,7 +49,7 @@ export default class Figure36Diagram extends Diagram {
     return arrow;
   }
 
-  enableUserTriggeredSwinging() {
+  enableUserTriggeredSwinging(onLightUp) {
     this._swingingArm.onClick(() => {
       this._arrow.disappearWithEasing(this._swingEasing, this._swingDurationSec);
 
@@ -57,6 +57,11 @@ export default class Figure36Diagram extends Diagram {
         onSwing: (index, angle) => {
           if (index == 0) {
             this.drawPendulumArm(angle);
+          }
+
+          // Only light up on those swings where the pendulum still touches its echo
+          if (index % 2 != 0 && index <= 9) {
+            this.lightUpJustBeforeNextSwing(index, onLightUp);
           }
         }
       });
@@ -74,6 +79,13 @@ export default class Figure36Diagram extends Diagram {
     const circle = new Circle(x, y, this._circleRadius);
     circle.stroke();
     this.addSVGChildElement(circle.node);
+  }
+
+  lightUpJustBeforeNextSwing(index, onLightUp) {
+    // 11 is a magic number – the final swing where the swinging pendulum still reaches the echo
+    const lightUpDuration = 1000 - ((index - 1) * 100); // Gradually less time to light up
+    const msUntilJustBeforeNextSwing = this._swingDurationSec * 1000 - (lightUpDuration / 2);
+    setTimeout(() => onLightUp(lightUpDuration), msUntilJustBeforeNextSwing);
   }
 }
 

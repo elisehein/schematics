@@ -1,3 +1,22 @@
+:root {
+  --schematics-figure-light-up-duration: 600ms;
+  --schematics-figure-light-up-easing: ease-in;
+}
+
+@keyframes light-up-diagram {
+  50% {
+    filter: drop-shadow(0 0 .1em #fff);
+    color: #fff;
+  }
+}
+
+@keyframes light-up-text {
+  50% {
+    text-shadow: 0 0 .2em var(--color-text-light);
+    color: #fff;
+  }
+}
+
 @keyframes jitter {
   0% { transform: translateX(.08em) translateY(.05em); }
   10% { transform: translateX(.02em) translateY(.01em); }
@@ -14,7 +33,7 @@
   position: relative;
   color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) + 5%), 1);
   opacity: 1;
-  transition: opacity .1s ease-out;
+  transition: opacity .2s ease-out;
 }
 
 .schematics-figure__figure--exiting {
@@ -42,6 +61,10 @@
   align-items: center;
   justify-content: center;
   transition: filter var(--figure-exit-transition-duration), color var(--figure-exit-transition-duration);
+}
+
+.schematics-figure__figure--light-up .schematics-figure__figure__diagram-container {
+  animation: light-up-diagram var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
 }
 
 .schematics-figure__figure--exiting .schematics-figure__figure__diagram-container {
@@ -100,6 +123,10 @@
   animation:
     text-shadow-flicker var(--figure-exit-transition-duration) ease-out,
     jitter var(--figure-exit-transition-duration);
+}
+
+.schematics-figure__figure--light-up .schematics-figure__figure__figcaption {
+  animation: light-up-text var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
 }
 
 .schematics-figure__figure__figcaption__character {

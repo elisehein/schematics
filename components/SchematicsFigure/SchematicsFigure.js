@@ -29,8 +29,19 @@ export default class SchematicsFigure extends HTMLElement {
 
     diagramElement.drawBeforeCaption({ onDone: () => {
       diagramElement.drawAlongsideCaption();
-      this.renderCaption({ onDone: () => diagramElement.drawAfterCaption() });
+      this.renderCaption({ onDone: () => {
+        diagramElement.drawAfterCaption({ onLightUp: this.lightUpFigure.bind(this) });
+      }});
     }});
+  }
+
+  lightUpFigure(durationMS) {
+    this.style.setProperty("--schematics-figure-light-up-duration", `${durationMS}ms`)
+    this.figureNode.classList.add("schematics-figure__figure--light-up");
+
+    setTimeout(() => {
+      this.figureNode.classList.remove("schematics-figure__figure--light-up");
+    }, durationMS);
   }
 
   static get observedAttributes()  {
