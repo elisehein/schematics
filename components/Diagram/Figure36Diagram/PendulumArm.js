@@ -17,7 +17,8 @@ export default function PendulumArm(anchorPoint, initialAngle, length, radius) {
   return Object.assign(
     self,
     swingable(self, anchorPoint, initialAngle),
-    clickable(self)
+    clickable(self),
+    buzzing(self)
   );
 }
 
@@ -201,3 +202,21 @@ function defineHoverScanLinePattern(groupNode, circleNode) {
 
   groupNode.appendChild(defs);
 }
+
+const buzzing = ({ arm ,circle }) => ({
+  buzz(transitionDurationSec) {
+    [arm.node, circle.node].forEach(node => {
+      node.style.transition = `stroke ${transitionDurationSec}s linear, stroke-width ${transitionDurationSec}s linear, filter ${transitionDurationSec}s linear`;
+      node.style.stroke = "fff;"
+      node.style.strokeWidth = 2;
+      node.style.filter = "blur(.04em)";
+    });
+  },
+
+  removeBuzz() {
+    arm.stroke();
+    circle.stroke();
+    arm.node.style.filter = "none";
+    circle.node.style.filter = "none";
+  }
+});

@@ -54,7 +54,9 @@ export default class Figure36Diagram extends Diagram {
       this._arrow.disappearWithEasing(this._swingEasing, this._swingDurationSec);
 
       this._swingingArm.beginSwinging({
-        atFirstAmplitude: (angle) => this.drawPendulumArm(angle)
+        atFirstAmplitude: (angle) => this._staticArm = this.drawPendulumArm(angle),
+        justBeforeEachSubsequentPeriod: () => this._staticArm.buzz(0.2),
+        justAfterEachSubsequentPeriod: () => this._staticArm.removeBuzz(0.2)
       });
     });
   }
