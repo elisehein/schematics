@@ -43,7 +43,7 @@ describe("CaptionTyping", () => {
       const expectedDelayChanges = [
         { index: 0, delay: 0 },
         { index: 10, delay: 1300 },
-        { index: 11, delay: 110 }
+        { index: 11, delay: 130 }
       ];
       expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
     });
