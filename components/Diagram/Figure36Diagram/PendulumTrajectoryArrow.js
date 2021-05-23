@@ -23,7 +23,7 @@ export default function PendulumTrajectoryArrow(anchorPoint, radius, angles, reg
 }
 
 const appearingInSteps = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
-  appearInSteps(durationMS, { onDone }) {
+  appearInSteps(durationMS, timerManager, { onDone }) {
     const arcLength  = finalAngles.endAngle - finalAngles.startAngle
     const arcLengthForSingleStep = arcLength / animationSteps;
     const singleStepDuration = durationMS / animationSteps;
@@ -37,7 +37,7 @@ const appearingInSteps = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
     }
 
     const steppedArrowIncrementActions = emptyArrayOfLength(animationSteps).map((_, index) => [
-      waitBeforeNextAction(singleStepDuration),
+      waitBeforeNextAction(singleStepDuration, timerManager),
       setArrowArcStartAngle(finalAngles.endAngle - ((index + 1) * arcLengthForSingleStep)),
     ]).flat();
 

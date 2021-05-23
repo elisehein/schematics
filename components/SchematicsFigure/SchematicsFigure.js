@@ -19,10 +19,7 @@ export default class SchematicsFigure extends HTMLElement {
   }
 
   renderFigure() {
-    if (this._captionTyping) {
-      this._captionTyping.cancelCurrentSession();
-    }
-
+    this.cleanUpCurrentFigure();
     this._diagramElement = this.renderDiagram();
 
     if (!this._diagramElement) {
@@ -31,17 +28,22 @@ export default class SchematicsFigure extends HTMLElement {
 
     this.querySelector(".schematics-figure__figure__figcaption").innerHTML = "";
 
-    this._diagramElement.drawBeforeCaption({ onDone: diagramNum => {
-      if (diagramNum !== this.num) {
-        console.log("drawBeforeCaption finished for", diagramNum, "but we are already at ", this.num, "so don't continue.");
-        return;
-      }
-
+    this._diagramElement.drawBeforeCaption({ onDone: () => {
       this._diagramElement.drawAlongsideCaption();
       this.renderCaption({ onDone: () => {
         this._diagramElement.drawAfterCaption({ onLightUp: this.lightUpFigure.bind(this) });
       } });
     } });
+  }
+
+  cleanUpCurrentFigure() {
+    if (this._captionTyping) {
+      this._captionTyping.cancelCurrentSession();
+    }
+
+    if (this._diagramElement) {
+      this._diagramElement.clearAllTimers();
+    }
   }
 
   lightUpFigure(durationMS) {
@@ -62,22 +64,25 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    const maybeIntOldNum = parseInt(oldNum);
-
-    if (maybeIntOldNum) {
-      this.updateWithTransition(maybeIntOldNum);
+    if (oldNum) {
+      this.updateWithTransition();
     } else {
       this.update();
     }
   }
 
-  updateWithTransition(oldNum) {
+  updateWithTransition() {
+    if (this._stopExitingTimer) {
+      clearTimeout(this._stopExitingTimer);
+    }
+
     this.figureNode.classList.add("schematics-figure__figure--exiting");
 
     const stopExitingAndUpdate = () => {
-      setTimeout(() => {
+      this._stopExitingTimer = setTimeout(() => {
         this.figureNode.classList.remove("schematics-figure__figure--exiting");
-        this.update(oldNum);
+        this.update();
+        this._stopExitingTimer = null;
       }, 1000);
     };
 
@@ -90,13 +95,9 @@ export default class SchematicsFigure extends HTMLElement {
     }
   }
 
-  update(oldNum) {
-    if (Number.isInteger(oldNum)) {
-      this.classList.replace(this.className(oldNum), this.className(this.num));
-    } else {
-      this.classList.add(this.className(this.num));
-    }
-
+  update() {
+    // Note this will only work so far that we only ever add one class to schematics-figure
+    this.setAttribute("class", this.className(this.num));
     this.renderFigure();
   }
 

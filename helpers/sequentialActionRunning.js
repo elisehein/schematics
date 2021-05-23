@@ -10,4 +10,7 @@ export const runActionsSequentially = (orderedActions, onAllDone = () => {}) => 
   runActions(0);
 };
 
-export const waitBeforeNextAction = delay => ({ onDone }) => setTimeout(onDone, delay);
+// eslint-disable-next-line arrow-body-style
+export const waitBeforeNextAction = (delay, timerManager) => {
+  return ({ onDone }) => timerManager.setTimeout(onDone, delay);
+};

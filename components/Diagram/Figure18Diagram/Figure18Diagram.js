@@ -14,7 +14,7 @@ export default class Figure18Diagram extends Diagram {
 
   drawAfterCaption() {
     super.drawAfterCaption();
-    setTimeout(() => this.drawBoxWithOptions(firstBox), 1000);
+    this._timerManager.setTimeout(() => this.drawBoxWithOptions(firstBox), 1000);
   }
 
   drawBoxWithOptions(boxText, boxOriginPoint, animated = true) {
@@ -51,7 +51,7 @@ export default class Figure18Diagram extends Diagram {
       const typingDurationSeconds = animated ? 0.2 + (index * 0.3 ): 0;
       const labelAppearanceDelayMS = animated ? 700 + (index * 600 ) : 0;
 
-      setTimeout(() => {
+      this._timerManager.setTimeout(() => {
         this.drawOptionLabel(originBoxText, option, typingDurationSeconds);
       }, labelAppearanceDelayMS);
     });
@@ -68,7 +68,7 @@ export default class Figure18Diagram extends Diagram {
 
     label.animateTyping();
 
-    setTimeout(() => {
+    this._timerManager.setTimeout(() => {
       const underline = this.drawOptionLabelUnderline(x, y, label.intrinsicSize);
       this.bindOptionLabelClick(label, underline.node, originBoxText, option);
     }, animationDurationSeconds * 1000)

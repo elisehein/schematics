@@ -29,10 +29,10 @@ export default class Figure36Diagram extends Diagram {
     this._arrow = this.drawArrow();
 
     runActionsSequentially([
-      waitBeforeNextAction(1000),
-      this._arrow.appearInSteps.bind(this._arrow, 3000),
-      waitBeforeNextAction(1000)
-    ], () => onDone(36));
+      waitBeforeNextAction(1000, this._timerManager),
+      this._arrow.appearInSteps.bind(this._arrow, 3000, this._timerManager),
+      waitBeforeNextAction(1000, this._timerManager)
+    ], onDone);
   }
 
   drawAfterCaption({ onLightUp }) {
@@ -85,7 +85,7 @@ export default class Figure36Diagram extends Diagram {
     // 11 is a magic number – the final swing where the swinging pendulum still reaches the echo
     const lightUpDuration = 1000 - ((index - 1) * 100); // Gradually less time to light up
     const msUntilJustBeforeNextSwing = this._swingDurationSec * 1000 - (lightUpDuration / 2);
-    setTimeout(() => onLightUp(lightUpDuration), msUntilJustBeforeNextSwing);
+    this._timerManager.setTimeout(() => onLightUp(lightUpDuration), msUntilJustBeforeNextSwing);
   }
 }
 
