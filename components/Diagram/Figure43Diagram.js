@@ -130,7 +130,7 @@ export default class Figure43Diagram extends Diagram {
       keySplines: `${easeIn}; ${easeOut}; ${easeIn}; ${easeOut}`,
       dur: 15,
       begin: "0s",
-      repeatCount: "infinite",
+      repeatCount: "indefinite",
       fill: "freeze"
     });
   }
