@@ -151,7 +151,7 @@
 
 .schematics-figure__figure__figcaption__character--latest-visible:last-child::after {
   opacity: 0;
-  animation-iteration-count: 3;
+  animation-iteration-count: 5;
 }
 
 /* To ensure both the caption and figure are able to receive pointer events */
