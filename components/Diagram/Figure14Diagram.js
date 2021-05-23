@@ -1,7 +1,6 @@
 /* eslint-disable id-length */
 import Diagram from "./Diagram.js";
 import { Line, Path, TypingText, Text } from "../SVGShapes/SVGShapes.js";
-import { runActionsSequentially } from "/helpers/sequentialActionRunning.js";
 
 export default class Figure14Diagram extends Diagram {
   constructor() {
@@ -10,11 +9,33 @@ export default class Figure14Diagram extends Diagram {
 
   drawBeforeCaption({ onDone }) {
     this.drawAxes(onDone)
+    const { node, length } = this.drawHiddenSpiral();
+    this._spiral = { node, length, sixthOfLength: length / 6.0 };
   }
 
-  drawAlongsideCaption() {
-    super.drawAlongsideCaption();
-    this.drawSpiral();
+  onCaptionPause(pauseIndex, pauseDuration) {
+    const lengthBite = this._spiral.sixthOfLength / 6.0;
+
+    // TODO: This would be a use case for [EVENT:<NAME>] flags in the caption instead
+    // of relying on pauses and keeping track of pause indeces. Here: onEvent("PROGRESS_SPIRAL").
+    switch(pauseIndex) {
+      case 1:
+        this.transitionSpiral(this._spiral.length - this._spiral.sixthOfLength + lengthBite, pauseDuration + 2000);
+        break;
+      case 4:
+        this.transitionSpiral(this._spiral.length - (3 * this._spiral.sixthOfLength) + lengthBite, pauseDuration + 2000);
+        break;
+      case 6:
+        this.transitionSpiral(this._spiral.length - (4 * this._spiral.sixthOfLength) - lengthBite, pauseDuration + 2000);
+        break;
+      default:
+        return;
+    }
+  }
+
+  drawAfterCaption() {
+    // Draw final bit of spiral when the caption is done.
+    this.transitionSpiral(0, 7000);
   }
 
   drawAxes(onAllDone) {
@@ -46,7 +67,7 @@ export default class Figure14Diagram extends Diagram {
     }
   }
 
-  drawSpiral() {
+  drawHiddenSpiral() {
     const spiral = new Path("M210,215 \
                              C 210,175, 90,175, 90,195 \
                              C 90,215, 210,215, 210,175 \
@@ -56,37 +77,18 @@ export default class Figure14Diagram extends Diagram {
                              C 90,135, 210,135, 210,95");
     spiral.stroke(2);
     this.addSVGChildElement(spiral.node);
-    this.animateSpiralInSteps(spiral.node);
+
+    const spiralLength = spiral.node.getTotalLength();
+    spiral.node.style.transitionProperty = "stroke-dashoffset";
+    spiral.node.style.strokeDasharray = spiralLength;
+    spiral.node.style.strokeDashoffset = spiralLength;
+
+    return { node: spiral.node, length: spiralLength };
   }
 
-  animateSpiralInSteps(spiralNode) {
-    const spiralLength = spiralNode.getTotalLength();
-    const sixthOfLength = spiralLength / 6.0;
-
-    spiralNode.style.strokeDasharray = spiralLength;
-    spiralNode.style.strokeDashoffset = spiralLength;
-
-    // Update the style asynchronously so the transition isn't applied to the initial styles
-    setTimeout(() => {
-      spiralNode.style.transition = "stroke-dashoffset 2.6s cubic-bezier(0.65, 0, 0.35, 1)";
-      spiralNode.style.strokeDashoffset = spiralLength - sixthOfLength;
-    }, 1700);
-
-    runActionsSequentially([
-      this.transitionSpiral.bind(this, spiralNode, spiralLength - (3 * sixthOfLength), 4600, 1400),
-      this.transitionSpiral.bind(this, spiralNode, spiralLength - (4 * sixthOfLength), 2600, 2400),
-      this.transitionSpiral.bind(this, spiralNode, spiralLength - (6 * sixthOfLength), 4600, 3400)
-    ], () => {});
-  }
-
-  transitionSpiral(spiralNode, strokeDashoffset, duration, delay, { onDone }) {
-    spiralNode.addEventListener("transitionend", () => {
-      setTimeout(() => {
-        spiralNode.style.transitionDuration = `${duration}ms`;
-        spiralNode.style.strokeDashoffset = strokeDashoffset;
-        onDone();
-      }, delay);
-    }, { once: true });
+  transitionSpiral(strokeDashoffset, duration) {
+    this._spiral.node.style.transitionDuration = `${duration}ms`;
+    this._spiral.node.style.strokeDashoffset = strokeDashoffset;
   }
 }
 

@@ -35,6 +35,8 @@ export default class Diagram extends HTMLElement {
   drawAlongsideCaption() {}
   drawAfterCaption() {}
 
+  onCaptionPause() {}
+
   renderTitle() {
     const node = this.querySelector("#figure-num");
     if (node) {

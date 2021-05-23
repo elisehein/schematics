@@ -19,18 +19,18 @@ export default class SchematicsFigure extends HTMLElement {
   }
 
   renderFigure() {
-    const diagramElement = this.renderDiagram();
+    this._diagramElement = this.renderDiagram();
 
-    if (!diagramElement) {
+    if (!this._diagramElement) {
       return;
     }
 
     this.querySelector(".schematics-figure__figure__figcaption").innerHTML = "";
 
-    diagramElement.drawBeforeCaption({ onDone: () => {
-      diagramElement.drawAlongsideCaption();
+    this._diagramElement.drawBeforeCaption({ onDone: () => {
+      this._diagramElement.drawAlongsideCaption();
       this.renderCaption({ onDone: () => {
-        diagramElement.drawAfterCaption({ onLightUp: this.lightUpFigure.bind(this) });
+        this._diagramElement.drawAfterCaption({ onLightUp: this.lightUpFigure.bind(this) });
       }});
     }});
   }
@@ -106,15 +106,11 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    const onPause = this.onCaptionPause;
+    const onPause = (index, duration) => this._diagramElement.onCaptionPause(index, duration);
 
     const captionNode = this.querySelector(".schematics-figure__figure__figcaption");
     const captionTyping = new CaptionTyping(getPoetry(this.num));
     captionTyping.animate(captionNode, onPause, onDone);
-  }
-
-  onCaptionPause(index, duration) {
-    console.log("Caption typing pause index", index, "duration", duration);
   }
 
   className(num) {
