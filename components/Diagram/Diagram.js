@@ -33,6 +33,7 @@ export default class Diagram extends HTMLElement {
   }
 
   drawAlongsideCaption() {}
+
   drawAfterCaption() {}
 
   onCaptionPause() {}

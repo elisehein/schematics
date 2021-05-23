@@ -1,7 +1,7 @@
 const captionAnimationFlagActions = {
   PAUSE: "PAUSE",
   TYPE: "TYPE"
-}
+};
 
 const captionAnimationTypingSpeeds = {
   SLOWEST: 200,
@@ -15,7 +15,7 @@ const captionAnimationPauseDurations = {
   SHORT: 300,
   MEDIUM: 800,
   LONG: 1300
-}
+};
 
 export default class CaptionTyping {
   constructor(unparsedCaption) {
@@ -66,7 +66,7 @@ export default class CaptionTyping {
     const { action, delay: delayForCurrentFlag } = this.actionAndDelayFromFlag(flag);
     const newRange = { index: flagIndex, delay: delayForCurrentFlag };
 
-    const extractedRanges = [newRange]
+    const extractedRanges = [newRange];
     let updatedDelay = latestActiveDelay;
     let updatedPausesSoFar = pausesSoFar;
 
@@ -75,7 +75,7 @@ export default class CaptionTyping {
       updatedPausesSoFar += 1;
       extractedRanges[0].isPause = true;
       extractedRanges[0].pauseIndex = updatedPausesSoFar - 1;
-      extractedRanges.push({ index: flagIndex + 1, delay: latestActiveDelay })
+      extractedRanges.push({ index: flagIndex + 1, delay: latestActiveDelay });
     } else {
       updatedDelay = delayForCurrentFlag;
     }
@@ -121,7 +121,7 @@ export default class CaptionTyping {
     const revealThisSpanAndNext = () => {
       this.updateVisibility(index, captionSpans);
       this.revealSpan({ index: index + 1, captionSpans, onPause, onDone });
-    }
+    };
 
     const { delay, isPause, pauseIndex } = this.getActiveDelayInfoAtSpan(index);
 
@@ -139,12 +139,12 @@ export default class CaptionTyping {
   updateVisibility(index, captionSpans) {
     if (index > 0) {
       captionSpans[index - 1].classList.remove(
-        "schematics-figure__figure__figcaption__character--latest-visible",
+        "schematics-figure__figure__figcaption__character--latest-visible"
         );
     }
     captionSpans[index].classList.add(
       "schematics-figure__figure__figcaption__character--visible",
-      "schematics-figure__figure__figcaption__character--latest-visible",
+      "schematics-figure__figure__figcaption__character--latest-visible"
       );
   }
 
@@ -157,7 +157,7 @@ export default class CaptionTyping {
       delay: rangeApplyingAtIndex.delay,
       isPause: rangeAtIndex && rangeAtIndex.isPause,
       pauseIndex: rangeAtIndex && rangeAtIndex.pauseIndex
-    }
+    };
   }
 
   actionAndDelayFromFlag(flagString) {

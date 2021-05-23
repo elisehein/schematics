@@ -3,7 +3,6 @@ export const directives = {
   PAUSE: "PAUSE"
 };
 
-/* eslint-disable id-length */
 const figures = {
   14: {
     a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system (the space-time continuum).",
@@ -43,4 +42,5 @@ export function figureExists(num) {
 export const orderedFigures = Object
   .keys(figures)
   .map(Number)
+  // eslint-disable-next-line id-length
   .sort((a, b) => a - b);

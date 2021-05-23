@@ -1,4 +1,3 @@
-/* eslint-disable id-length */
 import Diagram from "./Diagram.js";
 import { Path } from "../SVGShapes/SVGShapes.js";
 
@@ -25,7 +24,7 @@ export default class Figure43Diagram extends Diagram {
       F: { x: 290, y: 217.5 },
       G: { x: 10, y: 262.5 },
       H: { x: 150, y: 262.5 }
-    }
+    };
   }
 
   drawAlongsideCaption() {
@@ -115,7 +114,7 @@ export default class Figure43Diagram extends Diagram {
 
   configureAnimation(cube) {
     const easeIn = ".12 0 .39 0";
-    const easeOut = ".61 1 .88 1"
+    const easeOut = ".61 1 .88 1";
 
     cube.animateAttribute("d", {
       values: `

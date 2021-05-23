@@ -23,9 +23,9 @@ export const clickable = ({ node, circle }) => ({
 
     circle.node.style.cursor = "pointer";
 
-    const toggleFill = (isFilled) => {
+    const toggleFill = isFilled => {
       circle.node.style.fill = isFilled ? `url(#${pendulumCircleScanLinesID})` : "transparent";
-    }
+    };
     const fill = toggleFill.bind(this, true);
     const unfill = toggleFill.bind(this, false);
 

@@ -35,12 +35,12 @@ export default class SchematicsFigure extends HTMLElement {
       this._diagramElement.drawAlongsideCaption();
       this.renderCaption({ onDone: () => {
         this._diagramElement.drawAfterCaption({ onLightUp: this.lightUpFigure.bind(this) });
-      }});
-    }});
+      } });
+    } });
   }
 
   lightUpFigure(durationMS) {
-    this.style.setProperty("--schematics-figure-light-up-duration", `${durationMS}ms`)
+    this.style.setProperty("--schematics-figure-light-up-duration", `${durationMS}ms`);
     this.figureNode.classList.add("schematics-figure__figure--light-up");
 
     setTimeout(() => {
@@ -74,7 +74,7 @@ export default class SchematicsFigure extends HTMLElement {
         this.figureNode.classList.remove("schematics-figure__figure--exiting");
         this.update(oldNum);
       }, 1000);
-    }
+    };
 
     // figure--exiting may or may not trigger transitions/animations;
     // we don't want to depend on that.
@@ -97,7 +97,7 @@ export default class SchematicsFigure extends HTMLElement {
 
   renderDiagram() {
     if (!Number.isInteger(this.num)) {
-      return;
+      return null;
     }
 
     const diagramElement = this.getDiagram(this.num);
@@ -144,13 +144,13 @@ export default class SchematicsFigure extends HTMLElement {
         break;
       case 18:
         el = new Figure18Diagram();
-        break
+        break;
       case 36:
         el = new Figure36Diagram();
-        break
+        break;
       case 43:
         el = new Figure43Diagram();
-        break
+        break;
       default:
         throw new Error(`No diagram element specified for figure ${num}.`);
     }

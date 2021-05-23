@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import CaptionTyping from "./CaptionTyping.js";
 
 describe("CaptionTyping", () => {
@@ -5,6 +6,7 @@ describe("CaptionTyping", () => {
 
   test("provides a HTML string with each character wrapped in a hidden <span>", () => {
     const sut = new CaptionTyping(captionWithOnePause);
+    // eslint-disable-next-line quotes
     const expectedHTML = `<span class="schematics-figure__figure__figcaption__character">H</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character">o</span><span class="schematics-figure__figure__figcaption__character">,</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">w</span><span class="schematics-figure__figure__figcaption__character">o</span><span class="schematics-figure__figure__figcaption__character">r</span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character">d</span><span class="schematics-figure__figure__figcaption__character">!</span><span class="schematics-figure__figure__figcaption__character"><br/></span><span class="schematics-figure__figure__figcaption__character">H</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character">o</span><span class="schematics-figure__figure__figcaption__character">,</span><span class="schematics-figure__figure__figcaption__character"><br/></span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">g</span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">i</span><span class="schematics-figure__figure__figcaption__character">n</span><span class="schematics-figure__figure__figcaption__character">!</span>`;
     expect(sut.parsedAndWrappedCaption).toEqual(expectedHTML);
   });
@@ -21,8 +23,8 @@ describe("CaptionTyping", () => {
     });
 
     test("uses a default delay of 0 after pause if no pacing information is given", () => {
-      let sut = new CaptionTyping("No flags [PAUSE:MEDIUM]yet.")
-      let expectedDelayChanges = [
+      const sut = new CaptionTyping("No flags [PAUSE:MEDIUM]yet.");
+      const expectedDelayChanges = [
         { index: 0, delay: 0 },
         { index: 9, delay: 800, isPause: true, pauseIndex: 0 },
         { index: 10, delay: 0 }
@@ -31,15 +33,15 @@ describe("CaptionTyping", () => {
     });
 
     test("overrides any delays that are specified on the same index", () => {
-      let sut = new CaptionTyping("[TYPE:FAST][TYPE:FASTEST]No typing speed flags.")
-      let expectedDelayChanges = [
-        { index: 0, delay: 20 },
+      const sut = new CaptionTyping("[TYPE:FAST][TYPE:FASTEST]No typing speed flags.");
+      const expectedDelayChanges = [
+        { index: 0, delay: 20 }
       ];
       expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
     });
 
     test("takes into account typing speed changes even if that index is overridden", () => {
-      const sut = new CaptionTyping("No typing [TYPE:SLOW][PAUSE:LONG]speed flags.")
+      const sut = new CaptionTyping("No typing [TYPE:SLOW][PAUSE:LONG]speed flags.");
       const expectedDelayChanges = [
         { index: 0, delay: 0 },
         { index: 10, delay: 1300, isPause: true, pauseIndex: 0 },
@@ -49,7 +51,7 @@ describe("CaptionTyping", () => {
     });
 
     test("overrides the default delay if the animation begins with a pause", () => {
-      const sut = new CaptionTyping("[PAUSE:SHORT]No typing speed flags.")
+      const sut = new CaptionTyping("[PAUSE:SHORT]No typing speed flags.");
       const expectedDelayChanges = [
         { index: 0, delay: 300, isPause: true, pauseIndex: 0 },
         { index: 1, delay: 0 }
@@ -58,7 +60,7 @@ describe("CaptionTyping", () => {
     });
 
     test("adds a default zero delay if no flags are set", () => {
-      const sut = new CaptionTyping("No flags at all.")
+      const sut = new CaptionTyping("No flags at all.");
       expect(sut.singleCharacterDelayRanges).toEqual([{ index: 0, delay: 0 }]);
     });
 
@@ -91,6 +93,7 @@ describe("CaptionTyping", () => {
     test("replaces the newlines with <br/> and wraps them in spans, too", () => {
       const sut = new CaptionTyping(`X
 Y`);
+      // eslint-disable-next-line quotes
       expect(sut.parsedAndWrappedCaption).toEqual(`<span class="schematics-figure__figure__figcaption__character">X</span><span class="schematics-figure__figure__figcaption__character"><br/></span><span class="schematics-figure__figure__figcaption__character">Y</span>`);
     });
   });
@@ -101,6 +104,7 @@ Y`);
 [TYPE:FAST][PAUSE:LONG]but feel had I stayed,
 [PAUSE:MEDIUM]everything would likely seem the same.`;
     const sut = new CaptionTyping(poetry);
+    // eslint-disable-next-line quotes
     const expectedHTML = `<span class="schematics-figure__figure__figcaption__character">I</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">r</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">t</span><span class="schematics-figure__figure__figcaption__character">u</span><span class="schematics-figure__figure__figcaption__character">r</span><span class="schematics-figure__figure__figcaption__character">n</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">n</span><span class="schematics-figure__figure__figcaption__character">d</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">s</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">n</span><span class="schematics-figure__figure__figcaption__character">s</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">,</span><span class="schematics-figure__figure__figcaption__character"><br/></span><span class="schematics-figure__figure__figcaption__character">t</span><span class="schematics-figure__figure__figcaption__character">h</span><span class="schematics-figure__figure__figcaption__character">i</span><span class="schematics-figure__figure__figcaption__character">n</span><span class="schematics-figure__figure__figcaption__character">g</span><span class="schematics-figure__figure__figcaption__character">s</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">r</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">n</span><span class="schematics-figure__figure__figcaption__character">o</span><span class="schematics-figure__figure__figcaption__character">t</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">t</span><span class="schematics-figure__figure__figcaption__character">h</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">s</span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">m</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">s</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">b</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">f</span><span class="schematics-figure__figure__figcaption__character">o</span><span class="schematics-figure__figure__figcaption__character">r</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">,</span><span class="schematics-figure__figure__figcaption__character"><br/></span><span class="schematics-figure__figure__figcaption__character">b</span><span class="schematics-figure__figure__figcaption__character">u</span><span class="schematics-figure__figure__figcaption__character">t</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">f</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">h</span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">d</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">I</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">s</span><span class="schematics-figure__figure__figcaption__character">t</span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">y</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">d</span><span class="schematics-figure__figure__figcaption__character">,</span><span class="schematics-figure__figure__figcaption__character"><br/></span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">v</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">r</span><span class="schematics-figure__figure__figcaption__character">y</span><span class="schematics-figure__figure__figcaption__character">t</span><span class="schematics-figure__figure__figcaption__character">h</span><span class="schematics-figure__figure__figcaption__character">i</span><span class="schematics-figure__figure__figcaption__character">n</span><span class="schematics-figure__figure__figcaption__character">g</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">w</span><span class="schematics-figure__figure__figcaption__character">o</span><span class="schematics-figure__figure__figcaption__character">u</span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character">d</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character">i</span><span class="schematics-figure__figure__figcaption__character">k</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">l</span><span class="schematics-figure__figure__figcaption__character">y</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">s</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">m</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">t</span><span class="schematics-figure__figure__figcaption__character">h</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character"> </span><span class="schematics-figure__figure__figcaption__character">s</span><span class="schematics-figure__figure__figcaption__character">a</span><span class="schematics-figure__figure__figcaption__character">m</span><span class="schematics-figure__figure__figcaption__character">e</span><span class="schematics-figure__figure__figcaption__character">.</span>`;
 
     expect(sut.parsedAndWrappedCaption).toEqual(expectedHTML);

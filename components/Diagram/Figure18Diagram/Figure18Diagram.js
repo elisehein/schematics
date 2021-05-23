@@ -1,4 +1,3 @@
-/* eslint-disable id-length */
 import Diagram from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";

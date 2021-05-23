@@ -1,4 +1,3 @@
-/* eslint-disable id-length */
 import { strokeable, fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
 
 import { getArcPathD } from "/helpers/arcCalculations.js";
@@ -27,7 +26,7 @@ export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
 
   const addShape = shapeNode => {
     node.appendChild(shapeNode);
-  }
+  };
 
   return { node, addShape };
 }
@@ -82,6 +81,7 @@ export function Circle(cx, cy, r) {
   );
 }
 
+// eslint-disable-next-line id-length
 export function Path(d) {
   const node = createSVGElement("path");
 
@@ -98,7 +98,7 @@ export function Path(d) {
     fillable(self),
     havingLength(self),
     withOptionalArrowHead(self, Marker.arrowHead)
-  )
+  );
 }
 
 export function Arc({ x, y, radius }, { startAngle, endAngle }) {
@@ -135,6 +135,7 @@ export function Text(text, { x, y }, fontSize = 10) {
 }
 
 export function BoxedText(text, fontSize, { x, y }, { width, height }) {
+  // eslint-disable-next-line id-length
   const g = createSVGElement("g");
 
   const rectNode = createSVGElement("rect");
@@ -163,6 +164,7 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
 }
 
 export function TypingText(text, { x, y }, animationDuration, fontSize = 10) {
+  // eslint-disable-next-line id-length
   const g = createSVGElement("g");
   const id = `text-path-${Math.round(x)}-${Math.round(y)}`;
 

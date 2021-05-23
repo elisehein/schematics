@@ -1,4 +1,3 @@
-/* eslint-disable id-length */
 import Diagram from "./Diagram.js";
 import { Line, Path, TypingText, Text } from "../SVGShapes/SVGShapes.js";
 
@@ -8,7 +7,7 @@ export default class Figure14Diagram extends Diagram {
   }
 
   drawBeforeCaption({ onDone }) {
-    this.drawAxes(onDone)
+    this.drawAxes(onDone);
     const { node, length } = this.drawHiddenSpiral();
     this._spiral = { node, length, sixthOfLength: length / 6.0 };
   }
@@ -18,7 +17,7 @@ export default class Figure14Diagram extends Diagram {
 
     // TODO: This would be a use case for [EVENT:<NAME>] flags in the caption instead
     // of relying on pauses and keeping track of pause indeces. Here: onEvent("PROGRESS_SPIRAL").
-    switch(pauseIndex) {
+    switch (pauseIndex) {
       case 1:
         this.transitionSpiral(this._spiral.length - this._spiral.sixthOfLength + lengthBite, pauseDuration + 2000);
         break;
@@ -29,7 +28,6 @@ export default class Figure14Diagram extends Diagram {
         this.transitionSpiral(this._spiral.length - (4 * this._spiral.sixthOfLength) - lengthBite, pauseDuration + 2000);
         break;
       default:
-        return;
     }
   }
 

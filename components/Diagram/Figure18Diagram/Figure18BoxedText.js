@@ -1,9 +1,9 @@
-/* eslint-disable id-length */
 import { havingLength, strokeable } from "../../SVGShapes/SVGShapeFeatures.js";
 import { TypingText, Path, createSVGElement, Text } from "../../SVGShapes/SVGShapes.js";
 import { targetSideTouchPoints } from "./data.js";
 
 export default function Figure18BoxedText(text, fontSize, { x, y, width, height }, animated, targetSideTouchPoint) {
+  // eslint-disable-next-line id-length
   const g = createSVGElement("g");
 
   const rect = getRectAsPathWithOriginPoint({ x, y, width, height, originPoint: targetSideTouchPoint });
@@ -23,7 +23,7 @@ export default function Figure18BoxedText(text, fontSize, { x, y, width, height 
 
   const animateTyping = onDone => {
     textShape.animateTyping(null, onDone);
-  }
+  };
 
   return Object.assign(
     {
@@ -36,6 +36,7 @@ export default function Figure18BoxedText(text, fontSize, { x, y, width, height 
 }
 
 function getRectAsPathWithOriginPoint({ x, y, width, height, originPoint }) {
+  // eslint-disable-next-line id-length
   let d;
 
   const topLeftCorner = `${x},${y}`;
@@ -68,12 +69,13 @@ function getRectAsPathWithOriginPoint({ x, y, width, height, originPoint }) {
 }
 
 function getPathD(...points) {
+  // eslint-disable-next-line id-length
   const d = points
     .map((point, index) => {
       if (index == 0) {
         return `M ${point}`;
       } else {
-        return `L ${point}`
+        return `L ${point}`;
       }
     })
     .join(" ");

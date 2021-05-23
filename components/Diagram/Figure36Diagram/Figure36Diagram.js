@@ -19,7 +19,7 @@ export default class Figure36Diagram extends Diagram {
     this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 - offset };
 
     this._swingDurationSec = 2;
-    this._swingEasing = ".4 0 .6 1"
+    this._swingEasing = ".4 0 .6 1";
     this._totalSwings = 30;
   }
 
@@ -31,7 +31,7 @@ export default class Figure36Diagram extends Diagram {
     runActionsSequentially([
       waitBeforeNextAction(1000),
       this._arrow.appearInSteps.bind(this._arrow, 3000),
-      waitBeforeNextAction(1000),
+      waitBeforeNextAction(1000)
     ], onDone);
   }
 
@@ -69,7 +69,7 @@ export default class Figure36Diagram extends Diagram {
   }
 
   drawPendulumArm(rotationAngle) {
-    const arm = PendulumArm(this._anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
+    const arm = new PendulumArm(this._anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
     this.addSVGChildElement(arm.node);
     return arm;
   }

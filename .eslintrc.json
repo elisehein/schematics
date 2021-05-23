@@ -65,7 +65,7 @@
         "func-call-spacing": "error",
         "func-name-matching": "error",
         "func-names": "off",
-        "function-paren-newline": "error",
+        "function-paren-newline": "off",
         "generator-star-spacing": "error",
         "global-require": "error",
         "guard-for-in": "error",
@@ -73,7 +73,10 @@
         "id-blacklist": "error",
         "id-length": [
             "error",
-            { "exceptions": "_" }
+            {
+                "properties": "never",
+                "exceptions": [ "_", "x", "y", "r" ]
+            }
         ],
         "id-match": "error",
         "implicit-arrow-linebreak": [
@@ -91,7 +94,7 @@
                 "before": true
             }
         ],
-        "line-comment-position": "error",
+        "line-comment-position": "off",
         "linebreak-style": [
             "error",
             "unix"
@@ -152,7 +155,7 @@
         "no-loop-func": "error",
         "no-magic-numbers": "off",
         "no-misleading-character-class": "error",
-        "no-mixed-operators": "error",
+        "no-mixed-operators": "off",
         "no-mixed-requires": "error",
         "no-multi-assign": "error",
         "no-multi-spaces": "off",
@@ -198,6 +201,12 @@
         "no-unmodified-loop-condition": "error",
         "no-unneeded-ternary": "error",
         "no-unused-expressions": "error",
+        "no-unused-vars": [
+            "error",
+            {
+                "varsIgnorePattern": "_"
+            }
+        ],
         "no-use-before-define": "off",
         "no-useless-call": "error",
         "no-useless-computed-key": "error",
@@ -207,7 +216,7 @@
         "no-useless-return": "error",
         "no-var": "error",
         "no-void": "error",
-        "no-warning-comments": "error",
+        "no-warning-comments": "off",
         "no-whitespace-before-property": "error",
         "no-with": "error",
         "nonblock-statement-body-position": "error",
@@ -245,7 +254,7 @@
         "require-jsdoc": "off",
         "require-unicode-regexp": "off",
         "rest-spread-spacing": "error",
-        "semi": "off",
+        "semi": "error",
         "semi-spacing": "error",
         "semi-style": [
             "error",

@@ -33,7 +33,7 @@ export default class FigureList extends HTMLElement {
 
   renderDirectionalLink(direction) {
     const isNext = direction == DIRECTION.next;
-    const labelID = `${isNext ? "next" : "previous"}-link-label`
+    const labelID = `${isNext ? "next" : "previous"}-link-label`;
     const labelText = isNext ? "Next" : "Previous";
     const targetNum = this.nums[this.activeNumIndex + (isNext ? 1 : -1)];
 

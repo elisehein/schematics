@@ -1,4 +1,3 @@
-/* eslint-disable id-length */
 import { labelPositions } from "./data.js";
 
 export default class Figure18DiagramGridCoordinateSystem {
