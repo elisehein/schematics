@@ -61,6 +61,16 @@ describe("CaptionTyping", () => {
       const sut = new CaptionTyping("No flags at all.")
       expect(sut.singleCharacterDelayRanges).toEqual([{ index: 0, delay: 0 }]);
     });
+
+    test("uses a literal value for a pause duration if provided in the flag", () => {
+      const sut = new CaptionTyping("Extra long pause[PAUSE:5000] from literal value");
+      const expectedDelayChanges = [
+        { index: 0, delay: 0 },
+        { index: 16, delay: 5000 },
+        { index: 17, delay: 0 }
+      ];
+      expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
+    });
   });
 
   describe("when given a caption with newlines", () => {

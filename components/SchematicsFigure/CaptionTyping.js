@@ -145,7 +145,7 @@ export default class CaptionTyping {
     switch (action) {
       case captionAnimationFlagActions.PAUSE:
         // If no pause duration keyword is found in the dict, assume it's a raw duration in ms
-        delay = captionAnimationPauseDurations[setting] || setting;
+        delay = captionAnimationPauseDurations[setting] || parseInt(setting);
         break;
       case captionAnimationFlagActions.TYPE:
         delay = captionAnimationTypingSpeeds[setting];
