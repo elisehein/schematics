@@ -132,7 +132,7 @@ export default class CaptionTyping {
     if (delay == 0) {
       revealThisSpanAndNext();
     } else {
-      setTimeout(() => revealThisSpanAndNext(), delay);
+      this._timer = setTimeout(() => revealThisSpanAndNext(), delay);
     }
   }
 
@@ -172,8 +172,15 @@ export default class CaptionTyping {
       case captionAnimationFlagActions.TYPE:
         delay = captionAnimationTypingSpeeds[setting];
         break;
+      default:
     }
 
     return { action, delay };
-  };
+  }
+
+  cancelCurrentSession() {
+    if (this._timer) {
+      clearTimeout(this._timer);
+    }
+  }
 }

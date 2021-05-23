@@ -19,6 +19,10 @@ export default class SchematicsFigure extends HTMLElement {
   }
 
   renderFigure() {
+    if (this._captionTyping) {
+      this._captionTyping.cancelCurrentSession();
+    }
+
     this._diagramElement = this.renderDiagram();
 
     if (!this._diagramElement) {
@@ -109,8 +113,8 @@ export default class SchematicsFigure extends HTMLElement {
     const onPause = (index, duration) => this._diagramElement.onCaptionPause(index, duration);
 
     const captionNode = this.querySelector(".schematics-figure__figure__figcaption");
-    const captionTyping = new CaptionTyping(getPoetry(this.num));
-    captionTyping.animate(captionNode, onPause, onDone);
+    this._captionTyping = new CaptionTyping(getPoetry(this.num));
+    this._captionTyping.animate(captionNode, onPause, onDone);
   }
 
   className(num) {
