@@ -29,7 +29,7 @@ export default class Diagram extends HTMLElement {
   }
 
   drawBeforeCaption({ onDone }) {
-    onDone();
+    onDone(this.num);
   }
 
   drawAlongsideCaption() {}
@@ -92,7 +92,7 @@ export default class Diagram extends HTMLElement {
   }
 
   get num() {
-    return this.getAttribute("num");
+    return parseInt(this.getAttribute("num"));
   }
 
   set num(newValue) {

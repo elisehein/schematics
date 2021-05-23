@@ -31,7 +31,12 @@ export default class SchematicsFigure extends HTMLElement {
 
     this.querySelector(".schematics-figure__figure__figcaption").innerHTML = "";
 
-    this._diagramElement.drawBeforeCaption({ onDone: () => {
+    this._diagramElement.drawBeforeCaption({ onDone: diagramNum => {
+      if (diagramNum !== this.num) {
+        console.log("drawBeforeCaption finished for", diagramNum, "but we are already at ", this.num, "so don't continue.");
+        return;
+      }
+
       this._diagramElement.drawAlongsideCaption();
       this.renderCaption({ onDone: () => {
         this._diagramElement.drawAfterCaption({ onLightUp: this.lightUpFigure.bind(this) });

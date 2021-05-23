@@ -32,7 +32,7 @@ export default class Figure36Diagram extends Diagram {
       waitBeforeNextAction(1000),
       this._arrow.appearInSteps.bind(this._arrow, 3000),
       waitBeforeNextAction(1000)
-    ], onDone);
+    ], () => onDone(36));
   }
 
   drawAfterCaption({ onLightUp }) {

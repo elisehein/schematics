@@ -44,7 +44,7 @@ export default class Figure14Diagram extends Diagram {
     this.drawLabel("Y", { x: 207, y: 262 });
     this.drawLabel("Time", { x: 157, y: 36 });
 
-    setTimeout(onAllDone, 1000);
+    setTimeout(() => onAllDone(14), 1000);
   }
 
   drawAxis(startCoords, endCoords) {
