@@ -24,7 +24,7 @@ but feel[PAUSE:SHORT] had I stayed,
   },
   43: {
     a11yDescription: "A rotating Necker cube.",
-    poetry: "Dream little one, dream."
+    poetry: "[TYPE:NORMAL]Dream [TYPE:SLOW][PAUSE:SHORT]little one[PAUSE:LONG], [TYPE:SLOWEST]dream."
   }
 };
 
