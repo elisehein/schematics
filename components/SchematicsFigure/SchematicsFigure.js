@@ -106,9 +106,15 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
+    const onPause = this.onCaptionPause;
+
     const captionNode = this.querySelector(".schematics-figure__figure__figcaption");
     const captionTyping = new CaptionTyping(getPoetry(this.num));
-    captionTyping.animate(captionNode, onDone);
+    captionTyping.animate(captionNode, onPause, onDone);
+  }
+
+  onCaptionPause(index, duration) {
+    console.log("Caption typing pause index", index, "duration", duration);
   }
 
   className(num) {

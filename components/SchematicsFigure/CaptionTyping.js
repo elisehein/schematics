@@ -31,6 +31,7 @@ export default class CaptionTyping {
 
   parse(unparsedCaption) {
     let activeDelay = this.defaultDelay;
+    let pausesSoFar = 0;
 
     let parsedCaptionSoFar = unparsedCaption;
     const delayRanges = [{ index: 0, delay: activeDelay }];
@@ -40,8 +41,13 @@ export default class CaptionTyping {
       const { flagIndex, updatedCaption } = this.discardFlag(flag, parsedCaptionSoFar);
       parsedCaptionSoFar = updatedCaption;
 
-      const { updatedDelay, extractedRanges } = this.extractDelayRangesFromFlag(flag, flagIndex, activeDelay);
+      const {
+        updatedDelay,
+        updatedPausesSoFar,
+        extractedRanges
+      } = this.extractDelayRangesFromFlag(flag, flagIndex, activeDelay, pausesSoFar);
       activeDelay = updatedDelay;
+      pausesSoFar = updatedPausesSoFar;
       extractedRanges.forEach(delayRange => this.appendRange(delayRange, delayRanges));
     });
 
@@ -56,19 +62,25 @@ export default class CaptionTyping {
     return { flagIndex, updatedCaption: caption.replace(flag, "") };
   }
 
-  extractDelayRangesFromFlag(flag, flagIndex, latestActiveDelay) {
+  extractDelayRangesFromFlag(flag, flagIndex, latestActiveDelay, pausesSoFar) {
     const { action, delay: delayForCurrentFlag } = this.actionAndDelayFromFlag(flag);
-    const extractedRanges = [{ index: flagIndex, delay: delayForCurrentFlag }];
+    const newRange = { index: flagIndex, delay: delayForCurrentFlag };
+
+    const extractedRanges = [newRange]
     let updatedDelay = latestActiveDelay;
+    let updatedPausesSoFar = pausesSoFar;
 
     // After a pause, the delay needs to be reset to the currently active typing delay
     if (action == captionAnimationFlagActions.PAUSE) {
+      updatedPausesSoFar += 1;
+      extractedRanges[0].isPause = true;
+      extractedRanges[0].pauseIndex = updatedPausesSoFar - 1;
       extractedRanges.push({ index: flagIndex + 1, delay: latestActiveDelay })
     } else {
       updatedDelay = delayForCurrentFlag;
     }
 
-    return { updatedDelay, extractedRanges };
+    return { updatedDelay, updatedPausesSoFar, extractedRanges };
   }
 
   appendRange(newRange, existingRanges) {
@@ -94,13 +106,13 @@ export default class CaptionTyping {
       .replace(/\n/g, wrap("<br/>"));
   }
 
-  animate(captionNode, onDone) {
+  animate(captionNode, onPause, onDone) {
     captionNode.innerHTML = this.parsedAndWrappedCaption;
     const captionSpans = captionNode.querySelectorAll("span");
-    this.revealSpan({ index: 0, captionSpans, onDone });
+    this.revealSpan({ index: 0, captionSpans, onPause, onDone });
   }
 
-  revealSpan({ index, captionSpans, onDone }) {
+  revealSpan({ index, captionSpans, onPause, onDone }) {
     if (index >= captionSpans.length) {
       onDone();
       return;
@@ -108,10 +120,15 @@ export default class CaptionTyping {
 
     const revealThisSpanAndNext = () => {
       this.updateVisibility(index, captionSpans);
-      this.revealSpan({ index: index + 1, captionSpans, onDone });
+      this.revealSpan({ index: index + 1, captionSpans, onPause, onDone });
     }
 
-    const delay = this.getActiveDelayAtSpan(index);
+    const { delay, isPause, pauseIndex } = this.getActiveDelayInfoAtSpan(index);
+
+    if (isPause) {
+      onPause(pauseIndex, delay);
+    }
+
     if (delay == 0) {
       revealThisSpanAndNext();
     } else {
@@ -131,11 +148,16 @@ export default class CaptionTyping {
       );
   }
 
-  getActiveDelayAtSpan(index) {
+  getActiveDelayInfoAtSpan(index) {
     const rangeApplyingAtIndex = this.singleCharacterDelayRanges
       .filter(range => range.index <= index)
       .pop();
-    return rangeApplyingAtIndex.delay;
+    const rangeAtIndex = this.singleCharacterDelayRanges.find(range => range.index == index);
+    return {
+      delay: rangeApplyingAtIndex.delay,
+      isPause: rangeAtIndex && rangeAtIndex.isPause,
+      pauseIndex: rangeAtIndex && rangeAtIndex.pauseIndex
+    }
   }
 
   actionAndDelayFromFlag(flagString) {

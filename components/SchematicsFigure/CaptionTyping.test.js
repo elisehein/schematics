@@ -1,4 +1,4 @@
-import CaptionTyping, { CaptionAnimationDirective } from "./CaptionTyping.js";
+import CaptionTyping from "./CaptionTyping.js";
 
 describe("CaptionTyping", () => {
   const captionWithOnePause = "[TYPE:FAST]Hello, world!\n[PAUSE:SHORT]Hello,\nagain!";
@@ -14,7 +14,7 @@ describe("CaptionTyping", () => {
       const sut = new CaptionTyping(captionWithOnePause);
       const expectedDelayChanges = [
         { index: 0, delay: 45 },
-        { index: 14, delay: 300 },
+        { index: 14, delay: 300, isPause: true, pauseIndex: 0 },
         { index: 15, delay: 45 }
       ];
       expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
@@ -24,7 +24,7 @@ describe("CaptionTyping", () => {
       let sut = new CaptionTyping("No flags [PAUSE:MEDIUM]yet.")
       let expectedDelayChanges = [
         { index: 0, delay: 0 },
-        { index: 9, delay: 800 },
+        { index: 9, delay: 800, isPause: true, pauseIndex: 0 },
         { index: 10, delay: 0 }
       ];
       expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
@@ -42,7 +42,7 @@ describe("CaptionTyping", () => {
       const sut = new CaptionTyping("No typing [TYPE:SLOW][PAUSE:LONG]speed flags.")
       const expectedDelayChanges = [
         { index: 0, delay: 0 },
-        { index: 10, delay: 1300 },
+        { index: 10, delay: 1300, isPause: true, pauseIndex: 0 },
         { index: 11, delay: 130 }
       ];
       expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
@@ -51,7 +51,7 @@ describe("CaptionTyping", () => {
     test("overrides the default delay if the animation begins with a pause", () => {
       const sut = new CaptionTyping("[PAUSE:SHORT]No typing speed flags.")
       const expectedDelayChanges = [
-        { index: 0, delay: 300 },
+        { index: 0, delay: 300, isPause: true, pauseIndex: 0 },
         { index: 1, delay: 0 }
       ];
       expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
@@ -66,8 +66,22 @@ describe("CaptionTyping", () => {
       const sut = new CaptionTyping("Extra long pause[PAUSE:5000] from literal value");
       const expectedDelayChanges = [
         { index: 0, delay: 0 },
-        { index: 16, delay: 5000 },
+        { index: 16, delay: 5000, isPause: true, pauseIndex: 0 },
         { index: 17, delay: 0 }
+      ];
+      expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
+    });
+
+    test("adds correct pause indeces if there are multiple pauses", () => {
+      const sut = new CaptionTyping("[TYPE:FAST]String [PAUSE:SHORT]with multiple [PAUSE:SHORT]pauses[PAUSE:MEDIUM].");
+      const expectedDelayChanges = [
+        { index: 0, delay: 45 },
+        { index: 7, delay: 300, isPause: true, pauseIndex: 0 },
+        { index: 8, delay: 45 },
+        { index: 21, delay: 300, isPause: true, pauseIndex: 1 },
+        { index: 22, delay: 45 },
+        { index: 27, delay: 800, isPause: true, pauseIndex: 2 },
+        { index: 28, delay: 45 }
       ];
       expect(sut.singleCharacterDelayRanges).toEqual(expectedDelayChanges);
     });
@@ -92,13 +106,13 @@ Y`);
     expect(sut.parsedAndWrappedCaption).toEqual(expectedHTML);
     expect(sut.singleCharacterDelayRanges).toEqual([
       { index: 0, delay: 70 },
-      { index: 9, delay: 300 },
+      { index: 9, delay: 300, isPause: true, pauseIndex: 0 },
       { index: 10, delay: 70 },
-      { index: 20, delay: 1300 },
+      { index: 20, delay: 1300, isPause: true, pauseIndex: 1 },
       { index: 21, delay: 70 },
-      { index: 55, delay: 1300 },
+      { index: 55, delay: 1300, isPause: true, pauseIndex: 2 },
       { index: 56, delay: 45 },
-      { index: 78, delay: 800 },
+      { index: 78, delay: 800, isPause: true, pauseIndex: 3 },
       { index: 79, delay: 45 }
     ]);
   });
