@@ -8,32 +8,13 @@ export default class Figure14Diagram extends Diagram {
 
   drawBeforeCaption({ onDone }) {
     this.drawAxes(onDone);
-    const { node, length } = this.drawHiddenSpiral();
-    this._spiral = { node, length, sixthOfLength: length / 6.0 };
-  }
-
-  onCaptionPause(pauseIndex, pauseDuration) {
-    const lengthBite = this._spiral.sixthOfLength / 6.0;
-
-    // TODO: This would be a use case for [EVENT:<NAME>] flags in the caption instead
-    // of relying on pauses and keeping track of pause indeces. Here: onEvent("PROGRESS_SPIRAL").
-    switch (pauseIndex) {
-      case 1:
-        this.transitionSpiral(this._spiral.length - this._spiral.sixthOfLength + lengthBite, pauseDuration + 2000);
-        break;
-      case 4:
-        this.transitionSpiral(this._spiral.length - (3 * this._spiral.sixthOfLength) + lengthBite, pauseDuration + 2000);
-        break;
-      case 6:
-        this.transitionSpiral(this._spiral.length - (4 * this._spiral.sixthOfLength) - lengthBite, pauseDuration + 2000);
-        break;
-      default:
-    }
   }
 
   drawAfterCaption() {
-    // Draw final bit of spiral when the caption is done.
-    this.transitionSpiral(0, 8000);
+    this._timerManager.setTimeout(() => {
+      const spiral = this.drawHiddenSpiral();
+      spiral.animateStroke("10s", "linear");
+    }, 1000);
   }
 
   drawAxes(onAllDone) {
@@ -75,19 +56,7 @@ export default class Figure14Diagram extends Diagram {
                              C 90,135, 210,135, 210,95");
     spiral.stroke(2);
     this.addSVGChildElement(spiral.node);
-
-    const spiralLength = spiral.node.getTotalLength();
-    spiral.node.style.transitionProperty = "stroke-dashoffset";
-    spiral.node.style.transitionTimingFunction = "ease-in-out";
-    spiral.node.style.strokeDasharray = spiralLength;
-    spiral.node.style.strokeDashoffset = spiralLength;
-
-    return { node: spiral.node, length: spiralLength };
-  }
-
-  transitionSpiral(strokeDashoffset, duration) {
-    this._spiral.node.style.transitionDuration = `${duration}ms`;
-    this._spiral.node.style.strokeDashoffset = strokeDashoffset;
+    return spiral;
   }
 }
 
