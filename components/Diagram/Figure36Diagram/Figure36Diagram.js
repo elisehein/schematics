@@ -13,9 +13,9 @@ export default class Figure36Diagram extends Diagram {
     this._circleRadius = 20;
     this._initialAngle = 30;
 
-    // -10 in the end is to nudge it slightly towards the top to make room for
+    // The offset in the end is to nudge it slightly towards the top to make room for
     // the dashed arrow
-    const offset = 10;
+    const offset = 15;
     this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 - offset };
 
     this._swingDurationSec = 2;
