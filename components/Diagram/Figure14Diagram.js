@@ -38,7 +38,7 @@ export default class Figure14Diagram extends Diagram {
   animateAxes(animationStepDurationSec, onAllDone) {
     runActionsSequentially([
       this.draw2DXY.bind(this, animationStepDurationSec),
-      this.switchPerspective.bind(this, animationStepDurationSec),
+      this.shiftPerspective.bind(this, animationStepDurationSec),
       this.drawLabels.bind(this),
       waitBeforeNextAction(1000, this._timerManager)
     ], onAllDone);
@@ -49,7 +49,7 @@ export default class Figure14Diagram extends Diagram {
     this._xAxis.axis = this.drawAxis(...this._xAxis.initialCoords, durationSec, { onDone });
   }
 
-  switchPerspective(durationSec, { onDone }) {
+  shiftPerspective(durationSec, { onDone }) {
     // We delay drawing the time axis until just before animation so that the arrowhead doesn't
     // look out of place.
     this._timeAxis.axis = this.drawAxis(...this._timeAxis.initialCoords);
