@@ -1,6 +1,6 @@
 export const swingable = ({ arm, circle }, anchorPoint, initialAngle) => ({
-  swing(totalSwings, easing, durationSec, { onSwing, justBeforeAmplitude, justAfterAmplitude }) {
-    const angleChangeStep = initialAngle / (totalSwings - 1);
+  swing(totalSwings, easing, durationSec, { onSwing }) {
+    const angleChangeStep = initialAngle / totalSwings;
 
     const baseParamsForSwing = index => ({
       values: animationRotationValues(index, anchorPoint, totalSwings, angleChangeStep),
@@ -13,7 +13,7 @@ export const swingable = ({ arm, circle }, anchorPoint, initialAngle) => ({
     });
 
     Array(totalSwings).fill().forEach((_, index) => {
-      addAnimationForSwing(index, { arm, circle}, baseParamsForSwing, { onSwing });
+      addAnimationForSwing(index, { arm, circle }, baseParamsForSwing, { onSwing });
     });
 
     arm.beginAnimation();
@@ -38,7 +38,7 @@ function addAnimationForSwing(index, { arm, circle }, baseParamsForSwing, { onSw
 
 function animationRotationValues(swingIndex, anchorPoint, totalSwings, angleChangeStep) {
   const rotationValue = deg => `${deg} ${anchorPoint.x} ${anchorPoint.y}`;
-  const swingAngle = index => angleChangeStep * (totalSwings - (index + 1));
+  const swingAngle = index => angleChangeStep * (totalSwings - index);
 
   return [swingIndex, swingIndex + 1].map(index => {
     const mirroringFactor = index % 2 == 0 ? 1 : -1;
