@@ -33,7 +33,7 @@ export default class Figure14Diagram extends Diagram {
 
   drawAfterCaption() {
     // Draw final bit of spiral when the caption is done.
-    this.transitionSpiral(0, 7000);
+    this.transitionSpiral(0, 8000);
   }
 
   drawAxes(onAllDone) {
@@ -78,6 +78,7 @@ export default class Figure14Diagram extends Diagram {
 
     const spiralLength = spiral.node.getTotalLength();
     spiral.node.style.transitionProperty = "stroke-dashoffset";
+    spiral.node.style.transitionTimingFunction = "ease-in-out";
     spiral.node.style.strokeDasharray = spiralLength;
     spiral.node.style.strokeDashoffset = spiralLength;
 
