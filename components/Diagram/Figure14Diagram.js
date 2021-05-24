@@ -7,7 +7,7 @@ export default class Figure14Diagram extends Diagram {
   constructor() {
     super(14);
 
-    this._timeAxisInitialCoords = [{ x: 120, y: 100 }, { x: 170, y: 100 }];
+    this._timeAxisInitialCoords = [{ x: 120, y: 100 }, { x: 180, y: 100 }];
     this._timeAxisFinalCoords = [{ x: 150, y: 220 }, { x: 150, y: 30 }];
 
     this._yAxisInitialCoords = [{ x: 120, y: 100 }, { x: 120, y: 220 }];
@@ -51,9 +51,9 @@ export default class Figure14Diagram extends Diagram {
 
     // Since each element should animate for the same duration, it doesn't matter which one
     // the onDone event is attached to.
-    this.animateAxis(this._timeAxis, this._timeAxisInitialCoords, this._timeAxisFinalCoords, dur);
-    this.animateAxis(this._yAxis, this._yAxisInitialCoords, this._yAxisFinalCoords, dur);
-    this.animateAxis(this._xAxis, this._xAxisInitialCoords, this._xAxisFinalCoords, dur, onDone);
+    this.animateAxis(this._timeAxis, this._timeAxisInitialCoords, this._timeAxisFinalCoords, dur, true);
+    this.animateAxis(this._yAxis, this._yAxisInitialCoords, this._yAxisFinalCoords, dur, true);
+    this.animateAxis(this._xAxis, this._xAxisInitialCoords, this._xAxisFinalCoords, dur, true, onDone);
   }
 
   drawAxis(startCoords, endCoords, animationDurationSec = 0, { onDone } = {}) {
@@ -68,11 +68,11 @@ export default class Figure14Diagram extends Diagram {
       return axis;
     }
 
-    this.animateAxis(axis, [startCoords, startCoords], [startCoords, endCoords], animationDurationSec, onDone);
+    this.animateAxis(axis, [startCoords, startCoords], [startCoords, endCoords], animationDurationSec, true, onDone);
     return axis;
   }
 
-  animateAxis(axis, fromPoints, toPoints, animationDurationSec, onDone = () => {}) {
+  animateAxis(axis, fromPoints, toPoints, animationDurationSec, easeOut, onDone = () => {}) {
     const pointToValue = ({ x, y }) => `${x},${y}`;
     const from = fromPoints.map(pointToValue).join(" ");
     const to = toPoints.map(pointToValue).join(" ");
@@ -83,13 +83,12 @@ export default class Figure14Diagram extends Diagram {
       to,
       id,
       dur: animationDurationSec,
+      fill: "freeze",
+      begin: "indefinite",
       calcMode: "spline",
       keyTimes: "0; 1",
-      keySplines: (new BezierEasing(0.33, 1, 0.68, 1)).smilString,
-      fill: "freeze",
-      begin: "indefinite"
+      keySplines: (easeOut ? BezierEasing.easeOutSine : BezierEasing.easeInSine).smilString
     });
-
     axis.beginAnimation(id, onDone);
   }
 

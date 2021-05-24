@@ -68,7 +68,7 @@ function configurePulseAnimation(circle) {
     repeatCount: "indefinite",
     values: `${radius}; ${radius}; ${radius * 1.7}`,
     calcMode: "spline",
-    keySplines: `0 0 1 1; ${pulseEasing.smilString}`,
+    keySplines: `${BezierEasing.linear.smilString}; ${pulseEasing.smilString}`,
     keyTimes
   });
 
