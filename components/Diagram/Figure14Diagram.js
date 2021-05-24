@@ -6,10 +6,19 @@ import BezierEasing from "../../helpers/BezierEasing.js";
 export default class Figure14Diagram extends Diagram {
   constructor() {
     super(14);
+
+    this._timeAxisInitialCoords = [{ x: 120, y: 100 }, { x: 170, y: 100 }];
+    this._timeAxisFinalCoords = [{ x: 150, y: 220 }, { x: 150, y: 30 }];
+
+    this._yAxisInitialCoords = [{ x: 120, y: 100 }, { x: 120, y: 220 }];
+    this._yAxisFinalCoords = [{ x: 150, y: 220 }, { x: 200, y: 260 }];
+
+    this._xAxisInitialCoords = [{ x: 120, y: 100 }, { x: 240, y: 100 }];
+    this._xAxisFinalCoords = [{ x: 150, y: 220 }, { x: 250, y: 205 }];
   }
 
   drawBeforeCaption({ onDone }) {
-    this.drawAxes(onDone);
+    this.animateAxes(onDone);
   }
 
   drawAfterCaption() {
@@ -19,19 +28,30 @@ export default class Figure14Diagram extends Diagram {
     }, 1000);
   }
 
-  drawAxes(onDone) {
-    this.drawAxis({ x: 149, y: 220 }, { x: 200, y: 260 });
-    this.drawAxis({ x: 149, y: 220 }, { x: 250, y: 205 });
-    this.drawLabel("X", { x: 257, y: 207 });
-    this.drawLabel("Y", { x: 207, y: 262 });
+  animateAxes(onDone) {
+    this._yAxis = this.drawAxis(...this._yAxisInitialCoords);
+    this._xAxis = this.drawAxis(...this._xAxisInitialCoords);
 
     runActionsSequentially([
-      waitBeforeNextAction(1000, this._timerManager),
-      this.drawAxis.bind(this, { x: 149, y: 220 }, { x: 149, y: 30 }, 2),
-      waitBeforeNextAction(500, this._timerManager),
-      this.drawLabel.bind(this, "Time", { x: 157, y: 36 }, true),
+      waitBeforeNextAction(1500, this._timerManager),
+      this.switchPerspective.bind(this),
+      this.drawLabels.bind(this),
       waitBeforeNextAction(1000, this._timerManager)
     ], onDone);
+  }
+
+  switchPerspective({ onDone }) {
+    // We delay drawing the time axis until just before animation so that the arrowhead doesn't
+    // look out of place.
+    this._timeAxis = this.drawAxis(...this._timeAxisInitialCoords);
+
+    const dur = 3;
+
+    // Since each element should animate for the same duration, it doesn't matter which one
+    // the onDone event is attached to.
+    this.animateAxis(this._timeAxis, this._timeAxisInitialCoords, this._timeAxisFinalCoords, dur);
+    this.animateAxis(this._yAxis, this._yAxisInitialCoords, this._yAxisFinalCoords, dur);
+    this.animateAxis(this._xAxis, this._xAxisInitialCoords, this._xAxisFinalCoords, dur, onDone);
   }
 
   drawAxis(startCoords, endCoords, animationDurationSec = 0, { onDone } = {}) {
@@ -41,18 +61,21 @@ export default class Figure14Diagram extends Diagram {
 
     if (animationDurationSec == 0) {
       axis.addArrowHead(this.registerMarker.bind(this));
-      return;
+      // eslint-disable-next-line no-unused-expressions
+      onDone && onDone();
+      return axis;
     }
 
-    this.animateAxis(axis, startCoords, endCoords, animationDurationSec, onDone);
+    this.animateAxis(axis, [startCoords, startCoords], [startCoords, endCoords], animationDurationSec, onDone);
+    return axis;
   }
 
-  animateAxis(axis, startCoords, endCoords, animationDurationSec, onDone) {
+  animateAxis(axis, fromPoints, toPoints, animationDurationSec, onDone = () => {}) {
     const pointToValue = ({ x, y }) => `${x},${y}`;
 
     axis.animateAttribute("points", {
-      from: [startCoords, startCoords].map(pointToValue).join(" "),
-      to: [startCoords, endCoords].map(pointToValue).join(" "),
+      from: fromPoints.map(pointToValue).join(" "),
+      to: toPoints.map(pointToValue).join(" "),
       dur: animationDurationSec,
       calcMode: "spline",
       keyTimes: "0; 1",
@@ -63,19 +86,31 @@ export default class Figure14Diagram extends Diagram {
 
     axis.beginAnimation(null, () => {
       axis.addArrowHead(this.registerMarker.bind(this));
-      onDone();
+      // eslint-disable-next-line no-unused-expressions
+      onDone && onDone();
     });
   }
 
+  drawLabels({ onDone }) {
+    runActionsSequentially([
+      this.drawLabel.bind(this, "X", { x: 257, y: 207 }, true),
+      this.drawLabel.bind(this, "Y", { x: 207, y: 262 }, true),
+      this.drawLabel.bind(this, "Time", { x: 157, y: 36 }, true)
+    ], onDone);
+  }
+
   drawLabel(text, coords, animated = false, { onDone } = {}) {
+    let label;
     if (animated) {
-      const label = new TypingText(text, coords, 2);
+      label = new TypingText(text, coords, 1);
       this.addSVGChildElement(label.node);
       label.animateTyping(null, onDone);
     } else {
-      const label = new Text(text, coords);
+      label = new Text(text, coords);
       this.addSVGChildElement(label.node);
     }
+
+    return label;
   }
 
   drawHiddenSpiral() {
