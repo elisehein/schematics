@@ -65,7 +65,6 @@ export default class Figure14Diagram extends Diagram {
   drawAxis(startCoords, endCoords, animationDurationSec = 0, { onDone } = {}) {
     const axis = new Line(startCoords, endCoords);
     axis.stroke();
-    axis.addArrowHead(this.registerMarker.bind(this));
     this.addSVGChildElement(axis.node);
 
     if (animationDurationSec == 0) {
@@ -95,6 +94,13 @@ export default class Figure14Diagram extends Diagram {
       keyTimes: "0; 1",
       keySplines: BezierEasing.easeOutSine.smilString
     });
+
+    // Add the arrowheads slightly after the beginning of each animation
+    // because otherwise the first thing we see is an arrowhead not attached to a line.
+    this._timerManager.setTimeout(() => {
+      axis.addArrowHead(this.registerMarker.bind(this));
+    }, animationDurationSec * 1000 / 25);
+
     axis.beginAnimation(id, onDone);
   }
 
