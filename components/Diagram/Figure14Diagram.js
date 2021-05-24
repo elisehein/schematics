@@ -1,5 +1,7 @@
 import Diagram from "./Diagram.js";
 import { Line, Path, TypingText, Text } from "../SVGShapes/SVGShapes.js";
+import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
+import BezierEasing from "../../helpers/BezierEasing.js";
 
 export default class Figure14Diagram extends Diagram {
   constructor() {
@@ -17,22 +19,52 @@ export default class Figure14Diagram extends Diagram {
     }, 1000);
   }
 
-  drawAxes(onAllDone) {
-    this.drawAxis({ x: 149, y: 220 }, { x: 149, y: 30 });
-    this.drawAxis({ x: 149, y: 220 }, { x: 250, y: 205 });
+  drawAxes(onDone) {
     this.drawAxis({ x: 149, y: 220 }, { x: 200, y: 260 });
+    this.drawAxis({ x: 149, y: 220 }, { x: 250, y: 205 });
     this.drawLabel("X", { x: 257, y: 207 });
     this.drawLabel("Y", { x: 207, y: 262 });
-    this.drawLabel("Time", { x: 157, y: 36 });
 
-    this._timerManager.setTimeout(onAllDone, 1000);
+    runActionsSequentially([
+      waitBeforeNextAction(1000, this._timerManager),
+      this.drawAxis.bind(this, { x: 149, y: 220 }, { x: 149, y: 30 }, 2),
+      waitBeforeNextAction(500, this._timerManager),
+      this.drawLabel.bind(this, "Time", { x: 157, y: 36 }, true),
+      waitBeforeNextAction(1000, this._timerManager)
+    ], onDone);
   }
 
-  drawAxis(startCoords, endCoords) {
+  drawAxis(startCoords, endCoords, animationDurationSec = 0, { onDone } = {}) {
     const axis = new Line(startCoords, endCoords);
     axis.stroke();
-    axis.addArrowHead(this.registerMarker.bind(this));
     this.addSVGChildElement(axis.node);
+
+    if (animationDurationSec == 0) {
+      axis.addArrowHead(this.registerMarker.bind(this));
+      return;
+    }
+
+    this.animateAxis(axis, startCoords, endCoords, animationDurationSec, onDone);
+  }
+
+  animateAxis(axis, startCoords, endCoords, animationDurationSec, onDone) {
+    const pointToValue = ({ x, y }) => `${x},${y}`;
+
+    axis.animateAttribute("points", {
+      from: [startCoords, startCoords].map(pointToValue).join(" "),
+      to: [startCoords, endCoords].map(pointToValue).join(" "),
+      dur: animationDurationSec,
+      calcMode: "spline",
+      keyTimes: "0; 1",
+      keySplines: (new BezierEasing(0.33, 1, 0.68, 1)).smilString,
+      fill: "freeze",
+      begin: "indefinite"
+    });
+
+    axis.beginAnimation(null, () => {
+      axis.addArrowHead(this.registerMarker.bind(this));
+      onDone();
+    });
   }
 
   drawLabel(text, coords, animated = false, { onDone } = {}) {
