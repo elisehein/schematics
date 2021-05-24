@@ -28,16 +28,18 @@ export default class Figure14Diagram extends Diagram {
     }, 1000);
   }
 
-  animateAxes(onDone) {
-    this._yAxis = this.drawAxis(...this._yAxisInitialCoords);
-    this._xAxis = this.drawAxis(...this._xAxisInitialCoords);
+  animateAxes(onAllDone) {
+    const drawXY = ({ onDone }) => {
+      this._yAxis = this.drawAxis(...this._yAxisInitialCoords, 3);
+      this._xAxis = this.drawAxis(...this._xAxisInitialCoords, 3, { onDone });
+    };
 
     runActionsSequentially([
-      waitBeforeNextAction(1500, this._timerManager),
+      drawXY,
       this.switchPerspective.bind(this),
       this.drawLabels.bind(this),
       waitBeforeNextAction(1000, this._timerManager)
-    ], onDone);
+    ], onAllDone);
   }
 
   switchPerspective({ onDone }) {
@@ -57,10 +59,10 @@ export default class Figure14Diagram extends Diagram {
   drawAxis(startCoords, endCoords, animationDurationSec = 0, { onDone } = {}) {
     const axis = new Line(startCoords, endCoords);
     axis.stroke();
+    axis.addArrowHead(this.registerMarker.bind(this));
     this.addSVGChildElement(axis.node);
 
     if (animationDurationSec == 0) {
-      axis.addArrowHead(this.registerMarker.bind(this));
       // eslint-disable-next-line no-unused-expressions
       onDone && onDone();
       return axis;
@@ -72,10 +74,14 @@ export default class Figure14Diagram extends Diagram {
 
   animateAxis(axis, fromPoints, toPoints, animationDurationSec, onDone = () => {}) {
     const pointToValue = ({ x, y }) => `${x},${y}`;
+    const from = fromPoints.map(pointToValue).join(" ");
+    const to = toPoints.map(pointToValue).join(" ");
+    const id = `axis-animation-${(from + to).replace(/[,\.\s]/g, "")}`;
 
     axis.animateAttribute("points", {
-      from: fromPoints.map(pointToValue).join(" "),
-      to: toPoints.map(pointToValue).join(" "),
+      from,
+      to,
+      id,
       dur: animationDurationSec,
       calcMode: "spline",
       keyTimes: "0; 1",
@@ -84,11 +90,7 @@ export default class Figure14Diagram extends Diagram {
       begin: "indefinite"
     });
 
-    axis.beginAnimation(null, () => {
-      axis.addArrowHead(this.registerMarker.bind(this));
-      // eslint-disable-next-line no-unused-expressions
-      onDone && onDone();
-    });
+    axis.beginAnimation(id, onDone);
   }
 
   drawLabels({ onDone }) {
