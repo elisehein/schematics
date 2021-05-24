@@ -7,18 +7,25 @@ export default class Figure14Diagram extends Diagram {
   constructor() {
     super(14);
 
-    this._timeAxisInitialCoords = [{ x: 120, y: 100 }, { x: 180, y: 100 }];
-    this._timeAxisFinalCoords = [{ x: 150, y: 220 }, { x: 150, y: 30 }];
+    this._timeAxis = {
+      initialCoords: [{ x: 120, y: 100 }, { x: 180, y: 100 }],
+      finalCoords: [{ x: 150, y: 220 }, { x: 150, y: 30 }]
+    };
 
-    this._yAxisInitialCoords = [{ x: 120, y: 100 }, { x: 120, y: 220 }];
-    this._yAxisFinalCoords = [{ x: 150, y: 220 }, { x: 200, y: 260 }];
+    this._yAxis = {
+      initialCoords: [{ x: 120, y: 100 }, { x: 120, y: 220 }],
+      finalCoords: [{ x: 150, y: 220 }, { x: 200, y: 260 }]
+    };
 
-    this._xAxisInitialCoords = [{ x: 120, y: 100 }, { x: 240, y: 100 }];
-    this._xAxisFinalCoords = [{ x: 150, y: 220 }, { x: 250, y: 205 }];
+    this._xAxis = {
+      initialCoords: [{ x: 120, y: 100 }, { x: 240, y: 100 }],
+      finalCoords: [{ x: 150, y: 220 }, { x: 250, y: 205 }]
+    };
   }
 
   drawBeforeCaption({ onDone }) {
-    this.animateAxes(onDone);
+    const animationStepDurationSec = 3;
+    this.animateAxes(animationStepDurationSec, onDone);
   }
 
   drawAfterCaption() {
@@ -28,32 +35,31 @@ export default class Figure14Diagram extends Diagram {
     }, 1000);
   }
 
-  animateAxes(onAllDone) {
-    const drawXY = ({ onDone }) => {
-      this._yAxis = this.drawAxis(...this._yAxisInitialCoords, 3);
-      this._xAxis = this.drawAxis(...this._xAxisInitialCoords, 3, { onDone });
-    };
-
+  animateAxes(animationStepDurationSec, onAllDone) {
     runActionsSequentially([
-      drawXY,
-      this.switchPerspective.bind(this),
+      this.draw2DXY.bind(this, animationStepDurationSec),
+      this.switchPerspective.bind(this, animationStepDurationSec),
       this.drawLabels.bind(this),
       waitBeforeNextAction(1000, this._timerManager)
     ], onAllDone);
   }
 
-  switchPerspective({ onDone }) {
+  draw2DXY(durationSec, { onDone }) {
+    this._yAxis.axis = this.drawAxis(...this._yAxis.initialCoords, durationSec);
+    this._xAxis.axis = this.drawAxis(...this._xAxis.initialCoords, durationSec, { onDone });
+  }
+
+  switchPerspective(durationSec, { onDone }) {
     // We delay drawing the time axis until just before animation so that the arrowhead doesn't
     // look out of place.
-    this._timeAxis = this.drawAxis(...this._timeAxisInitialCoords);
+    this._timeAxis.axis = this.drawAxis(...this._timeAxis.initialCoords);
 
-    const dur = 3;
-
-    // Since each element should animate for the same duration, it doesn't matter which one
-    // the onDone event is attached to.
-    this.animateAxis(this._timeAxis, this._timeAxisInitialCoords, this._timeAxisFinalCoords, dur, true);
-    this.animateAxis(this._yAxis, this._yAxisInitialCoords, this._yAxisFinalCoords, dur, true);
-    this.animateAxis(this._xAxis, this._xAxisInitialCoords, this._xAxisFinalCoords, dur, true, onDone);
+    [this._timeAxis, this._yAxis, this._xAxis].forEach((axisData, index) => {
+      // Since each element should animate for the same duration, it doesn't matter which one
+      // the onDone event is attached to.
+      const onAxisAnimated = index == 0 ? onDone : () => {};
+      this.animateAxis(axisData.axis, axisData.initialCoords, axisData.finalCoords, durationSec, onAxisAnimated);
+    });
   }
 
   drawAxis(startCoords, endCoords, animationDurationSec = 0, { onDone } = {}) {
@@ -68,14 +74,14 @@ export default class Figure14Diagram extends Diagram {
       return axis;
     }
 
-    this.animateAxis(axis, [startCoords, startCoords], [startCoords, endCoords], animationDurationSec, true, onDone);
+    this.animateAxis(axis, [startCoords, startCoords], [startCoords, endCoords], animationDurationSec, onDone);
     return axis;
   }
 
-  animateAxis(axis, fromPoints, toPoints, animationDurationSec, easeOut, onDone = () => {}) {
+  animateAxis(axis, fromCoords, toCoords, animationDurationSec, onDone = () => {}) {
     const pointToValue = ({ x, y }) => `${x},${y}`;
-    const from = fromPoints.map(pointToValue).join(" ");
-    const to = toPoints.map(pointToValue).join(" ");
+    const from = fromCoords.map(pointToValue).join(" ");
+    const to = toCoords.map(pointToValue).join(" ");
     const id = `axis-animation-${(from + to).replace(/[,\.\s]/g, "")}`;
 
     axis.animateAttribute("points", {
@@ -87,7 +93,7 @@ export default class Figure14Diagram extends Diagram {
       begin: "indefinite",
       calcMode: "spline",
       keyTimes: "0; 1",
-      keySplines: (easeOut ? BezierEasing.easeOutSine : BezierEasing.easeInSine).smilString
+      keySplines: BezierEasing.easeOutSine.smilString
     });
     axis.beginAnimation(id, onDone);
   }
