@@ -56,8 +56,7 @@ const disappearingWithEasing = ({ arcNode, node }, anchorPoint, radius, angles) 
     overlayArc.stroke(8, "var(--color-page-bg)");
     node.appendChild(overlayArc.node);
 
-    const cssEasing = `cubic-bezier(${easing.split(" ").join(",")})`;
-    overlayArc.animateStroke(`${durationSec}s`, cssEasing, () => {
+    overlayArc.animateStroke(`${durationSec}s`, easing.cssString, () => {
       arcNode.remove();
       overlayArc.node.remove();
     });

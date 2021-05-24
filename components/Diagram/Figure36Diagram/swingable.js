@@ -6,7 +6,7 @@ export const swingable = ({ arm, circle }, anchorPoint, initialAngle) => ({
       values: animationRotationValues(index, anchorPoint, totalSwings, angleChangeStep),
       keyTimes: "0; 1",
       calcMode: "spline",
-      keySplines: easing,
+      keySplines: easing.smilString,
       dur: durationSec,
       begin: index == 0 ? "indefinite" : `swinganimation${index - 1}.end`,
       fill: "freeze"

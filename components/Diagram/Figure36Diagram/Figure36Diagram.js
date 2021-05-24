@@ -4,6 +4,7 @@ import PendulumArm from "./PendulumArm.js";
 import PendulumTrajectoryArrow from "./PendulumTrajectoryArrow.js";
 
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
+import BezierEasing from "/helpers/BezierEasing.js";
 
 export default class Figure36Diagram extends Diagram {
   constructor() {
@@ -19,7 +20,7 @@ export default class Figure36Diagram extends Diagram {
     this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 - offset };
 
     this._swingDurationSec = 2;
-    this._swingEasing = ".4 0 .6 1";
+    this._swingEasing = new BezierEasing(0.4, 0, 0.6, 1);
     this._totalSwings = 30;
   }
 

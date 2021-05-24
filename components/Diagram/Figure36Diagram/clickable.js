@@ -1,6 +1,7 @@
 import { Circle, createSVGElement } from "../../SVGShapes/SVGShapes.js";
 import { renderScanLinePatternDef } from "../../ScanLines.js";
 const pendulumCircleScanLinesID = "pendulum-circle-scan-lines";
+import BezierEasing from "/helpers/BezierEasing.js";
 
 export const clickable = ({ node, circle }) => ({
   onClick(handler) {
@@ -59,7 +60,7 @@ function configurePulseAnimation(circle) {
   const keyTimes = "0; 0.7; 1";
   const dur = 2.2;
   const begin = "0s";
-  const pulseEasing = ".25 1 .5 1";
+  const pulseEasing = new BezierEasing(0.25, 1, 0.5, 1);
 
   circle.animateAttribute("r", {
     begin,
@@ -67,7 +68,7 @@ function configurePulseAnimation(circle) {
     repeatCount: "indefinite",
     values: `${radius}; ${radius}; ${radius * 1.7}`,
     calcMode: "spline",
-    keySplines: `0 0 1 1; ${pulseEasing}`,
+    keySplines: `0 0 1 1; ${pulseEasing.smilString}`,
     keyTimes
   });
 
