@@ -1,11 +1,10 @@
 import "./components/SchematicsFigure/SchematicsFigure.js";
-import "./components/FigureList/FigureList.js";
+import "./components/SchematicsFigurePreviews/SchematicsFigurePreviews.js";
+// import "./components/FigureList/FigureList.js";
 import "./components/ScanLines.js";
 
 import { figureExists, orderedFigures } from "./figureData.js";
 import HashNavigation from "./HashNavigation.js";
-
-const defaultFigureNum = orderedFigures[0];
 
 document.addEventListener("DOMContentLoaded", () => {
   const schematicsFigure = document.querySelector("schematics-figure");
@@ -18,16 +17,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initNav(schematicsFigure, figureList) {
   const nav = new HashNavigation({
-    onFigureChange: (newFigureNum, oldFigureNum) => {
+    onNavigateToRoot: () => {
+      schematicsFigure.hide();
+      figureList.style.display = "none";
+    },
+    onNavigateToFigure: newFigureNum => {
       if (!figureExists(newFigureNum)) {
-        nav.goToFigure(oldFigureNum || defaultFigureNum);
+        nav.goToRoot();
         return;
       }
 
       schematicsFigure.num = newFigureNum;
       figureList.active = newFigureNum;
+      schematicsFigure.show();
+      figureList.style.display = "block";
     }
   });
 
-  nav.init({ defaultFigureNum });
+  nav.init();
 }

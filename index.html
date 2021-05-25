@@ -42,10 +42,11 @@
       </aside>
 
       <main>
-        <schematics-figure></schematics-figure>
+        <schematics-figure-previews></schematics-figure-previews>
+        <schematics-figure style="display: none;"></schematics-figure>
+        <figure-list style="display: none;"></figure-list>
       </main>
 
-      <figure-list></figure-list>
 
       <footer>
         <a href="https://github.com/elisehein/schematics">
@@ -57,32 +58,20 @@
 
     </div>
 
-    <template id="figure-previews-template">
-      <ul>
-        <li>
-          <a href="#fig14">
-            <figure-14 preview></figure-14>
-          </a>
-        </li>
-        <li>
-          <a href="#fig18">
-            <figure-18 preview></figure-18>
-          </a>
-        </li>
-        <li>
-          <a href="#fig43">
-            <figure-43 preview></figure-43>
-          </a>
-        </li>
-      </ul>
-    </template>
-
     <template id="schematics-figure-template">
       <figure id="figure" class="schematics-figure__figure">
         <div class="schematics-figure__figure__diagram-container"></div>
         <figcaption class="schematics-figure__figure__figcaption" role="text"></figcaption>
         <scan-lines class="schematics-figure__scan-lines"></scan-lines>
       </figure>
+    </template>
+
+    <template id="schematics-figure-preview-template">
+      <li class="schematics-figure-previews__item">
+        <a>
+          <span class="schematics-figure-previews__item__fig-num">fig. <span data-figure-num></span></span>
+        </a>
+      </li>
     </template>
 
   </body>

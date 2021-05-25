@@ -1,3 +1,8 @@
+import Figure14Diagram from "./components/Diagram/Figure14Diagram.js";
+import Figure18Diagram from "./components/Diagram/Figure18Diagram/Figure18Diagram.js";
+import Figure36Diagram from "./components/Diagram/Figure36Diagram/Figure36Diagram.js";
+import Figure43Diagram from "./components/Diagram/Figure43Diagram.js";
+
 export const directives = {
   TYPE: "TYPE",
   PAUSE: "PAUSE"
@@ -26,6 +31,21 @@ but feel[PAUSE:SHORT] had I stayed,
     poetry: "[TYPE:NORMAL]Dream [TYPE:SLOW][PAUSE:SHORT]little one[PAUSE:LONG], [TYPE:SLOWEST]dream."
   }
 };
+
+export function getDiagram(num, preview = false) {
+  switch (num) {
+    case 14:
+      return new Figure14Diagram(preview);
+    case 18:
+      return new Figure18Diagram(preview);
+    case 36:
+      return new Figure36Diagram(preview);
+    case 43:
+      return new Figure43Diagram(preview);
+    default:
+      throw new Error(`No diagram element specified for figure ${num}.`);
+  }
+}
 
 export function getPoetry(num) {
   return figures[num].poetry;

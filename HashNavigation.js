@@ -1,47 +1,66 @@
 export default class HashNavigation {
-  constructor({ onFigureChange }) {
-    this._onFigureChange = onFigureChange;
-    window.addEventListener("hashchange", this.onNavigation.bind(this));
+  constructor({ onNavigateToRoot, onNavigateToFigure }) {
+    this._onNavigateToFigure = onNavigateToFigure;
+    this._onNavigateToRoot = onNavigateToRoot;
+    window.addEventListener("hashchange", this.onHashChange.bind(this));
   }
 
-  init({ defaultFigureNum }) {
-    const figureNumFromHash = this.getFigureNumFromHash();
+  init() {
+    const figureNumFromHash = this.getFigureNumFromHash(window.location.hash);
     if (figureNumFromHash) {
       // If we already have a figure number given on start, the hashchange event won't fire,
       // So we trigger the handler manually.
-      this._onFigureChange(figureNumFromHash);
+      this._onNavigateToFigure(figureNumFromHash);
     } else {
-      this.goToFigure(defaultFigureNum);
+      this.goToRoot();
+    }
+  }
+
+  onHashChange(event) {
+    if (this.isRoot(window.location.hash)) {
+      this.goToRoot();
+      return;
+    }
+
+    const oldHash = (new URL(event.oldURL)).hash;
+    const newFigureNum = this.getFigureNumFromHash(window.location.hash);
+    const oldFigureNum = this.getFigureNumFromHash(oldHash);
+
+    if (newFigureNum) {
+      this._onNavigateToFigure(newFigureNum, oldFigureNum);
+    } else if (this.isRoot(oldHash)) {
+      this.clearHash();
+    } else {
+      this.goToRoot();
     }
   }
 
   getFigureNumFromHash(hash) {
-    const currentHash = hash || window.location.hash;
     const figureNumRegex = /^#fig(\d\d?)$/g;
-    const match = figureNumRegex.exec(currentHash);
+    const match = figureNumRegex.exec(hash);
 
     return match ? Number(match[1]) : null;
   }
 
-  onNavigation(event) {
-    const newFigureNum = this.getFigureNumFromHash();
-    const oldFigureNum = this.getFigureNumFromHash((new URL(event.oldURL)).hash);
-
-    if (newFigureNum) {
-      this._onFigureChange(newFigureNum, oldFigureNum);
-    } else if (oldFigureNum) {
-      this.goToFigure(oldFigureNum);
-    } else {
-      this.clearHash();
-    }
-  }
-
   clearHash() {
+    if (window.location.hash == "") {
+      return;
+    }
+
     window.history.pushState(
       null,
       null,
-      "#"
-    )
+      "#" // An empty string results in no hash change at all
+    );
+  }
+
+  isRoot(hash) {
+    return hash == "" || hash == "#";
+  }
+
+  goToRoot() {
+    this.clearHash();
+    this._onNavigateToRoot();
   }
 
   goToFigure(figureNum) {
@@ -53,6 +72,6 @@ export default class HashNavigation {
 
      // Call callback manually, as pushState never triggers a hashchange event
      // (as per spec)
-    this._onFigureChange(figureNum);
+    this._onNavigateToFigure(figureNum);
   }
 }

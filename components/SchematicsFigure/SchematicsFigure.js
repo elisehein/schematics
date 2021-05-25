@@ -1,16 +1,11 @@
-import Figure14Diagram from "../Diagram/Figure14Diagram.js";
-import Figure18Diagram from "../Diagram/Figure18Diagram/Figure18Diagram.js";
-import Figure36Diagram from "../Diagram/Figure36Diagram/Figure36Diagram.js";
-import Figure43Diagram from "../Diagram/Figure43Diagram.js";
-
-import { getPoetry } from "../../figureData.js";
+import { getPoetry, getDiagram } from "../../figureData.js";
 
 import CaptionTyping from "./CaptionTyping.js";
 
 export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
     super();
-    this.num = num;
+    this.num = num || this.getAttribute("num");
   }
 
   connectedCallback() {
@@ -64,30 +59,30 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    this.updateWithTransition();
+    this.transition(() => this.update());
   }
 
-  updateWithTransition() {
+  transition(onDone) {
     if (this._stopTransitioningTimer) {
       clearTimeout(this._stopTransitioningTimer);
     }
 
     this.figureNode.classList.add("schematics-figure__figure--transitioning");
 
-    const stopTransitioningAndUpdate = () => {
+    const stopTransitioning = () => {
       this._stopTransitioningTimer = setTimeout(() => {
         this.figureNode.classList.remove("schematics-figure__figure--transitioning");
-        this.update();
         this._stopTransitioningTimer = null;
+        onDone();
       }, 1000);
     };
 
     // figure--transitioning may or may not trigger transitions/animations;
     // we don't want to depend on that.
     if (this.figureNode.getAnimations().length > 0) {
-      this.figureNode.addEventListener("transitionend", stopTransitioningAndUpdate, { once: true });
+      this.figureNode.addEventListener("transitionend", stopTransitioning, { once: true });
     } else {
-      stopTransitioningAndUpdate();
+      stopTransitioning();
     }
   }
 
@@ -102,7 +97,7 @@ export default class SchematicsFigure extends HTMLElement {
       return null;
     }
 
-    const diagramElement = this.getDiagram(this.num);
+    const diagramElement = getDiagram(this.num);
     this.querySelector(".schematics-figure__figure__diagram-container").replaceChildren(diagramElement);
     return diagramElement;
   }
@@ -137,27 +132,15 @@ export default class SchematicsFigure extends HTMLElement {
     }
   }
 
-  getDiagram(num) {
-    let el;
+  show() {
+    this.style.display = "block";
+    this.transition(() => {});
+  }
 
-    switch (num) {
-      case 14:
-        el = new Figure14Diagram();
-        break;
-      case 18:
-        el = new Figure18Diagram();
-        break;
-      case 36:
-        el = new Figure36Diagram();
-        break;
-      case 43:
-        el = new Figure43Diagram();
-        break;
-      default:
-        throw new Error(`No diagram element specified for figure ${num}.`);
-    }
-
-    return el;
+  hide() {
+    this.transition(() => {
+      this.style.display = "none";
+    });
   }
 }
 
