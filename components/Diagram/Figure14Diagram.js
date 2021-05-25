@@ -8,18 +8,18 @@ export default class Figure14Diagram extends Diagram {
     super(14);
 
     this._timeAxis = {
-      initialCoords: [{ x: 120, y: 100 }, { x: 180, y: 100 }],
-      finalCoords: [{ x: 150, y: 220 }, { x: 150, y: 30 }]
+      coords2D: [{ x: 120, y: 100 }, { x: 180, y: 100 }],
+      coords3D: [{ x: 150, y: 220 }, { x: 150, y: 30 }]
     };
 
     this._yAxis = {
-      initialCoords: [{ x: 120, y: 100 }, { x: 120, y: 220 }],
-      finalCoords: [{ x: 150, y: 220 }, { x: 200, y: 260 }]
+      coords2D: [{ x: 120, y: 100 }, { x: 120, y: 220 }],
+      coords3D: [{ x: 150, y: 220 }, { x: 200, y: 260 }]
     };
 
     this._xAxis = {
-      initialCoords: [{ x: 120, y: 100 }, { x: 240, y: 100 }],
-      finalCoords: [{ x: 150, y: 220 }, { x: 250, y: 205 }]
+      coords2D: [{ x: 120, y: 100 }, { x: 240, y: 100 }],
+      coords3D: [{ x: 150, y: 220 }, { x: 250, y: 205 }]
     };
   }
 
@@ -47,8 +47,8 @@ export default class Figure14Diagram extends Diagram {
   draw2DXY(durationSec, { onDone }) {
     this._yAxis.axis = this.drawAxis();
     this._xAxis.axis = this.drawAxis();
-    this.animateAxisDrawing(this._yAxis.axis, this._yAxis.initialCoords, durationSec);
-    this.animateAxisDrawing(this._xAxis.axis, this._xAxis.initialCoords, durationSec, onDone);
+    this.animateAxisDrawing(this._yAxis.axis, this._yAxis.coords2D, durationSec);
+    this.animateAxisDrawing(this._xAxis.axis, this._xAxis.coords2D, durationSec, onDone);
   }
 
   shiftPerspective(durationSec, { onDone }) {
@@ -58,7 +58,7 @@ export default class Figure14Diagram extends Diagram {
       // Since each element should animate for the same duration, it doesn't matter which one
       // the onDone event is attached to.
       const onAxisAnimated = index == 0 ? onDone : () => {};
-      this.animateAxis(axisData.axis, axisData.initialCoords, axisData.finalCoords, durationSec, onAxisAnimated);
+      this.animateAxis(axisData.axis, axisData.coords2D, axisData.coords3D, durationSec, onAxisAnimated);
     });
   }
 
