@@ -64,34 +64,30 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    if (oldNum) {
-      this.updateWithTransition();
-    } else {
-      this.update();
-    }
+    this.updateWithTransition();
   }
 
   updateWithTransition() {
-    if (this._stopExitingTimer) {
-      clearTimeout(this._stopExitingTimer);
+    if (this._stopTransitioningTimer) {
+      clearTimeout(this._stopTransitioningTimer);
     }
 
-    this.figureNode.classList.add("schematics-figure__figure--exiting");
+    this.figureNode.classList.add("schematics-figure__figure--transitioning");
 
-    const stopExitingAndUpdate = () => {
-      this._stopExitingTimer = setTimeout(() => {
-        this.figureNode.classList.remove("schematics-figure__figure--exiting");
+    const stopTransitioningAndUpdate = () => {
+      this._stopTransitioningTimer = setTimeout(() => {
+        this.figureNode.classList.remove("schematics-figure__figure--transitioning");
         this.update();
-        this._stopExitingTimer = null;
+        this._stopTransitioningTimer = null;
       }, 1000);
     };
 
-    // figure--exiting may or may not trigger transitions/animations;
+    // figure--transitioning may or may not trigger transitions/animations;
     // we don't want to depend on that.
     if (this.figureNode.getAnimations().length > 0) {
-      this.figureNode.addEventListener("transitionend", stopExitingAndUpdate, { once: true });
+      this.figureNode.addEventListener("transitionend", stopTransitioningAndUpdate, { once: true });
     } else {
-      stopExitingAndUpdate();
+      stopTransitioningAndUpdate();
     }
   }
 

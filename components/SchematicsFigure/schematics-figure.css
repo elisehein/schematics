@@ -36,7 +36,7 @@
   transition: opacity .2s ease-out;
 }
 
-.schematics-figure__figure--exiting {
+.schematics-figure__figure--transitioning {
   opacity: 0;
   transition: opacity calc(var(--figure-exit-transition-duration) - .2s) cubic-bezier(.55, 0, 1, .45);
   transition-delay: .2s;
@@ -67,7 +67,7 @@
   animation: light-up-diagram var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
 }
 
-.schematics-figure__figure--exiting .schematics-figure__figure__diagram-container {
+.schematics-figure__figure--transitioning .schematics-figure__figure__diagram-container {
   filter: drop-shadow(0 0 .15em #fff);
   color: #fff;
   animation: jitter var(--figure-exit-transition-duration);
@@ -119,7 +119,7 @@
   z-index: 1;
 }
 
-.schematics-figure__figure--exiting .schematics-figure__figure__figcaption {
+.schematics-figure__figure--transitioning .schematics-figure__figure__figcaption {
   animation:
     text-shadow-flicker var(--figure-exit-transition-duration) ease-out,
     jitter var(--figure-exit-transition-duration);
