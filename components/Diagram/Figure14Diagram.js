@@ -45,14 +45,14 @@ export default class Figure14Diagram extends Diagram {
   }
 
   draw2DXY(durationSec, { onDone }) {
-    this._yAxis.axis = this.drawAxis(...this._yAxis.initialCoords, durationSec);
-    this._xAxis.axis = this.drawAxis(...this._xAxis.initialCoords, durationSec, { onDone });
+    this._yAxis.axis = this.drawAxis();
+    this._xAxis.axis = this.drawAxis();
+    this.animateAxisDrawing(this._yAxis.axis, this._yAxis.initialCoords, durationSec);
+    this.animateAxisDrawing(this._xAxis.axis, this._xAxis.initialCoords, durationSec, onDone);
   }
 
   shiftPerspective(durationSec, { onDone }) {
-    // We delay drawing the time axis until just before animation so that the arrowhead doesn't
-    // look out of place.
-    this._timeAxis.axis = this.drawAxis(...this._timeAxis.initialCoords);
+    this._timeAxis.axis = this.drawAxis();
 
     [this._timeAxis, this._yAxis, this._xAxis].forEach((axisData, index) => {
       // Since each element should animate for the same duration, it doesn't matter which one
@@ -62,19 +62,19 @@ export default class Figure14Diagram extends Diagram {
     });
   }
 
-  drawAxis(startCoords, endCoords, animationDurationSec = 0, { onDone } = {}) {
-    const axis = new Line(startCoords, endCoords);
+  drawAxis() {
+    // No need to specify coordinates because we never show axes in a pre-animation state.
+    // Once animations begin, the coordinates will be defined anyway.
+    // This also ensures the lines aren't visible before they're ready to be animated.
+    const axis = new Line();
     axis.stroke();
     this.addSVGChildElement(axis.node);
-
-    if (animationDurationSec == 0) {
-      // eslint-disable-next-line no-unused-expressions
-      onDone && onDone();
-      return axis;
-    }
-
-    this.animateAxis(axis, [startCoords, startCoords], [startCoords, endCoords], animationDurationSec, onDone);
     return axis;
+  }
+
+  animateAxisDrawing(axis, coords, durationSec, onDone = () => {}) {
+    const [from, to] = coords;
+    this.animateAxis(axis, [from, from], [from, to], durationSec, onDone);
   }
 
   animateAxis(axis, fromCoords, toCoords, animationDurationSec, onDone = () => {}) {
