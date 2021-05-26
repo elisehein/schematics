@@ -1,6 +1,6 @@
 import "./components/SchematicsFigure/SchematicsFigure.js";
 import "./components/SchematicsFigurePreviews/SchematicsFigurePreviews.js";
-// import "./components/FigureList/FigureList.js";
+import "./components/FigureList/FigureList.js";
 import "./components/ScanLines.js";
 
 import { figureExists, orderedFigures } from "./figureData.js";
@@ -9,17 +9,24 @@ import HashNavigation from "./HashNavigation.js";
 document.addEventListener("DOMContentLoaded", () => {
   const schematicsFigure = document.querySelector("schematics-figure");
 
+  const figurePreviews = document.querySelector("schematics-figure-previews");
   const figureList = document.querySelector("figure-list");
   figureList.nums = orderedFigures;
 
-  initNav(schematicsFigure, figureList);
+  initNav(schematicsFigure, figureList, figurePreviews);
 });
 
-function initNav(schematicsFigure, figureList) {
+function initNav(schematicsFigure, figureList, figurePreviews) {
+  let showingPreviews;
+
   const nav = new HashNavigation({
     onNavigateToRoot: () => {
-      schematicsFigure.hide();
-      figureList.style.display = "none";
+      if (showingPreviews) {
+        return;
+      }
+
+      showPreviews(schematicsFigure, figureList, figurePreviews);
+      showingPreviews = true;
     },
     onNavigateToFigure: newFigureNum => {
       if (!figureExists(newFigureNum)) {
@@ -27,12 +34,26 @@ function initNav(schematicsFigure, figureList) {
         return;
       }
 
-      schematicsFigure.num = newFigureNum;
       figureList.active = newFigureNum;
-      schematicsFigure.show();
-      figureList.style.display = "block";
+
+      showIndividualFigure(newFigureNum, schematicsFigure, figureList, figurePreviews, showingPreviews);
+      showingPreviews = false;
     }
   });
 
   nav.init();
+}
+
+function showIndividualFigure(newFigureNum, schematicsFigure, figureList, figurePreviews, forceRestart) {
+  schematicsFigure.showNewFigure(newFigureNum, { forceRestart });
+  figureList.show();
+  figurePreviews.style.display = "none";
+}
+
+function showPreviews(schematicsFigure, figureList, figurePreviews) {
+  figureList.hide();
+  schematicsFigure.hide(() => {
+    figurePreviews.style.display = "block";
+    figureList.style.display = "none";
+  });
 }

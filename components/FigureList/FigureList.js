@@ -130,6 +130,14 @@ export default class FigureList extends HTMLElement {
       this.setAttribute("active", newValue);
     }
   }
+
+  show() {
+    this.style.display = "flex";
+  }
+
+  hide() {
+    this.style.display = "none";
+  }
 }
 
 customElements.define("figure-list", FigureList);

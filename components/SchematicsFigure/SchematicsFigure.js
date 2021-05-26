@@ -21,8 +21,6 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    this.querySelector(".schematics-figure__figure__figcaption").innerHTML = "";
-
     this._diagramElement.drawBeforeCaption({ onDone: () => {
       this._diagramElement.drawAlongsideCaption();
       this.renderCaption({ onDone: () => {
@@ -39,6 +37,8 @@ export default class SchematicsFigure extends HTMLElement {
     if (this._diagramElement) {
       this._diagramElement.clearAllTimers();
     }
+
+    this.querySelector(".schematics-figure__figure__figcaption").innerHTML = "";
   }
 
   lightUpFigure(durationMS) {
@@ -132,14 +132,21 @@ export default class SchematicsFigure extends HTMLElement {
     }
   }
 
-  show() {
+  showNewFigure(newFigureNum, { forceRestart }) {
+    const oldFigureNum = this.num;
+    this.num = newFigureNum;
+
+    if (oldFigureNum == newFigureNum && forceRestart) {
+      this.transition(() => this.update());
+    }
+
     this.style.display = "block";
-    this.transition(() => {});
   }
 
-  hide() {
+  hide(onDone) {
     this.transition(() => {
       this.style.display = "none";
+      onDone();
     });
   }
 }
