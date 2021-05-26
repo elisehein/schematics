@@ -45,12 +45,14 @@ function initNav(schematicsFigure, figureList, figurePreviews) {
 }
 
 function showIndividualFigure(newFigureNum, schematicsFigure, figureList, figurePreviews, forceRestart) {
+  document.body.dataset.visibleView = "individual-figure";
   schematicsFigure.showNewFigure(newFigureNum, { forceRestart });
   figureList.show();
   figurePreviews.style.display = "none";
 }
 
 function showPreviews(schematicsFigure, figureList, figurePreviews) {
+  document.body.dataset.visibleView = "figure-previews";
   figureList.hide();
   schematicsFigure.hide(() => {
     figurePreviews.style.display = "block";

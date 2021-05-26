@@ -1,8 +1,10 @@
 @import "./reset.css";
 @import "./grid.css";
 @import "./header.css";
+@import "./footer.css";
 @import "../components/SchematicsFigure/schematics-figure.css";
 @import "../components/SchematicsFigure/schematics-figure-placements.css";
+@import "../components/SchematicsFigurePreviews/schematics-figure-previews.css";
 @import "../components/Diagram/diagram.css";
 @import "../components/FigureList/figure-list.css";
 
@@ -89,29 +91,6 @@ aside [href="#about"] {
 
 h3 {
   font-weight: 700;
-}
-
-footer {
-  font-size: var(--ms-2);
-}
-
-footer > * + * {
-  margin-left: calc(var(--baseline) * 3);
-}
-
-footer a svg {
-  width: 1.5em;
-  margin-right: .6em;
-  vertical-align: middle;
-}
-
-footer a span {
-  text-decoration: underline;
-  text-underline-position: under;
-}
-
-#copyright {
-  opacity: .9;
 }
 
 .button {

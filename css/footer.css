@@ -1,0 +1,25 @@
+footer {
+  position: sticky;
+  top: var(--grid-top-spacing);
+  font-size: var(--ms-2);
+  line-height: var(--schematics-title-height);
+}
+
+footer > * + * {
+  margin-left: calc(var(--baseline) * 3);
+}
+
+footer a svg {
+  width: 1.5em;
+  margin-right: .6em;
+  vertical-align: middle;
+}
+
+footer a span {
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+#copyright {
+  opacity: .9;
+}

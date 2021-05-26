@@ -1,10 +1,16 @@
+:root {
+  --schematics-title-vertical-padding: .3em;
+  --schematics-title-line-height: var(--double-baseline);
+  --schematics-title-height: calc(var(--schematics-title-line-height) + (2 * var(--schematics-title-vertical-padding)));
+}
+
 h1,
 h2 {
   display: inline-block;
-  padding: .3em 2em;
+  padding: var(--schematics-title-vertical-padding) 2em;
   font-size: var(--ms-2);
   font-weight: 400;
-  line-height: var(--double-baseline);
+  line-height: var(--schematics-title-line-height);
   white-space: nowrap;
 }
 

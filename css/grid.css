@@ -1,8 +1,18 @@
 :root {
-  --grid-top-spacing: var(--double-baseline);
+  --grid-top-spacing: var(--triple-baseline);
   --grid-bottom-spacing: calc(var(--baseline) * 3);
+  --grid-header-main-spacing: var(--baseline);
   --grid-template-columns: repeat(3, 1fr);
-  --header-row-height: calc(var(--double-baseline) * 3);
+  --header-row-height: var(--schematics-title-height);
+
+  --main-height:
+    calc(
+      100vh
+      - var(--grid-top-spacing)
+      - var(--header-row-height)
+      - var(--grid-header-main-spacing)
+      - var(--grid-bottom-spacing)
+    );
 }
 
 .grid {
@@ -11,26 +21,36 @@
   padding: var(--grid-top-spacing) 0 var(--grid-bottom-spacing);
   grid-template-columns: var(--grid-template-columns);
   grid-template-rows: var(--header-row-height) 1fr;
+  grid-row-gap: var(--grid-header-main-spacing);
   width: min(90rem, calc(100vw - (2 * var(--page-padding))));
   height: 100%;
 }
 
 header {
-  grid-column: 1 / -1;
+  grid-column: 1;
   grid-row: 1;
   align-self: center;
+  position: sticky;
+  top: var(--grid-top-spacing);
 }
 
 main {
-  --main-height: calc(100vh - var(--header-row-height) - var(--grid-top-spacing) - var(--grid-bottom-spacing));
   --eighth-main-height: calc(var(--main-height) / 8);
 
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  grid-template-rows: repeat(8, var(--eighth-main-height));
   grid-column: 2 / -1;
   grid-row: 2;
   min-height: var(--main-height);
+}
+
+[data-visible-view="figure-previews"] main {
+  display: flex;
+  flex-direction: row;
+}
+
+[data-visible-view="individual-figure"] main {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, var(--eighth-main-height));
 }
 
 schematics-figure {
@@ -54,7 +74,20 @@ figure-list {
 aside {
   grid-column: 1;
   grid-row: 2;
-  align-self: flex-end;
+
+  /* No movement in individual figure view, but make tall
+   * for sticky scrollin in figure previews view */
+  display: grid;
+  align-content: flex-end;
+  justify-items: flex-start;
+  position: sticky;
+  top:
+    calc(
+      var(--header-row-height)
+      + var(--grid-top-spacing)
+      + var(--grid-header-main-spacing)
+    );
+  height: var(--main-height);
 }
 
 footer {
