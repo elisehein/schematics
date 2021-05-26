@@ -1,6 +1,4 @@
-import { Circle, createSVGElement } from "../../SVGShapes/SVGShapes.js";
-import { renderScanLinePatternDef } from "../../ScanLines.js";
-const pendulumCircleScanLinesID = "pendulum-circle-scan-lines";
+import { Circle } from "../../SVGShapes/SVGShapes.js";
 import BezierEasing from "/helpers/BezierEasing.js";
 
 export const clickable = ({ node, circle }) => ({
@@ -20,12 +18,10 @@ export const clickable = ({ node, circle }) => ({
   },
 
   addHoverStyling() {
-    defineHoverScanLinePattern(node, circle.node);
-
     circle.node.style.cursor = "pointer";
 
     const toggleFill = isFilled => {
-      circle.node.style.fill = isFilled ? `url(#${pendulumCircleScanLinesID})` : "transparent";
+      circle.node.style.fill = isFilled ? "currentcolor" : "transparent";
     };
     const fill = toggleFill.bind(this, true);
     const unfill = toggleFill.bind(this, false);
@@ -79,22 +75,4 @@ function configurePulseAnimation(circle) {
     repeatCount: "indefinite",
     keyTimes
   });
-}
-
-function defineHoverScanLinePattern(groupNode, circleNode) {
-  const defs = createSVGElement("defs");
-
-  const color = getComputedStyle(groupNode).getPropertyValue("--color-text-light");
-  defs.innerHTML = renderScanLinePatternDef(pendulumCircleScanLinesID, color);
-
-  // Since the circle is rotated, the pattern fill also appears rotated, and not aligned
-  // to the rest of the scanlines on the page. This applies a rotation to the pattern that
-  // is opposite of what the current circle rotation is.
-  let rotation = 0;
-  if (circleNode.transform && circleNode.transform.animVal && circleNode.transform.animVal[0]) {
-    rotation = circleNode.transform.animVal[0].angle;
-  }
-  defs.querySelector("pattern").setAttribute("patternTransform", `rotate(${rotation * -1})`);
-
-  groupNode.appendChild(defs);
 }

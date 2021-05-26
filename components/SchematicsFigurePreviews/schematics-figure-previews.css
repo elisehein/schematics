@@ -1,4 +1,12 @@
 schematics-figure-previews {
+  --preview-bg:
+    hsla(
+      var(--hue-main),
+      var(--sat-main),
+      calc(var(--color-bg-dark-lightness) * .7),
+      1
+    );
+
   display: block;
   width: 100%;
   margin-top: calc(var(--baseline) * 6);
@@ -15,20 +23,13 @@ schematics-figure-previews ul {
 }
 
 .schematics-figure-previews__item a {
-  --color-bg-dark: red;
-
   display: block;
   position: relative;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   border-radius: .2em;
-  background-color:
-    hsla(
-      var(--hue-main),
-      var(--sat-main),
-      calc(var(--color-bg-dark-lightness) * .7),
-      1
-    );
+  background-color: var(--preview-bg);
 }
 
 .schematics-figure-previews__item__diagram {
@@ -43,10 +44,9 @@ schematics-figure-previews ul {
   transition: transform var(--micro-interaction-animation-duration);
 }
 
-.schematics-figure-previews__item a:hover svg {
+.schematics-figure-previews__item a:hover .schematics-figure-previews__item__diagram svg {
   transform: scale(1.05);
 }
-
 
 .schematics-figure-previews__item__fig-num {
   position: absolute;
@@ -66,6 +66,7 @@ schematics-figure-previews ul {
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 2;
   pointer-events: none;
+  color: var(--preview-bg);
+  z-index: 2;
 }

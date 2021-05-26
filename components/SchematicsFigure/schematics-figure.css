@@ -50,6 +50,7 @@
   left: 0;
   z-index: 2;
   pointer-events: none;
+  color: var(--color-bg-dark);
 }
 
 .schematics-figure__figure__diagram-container {
