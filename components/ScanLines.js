@@ -8,6 +8,10 @@ export default class ScanLines extends HTMLElement {
     this.appendChild(this.renderSVGPattern());
   }
 
+  static get observedAttributes()  {
+    return ["color"];
+  }
+
   renderSVGPattern() {
     const svg = createSVGElement("svg");
     svg.setAttribute("role", "presentation");

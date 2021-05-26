@@ -4,8 +4,8 @@ import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentia
 import BezierEasing from "../../helpers/BezierEasing.js";
 
 export default class Figure14Diagram extends Diagram {
-  constructor() {
-    super(14);
+  constructor(preview) {
+    super(14, preview);
 
     this._timeAxis = {
       coords2D: [{ x: 120, y: 100 }, { x: 180, y: 100 }],
@@ -23,6 +23,13 @@ export default class Figure14Diagram extends Diagram {
     };
   }
 
+  drawPreview() {
+    this.drawAxis(this._xAxis.coords3D, true);
+    this.drawAxis(this._yAxis.coords3D, true);
+    this.drawAxis(this._timeAxis.coords3D, true);
+    this.drawSpiral();
+  }
+
   drawBeforeCaption({ onDone }) {
     const animationStepDurationSec = 3;
     this.animateAxes(animationStepDurationSec, onDone);
@@ -30,7 +37,7 @@ export default class Figure14Diagram extends Diagram {
 
   drawAfterCaption() {
     this._timerManager.setTimeout(() => {
-      const spiral = this.drawHiddenSpiral();
+      const spiral = this.drawSpiral();
       spiral.animateStroke("10s", "linear");
     }, 1000);
   }
@@ -62,12 +69,17 @@ export default class Figure14Diagram extends Diagram {
     });
   }
 
-  drawAxis() {
-    // No need to specify coordinates because we never show axes in a pre-animation state.
+  drawAxis(points = [], addArrowHead = false) {
+    // Points are optional because we never show axes in a pre-animation state.
     // Once animations begin, the coordinates will be defined anyway.
     // This also ensures the lines aren't visible before they're ready to be animated.
-    const axis = new Line();
+    const axis = new Line(...points);
     axis.stroke();
+
+    if (addArrowHead) {
+      axis.addArrowHead(this.registerMarker.bind(this));
+    }
+
     this.addSVGChildElement(axis.node);
     return axis;
   }
@@ -81,6 +93,7 @@ export default class Figure14Diagram extends Diagram {
     const pointToValue = ({ x, y }) => `${x},${y}`;
     const from = fromCoords.map(pointToValue).join(" ");
     const to = toCoords.map(pointToValue).join(" ");
+    // eslint-disable-next-line no-useless-escape
     const id = `axis-animation-${(from + to).replace(/[,\.\s]/g, "")}`;
 
     axis.animateAttribute("points", {
@@ -126,7 +139,7 @@ export default class Figure14Diagram extends Diagram {
     return label;
   }
 
-  drawHiddenSpiral() {
+  drawSpiral() {
     const spiral = new Path("M210,215 \
                              C 210,175, 90,175, 90,195 \
                              C 90,215, 210,215, 210,175 \

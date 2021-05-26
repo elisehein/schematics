@@ -43,7 +43,6 @@
 }
 
 .schematics-figure__scan-lines {
-  content: "";
   position: absolute;
   top: 0;
   right: 0;
@@ -114,7 +113,7 @@
 .schematics-figure__figure__figcaption {
   font-size: var(--ms2);
   line-height: var(--double-baseline);
-  letter-spacing: .1em;
+  letter-spacing: var(--schematics-letter-spacing);
   text-shadow: var(--schematics-text-shadow);
   z-index: 1;
 }

@@ -7,8 +7,8 @@ import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentia
 import BezierEasing from "/helpers/BezierEasing.js";
 
 export default class Figure36Diagram extends Diagram {
-  constructor() {
-    super(36);
+  constructor(preview) {
+    super(36, preview);
 
     this._pendulumLength = 200;
     this._circleRadius = 20;

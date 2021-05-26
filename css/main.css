@@ -48,6 +48,7 @@
   --micro-interaction-animation-ease-out: cubic-bezier(.22, 1, .36, 1);
 
   --schematics-text-shadow: 0 0 .06em var(--color-text-light);
+  --schematics-letter-spacing: .1em;
 
   --figure-exit-transition-duration: .6s;
 }

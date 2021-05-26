@@ -42,11 +42,6 @@ main {
   min-height: var(--main-height);
 }
 
-[data-visible-view="figure-previews"] main {
-  display: flex;
-  flex-direction: row;
-}
-
 [data-visible-view="individual-figure"] main {
   display: grid;
   grid-template-columns: repeat(8, 1fr);

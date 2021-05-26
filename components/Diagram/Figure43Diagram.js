@@ -12,8 +12,8 @@ export default class Figure43Diagram extends Diagram {
    *
    *       leftward        middle       rightward
    */
-  constructor() {
-    super(43);
+  constructor(preview) {
+    super(43, preview);
 
     this._leftwardCoords = {
       A: { x: 150, y: 37.5 },
@@ -36,6 +36,12 @@ export default class Figure43Diagram extends Diagram {
     const cube = new Path(this.getLeftwardCubePath());
     cube.stroke();
     this.configureAnimation(cube);
+    this.addSVGChildElement(cube.node);
+  }
+
+  drawPreview() {
+    const cube = new Path(this.getSkewedLeftwardCubePath(20));
+    cube.stroke();
     this.addSVGChildElement(cube.node);
   }
 
@@ -64,8 +70,12 @@ export default class Figure43Diagram extends Diagram {
   }
 
   getRightwardCubePath() {
-    const { A, B, C, D, E, F, G, H } = this._leftwardCoords;
     const skewAmount = 140;
+    return this.getSkewedLeftwardCubePath(skewAmount);
+  }
+
+  getSkewedLeftwardCubePath(skewAmount) {
+    const { A, B, C, D, E, F, G, H } = this._leftwardCoords;
 
     return `
     M${A.x - skewAmount},${A.y}

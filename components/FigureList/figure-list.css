@@ -7,7 +7,7 @@ figure-list {
   justify-content: flex-end;
   font-size: var(--ms0);
   line-height: var(--triple-baseline);
-  letter-spacing: .1em;
+  letter-spacing: var(--schematics-letter-spacing);
   color: var(--faded-nav-link-color);
   text-shadow: var(--schematics-text-shadow);
 }

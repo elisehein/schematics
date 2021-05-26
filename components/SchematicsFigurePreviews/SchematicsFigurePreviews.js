@@ -26,11 +26,16 @@ export default class SchematicsFigurePreviews extends HTMLElement {
 
     const anchor = preview.querySelector("a");
     anchor.setAttribute("href", `#fig${num}`);
-    anchor.appendChild(getDiagram(num, true));
 
-    const figureNum = anchor.querySelector("[data-figure-num]");
+    const diagram = getDiagram(num, true);
+    diagram.classList.add("schematics-figure-previews__item__diagram");
+    anchor.appendChild(diagram);
+
+    const figureNum = preview.querySelector("[data-figure-num]");
     figureNum.dataset.num = num;
     figureNum.innerText = num;
+
+    preview.querySelector("scan-lines").setAttribute("color", "var(--schematics-figure-preview-scan-line-color)");
 
     return preview;
   }

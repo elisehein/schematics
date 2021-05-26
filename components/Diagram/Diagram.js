@@ -2,11 +2,12 @@ import { getA11yDescription } from "../../figureData.js";
 import TimerManager from "../../helpers/TimerManager.js";
 
 export default class Diagram extends HTMLElement {
-  constructor(num) {
+  constructor(num, preview) {
     super();
     this.num = num;
     this.a11yDescription = getA11yDescription(num);
     this._timerManager = new TimerManager();
+    this._preview = preview;
   }
 
   connectedCallback() {
@@ -28,6 +29,10 @@ export default class Diagram extends HTMLElement {
         <defs></defs>
       </svg>
     `;
+
+    if (this._preview) {
+      this.drawPreview();
+    }
   }
 
   drawBeforeCaption({ onDone }) {
@@ -39,6 +44,8 @@ export default class Diagram extends HTMLElement {
   drawAfterCaption() {}
 
   onCaptionPause() {}
+
+  drawPreview() {}
 
   clearAllTimers() {
     this._timerManager.clearAllTimeouts();

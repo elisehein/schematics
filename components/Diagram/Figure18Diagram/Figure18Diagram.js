@@ -7,8 +7,8 @@ import { Line, TypingText, Text } from "../../SVGShapes/SVGShapes.js";
 const firstBox = "good?";
 
 export default class Figure18Diagram extends Diagram {
-  constructor() {
-    super(18);
+  constructor(preview) {
+    super(18, preview);
     this._grid = new Figure18DiagramGridCoordinateSystem();
   }
 
