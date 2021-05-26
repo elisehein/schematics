@@ -23,6 +23,7 @@ export default class SchematicsFigurePreviews extends HTMLElement {
 
   getPreviewFragment(itemTemplate, num) {
     const preview = itemTemplate.cloneNode(true).content;
+    preview.querySelector("li").classList.add(`schematics-figure-previews__item--${num}`);
 
     const anchor = preview.querySelector("a");
     anchor.setAttribute("href", `#fig${num}`);

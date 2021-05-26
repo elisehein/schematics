@@ -5,11 +5,33 @@ import BoxedText from "./Figure18BoxedText.js";
 import { Line, TypingText, Text } from "../../SVGShapes/SVGShapes.js";
 
 const firstBox = "good?";
+const secondBox = "more?";
 
 export default class Figure18Diagram extends Diagram {
   constructor(preview) {
     super(18, preview);
     this._grid = new Figure18DiagramGridCoordinateSystem();
+  }
+
+  drawPreview() {
+    this.drawBoxedText({
+      text: firstBox,
+      position: data[firstBox].position,
+      animated: false,
+      onDone: () => {}
+    });
+    this.drawOptionArrow({
+      originBoxText: firstBox,
+      option: data[firstBox].options[0],
+      animated: false,
+      onDone: () => {}
+    });
+    this.drawBoxedText({
+      text: secondBox,
+      position: data[secondBox].position,
+      animated: false,
+      onDone: () => {}
+    });
   }
 
   drawAfterCaption() {
@@ -95,20 +117,25 @@ export default class Figure18Diagram extends Diagram {
     }, { once: true });
   }
 
-  drawOptionArrow({ originBoxText, option, onDone }) {
+  drawOptionArrow({ originBoxText, option, onDone, animated = true }) {
     const originPosition = data[originBoxText].position;
     const targetPosition = data[option.target].position;
     const arrowPoints = this._grid.getArrowCoordinatePoints(originPosition, targetPosition);
     const arrowLine = new Line(...arrowPoints);
     arrowLine.stroke(0.8);
     arrowLine.node.setAttribute("pointer-events", "none");
-
     this.addSVGChildElement(arrowLine.node);
 
-    this.animateBasedOnLength(arrowLine, () => {
+    const addArrowHeadAndFinish = () => {
       arrowLine.addArrowHead(this.registerMarker.bind(this));
       onDone();
-    })
+    }
+
+    if (animated) {
+      this.animateBasedOnLength(arrowLine, addArrowHeadAndFinish);
+    } else {
+      addArrowHeadAndFinish();
+    }
   }
 
   drawBoxedText({ text, position, animated, originPoint, onDone }) {
