@@ -6,7 +6,7 @@
 @import "../components/SchematicsFigure/schematics-figure-placements.css";
 @import "../components/SchematicsFigurePreviews/schematics-figure-previews.css";
 @import "../components/Diagram/diagram.css";
-@import "../components/FigureList/figure-list.css";
+@import "../components/SchematicsFigureToolbar/schematics-figure-toolbar.css";
 
 :root {
   --hue-main: 0;

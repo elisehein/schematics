@@ -1,22 +1,22 @@
 import "./components/SchematicsFigure/SchematicsFigure.js";
 import "./components/SchematicsFigurePreviews/SchematicsFigurePreviews.js";
-import "./components/FigureList/FigureList.js";
+import "./components/SchematicsFigureToolbar/SchematicsFigureToolbar.js";
 import "./components/ScanLines.js";
 
 import { figureExists, orderedFigures } from "./figureData.js";
 import HashNavigation from "./HashNavigation.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const schematicsFigure = document.querySelector("schematics-figure");
+  const figure = document.querySelector("schematics-figure");
+  const previews = document.querySelector("schematics-figure-previews");
+  const toolbar = document.querySelector("schematics-figure-toolbar");
 
-  const figurePreviews = document.querySelector("schematics-figure-previews");
-  const figureList = document.querySelector("figure-list");
-  figureList.nums = orderedFigures;
+  toolbar.nums = orderedFigures;
 
-  initNav(schematicsFigure, figureList, figurePreviews);
+  initNav(figure, toolbar, previews);
 });
 
-function initNav(schematicsFigure, figureList, figurePreviews) {
+function initNav(figure, toolbar, previews) {
   let showingPreviews;
 
   const nav = new HashNavigation({
@@ -25,7 +25,7 @@ function initNav(schematicsFigure, figureList, figurePreviews) {
         return;
       }
 
-      showPreviews(schematicsFigure, figureList, figurePreviews);
+      showPreviews(figure, toolbar, previews);
       showingPreviews = true;
     },
     onNavigateToFigure: newFigureNum => {
@@ -34,9 +34,9 @@ function initNav(schematicsFigure, figureList, figurePreviews) {
         return;
       }
 
-      figureList.active = newFigureNum;
+      toolbar.active = newFigureNum;
 
-      showIndividualFigure(newFigureNum, schematicsFigure, figureList, figurePreviews, showingPreviews);
+      showIndividualFigure(newFigureNum, figure, toolbar, previews, showingPreviews);
       showingPreviews = false;
     }
   });
@@ -44,18 +44,17 @@ function initNav(schematicsFigure, figureList, figurePreviews) {
   nav.init();
 }
 
-function showIndividualFigure(newFigureNum, schematicsFigure, figureList, figurePreviews, forceRestart) {
+function showIndividualFigure(newFigureNum, figure, toolbar, previews, forceRestart) {
   document.body.dataset.visibleView = "individual-figure";
-  schematicsFigure.showNewFigure(newFigureNum, { forceRestart });
-  figureList.show();
-  figurePreviews.style.display = "none";
+  figure.showNewFigure(newFigureNum, { forceRestart });
+  toolbar.show();
+  previews.style.display = "none";
 }
 
-function showPreviews(schematicsFigure, figureList, figurePreviews) {
+function showPreviews(figure, toolbar, previews) {
   document.body.dataset.visibleView = "figure-previews";
-  figureList.hide();
-  schematicsFigure.hide(() => {
-    figurePreviews.style.display = "block";
-    figureList.style.display = "none";
+  toolbar.hide();
+  figure.hide(() => {
+    previews.style.display = "block";
   });
 }

@@ -3,7 +3,7 @@ const DIRECTION = {
   next: 1
 };
 
-export default class FigureList extends HTMLElement {
+export default class SchematicsFigureToolbar extends HTMLElement {
   connectedCallback() {
     this.render();
   }
@@ -12,8 +12,8 @@ export default class FigureList extends HTMLElement {
     this.innerHTML = `
     <nav data-active-item-index>
       <ul>${this.renderLinks()}</ul>
-      <span class="figure-list__active-underline" role="presentation"></span>
-      <scan-lines class="figure-list__scan-lines"></scan-lines>
+      <span class="schematics-figure-toolbar__active-underline" role="presentation"></span>
+      <scan-lines class="schematics-figure-toolbar__scan-lines"></scan-lines>
     </nav>
     `;
   }
@@ -38,7 +38,7 @@ export default class FigureList extends HTMLElement {
     const targetNum = this.nums[this.activeNumIndex + (isNext ? 1 : -1)];
 
     const label = `
-    <span class="figure-list__directional-link__label" id="${labelID}">
+    <span class="schematics-figure-toolbar__directional-link__label" id="${labelID}">
       ${labelText} figure
     </span>
     `;
@@ -51,7 +51,7 @@ export default class FigureList extends HTMLElement {
       aria-hidden="${targetNum ? "false" : "true"}" >
       <a
         id="${this.directionalLinkID(direction)}"
-        class="figure-list__directional-link"
+        class="schematics-figure-toolbar__directional-link"
         aria-labelledby="${labelID}"
         ${targetNum ? `href="#fig${targetNum}"` : ""} >
         ${anchorContents}
@@ -78,7 +78,7 @@ export default class FigureList extends HTMLElement {
   }
 
   itemClass(active = false) {
-    const baseClass = "figure-list__item";
+    const baseClass = "schematics-figure-toolbar__item";
     return `${baseClass}${active ? ` ${baseClass}--active` : ""}`;
   }
 
@@ -140,4 +140,4 @@ export default class FigureList extends HTMLElement {
   }
 }
 
-customElements.define("figure-list", FigureList);
+customElements.define("schematics-figure-toolbar", SchematicsFigureToolbar);
