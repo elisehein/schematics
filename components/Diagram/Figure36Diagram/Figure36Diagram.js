@@ -24,10 +24,19 @@ export default class Figure36Diagram extends Diagram {
     this._totalSwings = 30;
   }
 
+  drawPreview() {
+    this.drawAnchor();
+    this.drawPendulumArm(this._initialAngle * -1 / 3);
+    this.drawPendulumArm(this._initialAngle * -1);
+  }
+
   drawBeforeCaption({ onDone }) {
     this.drawAnchor();
     this._swingingArm = this.drawPendulumArm(this._initialAngle);
-    this._arrow = this.drawArrow();
+    this._arrow = this.drawArrow({
+      startAngle: 180 - this._initialAngle + 10,
+      endAngle: 180 + this._initialAngle - 10
+    });
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
@@ -40,12 +49,9 @@ export default class Figure36Diagram extends Diagram {
     this.enableUserTriggeredSwinging(onLightUp);
   }
 
-  drawArrow() {
+  drawArrow(angles) {
     const arrowArcRadius = this._pendulumLength + (this._circleRadius * 2) + 10;
-    const arrow = new PendulumTrajectoryArrow(this._anchorPoint, arrowArcRadius, {
-      startAngle: 180 - this._initialAngle + 10,
-      endAngle: 180 + this._initialAngle - 10
-    });
+    const arrow = new PendulumTrajectoryArrow(this._anchorPoint, arrowArcRadius, angles);
     this.addSVGChildElement(arrow.node);
     return arrow;
   }

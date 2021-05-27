@@ -17,10 +17,18 @@ export default function PendulumTrajectoryArrow(anchorPoint, radius, angles) {
   const self = { node: g, arcNode: arc.node };
   return Object.assign(
     self,
+    appearingWithoutAnimation(self, anchorPoint, radius, angles),
     appearingInSteps(self, anchorPoint, radius, angles),
     disappearingWithEasing(self, anchorPoint, radius, angles)
   )
 }
+
+const appearingWithoutAnimation = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
+  appearWithoutAnimation() {
+    const d = getArcPathD({ radius, ...anchorPoint }, finalAngles);
+    arcNode.setAttribute("d", d);
+  }
+});
 
 const appearingInSteps = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
   appearInSteps(durationMS, timerManager, { onDone }) {
