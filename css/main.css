@@ -47,8 +47,9 @@
   --micro-interaction-animation-duration: .2s;
   --micro-interaction-animation-ease-out: cubic-bezier(.22, 1, .36, 1);
 
-  --schematics-text-shadow: 0 0 .06em var(--color-text-light);
+  --schematics-text-shadow: 0 0 .08em var(--color-text-light);
   --schematics-letter-spacing: .1em;
+  --schematics-figure-shadow-filter: drop-shadow(0 0 .05em #fff);
 
   --figure-exit-transition-duration: .6s;
 }

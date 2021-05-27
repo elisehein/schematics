@@ -36,10 +36,8 @@ schematics-figure-previews ul {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.schematics-figure-previews__item__diagram {
   transition: transform var(--micro-interaction-animation-duration);
+  filter: var(--schematics-figure-shadow-filter);
 }
 
 .schematics-figure-previews__item--14 .schematics-figure-previews__item__diagram svg {

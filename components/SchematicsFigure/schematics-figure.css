@@ -60,6 +60,7 @@
   overflow: hidden;
   align-items: center;
   justify-content: center;
+  filter: var(--schematics-figure-shadow-filter);
   transition: filter var(--figure-exit-transition-duration), color var(--figure-exit-transition-duration);
 }
 
