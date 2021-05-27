@@ -5,7 +5,7 @@ export const labelPositions = {
   RIGHT_BELOW_ARROW: "RIGHT_BELOW_ARROW",
   BOTTOM_LEFT_TO_ARROW: "BOTTOM_LEFT_TO_ARROW",
   BOTTOM_RIGHT_TO_ARROW: "BOTTOM_RIGHT_TO_ARROW"
-}
+};
 
 export const targetSideTouchPoints = {
   TOP_SIDE_MIDDLE: "TOP_SIDE_MIDDLE",
@@ -13,7 +13,7 @@ export const targetSideTouchPoints = {
   BOTTOM_SIDE_LEFT: "BOTTOM_SIDE_LEFT",
   LEFT_SIDE_MIDDLE: "LEFT_SIDE_MIDDLE",
   RIGHT_SIDE_TOP: "RIGHT_SIDE_TOP"
-}
+};
 
 const flowChartData = {
   "good?": {
@@ -81,6 +81,6 @@ const flowChartData = {
       { label: "", target: "good?", touchPoint: targetSideTouchPoints.TOP_SIDE_MIDDLE }
     ]
   }
-}
+};
 
 export default flowChartData;
