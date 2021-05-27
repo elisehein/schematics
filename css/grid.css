@@ -72,20 +72,14 @@ aside {
 
   /* No movement in individual figure view, but make tall
    * for sticky scrollin in figure previews view */
-  display: grid;
-  align-content: flex-end;
-  justify-items: flex-start;
+  align-self: flex-end;
   position: sticky;
-  top:
-    calc(
-      var(--header-row-height)
-      + var(--grid-top-spacing)
-      + var(--grid-header-main-spacing)
-    );
-  height: var(--main-height);
+  bottom: var(--grid-bottom-spacing);
 }
 
 footer {
+  position: sticky;
+  top: var(--grid-top-spacing);
   grid-row: 1;
   grid-column: 1 / -1;
   align-self: center;

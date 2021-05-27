@@ -1,6 +1,4 @@
 footer {
-  position: sticky;
-  top: var(--grid-top-spacing);
   font-size: var(--ms-2);
   line-height: var(--schematics-title-height);
 }
