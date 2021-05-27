@@ -37,10 +37,9 @@ export const havingLength = ({ node }) => ({
   }
 });
 
-export const withOptionalArrowHead = ({ node }, arrowHeadMarker) => ({
-  addArrowHead(registerMarker) {
-    registerMarker(arrowHeadMarker.node)
-    node.setAttribute("marker-end", `url(#${arrowHeadMarker.node.id})`);
+export const withOptionalArrowHead = ({ node }) => ({
+  addArrowHead() {
+    node.setAttribute("marker-end", "url(#arrowhead-marker)");
   }
 });
 

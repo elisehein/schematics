@@ -77,7 +77,7 @@ export default class Figure14Diagram extends Diagram {
     axis.stroke();
 
     if (addArrowHead) {
-      axis.addArrowHead(this.registerMarker.bind(this));
+      axis.addArrowHead();
     }
 
     this.addSVGChildElement(axis.node);
@@ -111,7 +111,7 @@ export default class Figure14Diagram extends Diagram {
     // Add the arrowheads slightly after the beginning of each animation
     // because otherwise the first thing we see is an arrowhead not attached to a line.
     this._timerManager.setTimeout(() => {
-      axis.addArrowHead(this.registerMarker.bind(this));
+      axis.addArrowHead();
     }, animationDurationSec * 1000 / 25);
 
     axis.beginAnimation(id, onDone);

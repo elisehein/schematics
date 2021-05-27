@@ -26,7 +26,6 @@ export default class Diagram extends HTMLElement {
           fig. <span id="figure-num">${this.num}</span>.
           <span id="figure-a11y-description">${this.a11yDescription}</span>
         </desc>
-        <defs></defs>
       </svg>
     `;
 
@@ -68,10 +67,6 @@ export default class Diagram extends HTMLElement {
 
   addSVGChildElement(el) {
     this.svgNode.appendChild(el);
-  }
-
-  registerMarker(markerNode) {
-    this.querySelector("defs").appendChild(markerNode);
   }
 
   static get observedAttributes()  {

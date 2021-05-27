@@ -45,7 +45,7 @@ export default class Figure36Diagram extends Diagram {
     const arrow = new PendulumTrajectoryArrow(this._anchorPoint, arrowArcRadius, {
       startAngle: 180 - this._initialAngle + 10,
       endAngle: 180 + this._initialAngle - 10
-    }, this.registerMarker.bind(this));
+    });
     this.addSVGChildElement(arrow.node);
     return arrow;
   }

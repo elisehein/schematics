@@ -4,11 +4,11 @@ import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentia
 
 const animationSteps = 18;
 
-export default function PendulumTrajectoryArrow(anchorPoint, radius, angles, registerMarker) {
+export default function PendulumTrajectoryArrow(anchorPoint, radius, angles) {
   const g = createSVGElement("g");
 
   const arc = new Path();
-  arc.addArrowHead(registerMarker);
+  arc.addArrowHead();
   arc.stroke();
   arc.dash(5);
 

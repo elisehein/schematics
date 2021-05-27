@@ -31,22 +31,6 @@ export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
   return { node, addShape };
 }
 
-Marker.arrowHead = (() => {
-  const marker = new Marker({
-    id: "arrowhead-marker",
-    width: 8,
-    height: 8,
-    x: 6,
-    y: 5,
-    viewBox: "0 0 10 10",
-    autoOrient: true
-  });
-  const arrow = new Path("M 1 1 L 7 5 L 1 9 z");
-  arrow.fill();
-  marker.addShape(arrow.node);
-  return marker;
-})();
-
 export function Line(...points) {
   const node = createSVGElement("polyline");
   node.setAttribute("points", points.map(({ x, y }) => `${x},${y}`).join(" "));
@@ -58,7 +42,7 @@ export function Line(...points) {
     strokeable(self),
     havingLength(self),
     animatable(self),
-    withOptionalArrowHead(self, Marker.arrowHead)
+    withOptionalArrowHead(self)
   );
 
   result.stroke();
@@ -97,7 +81,7 @@ export function Path(d) {
     strokeable(self),
     fillable(self),
     havingLength(self),
-    withOptionalArrowHead(self, Marker.arrowHead)
+    withOptionalArrowHead(self)
   );
 }
 

@@ -127,7 +127,7 @@ export default class Figure18Diagram extends Diagram {
     this.addSVGChildElement(arrowLine.node);
 
     const addArrowHeadAndFinish = () => {
-      arrowLine.addArrowHead(this.registerMarker.bind(this));
+      arrowLine.addArrowHead();
       onDone();
     }
 
