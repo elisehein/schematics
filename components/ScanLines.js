@@ -1,6 +1,18 @@
 import { createSVGElement } from "./SVGShapes/SVGShapes.js";
 
 const patternHeightEm = "0.17";
+
+/*
+ * We cannot use a shared pattern def for all scanlines because we need to
+ * modify the colour. While we do use currentcolor, it seems that will
+ * evaluate to the color in the context of where the def appears in the
+ * markup. If we had a single shared def at the end of <body>, the colour
+ * would always evaluate to the body colour, not to the colour of
+ * <scan-lines>'s position in the markup.
+ *
+ * But each def also needs to have a unique id, which is why we keep track of
+ * instances here.
+ */
 let instanceID = 0;
 
 export default class ScanLines extends HTMLElement {
@@ -13,10 +25,6 @@ export default class ScanLines extends HTMLElement {
   connectedCallback() {
     this.setAttribute("role", "presentation");
     this.appendChild(this.renderSVGPattern());
-  }
-
-  static get observedAttributes()  {
-    return ["color"];
   }
 
   renderSVGPattern() {
