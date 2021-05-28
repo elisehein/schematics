@@ -66,6 +66,20 @@
       </figure>
     </template>
 
+    <template id="schematics-figure-toolbar-template">
+      <nav>
+        <a class="schematics-figure-toolbar__all-link" href="#">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          All figures
+        </a>
+        <div class="schematics-figure-toolbar__figure-links-container" data-active-item-index>
+          <ul></ul>
+          <span class="schematics-figure-toolbar__active-underline" role="presentation"></span>
+        </div>
+        <scan-lines class="schematics-figure-toolbar__scan-lines"></scan-lines>
+      </nav>
+    </template>
+
     <template id="schematics-figure-preview-template">
       <li class="schematics-figure-previews__item">
         <a>
@@ -75,13 +89,13 @@
       </li>
     </template>
 
-  </body>
+    <svg width="0" height="0" role="presentation">
+      <defs>
+        <marker id="arrowhead-marker" markerWidth="8" markerHeight="8" refX="6" refY="5" orient="auto-start-reverse" viewBox="0 0 10 10">
+          <path d="M 1 1 L 7 5 L 1 9 z" style="fill: currentColor; stroke: transparent;"></path>
+        </marker>
+      </defs>
+    </svg>
 
-  <svg width="0" height="0" role="presentation">
-    <defs>
-      <marker id="arrowhead-marker" markerWidth="8" markerHeight="8" refX="6" refY="5" orient="auto-start-reverse" viewBox="0 0 10 10">
-        <path d="M 1 1 L 7 5 L 1 9 z" style="fill: currentColor; stroke: transparent;"></path>
-      </marker>
-    </defs>
-  </svg>
+  </body>
 </html>

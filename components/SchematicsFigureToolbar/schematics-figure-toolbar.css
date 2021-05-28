@@ -1,10 +1,10 @@
 schematics-figure-toolbar {
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
+  --underline-height: .2rem;
 
   display: flex;
   position: relative;
   align-self: flex-end;
-  justify-content: flex-end;
   font-size: var(--ms0);
   line-height: var(--triple-baseline);
   letter-spacing: var(--schematics-letter-spacing);
@@ -13,11 +13,15 @@ schematics-figure-toolbar {
 }
 
 schematics-figure-toolbar nav {
-  --item-width: 4em;
-  --directional-item-width: 2em;
-  --item-spacing: var(--double-baseline);
+  --item-width: 4rem;
+  --directional-item-width: 2rem;
+  --item-spacing: var(--triple-baseline);
 
   position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
 }
 
 schematics-figure-toolbar [data-active-item-index="0"] { --active-item-index: 0; }
@@ -31,16 +35,19 @@ schematics-figure-toolbar [data-active-item-index="4"] { --active-item-index: 4;
   position: absolute;
   top: 0;
   right: 0;
-  bottom: 0;
+  bottom: calc(var(--underline-height) * -1);
   left: 0;
   color: var(--color-bg-dark);
   z-index: 2;
   pointer-events: none;
 }
 
+.schematics-figure-toolbar__figure-links-container {
+  position: relative;
+}
+
 schematics-figure-toolbar ul {
   position: relative;
-  overflow: hidden;
 }
 
 .schematics-figure-toolbar__active-underline {
@@ -52,9 +59,9 @@ schematics-figure-toolbar ul {
       ((var(--active-item-index) + 1) * var(--item-spacing)) +
       (var(--active-item-index) * var(--item-width))
     );
-  bottom: 0;
+  top: 100%;
   width: var(--item-width);
-  height: .2em;
+  height: var(--underline-height);
   font-size: var(--ms0);
   background-color: var(--color-text-light);
   transition: left var(--figure-exit-transition-duration) var(--micro-interaction-animation-ease-out);
@@ -68,7 +75,8 @@ schematics-figure-toolbar ul {
 }
 
 .schematics-figure-toolbar__item--directional {
-  width: 2em;
+  width: var(--directional-item-width);
+  font-size: 1.8rem;
 }
 
 .schematics-figure-toolbar__item + .schematics-figure-toolbar__item {
@@ -101,4 +109,18 @@ schematics-figure-toolbar ul {
 
 .schematics-figure-toolbar__directional-link__label {
   display: none;
+}
+
+.schematics-figure-toolbar__all-link {
+  display: inline-block;
+  position: relative;
+  padding-left: calc(var(--baseline) * 2.5);
+}
+
+.schematics-figure-toolbar__all-link svg {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--double-baseline);
 }

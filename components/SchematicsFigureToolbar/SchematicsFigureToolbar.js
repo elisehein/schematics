@@ -9,13 +9,9 @@ export default class SchematicsFigureToolbar extends HTMLElement {
   }
 
   render() {
-    this.innerHTML = `
-    <nav data-active-item-index>
-      <ul>${this.renderLinks()}</ul>
-      <span class="schematics-figure-toolbar__active-underline" role="presentation"></span>
-      <scan-lines class="schematics-figure-toolbar__scan-lines"></scan-lines>
-    </nav>
-    `;
+    const template = document.getElementById("schematics-figure-toolbar-template").cloneNode(true).content;
+    template.querySelector("ul").innerHTML = this.renderLinks();
+    this.replaceChildren(template);
   }
 
   renderLinks() {
