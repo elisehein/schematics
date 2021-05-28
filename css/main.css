@@ -102,7 +102,7 @@ h3 {
   display: inline-block;
   position: relative;
   padding: 0 var(--button-side-padding);
-  border-radius: .3em;
+  border-radius: .3rem;
   background-color: #000;
   font-size: var(--ms-1);
   line-height: var(--button-height);

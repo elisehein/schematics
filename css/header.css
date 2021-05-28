@@ -1,5 +1,5 @@
 :root {
-  --schematics-title-vertical-padding: .3em;
+  --schematics-title-vertical-padding: .3rem;
   --schematics-title-line-height: var(--double-baseline);
   --schematics-title-height: calc(var(--schematics-title-line-height) + (2 * var(--schematics-title-vertical-padding)));
 }
