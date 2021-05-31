@@ -115,6 +115,7 @@ schematics-figure-toolbar ul {
   display: inline-block;
   position: relative;
   padding-left: calc(var(--baseline) * 2.5);
+  font-size: var(--ms-1);
 }
 
 .schematics-figure-toolbar__all-link svg {
