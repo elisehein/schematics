@@ -1,6 +1,4 @@
-import { strokeable, fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
-
-import { getArcPathD } from "/helpers/arcCalculations.js";
+import { fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
 
 /*
  * The components here are not Web Components but rather your vanilla
@@ -8,30 +6,7 @@ import { getArcPathD } from "/helpers/arcCalculations.js";
  * For all intents and purposes, they act as other ui components.
  */
 
-export function Marker({ id, width, height, x, y, viewBox, autoOrient }) {
-  const node = createSVGElement("marker");
-  node.setAttribute("id", id);
-  node.setAttribute("markerWidth", width);
-  node.setAttribute("markerHeight", height);
-  node.setAttribute("refX", x || width / 2.0);
-  node.setAttribute("refY", y || height / 2.0);
-
-  if (autoOrient) {
-    node.setAttribute("orient", "auto-start-reverse");
-  }
-
-  if (viewBox) {
-    node.setAttribute("viewBox", viewBox);
-  }
-
-  const addShape = shapeNode => {
-    node.appendChild(shapeNode);
-  };
-
-  return { node, addShape };
-}
-
-export function Line(...points) {
+export function Line(strokeable, ...points) {
   const node = createSVGElement("polyline");
   node.setAttribute("points", points.map(({ x, y }) => `${x},${y}`).join(" "));
 
@@ -49,7 +24,7 @@ export function Line(...points) {
   return result;
 }
 
-export function Circle(cx, cy, r) {
+export function Circle(strokeable, cx, cy, r) {
   const node = createSVGElement("circle");
   node.setAttribute("cx", cx);
   node.setAttribute("cy", cy);
@@ -66,7 +41,7 @@ export function Circle(cx, cy, r) {
 }
 
 // eslint-disable-next-line id-length
-export function Path(d) {
+export function Path(strokeable, d) {
   const node = createSVGElement("path");
 
   if (d) {
@@ -83,10 +58,6 @@ export function Path(d) {
     havingLength(self),
     withOptionalArrowHead(self)
   );
-}
-
-export function Arc({ x, y, radius }, { startAngle, endAngle }) {
-  return new Path(getArcPathD({ x, y, radius }, { startAngle, endAngle }));
 }
 
 export function Text(text, { x, y }, fontSize = 10) {
@@ -118,7 +89,7 @@ export function Text(text, { x, y }, fontSize = 10) {
   return result;
 }
 
-export function BoxedText(text, fontSize, { x, y }, { width, height }) {
+export function BoxedText(strokeable, text, fontSize, { x, y }, { width, height }) {
   // eslint-disable-next-line id-length
   const g = createSVGElement("g");
 
@@ -147,7 +118,7 @@ export function BoxedText(text, fontSize, { x, y }, { width, height }) {
   };
 }
 
-export function TypingText(text, { x, y }, animationDuration, fontSize = 10) {
+export function TypingText(strokeable, text, { x, y }, animationDuration, fontSize = 10, thumbnail = false) {
   // eslint-disable-next-line id-length
   const g = createSVGElement("g");
   const id = `text-path-${Math.round(x)}-${Math.round(y)}`;
@@ -156,7 +127,7 @@ export function TypingText(text, { x, y }, animationDuration, fontSize = 10) {
   const textSize = textShape.getSize();
   textShape.node.innerHTML = `<textPath href="#${id}">${text}</textPath>`;
 
-  const textPath = new Path();
+  const textPath = new Path(strokeable);
   textPath.stroke(0);
   textPath.node.setAttribute("id", id);
 

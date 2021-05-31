@@ -1,5 +1,4 @@
 import Diagram from "./Diagram.js";
-import { Path } from "../SVGShapes/SVGShapes.js";
 
 export default class Figure43Diagram extends Diagram {
 
@@ -12,8 +11,8 @@ export default class Figure43Diagram extends Diagram {
    *
    *       leftward        middle       rightward
    */
-  constructor(preview) {
-    super(43, preview);
+  constructor(isThumbnail) {
+    super(43, isThumbnail);
 
     this._leftwardCoords = {
       A: { x: 150, y: 37.5 },
@@ -33,14 +32,14 @@ export default class Figure43Diagram extends Diagram {
   }
 
   drawSinglePathCubeWithAnimation() {
-    const cube = new Path(this.getLeftwardCubePath());
+    const cube = this._svgShapeFactory.getPath(this.getLeftwardCubePath());
     cube.stroke();
     this.configureAnimation(cube);
     this.addSVGChildElement(cube.node);
   }
 
-  drawPreview() {
-    const cube = new Path(this.getSkewedLeftwardCubePath(20));
+  drawThumbnail() {
+    const cube = this._svgShapeFactory.getPath(this.getSkewedLeftwardCubePath(20));
     cube.stroke();
     this.addSVGChildElement(cube.node);
   }

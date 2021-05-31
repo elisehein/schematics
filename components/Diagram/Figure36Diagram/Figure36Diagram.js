@@ -1,5 +1,4 @@
 import Diagram from "../Diagram.js";
-import { Circle } from "../../SVGShapes/SVGShapes.js";
 import PendulumArm from "./PendulumArm.js";
 import PendulumTrajectoryArrow from "./PendulumTrajectoryArrow.js";
 
@@ -7,8 +6,8 @@ import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentia
 import BezierEasing from "/helpers/BezierEasing.js";
 
 export default class Figure36Diagram extends Diagram {
-  constructor(preview) {
-    super(36, preview);
+  constructor(isThumbnail) {
+    super(36, isThumbnail);
 
     this._pendulumLength = 200;
     this._circleRadius = 20;
@@ -24,7 +23,7 @@ export default class Figure36Diagram extends Diagram {
     this._totalSwings = 30;
   }
 
-  drawPreview() {
+  drawThumbnail() {
     this.drawAnchor();
     this.drawPendulumArm(this._initialAngle * -1 / 3);
     this.drawPendulumArm(this._initialAngle * -1);
@@ -51,7 +50,7 @@ export default class Figure36Diagram extends Diagram {
 
   drawArrow(angles) {
     const arrowArcRadius = this._pendulumLength + (this._circleRadius * 2) + 10;
-    const arrow = new PendulumTrajectoryArrow(this._anchorPoint, arrowArcRadius, angles);
+    const arrow = new PendulumTrajectoryArrow(this._svgShapeFactory, this._anchorPoint, arrowArcRadius, angles);
     this.addSVGChildElement(arrow.node);
     return arrow;
   }
@@ -76,14 +75,14 @@ export default class Figure36Diagram extends Diagram {
   }
 
   drawPendulumArm(rotationAngle) {
-    const arm = new PendulumArm(this._anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
+    const arm = new PendulumArm(this._svgShapeFactory, this._anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
     this.addSVGChildElement(arm.node);
     return arm;
   }
 
   drawAnchor() {
     const { x, y } = this._anchorPoint;
-    const circle = new Circle(x, y, this._circleRadius);
+    const circle = this._svgShapeFactory.getCircle(x, y, this._circleRadius);
     circle.stroke();
     this.addSVGChildElement(circle.node);
   }

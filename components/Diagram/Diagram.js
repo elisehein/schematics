@@ -1,13 +1,16 @@
 import { getA11yDescription } from "../../figureData.js";
 import TimerManager from "../../helpers/TimerManager.js";
+import SVGShapeFactory from "../SVGShapes/SVGShapeFactory.js";
 
 export default class Diagram extends HTMLElement {
-  constructor(num, preview) {
+  constructor(num, isThumbnail) {
     super();
     this.num = num;
     this.a11yDescription = getA11yDescription(num);
     this._timerManager = new TimerManager();
-    this._preview = preview;
+    this._isThumbnail = isThumbnail;
+
+    this._svgShapeFactory = new SVGShapeFactory(this._isThumbnail);
   }
 
   connectedCallback() {
@@ -16,7 +19,7 @@ export default class Diagram extends HTMLElement {
 
     this.innerHTML = `
       <svg
-        class="diagram"
+        class="diagram${this._isThumbnail ? " diagram--thumbnail" : ""}"
         preserveAspectRatio="xMidYMin meet"
         role="img"
         viewbox="0 0 300 300"
@@ -29,8 +32,8 @@ export default class Diagram extends HTMLElement {
       </svg>
     `;
 
-    if (this._preview) {
-      this.drawPreview();
+    if (this._isThumbnail) {
+      this.drawThumbnail();
     }
   }
 

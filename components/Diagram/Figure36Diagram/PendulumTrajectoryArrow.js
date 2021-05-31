@@ -1,13 +1,13 @@
-import { Path, createSVGElement } from "../../SVGShapes/SVGShapes.js";
+import { createSVGElement } from "../../SVGShapes/SVGShapes.js";
 import { getArcPathD } from "/helpers/arcCalculations.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 
 const animationSteps = 18;
 
-export default function PendulumTrajectoryArrow(anchorPoint, radius, angles) {
+export default function PendulumTrajectoryArrow(shapeFactory, anchorPoint, radius, angles) {
   const g = createSVGElement("g");
 
-  const arc = new Path();
+  const arc = shapeFactory.getPath();
   arc.addArrowHead();
   arc.stroke();
   arc.dash(5);
@@ -19,7 +19,7 @@ export default function PendulumTrajectoryArrow(anchorPoint, radius, angles) {
     self,
     appearingWithoutAnimation(self, anchorPoint, radius, angles),
     appearingInSteps(self, anchorPoint, radius, angles),
-    disappearingWithEasing(self, anchorPoint, radius, angles)
+    disappearingWithEasing(self, anchorPoint, radius, angles, shapeFactory.getPath.bind(shapeFactory))
   )
 }
 
@@ -53,14 +53,14 @@ const appearingInSteps = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
   }
 });
 
-const disappearingWithEasing = ({ arcNode, node }, anchorPoint, radius, angles) => ({
+const disappearingWithEasing = ({ arcNode, node }, anchorPoint, radius, angles, getPath) => ({
   disappearWithEasing(easing, durationSec) {
     const overlayAngles = {
       startAngle: angles.startAngle - 10,
       endAngle: angles.endAngle + 10
     };
 
-    const overlayArc = new Path(getArcPathD({ radius, ...anchorPoint }, overlayAngles))
+    const overlayArc = getPath(getArcPathD({ radius, ...anchorPoint }, overlayAngles))
     overlayArc.stroke(8, "var(--color-page-bg)");
     node.appendChild(overlayArc.node);
 

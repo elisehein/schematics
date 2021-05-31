@@ -1,11 +1,10 @@
-import { Circle } from "../../SVGShapes/SVGShapes.js";
 import BezierEasing from "/helpers/BezierEasing.js";
 
-export const clickable = ({ node, circle }) => ({
+export const clickable = ({ node, circle }, getCircle) => ({
   onClick(handler) {
     // We indicate that a pendulum (really just the circle) becomes clickable
     // by pulsing the circle
-    const pulsingCircle = drawPulsingCircle(node, circle.node);
+    const pulsingCircle = drawPulsingCircle(node, circle.node, getCircle);
     configurePulseAnimation(pulsingCircle);
 
     const removeHoverStyling = this.addHoverStyling();
@@ -38,11 +37,11 @@ export const clickable = ({ node, circle }) => ({
   }
 });
 
-function drawPulsingCircle(groupNode, originalCircleNode) {
+function drawPulsingCircle(groupNode, originalCircleNode, getCircle) {
   const cx = originalCircleNode.getAttribute("cx");
   const cy = originalCircleNode.getAttribute("cy");
   const radius = originalCircleNode.getAttribute("r");
-  const circle = new Circle(cx, cy, radius);
+  const circle = getCircle(cx, cy, radius);
   circle.node.setAttribute("transform", originalCircleNode.getAttribute("transform"));
   circle.node.setAttribute("stroke-opacity", 0);
   circle.stroke();

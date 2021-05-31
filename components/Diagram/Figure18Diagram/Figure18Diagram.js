@@ -2,18 +2,17 @@ import Diagram from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
-import { Line, TypingText, Text } from "../../SVGShapes/SVGShapes.js";
 
 const firstBox = "good?";
 const secondBox = "more?";
 
 export default class Figure18Diagram extends Diagram {
-  constructor(preview) {
-    super(18, preview);
+  constructor(isThumbnail) {
+    super(18, isThumbnail);
     this._grid = new Figure18DiagramGridCoordinateSystem();
   }
 
-  drawPreview() {
+  drawThumbnail() {
     this.drawBoxedText({
       text: firstBox,
       position: data[firstBox].position,
@@ -80,11 +79,11 @@ export default class Figure18Diagram extends Diagram {
   }
 
   drawOptionLabel(originBoxText, option, animationDurationSeconds) {
-    const sizerLabel = new Text(option.label, { x: 0, y: 0 }, 8);
+    const sizerLabel = this._svgShapeFactory.getText(option.label, { x: 0, y: 0 }, 8);
     const originBoxCoords = this._grid.getBoxCoords(data[originBoxText].position);
     const { x, y } = this._grid.getOptionLabelCoords(originBoxCoords, option.labelPosition, sizerLabel.getSize());
 
-    const label = new TypingText(option.label, { x, y }, animationDurationSeconds, 8);
+    const label = this._svgShapeFactory.getTypingText(option.label, { x, y }, animationDurationSeconds, 8);
     this.addSVGChildElement(label.node);
     label.textNode.style.cursor = "pointer";
 
@@ -97,7 +96,7 @@ export default class Figure18Diagram extends Diagram {
   }
 
   drawOptionLabelUnderline(labelX, labelY, labelSize) {
-    const underline = new Line(
+    const underline = this._svgShapeFactory.getLine(
       { x: labelX - 1, y: labelY + 3 },
       { x: labelX + labelSize.width + 1, y: labelY + 3 }
     );
@@ -121,7 +120,7 @@ export default class Figure18Diagram extends Diagram {
     const originPosition = data[originBoxText].position;
     const targetPosition = data[option.target].position;
     const arrowPoints = this._grid.getArrowCoordinatePoints(originPosition, targetPosition);
-    const arrowLine = new Line(...arrowPoints);
+    const arrowLine = this._svgShapeFactory.getLine(...arrowPoints);
     arrowLine.stroke(0.8);
     arrowLine.node.setAttribute("pointer-events", "none");
     this.addSVGChildElement(arrowLine.node);
@@ -148,7 +147,7 @@ export default class Figure18Diagram extends Diagram {
       ...boxSize
     };
 
-    const boxedText = new BoxedText(text, fontSize, boxGeometry, animated, originPoint);
+    const boxedText = new BoxedText(this._svgShapeFactory, text, fontSize, boxGeometry, animated, originPoint);
     boxedText.stroke(0.8);
     boxedText.node.setAttribute("id", `box-${position.toString()}`);
 

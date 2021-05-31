@@ -1,11 +1,10 @@
 import Diagram from "./Diagram.js";
-import { Line, Path, TypingText, Text } from "../SVGShapes/SVGShapes.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 import BezierEasing from "../../helpers/BezierEasing.js";
 
 export default class Figure14Diagram extends Diagram {
-  constructor(preview) {
-    super(14, preview);
+  constructor(isThumbnail) {
+    super(14, isThumbnail);
 
     this._timeAxis = {
       coords2D: [{ x: 120, y: 100 }, { x: 180, y: 100 }],
@@ -23,10 +22,7 @@ export default class Figure14Diagram extends Diagram {
     };
   }
 
-  drawPreview() {
-    this.drawAxis(this._xAxis.coords3D, true);
-    this.drawAxis(this._yAxis.coords3D, true);
-    this.drawAxis(this._timeAxis.coords3D, true);
+  drawThumbnail() {
     this.drawSpiral();
   }
 
@@ -73,7 +69,7 @@ export default class Figure14Diagram extends Diagram {
     // Points are optional because we never show axes in a pre-animation state.
     // Once animations begin, the coordinates will be defined anyway.
     // This also ensures the lines aren't visible before they're ready to be animated.
-    const axis = new Line(...points);
+    const axis = this._svgShapeFactory.getLine(...points);
     axis.stroke();
 
     if (addArrowHead) {
@@ -128,11 +124,11 @@ export default class Figure14Diagram extends Diagram {
   drawLabel(text, coords, animated = false, { onDone } = {}) {
     let label;
     if (animated) {
-      label = new TypingText(text, coords, 1);
+      label = this._svgShapeFactory.getTypingText(text, coords, 1);
       this.addSVGChildElement(label.node);
       label.animateTyping(null, onDone);
     } else {
-      label = new Text(text, coords);
+      label = this._svgShapeFactory.getText(text, coords);
       this.addSVGChildElement(label.node);
     }
 
@@ -140,7 +136,7 @@ export default class Figure14Diagram extends Diagram {
   }
 
   drawSpiral() {
-    const spiral = new Path("M210,215 \
+    const spiral = this._svgShapeFactory.getPath("M210,215 \
                              C 210,175, 90,175, 90,195 \
                              C 90,215, 210,215, 210,175 \
                              C 210,135, 90,135, 90,155 \

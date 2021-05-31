@@ -1,15 +1,15 @@
-import { havingLength, strokeable } from "../../SVGShapes/SVGShapeFeatures.js";
-import { TypingText, Path, createSVGElement, Text } from "../../SVGShapes/SVGShapes.js";
+import { havingLength } from "../../SVGShapes/SVGShapeFeatures.js";
+import { createSVGElement } from "../../SVGShapes/SVGShapes.js";
 import { targetSideTouchPoints } from "./data.js";
 
-export default function Figure18BoxedText(text, fontSize, { x, y, width, height }, animated, targetSideTouchPoint) {
+export default function Figure18BoxedText(shapeFactory, text, fontSize, { x, y, width, height }, animated, targetSideTouchPoint) {
   // eslint-disable-next-line id-length
   const g = createSVGElement("g");
 
-  const rect = getRectAsPathWithOriginPoint({ x, y, width, height, originPoint: targetSideTouchPoint });
+  const rect = getRectAsPathWithOriginPoint(shapeFactory, { x, y, width, height, originPoint: targetSideTouchPoint });
   g.appendChild(rect.node);
 
-  const sizerText = new Text(text, { x: 0, y: 0 }, fontSize);
+  const sizerText = shapeFactory.getText(text, { x: 0, y: 0 }, fontSize);
   const textSize = sizerText.getSize();
 
   // 4.0 is a magic number that results in the text being vertically aligned
@@ -17,7 +17,7 @@ export default function Figure18BoxedText(text, fontSize, { x, y, width, height 
   const textX = x + (width / 2.0) - (textSize.width / 2.0);
 
   const typingDuration = animated ? randomIntBetween(5, 1.2) / 10.0 : 0;
-  const textShape = new TypingText(text, { x: textX, y: textY }, typingDuration, fontSize);
+  const textShape = shapeFactory.getTypingText(text, { x: textX, y: textY }, typingDuration, fontSize);
 
   g.appendChild(textShape.node);
 
@@ -31,11 +31,11 @@ export default function Figure18BoxedText(text, fontSize, { x, y, width, height 
       animateTyping
     },
     havingLength({ node: rect.node }),
-    strokeable({ node: rect.node })
+    shapeFactory.strokeable({ node: rect.node })
   );
 }
 
-function getRectAsPathWithOriginPoint({ x, y, width, height, originPoint }) {
+function getRectAsPathWithOriginPoint(shapeFactory, { x, y, width, height, originPoint }) {
   // eslint-disable-next-line id-length
   let d;
 
@@ -65,7 +65,7 @@ function getRectAsPathWithOriginPoint({ x, y, width, height, originPoint }) {
       d = getPathD(topRightCorner, bottomRightCorner, bottomLeftCorner, topLeftCorner);
   }
 
-  return new Path(d);
+  return shapeFactory.getPath(d);
 }
 
 function getPathD(...points) {
