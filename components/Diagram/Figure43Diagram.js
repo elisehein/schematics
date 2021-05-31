@@ -26,9 +26,10 @@ export default class Figure43Diagram extends Diagram {
     };
   }
 
-  drawAlongsideCaption() {
+  drawBeforeCaption({ onDone }) {
     super.drawAlongsideCaption();
     this.drawSinglePathCubeWithAnimation();
+    this._timerManager.setTimeout(onDone, 1000);
   }
 
   drawSinglePathCubeWithAnimation() {
