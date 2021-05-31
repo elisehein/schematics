@@ -14,23 +14,23 @@ export default function PendulumTrajectoryArrow(shapeFactory, anchorPoint, radiu
 
   g.appendChild(arc.node);
 
-  const self = { node: g, arcNode: arc.node };
+  const self = { node: g, arc };
   return Object.assign(
     self,
     appearingWithoutAnimation(self, anchorPoint, radius, angles),
     appearingInSteps(self, anchorPoint, radius, angles),
-    disappearingWithEasing(self, anchorPoint, radius, angles, shapeFactory.getPath.bind(shapeFactory))
+    disappearingWithEasing(self, anchorPoint, radius, angles)
   )
 }
 
-const appearingWithoutAnimation = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
+const appearingWithoutAnimation = ({ arc }, anchorPoint, radius, finalAngles) => ({
   appearWithoutAnimation() {
     const d = getArcPathD({ radius, ...anchorPoint }, finalAngles);
-    arcNode.setAttribute("d", d);
+    arc.node.setAttribute("d", d);
   }
 });
 
-const appearingInSteps = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
+const appearingInSteps = ({ arc }, anchorPoint, radius, finalAngles) => ({
   appearInSteps(durationMS, timerManager, { onDone }) {
     const arcLength  = finalAngles.endAngle - finalAngles.startAngle
     const arcLengthForSingleStep = arcLength / animationSteps;
@@ -39,7 +39,7 @@ const appearingInSteps = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
     const setArrowArcStartAngle = startAngle => {
       return (objectWithDoneHandler) => {
         const d = getArcPathD({ radius, ...anchorPoint }, { startAngle, endAngle: finalAngles.endAngle });
-        arcNode.setAttribute("d", d);
+        arc.node.setAttribute("d", d);
         objectWithDoneHandler.onDone();
       }
     }
@@ -53,22 +53,59 @@ const appearingInSteps = ({ arcNode }, anchorPoint, radius, finalAngles) => ({
   }
 });
 
-const disappearingWithEasing = ({ arcNode, node }, anchorPoint, radius, angles, getPath) => ({
+/* We cannot use an overlay shape to make it look like the arrow is disappearing,
+ * because a black overlay shape is still visible if a drop-shadow filter is applied
+ * to the whole diagram.
+ * We also cannot use a CSS/SMIL animation, because there's no way in either case to animate
+ * an arc appearing/disappearing.
+ * Instead, we are redrawing a shorter and shorter arc manually using getAnimationFrame()
+ */
+const disappearingWithEasing = ({ arc, node }, anchorPoint, radius, angles, ) => ({
   disappearWithEasing(easing, durationSec) {
-    const overlayAngles = {
-      startAngle: angles.startAngle - 10,
-      endAngle: angles.endAngle + 10
-    };
+    const durationMS = durationSec * 1000;
 
-    const overlayArc = getPath(getArcPathD({ radius, ...anchorPoint }, overlayAngles))
-    overlayArc.stroke(8, "var(--color-page-bg)");
-    node.appendChild(overlayArc.node);
+    const totalAnglesCovered = angles.startAngle - angles.endAngle;
+    const startAngle = angles.startAngle;
+    const originalArcLength = arc.getLength();
 
-    overlayArc.animateStroke(`${durationSec}s`, easing.cssString, () => {
-      arcNode.remove();
-      overlayArc.node.remove();
-    });
+    let start;
+
+    const step = timestamp => {
+      if (start === undefined) {
+        start = timestamp;
+      }
+
+      const elapsed = timestamp - start;
+      const interval = elapsed / durationMS;
+
+      const anglesCoveredThisAnimationFrame = totalAnglesCovered * easing.pointAlongCurve(interval).y;
+
+      const endAngle = Math.max(angles.startAngle, angles.endAngle + anglesCoveredThisAnimationFrame);
+      const d = getArcPathD({ radius, ...anchorPoint }, { startAngle, endAngle });
+      this.updateArcStyle(arc, d, originalArcLength, interval >= 0.8);
+
+      if (elapsed < durationMS) {
+        window.requestAnimationFrame(step);
+      } else {
+        node.remove();
+      }
+    }
+
+    window.requestAnimationFrame(step);
+  },
+
+  updateArcStyle(arc, d, originalArcLength, almostDisappeared, ) {
+    arc.node.setAttribute("d", d);
+
+    // Adjust stroke-dashoffset so that the dashes begin at the original path start point.
+    // This prevents the dashes from moving during the animation.
+    arc.node.style.strokeDashoffset = (originalArcLength - arc.getLength());
+
+    if (almostDisappeared) {
+      arc.removeArrowHead(); // Remove slightly before the full path is hidden to make it look smoother
+    }
   }
 });
+
 
 const emptyArrayOfLength = length => Array(length).fill();

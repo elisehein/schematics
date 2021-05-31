@@ -12,6 +12,7 @@ export default class Figure36Diagram extends Diagram {
     this._pendulumLength = 200;
     this._circleRadius = 20;
     this._initialAngle = 30;
+    this._arrowOffsetAngle = 10;
 
     this._swingDurationSec = 2;
     this._swingEasing = new BezierEasing(0.4, 0, 0.6, 1);
@@ -29,8 +30,8 @@ export default class Figure36Diagram extends Diagram {
     this.drawAnchor();
     this._swingingArm = this.drawPendulumArm(this._initialAngle);
     this._arrow = this.drawArrow({
-      startAngle: 180 - this._initialAngle + 10,
-      endAngle: 180 + this._initialAngle - 10
+      startAngle: 180 - this._initialAngle + this._arrowOffsetAngle,
+      endAngle: 180 + this._initialAngle - this._arrowOffsetAngle
     });
 
     runActionsSequentially([
@@ -53,7 +54,7 @@ export default class Figure36Diagram extends Diagram {
 
   enableUserTriggeredSwinging(onLightUp) {
     this._swingingArm.onClick(() => {
-      this._arrow.disappearWithEasing(this._swingEasing, this._swingDurationSec);
+      this.hideArrow();
 
       this._swingingArm.swing(this._totalSwings, this._swingEasing, this._swingDurationSec, {
         onSwing: (index, angle) => {
@@ -68,6 +69,17 @@ export default class Figure36Diagram extends Diagram {
         }
       });
     });
+  }
+
+  hideArrow() {
+    // The arrow needs to disappear *slightly* later and quicker than the swing
+    // to account for its angle offset compared to the pendulum
+    const totalAnglesCovered = 2 * this._initialAngle;
+    const arrowDisappearanceDelay = (this._arrowOffsetAngle / totalAnglesCovered) * this._swingDurationSec;
+    const arrowDisappearanceDuration = this._swingDurationSec - (arrowDisappearanceDelay * 2);
+    this._timerManager.setTimeout(() => {
+      this._arrow.disappearWithEasing(this._swingEasing, arrowDisappearanceDuration);
+    }, arrowDisappearanceDelay * 1000);
   }
 
   drawPendulumArm(rotationAngle) {

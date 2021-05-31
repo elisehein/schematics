@@ -40,6 +40,10 @@ export const havingLength = ({ node }) => ({
 export const withOptionalArrowHead = ({ node }) => ({
   addArrowHead() {
     node.setAttribute("marker-end", "url(#arrowhead-marker)");
+  },
+
+  removeArrowHead() {
+    node.removeAttribute("marker-end");
   }
 });
 
