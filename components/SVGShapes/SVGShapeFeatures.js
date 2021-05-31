@@ -2,8 +2,8 @@ export const strokeable = (isThumbnail, { node }) => ({
   stroke(strokeWidth = 1, strokeColor = "currentcolor") {
     node.style.fill = "transparent";
     node.style.stroke = strokeColor;
-    node.style.strokeWidth = isThumbnail ? 5 : strokeWidth;
     node.style.strokeLinecap = "round";
+    node.style.strokeWidth = isThumbnail && strokeWidth !== 0 ? 5 : strokeWidth;
   },
 
   dash(dashWidth) {

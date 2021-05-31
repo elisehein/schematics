@@ -37,7 +37,6 @@ schematics-figure-previews ul {
   align-items: center;
   justify-content: center;
   transition: transform var(--micro-interaction-animation-duration);
-  filter: var(--schematics-figure-shadow-filter);
 }
 
 .schematics-figure-previews__item__diagram .diagram {

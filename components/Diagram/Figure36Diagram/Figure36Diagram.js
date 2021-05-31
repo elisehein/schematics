@@ -13,19 +13,15 @@ export default class Figure36Diagram extends Diagram {
     this._circleRadius = 20;
     this._initialAngle = 30;
 
-    // The offset in the end is to nudge it slightly towards the top to make room for
-    // the dashed arrow
-    const offset = 15;
-    this._anchorPoint = { x: 150, y: (300 - this._pendulumLength) / 2 - offset };
-
     this._swingDurationSec = 2;
     this._swingEasing = new BezierEasing(0.4, 0, 0.6, 1);
     this._totalSwings = 30;
   }
 
   drawThumbnail() {
+    this._pendulumLength = 120;
     this.drawAnchor();
-    this.drawPendulumArm(this._initialAngle * -1 / 3);
+    this.drawPendulumArm(0);
     this.drawPendulumArm(this._initialAngle * -1);
   }
 
@@ -50,7 +46,7 @@ export default class Figure36Diagram extends Diagram {
 
   drawArrow(angles) {
     const arrowArcRadius = this._pendulumLength + (this._circleRadius * 2) + 10;
-    const arrow = new PendulumTrajectoryArrow(this._svgShapeFactory, this._anchorPoint, arrowArcRadius, angles);
+    const arrow = new PendulumTrajectoryArrow(this._svgShapeFactory, this.anchorPoint, arrowArcRadius, angles);
     this.addSVGChildElement(arrow.node);
     return arrow;
   }
@@ -75,13 +71,13 @@ export default class Figure36Diagram extends Diagram {
   }
 
   drawPendulumArm(rotationAngle) {
-    const arm = new PendulumArm(this._svgShapeFactory, this._anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
+    const arm = new PendulumArm(this._svgShapeFactory, this.anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
     this.addSVGChildElement(arm.node);
     return arm;
   }
 
   drawAnchor() {
-    const { x, y } = this._anchorPoint;
+    const { x, y } = this.anchorPoint;
     const circle = this._svgShapeFactory.getCircle(x, y, this._circleRadius);
     circle.stroke();
     this.addSVGChildElement(circle.node);
@@ -92,6 +88,13 @@ export default class Figure36Diagram extends Diagram {
     const lightUpDuration = 1000 - ((index - 1) * 100); // Gradually less time to light up
     const msUntilJustBeforeNextSwing = this._swingDurationSec * 1000 - (lightUpDuration / 2);
     this._timerManager.setTimeout(() => onLightUp(lightUpDuration), msUntilJustBeforeNextSwing);
+  }
+
+  get anchorPoint() {
+    // The offset in the end is to nudge it slightly towards the top to make room for
+    // the dashed arrow
+    const offset = 15;
+    return { x: 150, y: (300 - this._pendulumLength) / 2 - offset };
   }
 }
 

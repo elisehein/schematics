@@ -1,8 +1,9 @@
-import { Line, Path, Circle, Text, BoxedText, TypingText } from "./SVGShapes.js";
+import { Line, Path, Circle, Text, TypingText } from "./SVGShapes.js";
 import { strokeable } from "./SVGShapeFeatures.js";
 
 export default class SVGShapeFactory {
   constructor(isThumbnail) {
+    this._isThumbnail = isThumbnail;
     this.strokeable = strokeable.bind(null, isThumbnail);
   }
 
@@ -19,15 +20,11 @@ export default class SVGShapeFactory {
   }
 
   getText(...args) {
-    return new Text(...args);
-  }
-
-  getBoxedText(...args) {
-    return new BoxedText(this.strokeable, ...args);
+    return new Text(this._isThumbnail, ...args);
   }
 
   getTypingText(...args) {
-    return new TypingText(this.strokeable, ...args);
+    return new TypingText(this.strokeable, this._isThumbnail, ...args);
   }
 }
 

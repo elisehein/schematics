@@ -4,7 +4,6 @@ import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinate
 import BoxedText from "./Figure18BoxedText.js";
 
 const firstBox = "good?";
-const secondBox = "more?";
 
 export default class Figure18Diagram extends Diagram {
   constructor(isThumbnail) {
@@ -15,19 +14,8 @@ export default class Figure18Diagram extends Diagram {
   drawThumbnail() {
     this.drawBoxedText({
       text: firstBox,
-      position: data[firstBox].position,
-      animated: false,
-      onDone: () => {}
-    });
-    this.drawOptionArrow({
-      originBoxText: firstBox,
-      option: data[firstBox].options[0],
-      animated: false,
-      onDone: () => {}
-    });
-    this.drawBoxedText({
-      text: secondBox,
-      position: data[secondBox].position,
+      coords: { x: 60, y: 96, width: 180, height: 108 },
+      fontSize: 28,
       animated: false,
       onDone: () => {}
     });
@@ -40,14 +28,15 @@ export default class Figure18Diagram extends Diagram {
 
   drawBoxWithOptions(boxText, boxOriginPoint, animated = true) {
     const boxData = data[boxText];
+    const coords = this._grid.getBoxCoords(boxData.position);
 
-    if (this.boxWithOptionsExists(boxData.position)) {
+    if (this.boxWithOptionsExists(coords)) {
       return;
     }
 
     this.drawBoxedText({
       text: boxText,
-      position: boxData.position,
+      coords,
       animated,
       originPoint: boxOriginPoint,
       onDone: () => {
@@ -58,8 +47,8 @@ export default class Figure18Diagram extends Diagram {
     });
   }
 
-  boxWithOptionsExists(position) {
-    return this.querySelector(`#box-${position.toString()}`) !== null;
+  boxWithOptionsExists(coords) {
+    return this.querySelector(`#${this.getBoxID(coords)}`) !== null;
   }
 
   drawOptions(originBoxText, options, animated = true) {
@@ -137,19 +126,17 @@ export default class Figure18Diagram extends Diagram {
     }
   }
 
-  drawBoxedText({ text, position, animated, originPoint, onDone }) {
-    const boxSize = { width: 50, height: 30 };
-    const coords = this._grid.getBoxCoords(position);
-    const fontSize = 8;
+  drawBoxedText({ text, coords, animated, originPoint, onDone, fontSize }) {
+    const boxSize = { width: coords.width || 50, height: coords.height || 30 };
 
     const boxGeometry = {
       ...coords,
       ...boxSize
     };
 
-    const boxedText = new BoxedText(this._svgShapeFactory, text, fontSize, boxGeometry, animated, originPoint);
+    const boxedText = new BoxedText(this._svgShapeFactory, text, fontSize || 8, boxGeometry, animated, originPoint);
     boxedText.stroke(0.8);
-    boxedText.node.setAttribute("id", `box-${position.toString()}`);
+    boxedText.node.setAttribute("id", this.getBoxID(coords));
 
     this.addSVGChildElement(boxedText.node);
 
@@ -164,6 +151,10 @@ export default class Figure18Diagram extends Diagram {
   animateBasedOnLength(path, onDone = () => {}) {
     const durationExpression = lengthCSSProperty => `calc(.15s * (var(${lengthCSSProperty}) / 30))`;
     path.animateStroke(durationExpression, "ease-out", onDone);
+  }
+
+  getBoxID(coords) {
+    return `box-${Math.round(coords.x)}-${Math.round(coords.y)}`;
   }
 }
 
