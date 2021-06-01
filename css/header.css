@@ -49,13 +49,18 @@ h1 scan-lines,
 h2 scan-lines {
   position: absolute;
   top: 0;
-  right: calc(var(--h2-border-width) * -1);
   bottom: 0;
-  left: calc(var(--triple-baseline) * -1);
   color: var(--color-text-dark);
   pointer-events: none;
 }
 
 h1 scan-lines {
   opacity: .6;
+  right: 0;
+  left: 0;
+}
+
+h2 scan-lines {
+  right: calc(var(--h2-border-width) * -1);
+  left: calc(var(--triple-baseline) * -1);
 }
