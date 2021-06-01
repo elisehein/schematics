@@ -109,6 +109,7 @@ schematics-figure-previews ul {
   line-height: var(--baseline);
   text-shadow: var(--schematics-text-shadow);
   letter-spacing: var(--schematics-letter-spacing);
+  font-variant-ligatures: none; /* we don't want it to look like fi g. */
 }
 
 .schematics-figure-previews__item__scan-lines {
