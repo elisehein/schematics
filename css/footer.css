@@ -1,10 +1,22 @@
 footer {
+  margin: 0 calc(var(--page-padding) * -1) calc(var(--grid-bottom-spacing) * -1);
+  padding: 0 var(--page-padding) var(--grid-bottom-spacing);
   font-size: var(--ms-2);
   line-height: var(--schematics-title-height);
+  background-color: var(--color-page-bg-accent);
+  z-index: 10;
 }
 
-footer > * + * {
-  margin-left: calc(var(--baseline) * 3);
+@media (min-width: 40em) {
+  footer {
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+
+  footer > * + * {
+    margin-left: calc(var(--baseline) * 3);
+  }
 }
 
 footer a svg {
@@ -20,4 +32,11 @@ footer a span {
 
 #copyright {
   opacity: .9;
+  float: right;
+}
+
+@media (min-width: 40em) {
+  #copyright {
+    float: none;
+  }
 }

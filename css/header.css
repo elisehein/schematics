@@ -4,6 +4,18 @@
   --schematics-title-height: calc(var(--schematics-title-line-height) + (2 * var(--schematics-title-vertical-padding)));
 }
 
+header {
+  max-width: calc(var(--baseline) * 22);
+  overflow: hidden;
+  z-index: 10;
+}
+
+@media (min-width: 40em) {
+  header {
+    overflow: visible;
+  }
+}
+
 h1,
 h2 {
   display: inline-block;
@@ -25,12 +37,19 @@ h1 {
 h2 {
   --h2-border-width: .12em;
 
-  position: absolute; /* So that h1 is the anchor, vertically centered */
+  position: relative;
+  float: right;
   margin-top: var(--baseline);
-  margin-left: calc(var(--baseline) * 8);
   border: var(--h2-border-width) solid var(--color-text-light);
   letter-spacing: .2em;
   text-shadow: var(--schematics-text-shadow);
+}
+
+@media (min-width: 40em) {
+  h2 {
+    position: absolute; /* So that h1 is the anchor, vertically centered */
+    margin-left: calc(var(--baseline) * 8);
+  }
 }
 
 h2::before {

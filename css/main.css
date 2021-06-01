@@ -22,6 +22,7 @@
   --color-bg-light: hsla(var(--hue-main), var(--sat-main), var(--color-bg-light-lightness), 1);
 
   --color-page-bg: var(--color-bg-dark);
+  --color-page-bg-accent: hsla(var(--hue-main), var(--sat-main), calc(var(--color-bg-dark-lightness) * 0.3), 1);
 
   --color-text-light-lightness: 72%;
 
@@ -42,7 +43,7 @@
   --ms1: calc(var(--ms0) * var(--scale-factor));
   --ms2: calc(var(--ms1) * var(--scale-factor));
 
-  --page-padding: var(--triple-baseline);
+  --page-padding: var(--baseline);
 
   --micro-interaction-animation-duration: .2s;
   --micro-interaction-animation-ease-out: cubic-bezier(.22, 1, .36, 1);
@@ -54,19 +55,66 @@
   --figure-exit-transition-duration: .6s;
 }
 
+@media (min-width: 30em) {
+  :root {
+    --page-padding: var(--double-baseline);
+  }
+}
+
+@media (min-width: 40em) {
+  :root {
+    --page-padding: var(--triple-baseline);
+  }
+}
+
+html {
+  min-height: -webkit-fill-available;
+}
+
 body {
   position: relative;
   width: 100vw;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   font-family: helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
   background-color: var(--color-page-bg);
   color: var(--color-text-light);
 }
 
 aside {
-  max-width: 32ch;
+  margin: 0 calc(var(--page-padding) * -1);
+  padding: var(--triple-baseline) var(--page-padding);
   font-size: var(--ms-1);
   line-height: var(--double-baseline);
+  background: var(--color-page-bg-accent);
+}
+
+aside .button {
+  background-color: var(--color-bg-light);
+  color: var(--color-text-dark);
+}
+
+@media (min-width: 30em) {
+  aside p {
+    max-width: 50ch;
+  }
+}
+
+@media (min-width: 40em) {
+  aside {
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+
+  aside p {
+    max-width: 32ch;
+  }
+
+  aside .button {
+    color: var(--button-text-color);
+    background-color: var(--button-bg-color);
+  }
 }
 
 aside > * + * {
@@ -98,19 +146,23 @@ h3 {
 .button {
   --button-side-padding: var(--double-baseline);
   --button-height: var(--triple-baseline);
+  --button-bg-color: #000;
+  --button-text-color: var(--color-text-light);
 
   display: inline-block;
   position: relative;
   padding: 0 var(--button-side-padding);
   border-radius: .3rem;
-  background-color: #000;
   font-size: var(--ms-1);
   line-height: var(--button-height);
   letter-spacing: .05em;
-  transition: filter .1s;
+  color: var(--button-text-color);
+  background-color: var(--button-bg-color);
+  transition: color .1s, background-color: .1s;
 }
 
 .button:hover,
 .button:focus {
-  filter: invert(1);
+  color: var(--color-text-dark);
+  background-color: var(--color-bg-light);
 }

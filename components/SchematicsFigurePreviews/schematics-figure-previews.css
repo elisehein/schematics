@@ -9,24 +9,72 @@ schematics-figure-previews {
 
   display: block;
   width: 100%;
-  margin-top: calc(var(--baseline) * 6);
+  margin: calc(var(--baseline) * 6) 0;
+}
+
+@media (min-width: 40em) {
+  schematics-figure-previews {
+    margin-top: calc(var(--baseline) * 10);
+  }
 }
 
 schematics-figure-previews ul {
+  --grid-gap: var(--baseline);
+  --col-max-relative-width: 50%;
+  --col-max-static-width: 16rem;
+
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: var(--double-baseline);
+
+  /* Cols should be 16rem wide until they exceed 50%, at which point they should be 50% wide */
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(
+        min(var(--col-max-static-width), 100%),
+        max(var(--col-max-static-width), calc(var(--col-max-relative-width) - (var(--grid-gap) / 2)))
+      )
+    );
+  grid-gap: var(--grid-gap);
+  margin: 0 auto;
+  justify-content: center;
+}
+
+@media (min-width: 19rem) {
+  schematics-figure-previews ul {
+    --grid-gap: var(--double-baseline);
+  }
+}
+
+@media (min-width: 30em) {
+  schematics-figure-previews ul {
+    --grid-gap: var(--baseline);
+  }
+}
+
+@media (min-width: 40em) {
+  schematics-figure-previews ul {
+    --grid-gap: var(--double-baseline);
+    --col-max-relative-width: 40%;
+    --col-max-static-width: 18rem;
+  }
 }
 
 .schematics-figure-previews__item {
-  aspect-ratio: 1;
+  /* Sadly not widely enough supported yet
+   * aspect-ratio: 1;
+   * So using this good ol' hack instead... */
+  position: relative;
+  height: 0;
+  padding-bottom: 100%;
 }
 
 .schematics-figure-previews__item a {
   display: block;
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   overflow: hidden;
   border-radius: .4rem;
   background-color: var(--preview-bg);
@@ -37,14 +85,17 @@ schematics-figure-previews ul {
   align-items: center;
   justify-content: center;
   transition: transform var(--micro-interaction-animation-duration);
+  padding-top: var(--double-baseline);
 }
 
 .schematics-figure-previews__item__diagram .diagram {
   width: 50%;
   height: 50%;
+  transform: translateY(calc(var(--double-baseline) * -1));
 }
 
-.schematics-figure-previews__item a:hover .schematics-figure-previews__item__diagram {
+.schematics-figure-previews__item a:hover .schematics-figure-previews__item__diagram,
+.schematics-figure-previews__item a:focus .schematics-figure-previews__item__diagram {
   transform: scale(1.05);
 }
 
