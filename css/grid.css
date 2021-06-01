@@ -1,6 +1,6 @@
 :root {
   --grid-top-spacing: var(--triple-baseline);
-  --grid-bottom-spacing: var(--baseline);
+  --grid-bottom-spacing: max(env(safe-area-inset-bottom), var(--baseline));
   --grid-header-main-spacing: var(--baseline);
   --grid-template-columns: repeat(3, 1fr);
   --header-row-height: var(--schematics-title-height);
