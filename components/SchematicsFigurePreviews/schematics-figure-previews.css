@@ -11,56 +11,37 @@ schematics-figure-previews {
   width: 100%;
 }
 
-@media (min-width: 50em) {
-  schematics-figure-previews {
-    margin-top: calc(var(--baseline) * 12);
-  }
-}
-
 schematics-figure-previews ul {
-  --grid-gap: var(--baseline);
+  --grid-gap: var(--page-padding);
   --col-max-relative-width: 50%;
   --col-max-static-width: 16rem;
 
   display: grid;
-
-  /* Cols should be 16rem wide until they exceed 50%, at which point they should be 50% wide */
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(
-        min(var(--col-max-static-width), 100%),
-        max(var(--col-max-static-width), calc(var(--col-max-relative-width) - (var(--grid-gap) / 2)))
-      )
-    );
   grid-gap: var(--grid-gap);
   margin: 0 auto;
-  justify-content: center;
-}
-
-@media (min-width: 19rem) {
-  schematics-figure-previews ul {
-    --grid-gap: var(--double-baseline);
-  }
-}
-
-@media (min-width: 30em) {
-  schematics-figure-previews ul {
-    --grid-gap: var(--baseline);
-  }
+  grid-auto-flow: column;
+  grid-auto-columns: min(var(--col-max-static-width), 70vw);
 }
 
 @media (min-width: 40em) {
   schematics-figure-previews ul {
-    --col-max-relative-width: 40%;
-    --col-max-static-width: 14rem;
+    --col-max-static-width: 18rem;
   }
 }
 
-@media (min-width: 65em) {
+@media (min-width: 60em) {
+  schematics-figure-previews {
+    margin-top: calc(var(--baseline) * 12);
+  }
+
   schematics-figure-previews ul {
     --grid-gap: var(--double-baseline);
     --col-max-relative-width: 35%;
+
+    justify-content: center;
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    grid-template-columns: repeat(2, min(var(--col-max-static-width), var(--col-max-relative-width)));
   }
 }
 

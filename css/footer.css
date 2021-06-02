@@ -20,7 +20,7 @@ footer a span {
   float: right;
 }
 
-@media (min-width: 50em) {
+@media (min-width: 40em) {
   footer > * + * {
     margin-left: calc(var(--baseline) * 3);
   }
