@@ -52,9 +52,9 @@ function showIndividualFigure(newFigureNum, figure, toolbar, previews, forceRest
 }
 
 function showPreviews(figure, toolbar, previews) {
-  document.body.dataset.visibleView = "figure-previews";
   toolbar.hide();
   figure.hide(() => {
+    document.body.dataset.visibleView = "figure-previews";
     previews.style.display = "block";
   });
 }

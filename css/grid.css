@@ -3,12 +3,12 @@
   --grid-bottom-spacing: max(env(safe-area-inset-bottom), var(--baseline));
   --grid-column-gap: var(--triple-baseline);
   --grid-row-gap: calc(var(--baseline) * 6);
+  --figure-cell-height: 1fr;
 }
 
 @media (min-width: 40em) {
   :root {
     --grid-template-columns: 1fr;
-    --grid-bottom-spacing: var(--triple-baseline);
   }
 }
 
@@ -18,6 +18,7 @@
     --grid-template-columns: repeat(3, 1fr);
     --grid-column-gap: var(--double-baseline);
     --header-row-height: var(--schematics-title-height);
+    --grid-bottom-spacing: var(--triple-baseline);
 
     --main-height:
       calc(
@@ -27,6 +28,9 @@
         - var(--grid-header-main-spacing)
         - var(--grid-bottom-spacing)
       );
+
+    --eighth-main-height: calc(var(--main-height) / 8);
+    --figure-cell-height: var(--eighth-main-height);
   }
 }
 
@@ -35,13 +39,49 @@
   grid-column-gap: var(--grid-column-gap);
   grid-row-gap: var(--grid-row-gap);
   margin: 0 auto;
-  width: max-content;
   padding: var(--grid-top-spacing) var(--page-padding) var(--grid-bottom-spacing);
+}
+
+[data-visible-view*="individual"] .grid {
+  --grid-top-spacing: var(--baseline);
+}
+
+[data-visible-view*="previews"] .grid {
+  width: max-content;
 }
 
 header {
   position: sticky;
   left: var(--page-padding);
+}
+
+main {
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, var(--figure-cell-height));
+}
+
+[data-visible-view*=individual] main {
+  display: grid;
+  height: calc(100vh - var(--grid-top-spacing) - var(--grid-bottom-spacing));
+}
+
+schematics-figure {
+  grid-row: 2 / -1;
+  grid-column: 1 / -1;
+}
+
+.schematics-figure__figure {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(7, var(--figure-cell-height));
+}
+
+schematics-figure-toolbar {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  align-self: flex-start;
 }
 
 aside,
@@ -51,8 +91,16 @@ footer {
   left: var(--page-padding);
 }
 
+[data-visible-view*="individual"] header,
+[data-visible-view*="individual"] footer,
+[data-visible-view*="individual"] aside {
+  display: none;
+}
+
 @media (min-width: 60em) {
-  .grid {
+  [data-visible-view] .grid {
+    --grid-top-spacing: var(--triple-baseline);
+
     grid-template-rows: var(--header-row-height) 1fr;
     grid-template-columns: var(--grid-template-columns);
     grid-row-gap: var(--grid-header-main-spacing);
@@ -68,41 +116,30 @@ footer {
     left: auto;
   }
 
-  main {
-    --eighth-main-height: calc(var(--main-height) / 8);
-
+  [data-visible-view] main {
     grid-column: 2 / -1;
     grid-row: 2;
     min-height: var(--main-height);
+    height: auto;
   }
 
-  [data-visible-view="individual-figure"] main {
+  [data-visible-view*=individual] main {
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
     grid-template-rows: repeat(8, var(--eighth-main-height));
   }
 
-  [data-visible-view="figure-previews"] main {
+  [data-visible-view*="previews"] main {
     display: flex;
     align-items: flex-end;
   }
 
   schematics-figure {
     grid-row: 1 / -2;
-    grid-column: 1 / -1;
-  }
-
-  .schematics-figure__figure {
-    display: grid;
-    width: 100%;
-    height: 100%;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(7, var(--eighth-main-height));
   }
 
   schematics-figure-toolbar {
-    grid-row: span 1 / -1;
-    grid-column: 1 / -1;
+    grid-row: -2;
+    align-self: flex-end;
   }
 
   aside {
@@ -125,5 +162,11 @@ footer {
     grid-column: 1 / -1;
     align-self: center;
     justify-self: flex-end;
+  }
+
+  [data-visible-view] header,
+  [data-visible-view] footer,
+  [data-visible-view] aside {
+    display: block;
   }
 }

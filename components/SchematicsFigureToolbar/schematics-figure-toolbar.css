@@ -4,7 +4,6 @@ schematics-figure-toolbar {
 
   display: flex;
   position: relative;
-  align-self: flex-end;
   font-size: var(--ms0);
   line-height: var(--triple-baseline);
   letter-spacing: var(--schematics-letter-spacing);
@@ -15,13 +14,19 @@ schematics-figure-toolbar {
 schematics-figure-toolbar nav {
   --item-width: 4rem;
   --directional-item-width: 2rem;
-  --item-spacing: var(--triple-baseline);
+  --item-spacing: var(--baseline);
 
   position: relative;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+}
+
+@media (min-width: 60em) {
+  schematics-figure-toolbar nav {
+    --item-spacing: var(--triple-baseline);
+  }
 }
 
 schematics-figure-toolbar [data-active-item-index="0"] { --active-item-index: 0; }
@@ -51,20 +56,26 @@ schematics-figure-toolbar ul {
 }
 
 .schematics-figure-toolbar__active-underline {
-  display: block;
-  position: absolute;
-  left:
-    calc(
-      var(--directional-item-width) +
-      ((var(--active-item-index) + 1) * var(--item-spacing)) +
-      (var(--active-item-index) * var(--item-width))
-    );
-  top: 100%;
-  width: var(--item-width);
-  height: var(--underline-height);
-  font-size: var(--ms0);
-  background-color: var(--color-text-light);
-  transition: left var(--figure-exit-transition-duration) var(--micro-interaction-animation-ease-out);
+  display: none;
+}
+
+@media (min-width: 70em) {
+  .schematics-figure-toolbar__active-underline {
+    display: block;
+    position: absolute;
+    left:
+      calc(
+        var(--directional-item-width) +
+        ((var(--active-item-index) + 1) * var(--item-spacing)) +
+        (var(--active-item-index) * var(--item-width))
+      );
+    top: 100%;
+    width: var(--item-width);
+    height: var(--underline-height);
+    font-size: var(--ms0);
+    background-color: var(--color-text-light);
+    transition: left var(--figure-exit-transition-duration) var(--micro-interaction-animation-ease-out);
+  }
 }
 
 .schematics-figure-toolbar__item {
@@ -77,6 +88,16 @@ schematics-figure-toolbar ul {
 .schematics-figure-toolbar__item--directional {
   width: var(--directional-item-width);
   font-size: 1.8rem;
+}
+
+.schematics-figure-toolbar__item--figure:not(.schematics-figure-toolbar__item--active) {
+  display: none;
+}
+
+@media (min-width: 70em) {
+  .schematics-figure-toolbar__item--figure:not(.schematics-figure-toolbar__item--active) {
+    display: inline-block;
+  }
 }
 
 .schematics-figure-toolbar__item + .schematics-figure-toolbar__item {

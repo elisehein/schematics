@@ -43,7 +43,7 @@ export default class SchematicsFigureToolbar extends HTMLElement {
 
     return `
     <li
-      class="${this.itemClass()} ${this.directionalItemClass()}"
+      class="${this.itemClass({ directional: true })}"
       aria-hidden="${targetNum ? "false" : "true"}" >
       <a
         id="${this.directionalLinkID(direction)}"
@@ -58,7 +58,7 @@ export default class SchematicsFigureToolbar extends HTMLElement {
 
   renderFigureLinks() {
     return this.nums.map(num => `
-      <li class="${this.itemClass(num == this.active)}" data-figure-link="${num}">
+      <li class="${this.itemClass({ active: num == this.active, figure: true })}" data-figure-link="${num}">
         <a href="#fig${num}">fig. ${num}</a>
       </li>
     `).join("");
@@ -73,13 +73,17 @@ export default class SchematicsFigureToolbar extends HTMLElement {
     return `${direction == DIRECTION.next ? "next" : "previous"}-figure-link`;
   }
 
-  itemClass(active = false) {
+  itemClass(variations = {}) {
     const baseClass = "schematics-figure-toolbar__item";
-    return `${baseClass}${active ? ` ${baseClass}--active` : ""}`;
-  }
+    const classes = [baseClass];
 
-  directionalItemClass() {
-    return `${this.itemClass()}--directional`;
+    Object.keys(variations).forEach(variation => {
+      if (variations[variation]) {
+        classes.push(`${baseClass}--${variation}`);
+      }
+    });
+
+    return classes.join(" ");
   }
 
   get activeNumIndex() {

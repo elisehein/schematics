@@ -20,7 +20,7 @@ schematics-figure-previews ul {
   grid-gap: var(--grid-gap);
   margin: 0 auto;
   grid-auto-flow: column;
-  grid-auto-columns: min(var(--col-max-static-width), 70vw);
+  grid-auto-columns: min(var(--col-max-static-width), 62vw);
 }
 
 @media (min-width: 40em) {
