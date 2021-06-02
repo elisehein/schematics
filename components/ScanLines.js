@@ -24,7 +24,7 @@ export default class ScanLines extends HTMLElement {
 
   connectedCallback() {
     this.setAttribute("role", "presentation");
-    this.appendChild(this.renderSVGPattern());
+    this.replaceChildren(this.renderSVGPattern());
   }
 
   renderSVGPattern() {
