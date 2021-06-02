@@ -61,7 +61,7 @@
   }
 }
 
-@media (min-width: 40em) {
+@media (min-width: 65em) {
   :root {
     --page-padding: var(--triple-baseline);
   }
@@ -82,7 +82,7 @@ body {
 }
 
 aside {
-  padding-top: calc(var(--triple-baseline) * 6);
+  padding-top: var(--triple-baseline);
   font-size: var(--ms-1);
   line-height: var(--double-baseline);
 }

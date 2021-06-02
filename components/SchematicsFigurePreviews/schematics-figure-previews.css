@@ -53,9 +53,15 @@ schematics-figure-previews ul {
 
 @media (min-width: 40em) {
   schematics-figure-previews ul {
-    --grid-gap: var(--double-baseline);
     --col-max-relative-width: 40%;
-    --col-max-static-width: 18rem;
+    --col-max-static-width: 14rem;
+  }
+}
+
+@media (min-width: 65em) {
+  schematics-figure-previews ul {
+    --grid-gap: var(--double-baseline);
+    --col-max-relative-width: 35%;
   }
 }
 
