@@ -20,7 +20,7 @@ export default class Diagram extends HTMLElement {
     this.innerHTML = `
       <svg
         class="diagram${this._isThumbnail ? " diagram--thumbnail" : ""}"
-        preserveAspectRatio="xMidYMin meet"
+        preserveAspectRatio="xMidYMid meet"
         role="img"
         viewbox="0 0 300 300"
         aria-labelledby="figure-desc"
