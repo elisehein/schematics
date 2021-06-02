@@ -10,12 +10,6 @@ header {
   z-index: 10;
 }
 
-@media (min-width: 40em) {
-  header {
-    overflow: visible;
-  }
-}
-
 h1,
 h2 {
   display: inline-block;
@@ -46,7 +40,11 @@ h2 {
   text-shadow: var(--schematics-text-shadow);
 }
 
-@media (min-width: 40em) {
+@media (min-width: 50em) {
+  header {
+    overflow: visible;
+  }
+
   h2 {
     position: absolute; /* So that h1 is the anchor, vertically centered */
     margin-left: calc(var(--baseline) * 8);

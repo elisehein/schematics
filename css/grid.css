@@ -1,16 +1,16 @@
 :root {
   --grid-top-spacing: var(--triple-baseline);
   --grid-bottom-spacing: max(env(safe-area-inset-bottom), var(--baseline));
+  --grid-template-columns: 1fr;
+  --grid-column-gap: var(--triple-baseline);
+  --grid-row-gap: calc(var(--baseline) * 6);
 }
 
 @media (min-width: 40em) {
   :root {
     --grid-bottom-spacing: var(--triple-baseline);
+    --grid-row-gap: calc(var(--baseline) * 10);
   }
-}
-
-.grid {
-  padding: var(--grid-top-spacing) var(--page-padding) var(--grid-bottom-spacing);
 }
 
 @media (min-width: 50em) {
@@ -29,14 +29,21 @@
         - var(--grid-bottom-spacing)
       );
   }
+}
 
+.grid {
+  display: grid;
+  grid-template-columns: var(--grid-template-columns);
+  grid-row-gap: var(--grid-row-gap);
+  margin: 0 auto;
+  padding: var(--grid-top-spacing) var(--page-padding) var(--grid-bottom-spacing);
+}
+
+@media (min-width: 50em) {
   .grid {
-    display: grid;
-    margin: 0 auto;
-    grid-template-columns: var(--grid-template-columns);
     grid-template-rows: var(--header-row-height) 1fr;
-    grid-row-gap: var(--grid-header-main-spacing);
     grid-column-gap: var(--grid-column-gap);
+    grid-row-gap: var(--grid-header-main-spacing);
     width: min(90rem, 100%);
     height: 100%;
   }

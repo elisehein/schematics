@@ -9,12 +9,11 @@ schematics-figure-previews {
 
   display: block;
   width: 100%;
-  margin: calc(var(--baseline) * 6) 0;
 }
 
-@media (min-width: 40em) {
+@media (min-width: 50em) {
   schematics-figure-previews {
-    margin-top: calc(var(--baseline) * 10);
+    margin-top: calc(var(--baseline) * 12);
   }
 }
 

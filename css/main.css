@@ -82,7 +82,6 @@ body {
 }
 
 aside {
-  padding-top: var(--triple-baseline);
   font-size: var(--ms-1);
   line-height: var(--double-baseline);
 }
@@ -95,7 +94,6 @@ aside {
 
 @media (min-width: 40em) {
   aside p {
-    padding-top: 0;
     max-width: 32ch;
   }
 }
