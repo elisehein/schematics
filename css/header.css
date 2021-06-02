@@ -31,6 +31,7 @@ h1 {
   background: var(--color-bg-light);
   text-transform: uppercase;
   letter-spacing: .5em;
+  text-shadow: 0 0 0.06em var(--color-text-dark);
   color: var(--color-text-dark);
 }
 
