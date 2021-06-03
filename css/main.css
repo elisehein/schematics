@@ -97,6 +97,7 @@ main {
 
 main > scan-lines {
   position: absolute;
+  display: block;
   top: 0;
   right: 0;
   bottom: calc(var(--page-padding) * -1); /* To account for toolbar overflowing elements */
@@ -104,6 +105,12 @@ main > scan-lines {
   color: var(--color-bg-dark);
   z-index: 10;
   pointer-events: none;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 
   [data-visible-view*="previews"] & {
     display: none;
