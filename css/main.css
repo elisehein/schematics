@@ -106,12 +106,6 @@ main > scan-lines {
   z-index: 10;
   pointer-events: none;
 
-  svg {
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
-
   [data-visible-view*="previews"] & {
     display: none;
   }

@@ -33,6 +33,7 @@ export default class ScanLines extends HTMLElement {
 
     svg.setAttribute("width", "100%");
     svg.setAttribute("height", "100%");
+    svg.style.display = "block";
 
     const patternID = `scan-lines-pattern-${this.uniqueID}`;
     const gradientID = `${patternID}__gradient`;
