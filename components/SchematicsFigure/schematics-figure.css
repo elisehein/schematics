@@ -102,11 +102,15 @@
 }
 
 .schematics-figure__figure__figcaption {
-  font-size: var(--ms2);
+  font-size: var(--ms0);
   line-height: var(--double-baseline);
   letter-spacing: var(--schematics-letter-spacing);
   text-shadow: var(--schematics-text-shadow);
   z-index: 1;
+
+  @media (min-width: 40em) {
+    font-size: var(--ms2);
+  }
 }
 
 .schematics-figure__figure--transitioning .schematics-figure__figure__figcaption {
