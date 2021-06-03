@@ -29,7 +29,8 @@
     "postcss:production": "postcss css/main.css --use postcss-import postcss-custom-media postcss-nested --no-map -o main.css",
     "serve": "http-server --port=3000",
     "watch-css": "npm-watch postcss",
-    "dev": "concurrently \"npm run watch-css\" \"npm run serve\" \"livereload\""
+    "livereload": "livereload -w 2000",
+    "dev": "concurrently \"npm run watch-css\" \"npm run serve\" \"npm run livereload\""
   },
   "watch": {
     "postcss": {
