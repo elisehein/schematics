@@ -1,4 +1,5 @@
 @custom-media --toolbar-layout-all-links-visible (min-width: 75em);
+@custom-media --toolbar-style-large-arrows (min-width: 40em);
 
 schematics-figure-toolbar {
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
@@ -14,13 +15,18 @@ schematics-figure-toolbar {
 
   nav {
     --item-width: 4rem;
-    --directional-item-width: 2rem;
+    --directional-item-width: 5rem;
     --item-spacing: var(--baseline);
 
     position: relative;
     display: flex;
     flex-direction: row;
     width: 100%;
+
+    @media (--toolbar-style-larger-arrows) {
+      /* The item itself gets smaller because the hit area is increased by the font size increasing */
+      --directional-item-width: 2rem;
+    }
 
     @media (--layout-aside-always-visible) {
       --item-spacing: var(--triple-baseline);
@@ -94,7 +100,27 @@ schematics-figure-toolbar {
 
     &--directional {
       width: var(--directional-item-width);
-      font-size: 1.8rem;
+
+      &:first-child {
+        text-align: left;
+      }
+
+      &:last-child {
+        text-align: right;
+      }
+
+      a {
+        display: inline-block;
+        width: 100%;
+      }
+
+      @media (--toolbar-style-larger-arrows) {
+        font-size: 1.8rem;
+      }
+    }
+
+    &--figure a {
+      font-variant-ligatures: none; /* we don't want it to look like fi g. */
     }
 
     &--figure:not(&--active) {
