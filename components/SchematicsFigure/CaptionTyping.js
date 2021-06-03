@@ -100,7 +100,19 @@ export default class CaptionTyping {
   }
 
   wrapIndividualCharacters(caption) {
-    const wrap = str => `<span class="schematics-figure__figure__figcaption__character">${str}</span>`;
+    const baseClass = "schematics-figure__figure__figcaption__character";
+
+    const wrap = str => {
+      const classes = [baseClass];
+
+      if (str == "<br/>") {
+        classes.push(`${baseClass}--line-break`);
+        return `<br class="${classes.join(" ")}" />`;
+      }
+
+      return `<span class="${classes.join(" ")}">${str}</span>`;
+    };
+
     return caption
       .replace(/[^\n]/g, wrap("$&"))
       .replace(/\n/g, wrap("<br/>"));
@@ -108,19 +120,19 @@ export default class CaptionTyping {
 
   animate(captionNode, onPause, onDone) {
     captionNode.innerHTML = this.parsedAndWrappedCaption;
-    const captionSpans = captionNode.querySelectorAll("span");
-    this.revealSpan({ index: 0, captionSpans, onPause, onDone });
+    const captionChars = captionNode.childNodes;
+    this.revealChar({ index: 0, captionChars, onPause, onDone });
   }
 
-  revealSpan({ index, captionSpans, onPause, onDone }) {
-    if (index >= captionSpans.length) {
+  revealChar({ index, captionChars, onPause, onDone }) {
+    if (index >= captionChars.length) {
       onDone();
       return;
     }
 
     const revealThisSpanAndNext = () => {
-      this.updateVisibility(index, captionSpans);
-      this.revealSpan({ index: index + 1, captionSpans, onPause, onDone });
+      this.updateVisibility(index, captionChars);
+      this.revealChar({ index: index + 1, captionChars, onPause, onDone });
     };
 
     const { delay, isPause, pauseIndex } = this.getActiveDelayInfoAtSpan(index);
@@ -136,13 +148,13 @@ export default class CaptionTyping {
     }
   }
 
-  updateVisibility(index, captionSpans) {
+  updateVisibility(index, captionChars) {
     if (index > 0) {
-      captionSpans[index - 1].classList.remove(
+      captionChars[index - 1].classList.remove(
         "schematics-figure__figure__figcaption__character--latest-visible"
         );
     }
-    captionSpans[index].classList.add(
+    captionChars[index].classList.add(
       "schematics-figure__figure__figcaption__character--visible",
       "schematics-figure__figure__figcaption__character--latest-visible"
       );
