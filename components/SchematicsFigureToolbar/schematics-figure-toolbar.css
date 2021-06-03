@@ -48,18 +48,6 @@ schematics-figure-toolbar {
 }
 
 .schematics-figure-toolbar {
-  &__scan-lines {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: calc(var(--underline-height) * -1);
-    left: 0;
-    color: var(--color-bg-dark);
-    z-index: 2;
-    pointer-events: none;
-  }
-
   &__figure-links-container {
     position: relative;
     display: flex;
