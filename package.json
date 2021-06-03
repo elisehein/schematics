@@ -24,8 +24,8 @@
   },
   "scripts": {
     "test": "jest",
-    "postcss": "postcss css/main.css --use postcss-import -o main.css --watch --verbose",
-    "postcss:production": "postcss css/main.css --use postcss-import --no-map -o main.css",
+    "postcss": "postcss css/main.css --use postcss-import postcss-nested -o main.css --watch --verbose",
+    "postcss:production": "postcss css/main.css --use postcss-import postcss-nested --no-map -o main.css",
     "serve": "http-server --port=3000",
     "watch-css": "npm-watch postcss",
     "dev": "concurrently \"npm run watch-css\" \"npm run serve\" \"livereload\""

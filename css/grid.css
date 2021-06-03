@@ -40,6 +40,7 @@
   grid-row-gap: var(--grid-row-gap);
   margin: 0 auto;
   padding: var(--grid-top-spacing) var(--page-padding) var(--grid-bottom-spacing);
+  height: 100%;
 }
 
 [data-visible-view*="individual"] .grid {
@@ -62,7 +63,8 @@ main {
 
 [data-visible-view*=individual] main {
   display: grid;
-  height: calc(100vh - var(--grid-top-spacing) - var(--grid-bottom-spacing));
+  align-items: stretch;
+  overflow: hidden;
 }
 
 schematics-figure {
