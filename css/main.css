@@ -139,7 +139,7 @@ h3 {
   letter-spacing: .05em;
   color: var(--button-text-color);
   background-color: var(--button-bg-color);
-  transition: color .1s, background-color: .1s;
+  transition: color .1s, background-color .1s;
 }
 
 .button:hover,
