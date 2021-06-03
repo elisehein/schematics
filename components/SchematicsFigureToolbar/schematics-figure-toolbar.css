@@ -1,3 +1,5 @@
+@custom-media --toolbar-layout-all-links-visible (min-width: 75em);
+
 schematics-figure-toolbar {
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
   --underline-height: .2rem;
@@ -9,140 +11,163 @@ schematics-figure-toolbar {
   letter-spacing: var(--schematics-letter-spacing);
   color: var(--faded-nav-link-color);
   text-shadow: var(--schematics-text-shadow);
-}
 
-schematics-figure-toolbar nav {
-  --item-width: 4rem;
-  --directional-item-width: 2rem;
-  --item-spacing: var(--baseline);
+  nav {
+    --item-width: 4rem;
+    --directional-item-width: 2rem;
+    --item-spacing: var(--baseline);
 
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-}
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
 
-@media (min-width: 60em) {
-  schematics-figure-toolbar nav {
-    --item-spacing: var(--triple-baseline);
+    @media (--layout-aside-always-visible) {
+      --item-spacing: var(--triple-baseline);
+
+      justify-content: space-between;
+    }
+  }
+
+  [data-active-item-index="0"] { --active-item-index: 0; }
+  [data-active-item-index="1"] { --active-item-index: 1; }
+  [data-active-item-index="2"] { --active-item-index: 2; }
+  [data-active-item-index="3"] { --active-item-index: 3; }
+  [data-active-item-index="4"] { --active-item-index: 4; }
+
+  ul {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    @media (--layout-aside-always-visible) {
+      width: auto;
+    }
   }
 }
 
-schematics-figure-toolbar [data-active-item-index="0"] { --active-item-index: 0; }
-schematics-figure-toolbar [data-active-item-index="1"] { --active-item-index: 1; }
-schematics-figure-toolbar [data-active-item-index="2"] { --active-item-index: 2; }
-schematics-figure-toolbar [data-active-item-index="3"] { --active-item-index: 3; }
-schematics-figure-toolbar [data-active-item-index="4"] { --active-item-index: 4; }
-
-.schematics-figure-toolbar__scan-lines {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: calc(var(--underline-height) * -1);
-  left: 0;
-  color: var(--color-bg-dark);
-  z-index: 2;
-  pointer-events: none;
-}
-
-.schematics-figure-toolbar__figure-links-container {
-  position: relative;
-}
-
-schematics-figure-toolbar ul {
-  position: relative;
-}
-
-.schematics-figure-toolbar__active-underline {
-  display: none;
-}
-
-@media (min-width: 70em) {
-  .schematics-figure-toolbar__active-underline {
-    display: block;
+.schematics-figure-toolbar {
+  &__scan-lines {
+    content: "";
     position: absolute;
-    left:
-      calc(
-        var(--directional-item-width) +
-        ((var(--active-item-index) + 1) * var(--item-spacing)) +
-        (var(--active-item-index) * var(--item-width))
-      );
-    top: 100%;
-    width: var(--item-width);
-    height: var(--underline-height);
-    font-size: var(--ms0);
-    background-color: var(--color-text-light);
-    transition: left var(--figure-exit-transition-duration) var(--micro-interaction-animation-ease-out);
+    top: 0;
+    right: 0;
+    bottom: calc(var(--underline-height) * -1);
+    left: 0;
+    color: var(--color-bg-dark);
+    z-index: 2;
+    pointer-events: none;
   }
-}
 
-.schematics-figure-toolbar__item {
-  display: inline-block;
-  float: left;
-  width: var(--item-width);
-  text-align: center;
-}
+  &__figure-links-container {
+    position: relative;
+    display: flex;
+    justify-content: stretch;
+    width: 100%;
 
-.schematics-figure-toolbar__item--directional {
-  width: var(--directional-item-width);
-  font-size: 1.8rem;
-}
+    @media (--layout-aside-always-visible) {
+      justify-content: flex-end;
+      width: auto;
+    }
+  }
 
-.schematics-figure-toolbar__item--figure:not(.schematics-figure-toolbar__item--active) {
-  display: none;
-}
+  &__active-underline {
+    display: none;
 
-@media (min-width: 70em) {
-  .schematics-figure-toolbar__item--figure:not(.schematics-figure-toolbar__item--active) {
+    @media (--toolbar-layout-all-links-visible) {
+      display: block;
+      position: absolute;
+      left:
+        calc(
+          var(--directional-item-width) +
+          ((var(--active-item-index) + 1) * var(--item-spacing)) +
+          (var(--active-item-index) * var(--item-width))
+        );
+      top: 100%;
+      width: var(--item-width);
+      height: var(--underline-height);
+      font-size: var(--ms0);
+      background-color: var(--color-text-light);
+      transition: left var(--figure-exit-transition-duration) var(--micro-interaction-animation-ease-out);
+    }
+  }
+
+  &__item--active a,
+  &__directional-link:not([href]) {
+    cursor: default;
+  }
+
+  &__item {
     display: inline-block;
+    float: left;
+    width: var(--item-width);
+    text-align: center;
+
+    &--directional {
+      width: var(--directional-item-width);
+      font-size: 1.8rem;
+    }
+
+    &--figure:not(&--active) {
+      display: none;
+
+      @media (--toolbar-layout-all-links-visible) {
+        display: inline-block;
+      }
+    }
+
+    & + & {
+      margin-left: var(--item-spacing);
+    }
+
+    a {
+      transition: transform var(--micro-interaction-animation-duration) ease;
+    }
+
+    &--active a,
+    a:hover,
+    a:focus {
+      color: var(--color-text-light);
+    }
+
+    .schematics-figure-toolbar__item a:focus {
+      outline-offset: 1em;
+    }
   }
-}
 
-.schematics-figure-toolbar__item + .schematics-figure-toolbar__item {
-  margin-left: var(--item-spacing);
-}
+  /* Disabled arrow link */
+  &__directional-link:not([href]) {
+    opacity: .4;
+  }
 
-.schematics-figure-toolbar__item a {
-  transition: transform var(--micro-interaction-animation-duration) ease;
-}
+  &__directional-link__label {
+    display: none;
+  }
 
-/* Disabled arrow link */
-.schematics-figure-toolbar__directional-link:not([href]) {
-  opacity: .4;
-}
+  &__all-link {
+    display: inline-block;
+    position: fixed;
+    top: var(--grid-top-spacing);
+    left: var(--page-padding);
+    padding-left: calc(var(--baseline) * 2.5);
+    font-size: var(--ms-1);
+    z-index: 1;
+    text-indent: -999px;
 
-.schematics-figure-toolbar__item--active a,
-.schematics-figure-toolbar__directional-link:not([href]) {
-  cursor: default;
-}
+    @media (--layout-aside-always-visible) {
+      position: static;
+      top: auto;
+      left: auto;
+      text-indent: 0;
+    }
 
-.schematics-figure-toolbar__item--active a,
-.schematics-figure-toolbar__item a:hover,
-.schematics-figure-toolbar__item a:focus {
-  color: var(--color-text-light);
-}
-
-.schematics-figure-toolbar__item a:focus {
-  outline-offset: 1em;
-}
-
-.schematics-figure-toolbar__directional-link__label {
-  display: none;
-}
-
-.schematics-figure-toolbar__all-link {
-  display: inline-block;
-  position: relative;
-  padding-left: calc(var(--baseline) * 2.5);
-  font-size: var(--ms-1);
-}
-
-.schematics-figure-toolbar__all-link svg {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: var(--double-baseline);
+    svg {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: var(--double-baseline);
+    }
+  }
 }

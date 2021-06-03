@@ -1,6 +1,8 @@
 @import "./reset.css";
+@import "./custom-media.css";
 @import "./grid.css";
 @import "./header.css";
+@import "./aside.css";
 @import "./footer.css";
 @import "../components/SchematicsFigure/schematics-figure.css";
 @import "../components/SchematicsFigure/schematics-figure-placements.css";
@@ -22,7 +24,7 @@
   --color-bg-light: hsla(var(--hue-main), var(--sat-main), var(--color-bg-light-lightness), 1);
 
   --color-page-bg: var(--color-bg-dark);
-  --color-page-bg-accent: hsla(var(--hue-main), var(--sat-main), calc(var(--color-bg-dark-lightness) * 0.3), 1);
+  --color-page-bg-accent: hsla(var(--hue-main), var(--sat-main), calc(var(--color-bg-dark-lightness) * .3), 1);
 
   --color-text-light-lightness: 72%;
 
@@ -53,16 +55,12 @@
   --schematics-figure-shadow-filter: drop-shadow(0 0 .05rem #fff);
 
   --figure-exit-transition-duration: .6s;
-}
 
-@media (min-width: 30em) {
-  :root {
+  @media (min-width: 30em) {
     --page-padding: var(--double-baseline);
   }
-}
 
-@media (min-width: 60em) {
-  :root {
+  @media (min-width: 60em) {
     --page-padding: var(--triple-baseline);
   }
 }
@@ -86,47 +84,11 @@ body {
   }
 }
 
-aside {
-  font-size: var(--ms-1);
-  line-height: var(--double-baseline);
-}
-
-@media (min-width: 30em) {
-  aside p {
-    max-width: 50ch;
+a {
+  &:hover,
+  &:focus {
+    color: #fff;
   }
-}
-
-@media (min-width: 60em) {
-  aside p {
-    max-width: 32ch;
-  }
-}
-
-aside > * + * {
-  margin-top: var(--double-baseline);
-}
-
-aside p a {
-  text-decoration: underline;
-  text-underline-position: under;
-}
-
-a:hover,
-a:focus {
-  color: #fff;
-}
-
-aside p em {
-  font-style: italic;
-}
-
-aside [href="#about"] {
-  margin-top: calc(var(--baseline) * 4);
-}
-
-h3 {
-  font-weight: 700;
 }
 
 .button {

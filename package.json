@@ -17,6 +17,7 @@
     "npm-watch": "^0.9.0",
     "postcss": "^8.3.0",
     "postcss-cli": "^8.3.1",
+    "postcss-custom-media": "^8.0.0",
     "postcss-import": "^14.0.2",
     "postcss-nested": "^5.0.5",
     "stylelint": "^13.13.1",
@@ -24,8 +25,8 @@
   },
   "scripts": {
     "test": "jest",
-    "postcss": "postcss css/main.css --use postcss-import postcss-nested -o main.css --watch --verbose",
-    "postcss:production": "postcss css/main.css --use postcss-import postcss-nested --no-map -o main.css",
+    "postcss": "postcss css/main.css --use postcss-import postcss-custom-media postcss-nested -o main.css --watch --verbose",
+    "postcss:production": "postcss css/main.css --use postcss-import postcss-custom-media postcss-nested --no-map -o main.css",
     "serve": "http-server --port=3000",
     "watch-css": "npm-watch postcss",
     "dev": "concurrently \"npm run watch-css\" \"npm run serve\" \"livereload\""

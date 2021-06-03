@@ -8,6 +8,10 @@ header {
   max-width: calc(var(--baseline) * 22);
   overflow: hidden;
   z-index: 10;
+
+  @media (--layout-aside-always-visible) {
+    overflow: visible;
+  }
 }
 
 h1,
@@ -18,6 +22,19 @@ h2 {
   font-weight: 400;
   line-height: var(--schematics-title-line-height);
   white-space: nowrap;
+
+  span {
+    display: inline-block;
+    transform: scaleY(1.1);
+  }
+
+  scan-lines {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    color: var(--color-text-dark);
+    pointer-events: none;
+  }
 }
 
 h1 {
@@ -27,6 +44,12 @@ h1 {
   letter-spacing: .5em;
   text-shadow: 0 0 .06em var(--color-text-dark);
   color: var(--color-text-dark);
+
+  scan-lines {
+    opacity: .6;
+    right: 0;
+    left: 0;
+  }
 }
 
 h2 {
@@ -38,47 +61,20 @@ h2 {
   border: var(--h2-border-width) solid var(--color-text-light);
   letter-spacing: .2em;
   text-shadow: var(--schematics-text-shadow);
-}
 
-@media (min-width: 60em) {
-  header {
-    overflow: visible;
-  }
-
-  h2 {
+  @media (--layout-aside-always-visible) {
     position: absolute; /* So that h1 is the anchor, vertically centered */
     margin-left: calc(var(--baseline) * 8);
   }
-}
 
-h2::before {
-  content: "\2192";
-  position: absolute;
-  right: calc(100% + var(--baseline));
-}
+  &::before {
+    content: "\2192";
+    position: absolute;
+    right: calc(100% + var(--baseline));
+  }
 
-h1 span,
-h2 span {
-  display: inline-block;
-  transform: scaleY(1.1);
-}
-
-h1 scan-lines,
-h2 scan-lines {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  color: var(--color-text-dark);
-  pointer-events: none;
-}
-
-h1 scan-lines {
-  opacity: .6;
-  right: 0;
-  left: 0;
-}
-
-h2 scan-lines {
-  right: calc(var(--h2-border-width) * -1);
-  left: calc(var(--triple-baseline) * -1);
+  scan-lines {
+    right: calc(var(--h2-border-width) * -1);
+    left: calc(var(--triple-baseline) * -1);
+  }
 }

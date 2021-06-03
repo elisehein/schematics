@@ -6,13 +6,7 @@
   --figure-cell-height: 1fr;
 }
 
-@media (min-width: 40em) {
-  :root {
-    --grid-template-columns: 1fr;
-  }
-}
-
-@media (min-width: 60em) {
+@media (--layout-aside-always-visible) {
   :root {
     --grid-header-main-spacing: var(--baseline);
     --grid-template-columns: repeat(3, 1fr);
@@ -68,7 +62,7 @@ main {
 }
 
 schematics-figure {
-  grid-row: 2 / -1;
+  grid-row: 1 / -2;
   grid-column: 1 / -1;
 }
 
@@ -81,9 +75,9 @@ schematics-figure {
 }
 
 schematics-figure-toolbar {
-  grid-row: 1;
+  grid-row: -2;
   grid-column: 1 / -1;
-  align-self: flex-start;
+  align-self: flex-end;
 }
 
 aside,
@@ -99,7 +93,7 @@ footer {
   display: none;
 }
 
-@media (min-width: 60em) {
+@media (--layout-aside-always-visible) {
   [data-visible-view] .grid {
     --grid-top-spacing: var(--triple-baseline);
 
@@ -123,6 +117,7 @@ footer {
     grid-row: 2;
     min-height: var(--main-height);
     height: auto;
+    overflow: visible;
   }
 
   [data-visible-view*=individual] main {
@@ -133,15 +128,6 @@ footer {
   [data-visible-view*="previews"] main {
     display: flex;
     align-items: flex-end;
-  }
-
-  schematics-figure {
-    grid-row: 1 / -2;
-  }
-
-  schematics-figure-toolbar {
-    grid-row: -2;
-    align-self: flex-end;
   }
 
   aside {

@@ -1,0 +1,37 @@
+aside {
+  font-size: var(--ms-1);
+  line-height: var(--double-baseline);
+
+  > * + * {
+    margin-top: var(--double-baseline);
+  }
+
+  p a {
+    text-decoration: underline;
+    text-underline-position: under;
+  }
+
+  p em {
+    font-style: italic;
+  }
+
+  [href="#about"] {
+    margin-top: calc(var(--baseline) * 4);
+  }
+
+  h3 {
+    font-weight: 700;
+  }
+
+  @media (min-width: 30em) {
+    p {
+      max-width: 50ch;
+    }
+  }
+
+  @media (--layout-aside-always-visible) {
+    p {
+      max-width: 32ch;
+    }
+  }
+}

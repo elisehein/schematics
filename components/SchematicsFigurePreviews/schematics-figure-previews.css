@@ -29,7 +29,7 @@ schematics-figure-previews ul {
   }
 }
 
-@media (min-width: 60em) {
+@media (--layout-aside-always-visible) {
   schematics-figure-previews {
     margin-top: calc(var(--baseline) * 12);
   }
