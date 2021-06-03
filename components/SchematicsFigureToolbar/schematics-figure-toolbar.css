@@ -1,9 +1,8 @@
 @custom-media --toolbar-layout-all-links-visible (min-width: 75em);
-@custom-media --toolbar-style-large-arrows (min-width: 40em);
 
 schematics-figure-toolbar {
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
-  --underline-height: .2rem;
+  --underline-height: .22rem;
 
   display: flex;
   position: relative;
@@ -13,6 +12,10 @@ schematics-figure-toolbar {
   color: var(--faded-nav-link-color);
   text-shadow: var(--schematics-text-shadow);
 
+  @media (--layout-aside-always-visible) {
+    font-size: var(--ms-1);
+  }
+
   nav {
     --item-width: 4rem;
     --directional-item-width: 5rem;
@@ -20,18 +23,19 @@ schematics-figure-toolbar {
 
     position: relative;
     display: flex;
-    flex-direction: row;
     width: 100%;
 
-    @media (--toolbar-style-larger-arrows) {
-      /* The item itself gets smaller because the hit area is increased by the font size increasing */
+    @media (min-width: 40em) {
       --directional-item-width: 2rem;
+      --item-spacing: var(--double-baseline);
     }
 
     @media (--layout-aside-always-visible) {
-      --item-spacing: var(--triple-baseline);
-
       justify-content: space-between;
+    }
+
+    @media (--toolbar-layout-all-links-visible) {
+      --item-spacing: var(--triple-baseline);
     }
   }
 
@@ -43,7 +47,9 @@ schematics-figure-toolbar {
 
   ul {
     position: relative;
-    display: flex;
+    display: grid;
+    grid-auto-flow: column;
+    grid-gap: var(--item-spacing);
     justify-content: space-between;
     width: 100%;
 
@@ -74,15 +80,15 @@ schematics-figure-toolbar {
       position: absolute;
       left:
         calc(
-          var(--directional-item-width) +
-          ((var(--active-item-index) + 1) * var(--item-spacing)) +
-          (var(--active-item-index) * var(--item-width))
+          (var(--active-item-index) * var(--item-spacing)) +
+          (var(--active-item-index) * var(--item-width)) +
+          (var(--item-width) * .2)
         );
       top: 100%;
-      width: var(--item-width);
+      width: calc(var(--item-width) * .6);
       height: var(--underline-height);
-      font-size: var(--ms0);
-      background-color: var(--color-text-light);
+      border-radius: .5rem;
+      background-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 20%), 1);
       transition: left var(--figure-exit-transition-duration) var(--micro-interaction-animation-ease-out);
     }
   }
@@ -114,8 +120,8 @@ schematics-figure-toolbar {
         width: 100%;
       }
 
-      @media (--toolbar-style-larger-arrows) {
-        font-size: 1.8rem;
+      @media (--toolbar-layout-all-links-visible) {
+        display: none;
       }
     }
 
@@ -131,12 +137,8 @@ schematics-figure-toolbar {
       }
     }
 
-    & + & {
-      margin-left: var(--item-spacing);
-    }
-
     a {
-      transition: transform var(--micro-interaction-animation-duration) ease;
+      transition: color var(--micro-interaction-animation-duration) ease;
     }
 
     &--active a,
