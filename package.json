@@ -8,16 +8,33 @@
     "@babel/core": "^7.14.2",
     "@babel/preset-env": "^7.14.2",
     "babel-jest": "^26.6.3",
+    "concurrently": "^6.2.0",
     "eslint": "^7.26.0",
     "eslint-plugin-jest": "^24.3.6",
+    "http-server": "^0.12.3",
     "jest": "^26.6.3",
-    "live-server": "^1.2.1",
+    "livereload": "^0.9.3",
+    "npm-watch": "^0.9.0",
+    "postcss": "^8.3.0",
+    "postcss-cli": "^8.3.1",
+    "postcss-import": "^14.0.2",
+    "postcss-nested": "^5.0.5",
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0"
   },
   "scripts": {
     "test": "jest",
-    "watch": "live-server --port=3000 --host=0.0.0.0 --no-browser --ignore=.git"
+    "postcss": "postcss css/main.css --use postcss-import -o main.css --watch --verbose",
+    "postcss:production": "postcss css/main.css --use postcss-import --no-map -o main.css",
+    "serve": "http-server --port=3000",
+    "watch-css": "npm-watch postcss",
+    "dev": "concurrently \"npm run watch-css\" \"npm run serve\" \"livereload\""
+  },
+  "watch": {
+    "postcss": {
+      "extensions": "css",
+      "ignore": "./main.css"
+    }
   },
   "repository": {
     "type": "git",
