@@ -1,6 +1,10 @@
 :root {
-  --schematics-title-vertical-padding: .3rem;
-  --schematics-title-horizontal-padding: 2em;
+  --schematics-title-default-vertical-padding: .3rem;
+  --schematics-title-default-horizontal-padding: 2em;
+
+  --schematics-title-vertical-padding: var(--schematics-title-default-vertical-padding);
+  --schematics-title-horizontal-padding: var(--schematics-title-default-horizontal-padding);
+
   --schematics-title-line-height: var(--double-baseline);
   --schematics-title-height: calc(var(--schematics-title-line-height) + (2 * var(--schematics-title-vertical-padding)));
 }
@@ -18,7 +22,6 @@ header {
 h1,
 h2 {
   display: inline-block;
-  padding: var(--schematics-title-vertical-padding) var(--schematics-title-horizontal-padding);
   font-size: var(--ms-2);
   font-weight: 400;
   line-height: var(--schematics-title-line-height);
@@ -48,7 +51,18 @@ h1 {
   transform-origin: top left;
   transition:
     transform var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
-    padding var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
+    opacity var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
+
+  a {
+    display: inline-block;
+    padding: var(--schematics-title-vertical-padding) var(--schematics-title-horizontal-padding);
+    transition: padding var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
+
+    &:hover,
+    &:focus {
+      color: inherit;
+    }
+  }
 
   scan-lines {
     opacity: .6;
@@ -61,9 +75,23 @@ h1 {
     --schematics-title-horizontal-padding: 1em;
 
     transform: scale(.75);
+    opacity: .5;
+
+    &:hover,
+    &:focus {
+      opacity: 1;
+    }
+
+    @media (min-width: 30em) {
+      transform: scale(.85);
+    }
 
     @media (--layout-individual-view-logo-fully-visible) {
+      --schematics-title-vertical-padding: var(--schematics-title-default-vertical-padding);
+      --schematics-title-horizontal-padding: var(--schematics-title-default-horizontal-padding);
+
       transform: none;
+      opacity: 1;
     }
   }
 }
@@ -74,6 +102,7 @@ h2 {
   position: relative;
   float: right;
   margin-top: var(--baseline);
+  padding: var(--schematics-title-vertical-padding) var(--schematics-title-horizontal-padding);
   border: var(--h2-border-width) solid var(--color-text-light);
   letter-spacing: .2em;
   text-shadow: var(--schematics-text-shadow);

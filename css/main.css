@@ -55,12 +55,16 @@
   --schematics-figure-shadow-filter: drop-shadow(0 0 .05rem #fff);
 
   --figure-exit-transition-duration: .6s;
+}
 
-  @media (min-width: 30em) {
+@media (min-width: 30em) {
+  [data-visible-view*="previews"] {
     --page-padding: var(--double-baseline);
   }
+}
 
-  @media (min-width: 60em) {
+@media (--layout-individual-view-logo-fully-visible) {
+  [data-visible-view] {
     --page-padding: var(--triple-baseline);
   }
 }

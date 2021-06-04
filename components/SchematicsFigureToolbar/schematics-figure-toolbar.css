@@ -167,7 +167,7 @@ schematics-figure-toolbar {
     font-size: var(--ms-1);
     z-index: 1;
 
-    @media (--layout-individual-figure-logo-fully-visible) {
+    @media (--layout-aside-always-visible) {
       display: inline-block;
     }
 

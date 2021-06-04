@@ -46,7 +46,7 @@
     width: max-content;
   }
 
-  @media (min-width: 40em) {
+  @media (min-width: 48em) {
     [data-visible-view] & {
       --grid-top-spacing: var(--triple-baseline);
     }
