@@ -29,6 +29,14 @@
   100% { transform: translateX(.05em) translateY(.08em); }
 }
 
+schematics-figure {
+  overflow-x: scroll;
+
+  @media (--layout-aside-always-visible) {
+    overflow-x: visible;
+  }
+}
+
 .schematics-figure__figure {
   position: relative;
   color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) + 5%), 1);
