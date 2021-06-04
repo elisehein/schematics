@@ -1,21 +1,74 @@
 .schematics-figure {
-  /* We know that the spiral begins 30% from the edge,
-  * and we want to position the figure more to the left edge of the area
-  */
   &--14 .diagram {
-    transform: translateX(-25%);
+    transform: translateX(5%);
+
+    @media (min-width: 40em) {
+      transform: translateX(-25%);
+    }
   }
 
   &--14 &__figure {
     &__diagram-container {
-      grid-column: 1 / -4;
-      grid-row: 1 / -1;
+      grid-column: 1 / -1;
+      grid-row: 4 / -1;
     }
 
     &__figcaption {
-      grid-column: span 5 / -1;
-      grid-row: 1 / span 3;
+      grid-column: 2 / -1;
+      grid-row: 2 / span 2;
       align-self: center;
+    }
+
+    @media (min-width: 30em) {
+      &__diagram-container {
+        grid-row: 3 / -1;
+      }
+
+      &__figcaption {
+        grid-row: 1 / span 2;
+
+        br:nth-of-type(2),
+        br:nth-of-type(5) {
+          display: none;
+
+          + span::before {
+            content: "\00a0 ";
+          }
+        }
+      }
+    }
+
+    @media (min-width: 40em) {
+      &__diagram-container {
+        grid-row: 3 / -1;
+      }
+
+      &__figcaption {
+        grid-column: span 5 / -1;
+        grid-row: 1 / span 3;
+        font-size: var(--ms1);
+
+        /* br:nth-of-type(3),
+        br:nth-of-type(8),
+        br:nth-of-type(9) {
+          display: none;
+
+          + span::before {
+            content: "\00a0 ";
+          }
+        } */
+      }
+    }
+
+    @media (min-width: 50em) {
+      &__diagram-container {
+        grid-column: 1 / -4;
+        grid-row: 1 / -1;
+      }
+
+      &__figcaption {
+        font-size: var(--ms2);
+      }
     }
   }
 

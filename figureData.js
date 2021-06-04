@@ -12,9 +12,9 @@ const figures = {
   14: {
     a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system (the space-time continuum).",
     poetry: `[TYPE:NORMAL]I return [TYPE:FAST][PAUSE:SHORT]and sense,
-[PAUSE:LONG]things [PAUSE:SHORT]are [PAUSE:MEDIUM]not [TYPE:SLOWEST]the same[TYPE:SLOW] as[TYPE:NORMAL] before,[PAUSE:MEDIUM]
+[PAUSE:LONG]things [PAUSE:SHORT]are\n[PAUSE:gMEDIUM]not [TYPE:SLOWEST]the same[TYPE:SLOW] as[TYPE:NORMAL] before,[PAUSE:MEDIUM]
 but feel[PAUSE:SHORT] had I stayed,
-[TYPE:SLOWEST][PAUSE:LONG]every[TYPE:SLOW]thing [PAUSE:MEDIUM]would likely[TYPE:NORMAL][PAUSE:MEDIUM] seem[PAUSE:MEDIUM] the same.`
+[TYPE:SLOWEST][PAUSE:LONG]every[TYPE:SLOW]thing [PAUSE:MEDIUM]would likely[TYPE:NORMAL][PAUSE:MEDIUM]\nseem[PAUSE:MEDIUM] the same.`
   },
   18: {
     a11yDescription: "A flow diagram for love. Good? Yes. More? Yes. Do it.",

@@ -117,6 +117,10 @@ schematics-figure {
   z-index: 1;
 
   @media (min-width: 40em) {
+    font-size: var(--ms1);
+  }
+
+  @media (min-width: 50em) {
     font-size: var(--ms2);
   }
 }
