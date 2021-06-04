@@ -2,7 +2,7 @@
 
 schematics-figure-toolbar {
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
-  --underline-height: .22rem;
+  --underline-height: .17rem;
 
   display: flex;
   position: relative;
@@ -27,7 +27,6 @@ schematics-figure-toolbar {
 
     @media (min-width: 40em) {
       --directional-item-width: 2rem;
-      --item-spacing: var(--double-baseline);
     }
 
     @media (--layout-aside-always-visible) {
@@ -35,7 +34,7 @@ schematics-figure-toolbar {
     }
 
     @media (--toolbar-layout-all-links-visible) {
-      --item-spacing: var(--triple-baseline);
+      --item-spacing: calc(var(--baseline) * 4);
     }
   }
 
@@ -84,7 +83,7 @@ schematics-figure-toolbar {
           (var(--active-item-index) * var(--item-width)) +
           (var(--item-width) * .2)
         );
-      top: 100%;
+      bottom: 0;
       width: calc(var(--item-width) * .6);
       height: var(--underline-height);
       border-radius: .5rem;
@@ -100,7 +99,7 @@ schematics-figure-toolbar {
 
   &__item {
     display: inline-block;
-    float: left;
+    position: relative;
     width: var(--item-width);
     text-align: center;
 
@@ -147,8 +146,19 @@ schematics-figure-toolbar {
       color: var(--color-text-light);
     }
 
-    .schematics-figure-toolbar__item a:focus {
+    a:focus {
       outline-offset: 1em;
+    }
+
+    @media (--toolbar-layout-all-links-visible) {
+      &--figure + &--figure::after {
+        content: "\b7";
+        position: absolute;
+        right: calc(100% + (var(--item-spacing) / 2) - .5rem);
+        width: 1rem;
+        overflow: visible;
+        opacity: .7;
+      }
     }
   }
 
