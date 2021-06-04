@@ -47,16 +47,6 @@
         grid-column: span 5 / -1;
         grid-row: 1 / span 3;
         font-size: var(--ms1);
-
-        /* br:nth-of-type(3),
-        br:nth-of-type(8),
-        br:nth-of-type(9) {
-          display: none;
-
-          + span::before {
-            content: "\00a0 ";
-          }
-        } */
       }
     }
 
