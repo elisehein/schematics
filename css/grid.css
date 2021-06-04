@@ -55,12 +55,13 @@
   @media (--layout-aside-always-visible) {
     grid-template-rows: var(--header-row-height) 1fr;
     grid-template-columns: var(--grid-template-columns);
-    width: min(90rem, 100%);
     height: 100%;
 
     /* Need to specify the visible view context so we override the individual view top spacing on mobile in all cases */
     [data-visible-view] & {
       --grid-row-gap: var(--grid-header-main-spacing);
+
+      width: min(90rem, 100%);
     }
   }
 }
