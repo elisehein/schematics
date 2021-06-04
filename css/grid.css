@@ -27,6 +27,10 @@
     --grid-row-gap: 0;
 
     grid-template-rows: min-content 1fr;
+
+    @media (--layout-individual-view-logo-fully-visible) {
+      --grid-row-gap: var(--double-baseline);
+    }
   }
 
   [data-visible-view*="previews"] & {
