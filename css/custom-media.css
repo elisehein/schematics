@@ -1,1 +1,2 @@
 @custom-media --layout-aside-always-visible (min-width: 60em);
+@custom-media --layout-individual-view-logo-fully-visible (--layout-aside-always-visible);

@@ -162,20 +162,13 @@ schematics-figure-toolbar {
   }
 
   &__all-link {
-    display: inline-block;
-    position: fixed;
-    top: var(--grid-top-spacing);
-    left: var(--page-padding);
+    display: none;
     padding-left: calc(var(--baseline) * 2.5);
     font-size: var(--ms-1);
     z-index: 1;
-    text-indent: -999px;
 
-    @media (--layout-aside-always-visible) {
-      position: static;
-      top: auto;
-      left: auto;
-      text-indent: 0;
+    @media (--layout-individual-figure-logo-fully-visible) {
+      display: inline-block;
     }
 
     svg {

@@ -52,8 +52,7 @@
     &__figcaption {
       grid-column: 1 / -1;
       grid-row: 2 / span 3;
-      position: relative;
-      left: var(--double-baseline);
+      padding-left: var(--double-baseline);
 
       @media (min-width: 30em) {
         br:nth-of-type(2),
@@ -87,7 +86,7 @@
       }
 
       @media (--layout-aside-always-visible) {
-        left: auto;
+        padding-left: 0;
       }
     }
   }

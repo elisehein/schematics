@@ -1,5 +1,6 @@
 :root {
   --schematics-title-vertical-padding: .3rem;
+  --schematics-title-horizontal-padding: 2em;
   --schematics-title-line-height: var(--double-baseline);
   --schematics-title-height: calc(var(--schematics-title-line-height) + (2 * var(--schematics-title-vertical-padding)));
 }
@@ -17,7 +18,7 @@ header {
 h1,
 h2 {
   display: inline-block;
-  padding: var(--schematics-title-vertical-padding) 2em;
+  padding: var(--schematics-title-vertical-padding) var(--schematics-title-horizontal-padding);
   font-size: var(--ms-2);
   font-weight: 400;
   line-height: var(--schematics-title-line-height);
@@ -42,13 +43,28 @@ h1 {
   background: var(--color-bg-light);
   text-transform: uppercase;
   letter-spacing: .5em;
-  text-shadow: 0 0 .06em var(--color-text-dark);
+  text-shadow: 0 0 .03em var(--color-text-dark);
   color: var(--color-text-dark);
+  transform-origin: top left;
+  transition:
+    transform var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
+    padding var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
 
   scan-lines {
     opacity: .6;
     right: 0;
     left: 0;
+  }
+
+  [data-visible-view*="individual"] & {
+    --schematics-title-vertical-padding: .1rem;
+    --schematics-title-horizontal-padding: 1em;
+
+    transform: scale(.75);
+
+    @media (--layout-individual-view-logo-fully-visible) {
+      transform: none;
+    }
   }
 }
 
@@ -62,11 +78,6 @@ h2 {
   letter-spacing: .2em;
   text-shadow: var(--schematics-text-shadow);
 
-  @media (--layout-aside-always-visible) {
-    position: absolute; /* So that h1 is the anchor, vertically centered */
-    margin-left: calc(var(--baseline) * 8);
-  }
-
   &::before {
     content: "\2192";
     position: absolute;
@@ -76,5 +87,18 @@ h2 {
   scan-lines {
     right: calc(var(--h2-border-width) * -1);
     left: calc(var(--triple-baseline) * -1);
+  }
+
+  [data-visible-view*="individual"] & {
+    display: none;
+
+    @media (--layout-individual-view-logo-fully-visible) {
+      display: inline-block;
+    }
+  }
+
+  @media (--layout-aside-always-visible) {
+    position: absolute; /* So that h1 is the anchor, vertically centered */
+    margin-left: calc(var(--baseline) * 8);
   }
 }
