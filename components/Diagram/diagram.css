@@ -13,4 +13,6 @@
 .diagram {
   width: 100%;
   height: 100%;
+  max-width: 32rem;
+  max-height: 32rem;
 }
