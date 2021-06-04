@@ -102,15 +102,19 @@ export default class CaptionTyping {
   wrapIndividualCharacters(caption) {
     const baseClass = "schematics-figure__figure__figcaption__character";
 
+    const span = (spanClasses, innerText) => (
+      `<span class="${spanClasses.join(" ")}">${innerText}</span>`
+    );
+
     const wrap = str => {
       const classes = [baseClass];
 
       if (str == "<br/>") {
         classes.push(`${baseClass}--line-break`);
-        return `<br class="${classes.join(" ")}" />`;
+        return `${span(classes, "")}<br/>`;
       }
 
-      return `<span class="${classes.join(" ")}">${str}</span>`;
+      return span(classes, str);
     };
 
     return caption
@@ -120,7 +124,7 @@ export default class CaptionTyping {
 
   animate(captionNode, onPause, onDone) {
     captionNode.innerHTML = this.parsedAndWrappedCaption;
-    const captionChars = captionNode.childNodes;
+    const captionChars = captionNode.querySelectorAll("span");
     this.revealChar({ index: 0, captionChars, onPause, onDone });
   }
 
