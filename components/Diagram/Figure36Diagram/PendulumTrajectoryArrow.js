@@ -1,5 +1,6 @@
 import { createSVGElement } from "../../SVGShapes/SVGShapes.js";
 import { getArcPathD } from "/helpers/arcCalculations.js";
+import animateWithEasing from "/helpers/animateWithEasing.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 
 const animationSteps = 18;
@@ -68,33 +69,17 @@ const disappearingWithEasing = ({ arc, node }, anchorPoint, radius, angles, ) =>
     const startAngle = angles.startAngle;
     const originalArcLength = arc.getLength();
 
-    let start;
-
-    const step = timestamp => {
-      if (start === undefined) {
-        start = timestamp;
-      }
-
-      const elapsed = timestamp - start;
-      const interval = elapsed / durationMS;
-
-      const anglesCoveredThisAnimationFrame = totalAnglesCovered * easing.pointAlongCurve(interval).y;
-
+    animateWithEasing(durationMS, easing, fractionOfAnimationDone => {
+      const anglesCoveredThisAnimationFrame = totalAnglesCovered * fractionOfAnimationDone;
       const endAngle = Math.max(angles.startAngle, angles.endAngle + anglesCoveredThisAnimationFrame);
       const d = getArcPathD({ radius, ...anchorPoint }, { startAngle, endAngle });
-      this.updateArcStyle(arc, d, originalArcLength, interval >= 0.8);
-
-      if (elapsed < durationMS) {
-        window.requestAnimationFrame(step);
-      } else {
-        node.remove();
-      }
-    }
-
-    window.requestAnimationFrame(step);
+      this.updateArcStyle(arc, d, originalArcLength, fractionOfAnimationDone >= 0.8);
+    }, { onDone: () => {
+      node.remove();
+    }});
   },
 
-  updateArcStyle(arc, d, originalArcLength, almostDisappeared, ) {
+  updateArcStyle(arc, d, originalArcLength, almostDisappeared) {
     arc.node.setAttribute("d", d);
 
     // Adjust stroke-dashoffset so that the dashes begin at the original path start point.

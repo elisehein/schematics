@@ -1,3 +1,5 @@
+import animateWithEasing from "./animateWithEasing.js";
+
 /* This is used to scroll the diagram back into view on narrow screens
  * where the typing animation scrolls it out of view.
  * scrollIntoView({ behavior: smooth }) works fine, but it's not supported
@@ -11,18 +13,9 @@ export default function smoothScroll(node, x, y, durationMS, easing, { onDone } 
   const totalScrollDistanceX = Math.abs(node.scrollLeft - x);
   const totalScrollDistanceY = Math.abs(node.scrollTop - y);
 
-  let start;
-
-  const step = timestamp => {
-    if (start === undefined) {
-      start = timestamp;
-    }
-
-    const elapsed = timestamp - start;
-    const interval = elapsed / durationMS;
-
-    const scrollDistanceXCoveredThisAnimationFrame = totalScrollDistanceX * easing.pointAlongCurve(interval).y;
-    const scrollDistanceYCoveredThisAnimationFrame = totalScrollDistanceY * easing.pointAlongCurve(interval).y;
+  animateWithEasing(durationMS, easing, fractionOfAnimationDone => {
+    const scrollDistanceXCoveredThisAnimationFrame = totalScrollDistanceX * fractionOfAnimationDone;
+    const scrollDistanceYCoveredThisAnimationFrame = totalScrollDistanceY * fractionOfAnimationDone;
 
     node.scrollLeft = (
       scrollingRight
@@ -34,13 +27,5 @@ export default function smoothScroll(node, x, y, durationMS, easing, { onDone } 
       ? initialScrollY + scrollDistanceYCoveredThisAnimationFrame
       : initialScrollY - scrollDistanceYCoveredThisAnimationFrame
     );
-
-    if (elapsed < durationMS) {
-      window.requestAnimationFrame(step);
-    } else if (onDone !== undefined) {
-      onDone();
-    }
-  };
-
-  window.requestAnimationFrame(step);
+  }, { onDone });
 }
