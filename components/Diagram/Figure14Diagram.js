@@ -32,6 +32,7 @@ export default class Figure14Diagram extends Diagram {
   }
 
   drawAfterCaption() {
+    this.scrollIntoView({ inline: "start", behavior: "smooth" });
     this._timerManager.setTimeout(() => {
       const spiral = this.drawSpiral();
       spiral.animateStroke("10s", "linear");

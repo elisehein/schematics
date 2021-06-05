@@ -82,9 +82,15 @@ body {
   font-family: helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
   background-color: var(--color-page-bg);
   color: var(--color-text-light);
+  scroll-behavior: smooth;
+  overflow-x: scroll;
 
   &[data-visible-view*="individual"] {
     height: 100%;
+  }
+
+  @media (--layout-aside-always-visible) {
+    overflow-x: hidden;
   }
 }
 

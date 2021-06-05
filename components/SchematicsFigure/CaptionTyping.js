@@ -153,6 +153,8 @@ export default class CaptionTyping {
   }
 
   updateVisibility(index, captionChars) {
+    captionChars[index].scrollIntoView({ block: "nearest", behavior: "smooth" });
+
     if (index > 0) {
       captionChars[index - 1].classList.remove(
         "schematics-figure__figure__figcaption__character--latest-visible"

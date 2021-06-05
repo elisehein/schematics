@@ -5,7 +5,6 @@ schematics-figure-toolbar {
   --underline-height: .17rem;
 
   display: flex;
-  position: relative;
   font-size: var(--ms0);
   line-height: var(--triple-baseline);
   letter-spacing: var(--schematics-letter-spacing);
