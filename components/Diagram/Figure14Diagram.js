@@ -1,5 +1,6 @@
 import Diagram from "./Diagram.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
+import smoothScroll from "/helpers/smoothScroll.js";
 import BezierEasing from "../../helpers/BezierEasing.js";
 
 export default class Figure14Diagram extends Diagram {
@@ -32,11 +33,16 @@ export default class Figure14Diagram extends Diagram {
   }
 
   drawAfterCaption() {
-    this.scrollIntoView({ inline: "start", behavior: "smooth" });
-    this._timerManager.setTimeout(() => {
-      const spiral = this.drawSpiral();
-      spiral.animateStroke("10s", "linear");
-    }, 1000);
+    runActionsSequentially([
+      waitBeforeNextAction(1000, this._timerManager),
+      smoothScroll.bind(null, document.documentElement, 0, 0, 700, BezierEasing.easeOutCubic),
+      waitBeforeNextAction(1000, this._timerManager),
+      ({ onDone }) => {
+        const spiral = this.drawSpiral();
+        spiral.animateStroke("10s", "linear");
+        onDone();
+      }
+    ], () => {});
   }
 
   animateAxes(animationStepDurationSec, onAllDone) {
