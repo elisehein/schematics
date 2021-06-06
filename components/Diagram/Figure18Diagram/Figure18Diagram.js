@@ -2,6 +2,7 @@ import Diagram from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
+import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 
 const firstBox = "good?";
 
@@ -23,14 +24,21 @@ export default class Figure18Diagram extends Diagram {
 
   drawAfterCaption() {
     super.drawAfterCaption();
-    this._timerManager.setTimeout(() => this.drawBoxWithOptions(firstBox), 1000);
+
+    runActionsSequentially([
+      waitBeforeNextAction(1000, this._timerManager),
+      this.smoothScrollIntoView.bind(this),
+      waitBeforeNextAction(1000, this._timerManager),
+      this.drawBoxWithOptions.bind(this, firstBox)
+    ]);
   }
 
-  drawBoxWithOptions(boxText, boxOriginPoint, animated = true) {
+  drawBoxWithOptions(boxText, boxOriginPoint, animated = true, { onDone } = {}) {
     const boxData = data[boxText];
     const coords = this._grid.getBoxCoords(boxData.position);
 
     if (this.boxWithOptionsExists(coords)) {
+      onDone && onDOne();
       return;
     }
 
@@ -43,6 +51,7 @@ export default class Figure18Diagram extends Diagram {
         if (boxData.options) {
           this.drawOptions(boxText, boxData.options, animated);
         }
+        onDone && onDone();
       }
     });
   }
