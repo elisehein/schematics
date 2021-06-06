@@ -8,6 +8,12 @@ import animateWithEasing from "./animateWithEasing.js";
 export default function smoothScroll(node, x, y, durationMS, easing, { onDone } = {}) {
   const initialScrollX = node.scrollLeft;
   const initialScrollY = node.scrollTop;
+
+  if (initialScrollX == x && initialScrollY == y) {
+    onDone && onDone();
+    return;
+  }
+
   const scrollingRight = initialScrollX < x;
   const scrollingDown = initialScrollY < y;
   const totalScrollDistanceX = Math.abs(node.scrollLeft - x);
