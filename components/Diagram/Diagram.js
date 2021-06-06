@@ -40,6 +40,7 @@ export default class Diagram extends HTMLElement {
   }
 
   drawBeforeCaption({ onDone }) {
+    this.scrollIntoView();
     onDone();
   }
 
@@ -79,6 +80,11 @@ export default class Diagram extends HTMLElement {
    */
   smoothScrollIntoView({ onDone }) {
     smoothScroll(document.documentElement, 0, 0, 700, BezierEasing.easeOutCubic, { onDone });
+  }
+
+  scrollIntoView() {
+    document.documentElement.scrollLeft = 0;
+    document.documentElement.scrollTop = 0;
   }
 
   static get observedAttributes()  {
