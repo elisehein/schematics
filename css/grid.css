@@ -41,7 +41,7 @@
     }
 
     /* Only allow scrolling horizontally up to a point.
-     * There should never be a need to make the figure wider than 48em */
+     * There should never be a need to make the figure scrollable on screens wider than 48em */
     [data-visible-view*="individual"] & {
       width: auto;
     }
