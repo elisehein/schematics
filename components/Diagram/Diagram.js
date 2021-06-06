@@ -1,6 +1,8 @@
 import { getA11yDescription } from "../../figureData.js";
 import TimerManager from "../../helpers/TimerManager.js";
 import SVGShapeFactory from "../SVGShapes/SVGShapeFactory.js";
+import smoothScroll from "/helpers/smoothScroll.js";
+import BezierEasing from "/helpers/BezierEasing.js";
 
 export default class Diagram extends HTMLElement {
   constructor(num, isThumbnail) {
@@ -70,6 +72,13 @@ export default class Diagram extends HTMLElement {
 
   addSVGChildElement(el) {
     this.svgNode.appendChild(el);
+  }
+
+  /* Until we have other use cases, keep it simple with the assumption that scrolling
+   * body all the way to the left will bring the diagram into view.
+   */
+  smoothScrollIntoView({ onDone }) {
+    smoothScroll(document.documentElement, 0, 0, 700, BezierEasing.easeOutCubic, { onDone });
   }
 
   static get observedAttributes()  {
