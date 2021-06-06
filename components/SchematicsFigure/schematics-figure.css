@@ -142,6 +142,8 @@
 
   &--latest-visible::after {
     content: "_";
+    display: inline-block;
+    width: 3rem; /* The extra width is to give it some air in cases where it is scrolledIntoView */
     animation: blink .5s cubic-bezier(0, .55, .45, 1) infinite;
     animation-delay: .13s;
   }
