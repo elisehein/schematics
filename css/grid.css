@@ -55,7 +55,9 @@
     /* Need to specify the visible view context so we override the individual view top spacing on mobile in all cases */
     [data-visible-view] & {
       --grid-row-gap: var(--grid-header-main-spacing);
+
       width: min(90rem, 100%);
+      min-width: auto;
     }
   }
 }
