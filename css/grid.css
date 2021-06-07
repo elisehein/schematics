@@ -61,6 +61,14 @@
 header {
   position: sticky;
   left: var(--page-padding);
+
+  @media (--layout-aside-always-visible) {
+    grid-row: 1;
+    grid-column: 1;
+    align-self: center;
+    top: var(--grid-top-spacing);
+    left: auto;
+  }
 }
 
 main {
@@ -70,20 +78,32 @@ main {
   min-width: 100%;
   overflow-y: hidden;
 
+  [data-visible-view*=individual] & {
+    display: grid;
+    align-items: stretch;
+  }
+
   @media (--layout-aside-always-visible) {
+    grid-column: 2 / -1;
+    grid-row: 2;
     max-width: 100%;
     overflow-x: hidden;
+
+    [data-visible-view*=individual] & {
+      grid-template-rows: repeat(8, 1fr);
+    }
+
+    [data-visible-view*="previews"] & {
+      display: flex;
+      align-items: flex-end;
+      overflow: visible;
+    }
   }
 
   @media (--layout-capped-height) {
     height: min(50rem, 100%);
     align-self: flex-end;
   }
-}
-
-[data-visible-view*=individual] main {
-  display: grid;
-  align-items: stretch;
 }
 
 schematics-figure {
@@ -100,62 +120,37 @@ schematics-figure {
 }
 
 schematics-figure-toolbar {
-  position: fixed;
-  bottom: var(--grid-bottom-spacing);
-  right: var(--page-padding);
-  left: var(--page-padding);
+  @media (--layout-full-screen-figure) {
+    position: fixed;
+    bottom: var(--grid-bottom-spacing);
+    right: var(--page-padding);
+    left: var(--page-padding);
+  }
+
+  @media (--layout-aside-always-visible) {
+    grid-row: -2;
+    grid-column: 1 / -1;
+    align-self: flex-end;
+  }
 }
 
 aside,
 footer {
   position: sticky;
-  width: calc(100vw - (2 * var(--page-padding)));
-  left: var(--page-padding);
+
+  @media (--layout-full-screen-figure) {
+    width: calc(100vw - (2 * var(--page-padding)));
+    left: var(--page-padding);
+
+    [data-visible-view*="individual"] & {
+      display: none;
+    }
+  }
 }
 
-[data-visible-view*="individual"] footer,
-[data-visible-view*="individual"] aside {
-  display: none;
-}
-
-@media (--layout-aside-always-visible) {
-  header {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: center;
-    top: var(--grid-top-spacing);
-    left: auto;
-  }
-
-  [data-visible-view] main {
-    grid-column: 2 / -1;
-    grid-row: 2;
-  }
-
-  [data-visible-view*=individual] main {
-    grid-template-rows: repeat(8, 1fr);
-  }
-
-  [data-visible-view*="previews"] main {
-    display: flex;
-    align-items: flex-end;
-    overflow: visible;
-  }
-
-  schematics-figure-toolbar {
-    position: relative;
-    grid-row: -2;
-    grid-column: 1 / -1;
-    align-self: flex-end;
-    left: auto;
-    bottom: auto;
-    right: auto;
-  }
-
-  aside {
+aside {
+  @media (--layout-aside-always-visible) {
     bottom: var(--grid-bottom-spacing);
-    left: auto;
-    width: auto;
     grid-column: 1;
     grid-row: 2;
 
@@ -163,20 +158,14 @@ footer {
     * for sticky scrollin in figure previews view */
     align-self: flex-end;
   }
+}
 
-  footer {
+footer {
+  @media (--layout-aside-always-visible) {
     top: var(--grid-top-spacing);
-    left: auto;
-    width: auto;
     grid-row: 1;
     grid-column: 1 / -1;
     align-self: center;
     justify-self: flex-end;
-  }
-
-  [data-visible-view] header,
-  [data-visible-view] footer,
-  [data-visible-view] aside {
-    display: block;
   }
 }
