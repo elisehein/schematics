@@ -30,6 +30,11 @@
     --grid-bottom-spacing: calc(var(--baseline) * 6);
   }
 
+  @media (--very-tall-screen) {
+    --grid-top-spacing: 15vh;
+    --grid-bottom-spacing: 15vh;
+  }
+
   display: grid;
   grid-column-gap: var(--grid-column-gap);
   grid-row-gap: var(--grid-row-gap);
@@ -49,7 +54,7 @@
   @media (--layout-aside-always-visible) {
     grid-template-rows: min-content 1fr;
     grid-template-columns: var(--grid-template-columns);
-    height: min(100vh, 80rem);
+    min-height: 100vh;
     margin: auto;
 
     [data-visible-view] & {

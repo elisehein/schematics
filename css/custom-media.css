@@ -9,4 +9,6 @@
 @custom-media --layout-full-screen-figure-with-full-size-logo (min-width: 48em) and (--layout-full-screen-figure);
 @custom-media --layout-capped-height (min-height: 60em) and (--layout-aside-always-visible);
 
+@custom-media --very-tall-screen (min-height: 80em) and (--layout-aside-always-visible);
+
 @custom-media --baseline-and-font-scaled-up (--layout-capped-height);
