@@ -60,17 +60,19 @@
     --baseline: 1.2rem;
     --base-font-size: 1.4rem;
   }
-}
 
-@media (min-width: 30em) {
-  [data-visible-view*="previews"] {
+  @media (min-width: 30em) {
     --page-padding: var(--double-baseline);
+  }
+
+  @media (--layout-aside-always-visible) {
+    --page-padding: var(--triple-baseline);
   }
 }
 
-@media (--layout-individual-view-logo-fully-visible) {
-  [data-visible-view] {
-    --page-padding: var(--triple-baseline);
+[data-visible-view*="individual"] {
+  @media (--layout-full-screen-figure-with-small-logo) {
+    --page-padding: var(--baseline);
   }
 }
 

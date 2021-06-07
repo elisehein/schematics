@@ -1,19 +1,35 @@
-:root {
+.grid {
   --grid-top-spacing: var(--triple-baseline);
   --grid-bottom-spacing: max(env(safe-area-inset-bottom), var(--baseline));
   --grid-column-gap: var(--triple-baseline);
   --grid-row-gap: calc(var(--baseline) * 6);
 
-  @media (--layout-aside-always-visible) {
-    --grid-header-main-spacing: var(--baseline);
-    --grid-template-columns: repeat(3, 1fr);
-    --grid-column-gap: var(--double-baseline);
-    --header-row-height: var(--schematics-title-height);
-    --grid-bottom-spacing: var(--triple-baseline);
+  @media (--layout-full-screen-figure) {
+    [data-visible-view*="individual"] & {
+      --grid-top-spacing: var(--baseline);
+      --grid-row-gap: 0;
+    }
   }
-}
 
-.grid {
+  @media (--layout-full-screen-figure-with-full-size-logo) {
+    [data-visible-view*="individual"] & {
+      --grid-top-spacing: var(--triple-baseline);
+      --grid-row-gap: var(--double-baseline);
+    }
+  }
+
+  @media (--layout-aside-always-visible) {
+    --grid-bottom-spacing: var(--triple-baseline);
+    --grid-column-gap: var(--double-baseline);
+    --grid-row-gap: var(--baseline);
+    --grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (--layout-capped-height) {
+    --grid-top-spacing: calc(var(--baseline) * 6);
+    --grid-bottom-spacing: calc(var(--baseline) * 6);
+  }
+
   display: grid;
   grid-column-gap: var(--grid-column-gap);
   grid-row-gap: var(--grid-row-gap);
@@ -25,21 +41,10 @@
   transition: padding var(--micro-interaction-animation-duration) ease-in-out;
 
   [data-visible-view*="individual"] & {
-    --grid-top-spacing: var(--baseline);
-    --grid-row-gap: 0;
-
     grid-template-rows: min-content 1fr;
-
-    @media (--layout-individual-view-logo-fully-visible) {
-      --grid-row-gap: var(--double-baseline);
-    }
   }
 
   @media (min-width: 48em) {
-    [data-visible-view] & {
-      --grid-top-spacing: var(--triple-baseline);
-    }
-
     /* Only allow scrolling horizontally up to a point.
      * There should never be a need to make the figure scrollable on screens wider than 48em */
     [data-visible-view*="individual"] & {
@@ -48,24 +53,14 @@
   }
 
   @media (--layout-aside-always-visible) {
-    grid-template-rows: var(--header-row-height) 1fr;
+    grid-template-rows: min-content 1fr;
     grid-template-columns: var(--grid-template-columns);
     height: min(100vh, 80rem);
+    min-width: auto;
     margin: auto;
 
-    /* Need to specify the visible view context so we override the individual view top spacing on mobile in all cases */
     [data-visible-view] & {
-      --grid-row-gap: var(--grid-header-main-spacing);
-
       width: min(110rem, 100%);
-      min-width: auto;
-    }
-  }
-
-  @media (--layout-capped-height) {
-    [data-visible-view] & {
-      --grid-top-spacing: calc(var(--baseline) * 6);
-      --grid-bottom-spacing: calc(var(--baseline) * 6);
     }
   }
 }
@@ -78,6 +73,7 @@ header {
 main {
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
+  overflow: hidden;
 
   @media (--layout-capped-height) {
     height: min(50rem, 100%);
@@ -137,7 +133,6 @@ footer {
   }
 
   [data-visible-view*=individual] main {
-    display: grid;
     grid-template-rows: repeat(8, 1fr);
   }
 

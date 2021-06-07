@@ -1,9 +1,6 @@
 :root {
-  --schematics-title-default-vertical-padding: .3rem;
-  --schematics-title-default-horizontal-padding: 2em;
-
-  --schematics-title-vertical-padding: var(--schematics-title-default-vertical-padding);
-  --schematics-title-horizontal-padding: var(--schematics-title-default-horizontal-padding);
+  --schematics-title-vertical-padding: .3rem;
+  --schematics-title-horizontal-padding: 2em;
 
   --schematics-title-line-height: var(--double-baseline);
   --schematics-title-height: calc(var(--schematics-title-line-height) + (2 * var(--schematics-title-vertical-padding)));
@@ -71,27 +68,17 @@ h1 {
   }
 
   [data-visible-view*="individual"] & {
-    --schematics-title-vertical-padding: .1rem;
-    --schematics-title-horizontal-padding: 1em;
+    @media (--layout-full-screen-figure-with-small-logo) {
+      --schematics-title-vertical-padding: .1rem;
+      --schematics-title-horizontal-padding: 1em;
 
-    transform: scale(.75);
-    opacity: .5;
+      transform: scale(.75);
+      opacity: .5;
 
-    &:hover,
-    &:focus {
-      opacity: 1;
-    }
-
-    @media (min-width: 30em) {
-      transform: scale(.85);
-    }
-
-    @media (--layout-individual-view-logo-fully-visible) {
-      --schematics-title-vertical-padding: var(--schematics-title-default-vertical-padding);
-      --schematics-title-horizontal-padding: var(--schematics-title-default-horizontal-padding);
-
-      transform: none;
-      opacity: 1;
+      &:hover,
+      &:focus {
+        opacity: 1;
+      }
     }
   }
 }
@@ -99,6 +86,7 @@ h1 {
 h2 {
   --h2-border-width: .12em;
 
+  display: inline-block;
   position: relative;
   float: right;
   margin-top: var(--baseline);
@@ -119,10 +107,8 @@ h2 {
   }
 
   [data-visible-view*="individual"] & {
-    display: none;
-
-    @media (--layout-individual-view-logo-fully-visible) {
-      display: inline-block;
+    @media (--layout-full-screen-figure-with-small-logo) {
+      display: none;
     }
   }
 

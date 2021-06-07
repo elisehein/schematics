@@ -1,4 +1,12 @@
+/* stylelint-disable at-rule-empty-line-before */
+
 @custom-media --layout-aside-always-visible (min-width: 60em);
-@custom-media --layout-individual-view-logo-fully-visible (min-width: 48em);
+
+/* 1px less than 60em. Won't be *exactly* correct with different user-defined font sizes, but close enough. */
+@custom-media --layout-full-screen-figure (max-width: 59.9375em);
+
+@custom-media --layout-full-screen-figure-with-small-logo (max-width: 47.9375em);
+@custom-media --layout-full-screen-figure-with-full-size-logo (min-width: 48em) and (--layout-full-screen-figure);
 @custom-media --layout-capped-height (min-height: 60em) and (--layout-aside-always-visible);
+
 @custom-media --baseline-and-font-scaled-up (--layout-capped-height);
