@@ -35,28 +35,21 @@
   grid-row-gap: var(--grid-row-gap);
   margin: 0 auto;
   padding: var(--grid-top-spacing) var(--page-padding) var(--grid-bottom-spacing);
-  width: max-content;
-  min-width: 100%;
   height: 100%; /* Use % on mobile instead of vh because of differing behavior in combination with browser ui */
   transition: padding var(--micro-interaction-animation-duration) ease-in-out;
 
-  [data-visible-view*="individual"] & {
-    grid-template-rows: min-content 1fr;
+  [data-visible-view*="previews"] & {
+    width: max-content;
   }
 
-  @media (min-width: 48em) {
-    /* Only allow scrolling horizontally up to a point.
-     * There should never be a need to make the figure scrollable on screens wider than 48em */
-    [data-visible-view*="individual"] & {
-      width: auto;
-    }
+  [data-visible-view*="individual"] & {
+    grid-template-rows: min-content 1fr;
   }
 
   @media (--layout-aside-always-visible) {
     grid-template-rows: min-content 1fr;
     grid-template-columns: var(--grid-template-columns);
     height: min(100vh, 80rem);
-    min-width: auto;
     margin: auto;
 
     [data-visible-view] & {
@@ -73,7 +66,14 @@ header {
 main {
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
-  overflow: hidden;
+  width: max-content;
+  min-width: 100%;
+  overflow-y: hidden;
+
+  @media (--layout-aside-always-visible) {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
 
   @media (--layout-capped-height) {
     height: min(50rem, 100%);
