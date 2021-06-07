@@ -44,12 +44,18 @@ export default class SchematicsFigurePreviews extends HTMLElement {
   }
 
   show() {
+    this.style.visibility = "visible";
+    this.classList.add(`${transitioningClassName}--showing`);
     this.style.display = "block";
-    this.transition();
+    this.transition(() => {
+      this.classList.remove(`${transitioningClassName}--showing`);
+    });
   }
 
   hide(onDone) {
+    this.classList.add(`${transitioningClassName}--hiding`);
     this.transition(() => {
+      this.classList.remove(`${transitioningClassName}--hiding`);
       this.style.display = "none";
       onDone();
     });
@@ -64,7 +70,7 @@ export default class SchematicsFigurePreviews extends HTMLElement {
     };
 
     if (this.getAnimations().length > 0) {
-      this.addEventListener("transitionend", stopTransitioning, { once: true });
+      this.addEventListener("animationend", stopTransitioning, { once: true });
     } else {
       stopTransitioning();
     }

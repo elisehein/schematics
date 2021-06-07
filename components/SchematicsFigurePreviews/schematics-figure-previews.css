@@ -1,3 +1,8 @@
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 schematics-figure-previews {
   --preview-bg:
     hsla(
@@ -25,6 +30,16 @@ schematics-figure-previews {
     --item-max-relative-width: 35%;
 
     margin-top: calc(var(--baseline) * 12);
+  }
+
+  .&--transitioning--showing {
+    animation: fade var(--micro-interaction-animation-duration) ease-in;
+  }
+
+  .&--transitioning--hiding {
+    animation: fade var(--micro-interaction-animation-duration) ease-in;
+    animation-direction: reverse;
+    animation-delay: var(--micro-interaction-animation-duration);
   }
 
   ul {
@@ -66,7 +81,10 @@ schematics-figure-previews {
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform var(--micro-interaction-animation-duration);
+      /* transition:
+        transform var(--micro-interaction-animation-duration),
+        filter var(--micro-interaction-animation-duration) ease-out,
+        color var(--micro-interaction-animation-duration) ease-out; */
       padding-top: var(--double-baseline);
 
       .diagram {
@@ -103,6 +121,11 @@ schematics-figure-previews {
       pointer-events: none;
       color: var(--preview-bg);
       z-index: 2;
+    }
+
+    a:focus &__diagram {
+      filter: drop-shadow(0 0 .15em #fff);
+      color: #fff;
     }
   }
 }

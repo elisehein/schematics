@@ -8,12 +8,14 @@ import HashNavigation from "./HashNavigation.js";
 import ViewSwitcher from "./ViewSwitcher.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  const aside = document.querySelector("aside");
+  const footer = document.querySelector("footer");
   const previews = document.querySelector("schematics-figure-previews");
   const figure = document.querySelector("schematics-figure");
   const toolbar = document.querySelector("schematics-figure-toolbar");
   toolbar.nums = orderedFigures;
 
-  const viewSwitcher = new ViewSwitcher(previews, figure, toolbar);
+  const viewSwitcher = new ViewSwitcher(previews, figure, toolbar, aside, footer);
   initNav(viewSwitcher);
 });
 
