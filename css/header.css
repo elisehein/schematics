@@ -46,9 +46,6 @@ h1 {
   text-shadow: 0 0 .03em var(--color-text-dark);
   color: var(--color-text-dark);
   transform-origin: top left;
-  transition:
-    transform var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
-    opacity var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
 
   a {
     display: inline-block;
@@ -67,11 +64,15 @@ h1 {
     left: 0;
   }
 
-  [data-visible-view*="individual"] & {
-    @media (--layout-full-screen-figure-with-small-logo) {
-      --schematics-title-vertical-padding: .1rem;
-      --schematics-title-horizontal-padding: 1em;
+  @media (--layout-full-screen-figure-with-small-logo) {
+    --schematics-title-vertical-padding: .1rem;
+    --schematics-title-horizontal-padding: 1em;
 
+    transition:
+      transform var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
+      opacity var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
+
+    [data-visible-view*="individual"] & {
       transform: scale(.75);
       opacity: .5;
 

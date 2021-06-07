@@ -43,10 +43,13 @@
   width: max-content;
   min-width: 100%;
   height: 100%; /* Use % on mobile instead of vh because of differing behavior in combination with browser ui */
-  transition: padding var(--micro-interaction-animation-duration) ease-in-out;
 
   [data-visible-view*="individual"] & {
     grid-template-rows: min-content 1fr;
+  }
+
+  @media (--layout-full-screen-figure) {
+    transition: padding var(--micro-interaction-animation-duration) ease-in-out;
   }
 
   @media (--layout-aside-always-visible) {
