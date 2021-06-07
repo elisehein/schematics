@@ -55,6 +55,11 @@
   --schematics-figure-shadow-filter: drop-shadow(0 0 .05rem #fff);
 
   --figure-exit-transition-duration: .6s;
+
+  @media (--baseline-and-font-scaled-up) {
+    --baseline: 1.2rem;
+    --base-font-size: 1.4rem;
+  }
 }
 
 @media (min-width: 30em) {
@@ -91,6 +96,10 @@ body {
 
   @media (--layout-aside-always-visible) {
     overflow-x: hidden;
+  }
+
+  @media (--layout-capped-height) {
+    display: flex; /* For vertical ventering */
   }
 }
 

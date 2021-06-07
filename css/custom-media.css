@@ -1,2 +1,4 @@
 @custom-media --layout-aside-always-visible (min-width: 60em);
 @custom-media --layout-individual-view-logo-fully-visible (min-width: 48em);
+@custom-media --layout-capped-height (min-height: 60em) and (--layout-aside-always-visible);
+@custom-media --baseline-and-font-scaled-up (--layout-capped-height);

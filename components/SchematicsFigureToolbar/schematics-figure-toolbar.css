@@ -1,6 +1,10 @@
 @custom-media --toolbar-layout-all-links-visible (min-width: 75em);
 
 schematics-figure-toolbar {
+  --item-width: calc(var(--baseline) * 5);
+  --directional-item-width: 5rem;
+  --item-spacing: var(--baseline);
+
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
   --underline-height: .17rem;
 
@@ -11,29 +15,27 @@ schematics-figure-toolbar {
   color: var(--faded-nav-link-color);
   text-shadow: var(--schematics-text-shadow);
 
+  @media (min-width: 40em) {
+    --directional-item-width: 2rem;
+  }
+
+  @media (--toolbar-layout-all-links-visible) {
+    --item-spacing: calc(var(--baseline) * 4);
+  }
+
   @media (--layout-aside-always-visible) {
+    --item-width: calc(var(--baseline) * 4);
+
     font-size: var(--ms-1);
   }
 
   nav {
-    --item-width: 4rem;
-    --directional-item-width: 5rem;
-    --item-spacing: var(--baseline);
-
     position: relative;
     display: flex;
     width: 100%;
 
-    @media (min-width: 40em) {
-      --directional-item-width: 2rem;
-    }
-
     @media (--layout-aside-always-visible) {
       justify-content: space-between;
-    }
-
-    @media (--toolbar-layout-all-links-visible) {
-      --item-spacing: calc(var(--baseline) * 4);
     }
   }
 
