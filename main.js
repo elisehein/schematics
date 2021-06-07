@@ -5,18 +5,19 @@ import "./components/ScanLines.js";
 
 import { figureExists, orderedFigures } from "./figureData.js";
 import HashNavigation from "./HashNavigation.js";
+import ViewSwitcher from "./ViewSwitcher.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const figure = document.querySelector("schematics-figure");
   const previews = document.querySelector("schematics-figure-previews");
+  const figure = document.querySelector("schematics-figure");
   const toolbar = document.querySelector("schematics-figure-toolbar");
-
   toolbar.nums = orderedFigures;
 
-  initNav(figure, toolbar, previews);
+  const viewSwitcher = new ViewSwitcher(previews, figure, toolbar);
+  initNav(viewSwitcher);
 });
 
-function initNav(figure, toolbar, previews) {
+function initNav(viewSwitcher) {
   let showingPreviews;
 
   const nav = new HashNavigation({
@@ -25,7 +26,7 @@ function initNav(figure, toolbar, previews) {
         return;
       }
 
-      showPreviews(figure, toolbar, previews);
+      viewSwitcher.showPreviews();
       showingPreviews = true;
     },
     onNavigateToFigure: newFigureNum => {
@@ -34,27 +35,10 @@ function initNav(figure, toolbar, previews) {
         return;
       }
 
-      toolbar.active = newFigureNum;
-
-      showIndividualFigure(newFigureNum, figure, toolbar, previews, showingPreviews);
+      viewSwitcher.showFigure(newFigureNum, { forceRestart: showingPreviews });
       showingPreviews = false;
     }
   });
 
   nav.init();
-}
-
-function showIndividualFigure(newFigureNum, figure, toolbar, previews, forceRestart) {
-  document.body.dataset.visibleView = "individual-figure";
-  figure.showNewFigure(newFigureNum, { forceRestart });
-  toolbar.show();
-  previews.style.display = "none";
-}
-
-function showPreviews(figure, toolbar, previews) {
-  toolbar.hide();
-  figure.hide(() => {
-    document.body.dataset.visibleView = "figure-previews";
-    previews.style.display = "block";
-  });
 }

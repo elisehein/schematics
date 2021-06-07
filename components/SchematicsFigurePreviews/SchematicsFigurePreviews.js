@@ -1,5 +1,7 @@
 import { orderedFigures, getDiagram } from "../../figureData.js";
 
+const transitioningClassName = "schematics-figure-previews--transitioning";
+
 export default class SchematicsFigurePreviews extends HTMLElement {
   connectedCallback() {
     const itemTemplate = document.getElementById("schematics-figure-preview-template");
@@ -39,6 +41,33 @@ export default class SchematicsFigurePreviews extends HTMLElement {
     preview.querySelector("scan-lines").setAttribute("color", "var(--schematics-figure-preview-scan-line-color)");
 
     return preview;
+  }
+
+  show() {
+    this.style.display = "block";
+    this.transition();
+  }
+
+  hide(onDone) {
+    this.transition(() => {
+      this.style.display = "none";
+      onDone();
+    });
+  }
+
+  transition(onDone = () => {}) {
+    this.classList.add(transitioningClassName);
+
+    const stopTransitioning = () => {
+      this.classList.remove(transitioningClassName);
+      onDone();
+    };
+
+    if (this.getAnimations().length > 0) {
+      this.addEventListener("transitionend", stopTransitioning, { once: true });
+    } else {
+      stopTransitioning();
+    }
   }
 }
 
