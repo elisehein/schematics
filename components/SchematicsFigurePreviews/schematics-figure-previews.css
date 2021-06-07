@@ -7,104 +7,102 @@ schematics-figure-previews {
       1
     );
 
+  --grid-gap: var(--page-padding);
+  --item-max-relative-width: 62vw;
+  --item-max-static-width: 16rem;
+  --item-size: min(var(--item-max-static-width), var(--item-max-relative-width));
+
   display: block;
   width: 100%;
-}
+  min-height: var(--item-size); /* Prevents layout shift before previews load */
 
-schematics-figure-previews ul {
-  --grid-gap: var(--page-padding);
-  --col-max-relative-width: 50%;
-  --col-max-static-width: 16rem;
-
-  display: grid;
-  grid-gap: var(--grid-gap);
-  margin: 0 auto;
-  grid-auto-flow: column;
-  grid-auto-columns: min(var(--col-max-static-width), 62vw);
-}
-
-@media (min-width: 40em) {
-  schematics-figure-previews ul {
-    --col-max-static-width: 18rem;
+  @media (min-width: 40em) {
+    --item-max-static-width: 18rem;
   }
-}
 
-@media (--layout-aside-always-visible) {
-  schematics-figure-previews {
+  @media (--layout-aside-always-visible) {
+    --grid-gap: var(--double-baseline);
+    --item-max-relative-width: 35%;
+
     margin-top: calc(var(--baseline) * 12);
   }
 
-  schematics-figure-previews ul {
-    --grid-gap: var(--double-baseline);
-    --col-max-relative-width: 35%;
+  ul {
+    display: grid;
+    grid-gap: var(--grid-gap);
+    margin: 0 auto;
+    grid-auto-flow: column;
+    grid-auto-columns: var(--item-size);
 
-    justify-content: center;
-    grid-auto-flow: row;
-    grid-auto-columns: auto;
-    grid-template-columns: repeat(2, min(var(--col-max-static-width), var(--col-max-relative-width)));
+    @media (--layout-aside-always-visible) {
+      justify-content: center;
+      grid-auto-flow: row;
+      grid-auto-columns: auto;
+      grid-template-columns: repeat(2, var(--item-size));
+    }
   }
-}
 
-.schematics-figure-previews__item {
-  /* Sadly not widely enough supported yet
-   * aspect-ratio: 1;
-   * So using this good ol' hack instead... */
-  position: relative;
-  height: 0;
-  padding-bottom: 100%;
-}
+  .&__item {
+    /* Sadly not widely enough supported yet
+    * aspect-ratio: 1;
+    * So using this good ol' hack instead... */
+    position: relative;
+    height: 0;
+    padding-bottom: 100%;
 
-.schematics-figure-previews__item a {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: hidden;
-  border-radius: .4rem;
-  background-color: var(--preview-bg);
-}
+    a {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      overflow: hidden;
+      border-radius: .4rem;
+      background-color: var(--preview-bg);
+    }
 
-.schematics-figure-previews__item__diagram {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform var(--micro-interaction-animation-duration);
-  padding-top: var(--double-baseline);
-}
+    &__diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform var(--micro-interaction-animation-duration);
+      padding-top: var(--double-baseline);
 
-.schematics-figure-previews__item__diagram .diagram {
-  width: 50%;
-  height: 50%;
-  transform: translateY(calc(var(--double-baseline) * -1));
-}
+      .diagram {
+        width: 50%;
+        height: 50%;
+        transform: translateY(calc(var(--double-baseline) * -1));
+      }
+    }
 
-.schematics-figure-previews__item a:hover .schematics-figure-previews__item__diagram,
-.schematics-figure-previews__item a:focus .schematics-figure-previews__item__diagram {
-  transform: scale(1.05);
-}
+    a:hover &__diagram,
+    a:focus &__diagram {
+      transform: scale(1.05);
+    }
 
-.schematics-figure-previews__item__fig-num {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: var(--triple-baseline);
-  text-align: center;
-  font-size: var(--ms0);
-  line-height: var(--baseline);
-  text-shadow: var(--schematics-text-shadow);
-  letter-spacing: var(--schematics-letter-spacing);
-  font-variant-ligatures: none; /* we don't want it to look like fi g. */
-}
+    &__fig-num {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: var(--triple-baseline);
+      text-align: center;
+      font-size: var(--ms0);
+      line-height: var(--baseline);
+      text-shadow: var(--schematics-text-shadow);
+      letter-spacing: var(--schematics-letter-spacing);
+      font-variant-ligatures: none; /* we don't want it to look like "fi g". */
+    }
 
-.schematics-figure-previews__item__scan-lines {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  color: var(--preview-bg);
-  z-index: 2;
+    &__scan-lines {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      pointer-events: none;
+      color: var(--preview-bg);
+      z-index: 2;
+    }
+  }
 }
