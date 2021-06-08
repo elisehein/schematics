@@ -76,10 +76,10 @@ schematics-figure-previews {
       display: flex;
       align-items: center;
       justify-content: center;
-      /* transition:
+      transition:
         transform var(--micro-interaction-animation-duration),
         filter var(--micro-interaction-animation-duration) ease-out,
-        color var(--micro-interaction-animation-duration) ease-out; */
+        color var(--micro-interaction-animation-duration) ease-out;
       padding-top: var(--double-baseline);
 
       .diagram {
