@@ -10,12 +10,12 @@ export default class SchematicsFigure extends HTMLElement {
   }
 
   connectedCallback() {
+    this.classList.add("schematics-figure");
     this.innerHTML = document.getElementById("schematics-figure-template").innerHTML;
     this.renderFigure();
   }
 
   renderFigure() {
-    this.cleanUpCurrentFigure();
     this._diagramElement = this.renderDiagram();
 
     if (!this._diagramElement) {
@@ -40,6 +40,7 @@ export default class SchematicsFigure extends HTMLElement {
     }
 
     this.querySelector(".schematics-figure__figure__figcaption").innerHTML = "";
+    this.querySelector(".schematics-figure__figure__diagram-container").innerHTML = "";
   }
 
   lightUpFigure(durationMS) {
@@ -60,17 +61,29 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    this.transition(() => this.update());
+    if (newNum === null) {
+      this.cleanUpCurrentFigure();
+    } else {
+      this.switchFigure(oldNum);
+    }
   }
 
-  transition(onDone) {
-    transitionWithClasses(this.figureNode, ["schematics-figure__figure--transitioning"], onDone);
-  }
+  switchFigure(oldNum) {
+    if (this._transitionTimer) {
+      clearTimeout(this._transitionTimer);
+    }
 
-  update() {
-    // Note this will only work so far that we only ever add one class to schematics-figure
-    this.setAttribute("class", this.className(this.num));
-    this.renderFigure();
+    transitionWithClasses(this.figureNode, ["schematics-figure__figure--hiding"], () => {
+      this.cleanUpCurrentFigure();
+      this.classList.remove(this.className(oldNum));
+      this._transitionTimer = setTimeout(() => {
+        this.classList.add(this.className(this.num));
+        this.renderFigure();
+        transitionWithClasses(this.figureNode, ["schematics-figure__figure--showing"], () => {
+          this._transitionTimer = null;
+        });
+      }, 1000);
+    });
   }
 
   renderDiagram() {
@@ -113,19 +126,13 @@ export default class SchematicsFigure extends HTMLElement {
     }
   }
 
-  showNewFigure(newFigureNum, { forceRestart }) {
-    const oldFigureNum = this.num;
-    this.num = newFigureNum;
-
-    if (oldFigureNum == newFigureNum && forceRestart) {
-      this.transition(() => this.update());
-    }
-
+  show() {
     this.style.display = "block";
+    transitionWithClasses(this.figureNode, ["schematics-figure__figure--showing"]);
   }
 
   hide(onDone) {
-    this.transition(() => {
+    transitionWithClasses(this.figureNode, ["schematics-figure__figure--hiding"], () => {
       this.style.display = "none";
       onDone();
     });

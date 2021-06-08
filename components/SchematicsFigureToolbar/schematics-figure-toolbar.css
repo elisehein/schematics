@@ -5,6 +5,7 @@
   --directional-item-width: 5rem;
   --item-spacing: var(--baseline);
 
+  --normal-nav-link-color: var(--color-text-light);
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
   --underline-height: .17rem;
 
@@ -12,25 +13,22 @@
   font-size: var(--ms0);
   line-height: var(--triple-baseline);
   letter-spacing: var(--schematics-letter-spacing);
-  color: var(--faded-nav-link-color);
-  text-shadow: var(--schematics-text-shadow);
-  transition:
-    text-shadow var(--micro-interaction-animation-duration),
-    color var(--micro-interaction-animation-duration);
 
   &--transitioning {
-    text-shadow: 0 0 .2em var(--color-text-light);
-    color: #fff;
+    --normal-nav-link-color: #fff;
+    --faded-nav-link-color: #fff;
+    --schematics-text-shadow: 0 0 .3em #fff;
   }
 
   &--transitioning--showing {
-    animation: fade var(--micro-interaction-animation-duration) ease-in;
+    animation: fade var(--figure-appear-transition-duration) ease-in;
   }
 
   &--transitioning--hiding {
-    animation: fade var(--micro-interaction-animation-duration) var(--figure-exit-fade-out-timing);
+    animation: fade var(--figure-exit-transition-duration) var(--figure-exit-fade-out-timing);
     animation-direction: reverse;
-    animation-delay: calc(var(--figure-exit-transition-duration) - var(--micro-interaction-animation-duration));
+    animation-delay: var(--figure-pre-exit-transition-duration);
+    animation-fill-mode: forwards;
   }
 
   nav {
@@ -100,6 +98,22 @@
     cursor: default;
   }
 
+  a {
+    color: var(--faded-nav-link-color);
+    text-shadow: var(--schematics-text-shadow);
+    transition:
+      text-shadow var(--micro-interaction-animation-duration),
+      color var(--micro-interaction-animation-duration);
+  }
+
+  &--transitioning--hiding a {
+    transition-duration: var(--figure-pre-exit-transition-duration);
+  }
+
+  &--transitioning--showing a {
+    transition-duration: var(--figure-appear-transition-duration);
+  }
+
   &__item {
     display: inline-block;
     position: relative;
@@ -139,14 +153,9 @@
       }
     }
 
-    a {
-      transition: color var(--micro-interaction-animation-duration) ease;
-    }
-
     &--active a,
-    a:hover,
-    a:focus {
-      color: var(--color-text-light);
+    &--active a:hover {
+      color: var(--normal-nav-link-color);
     }
 
     a:focus {

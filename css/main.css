@@ -55,7 +55,9 @@
   --schematics-letter-spacing: .1em;
   --schematics-figure-shadow-filter: drop-shadow(0 0 .05rem #fff);
 
-  --figure-exit-transition-duration: .6s;
+  --figure-pre-exit-transition-duration: .5s;
+  --figure-exit-transition-duration: .3s;
+  --figure-appear-transition-duration: .2s;
   --figure-exit-fade-out-timing: cubic-bezier(.55, 0, 1, .45);
 
   @media (--baseline-and-font-scaled-up) {

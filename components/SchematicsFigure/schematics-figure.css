@@ -1,76 +1,3 @@
-:root {
-  --schematics-figure-light-up-duration: 600ms;
-  --schematics-figure-light-up-easing: ease-in;
-}
-
-@keyframes light-up-diagram {
-  50% {
-    filter: drop-shadow(0 0 .1em #fff);
-    color: #fff;
-  }
-}
-
-@keyframes light-up-text {
-  50% {
-    text-shadow: 0 0 .2em var(--color-text-light);
-    color: #fff;
-  }
-}
-
-@keyframes jitter {
-  0% { transform: translateX(.08em) translateY(.05em); }
-  10% { transform: translateX(.02em) translateY(.01em); }
-  10% { transform: translateX(.06em) translateY(.05em); }
-  30% { transform: translateX(.05em) translateY(.07em); }
-  50% { transform: translateX(0) translateY(.04em); }
-  70% { transform: translateX(.06em) translateY(0); }
-  80% { transform: translateX(.03em) translateY(.02); }
-  90% { transform: translateX(.01em) translateY(.05); }
-  100% { transform: translateX(.05em) translateY(.08em); }
-}
-
-.schematics-figure__figure {
-  position: relative;
-  color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) + 5%), 1);
-  opacity: 1;
-  transition: opacity .2s ease-out;
-}
-
-.schematics-figure__figure--transitioning {
-  opacity: 0;
-  transition: opacity calc(var(--figure-exit-transition-duration) - .2s) var(--figure-exit-fade-out-timing);
-  transition-delay: .2s;
-}
-
-.schematics-figure__figure__diagram-container {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-  filter: var(--schematics-figure-shadow-filter);
-  transition: filter var(--figure-exit-transition-duration), color var(--figure-exit-transition-duration);
-}
-
-.schematics-figure__figure--light-up .schematics-figure__figure__diagram-container {
-  animation: light-up-diagram var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
-}
-
-.schematics-figure__figure--transitioning .schematics-figure__figure__diagram-container {
-  filter: drop-shadow(0 0 .15em #fff);
-  color: #fff;
-  animation: jitter var(--figure-exit-transition-duration);
-}
-
-.schematics-figure__figure__diagram-container > * {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
 @keyframes text-shadow-flicker {
   0% {
     text-shadow: 0 0 .2em var(--color-text-light);
@@ -101,76 +28,162 @@
   }
 }
 
-.schematics-figure__figure__figcaption {
-  font-size: var(--ms-1);
-  line-height: var(--double-baseline);
-  letter-spacing: var(--schematics-letter-spacing);
-  text-shadow: var(--schematics-text-shadow);
-  z-index: 1;
-
-  @media (min-width: 30em) {
-    font-size: var(--ms0);
-  }
-
-  @media (min-width: 40em) {
-    font-size: var(--ms1);
-  }
-
-  @media (min-width: 50em) {
-    font-size: var(--ms2);
-  }
-}
-
-.schematics-figure__figure--transitioning .schematics-figure__figure__figcaption {
-  animation:
-    text-shadow-flicker var(--figure-exit-transition-duration) ease-out,
-    jitter var(--figure-exit-transition-duration);
-}
-
-.schematics-figure__figure--light-up .schematics-figure__figure__figcaption {
-  animation: light-up-text var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
-}
-
 @keyframes blink {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-.schematics-figure__figure__figcaption__character {
-  position: relative;
-  visibility: hidden;
-
-  &--visible {
-    visibility: visible;
-  }
-
-  &--latest-visible {
-    &::after {
-      content: "_";
-      animation: blink .5s cubic-bezier(0, .55, .45, 1) infinite;
-      animation-delay: .13s;
-    }
-
-    &:last-child::after {
-      opacity: 0;
-      animation-iteration-count: 5;
-    }
-
-    @media (max-width: 40em) {
-      /* To keep the extra whitespace next to the character when scrolling */
-      white-space: nowrap;
-
-      /* The extra width is to give it some air in cases where it is scrolledIntoView */
-      &::after {
-        display: inline-block;
-        width: 3rem;
-      }
-    }
+@keyframes light-up-diagram {
+  50% {
+    filter: drop-shadow(0 0 .1em #fff);
+    color: #fff;
   }
 }
 
-/* To ensure both the caption and figure are able to receive pointer events */
-.schematics-figure__figure__diagram-container:hover,
-.schematics-figure__figure__figcaption:hover {
-  z-index: 1;
+@keyframes light-up-text {
+  50% {
+    text-shadow: 0 0 .2em var(--color-text-light);
+    color: #fff;
+  }
+}
+
+@keyframes jitter {
+  0% { transform: translateX(.1em) translateY(.07em); }
+  10% { transform: translateX(.04em) translateY(.01em); }
+  10% { transform: translateX(.1em) translateY(.07em); }
+  30% { transform: translateX(.05em) translateY(.12em); }
+  50% { transform: translateX(0) translateY(.06em); }
+  70% { transform: translateX(.08em) translateY(.01em); }
+  80% { transform: translateX(.03em) translateY(.07em); }
+  90% { transform: translateX(.1em) translateY(-.01em); }
+  100% { transform: translateX(.01em) translateY(.08em); }
+}
+
+.schematics-figure {
+  --schematics-figure-light-up-duration: 600ms;
+  --schematics-figure-light-up-easing: ease-in;
+  --jitter-animation-duration: calc(var(--figure-pre-exit-transition-duration) + (var(--figure-exit-transition-duration) / 2));
+
+  &__figure {
+    position: relative;
+    color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) + 5%), 1);
+
+    &--showing {
+      animation: fade var(--figure-appear-transition-duration) ease-in;
+    }
+
+    &--hiding {
+      animation: fade var(--figure-exit-transition-duration) var(--figure-exit-fade-out-timing);
+      animation-delay: var(--figure-pre-exit-transition-duration);
+      animation-direction: reverse;
+      animation-fill-mode: forwards;
+    }
+
+    &__diagram-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      align-items: center;
+      justify-content: center;
+      filter: var(--schematics-figure-shadow-filter);
+      transition-property: filter, color;
+      transition-duration: var(--jitter-animation-duration);
+
+      > * {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &--showing &__diagram-container,
+    &--hiding &__diagram-container {
+      filter: drop-shadow(0 0 .15em #fff);
+      color: #fff;
+    }
+
+    &--hiding &__diagram-container {
+      animation: jitter var(--jitter-animation-duration);
+    }
+
+    &--light-up &__diagram-container {
+      animation: light-up-diagram var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
+    }
+
+    &__figcaption {
+      font-size: var(--ms-1);
+      line-height: var(--double-baseline);
+      letter-spacing: var(--schematics-letter-spacing);
+      text-shadow: var(--schematics-text-shadow);
+      z-index: 1;
+
+      @media (min-width: 30em) {
+        font-size: var(--ms0);
+      }
+
+      @media (min-width: 40em) {
+        font-size: var(--ms1);
+      }
+
+      @media (min-width: 50em) {
+        font-size: var(--ms2);
+      }
+
+      &__character {
+        position: relative;
+        visibility: hidden;
+
+        &--visible {
+          visibility: visible;
+        }
+
+        &--latest-visible {
+          &::after {
+            content: "_";
+            animation: blink .5s cubic-bezier(0, .55, .45, 1) infinite;
+            animation-delay: .13s;
+          }
+
+          &:last-child::after {
+            opacity: 0;
+            animation-iteration-count: 5;
+          }
+
+          @media (max-width: 40em) {
+            /* To keep the extra whitespace next to the character when scrolling */
+            white-space: nowrap;
+
+            /* The extra width is to give it some air in cases where it is scrolledIntoView */
+            &::after {
+              display: inline-block;
+              width: 3rem;
+            }
+          }
+        }
+      }
+    }
+
+    &--showing &__figcaption {
+      animation: text-shadow-flicker var(--figure-appear-transition-duration) ease-out;
+    }
+
+    &--hiding &__figcaption {
+      animation:
+        text-shadow-flicker var(--jitter-animation-duration) ease-out,
+        jitter var(--jitter-animation-duration);
+    }
+
+    &--light-up &__figcaption {
+      animation: light-up-text var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
+    }
+
+    /* To ensure both the caption and figure are able to receive pointer events */
+    &__diagram-container:hover,
+    &__ficaption:hover {
+      z-index: 1;
+    }
+  }
 }
