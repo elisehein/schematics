@@ -65,14 +65,14 @@ h1 {
   }
 
   @media (--layout-full-screen-figure-with-small-logo) {
-    --schematics-title-vertical-padding: .1rem;
-    --schematics-title-horizontal-padding: 1em;
-
     transition:
       transform var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
       opacity var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
 
     [data-visible-view*="individual"] & {
+      --schematics-title-vertical-padding: .1rem;
+      --schematics-title-horizontal-padding: 1em;
+
       transform: scale(.75);
       opacity: .5;
 
