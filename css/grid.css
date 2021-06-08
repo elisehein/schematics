@@ -60,6 +60,7 @@
 
     [data-visible-view] & {
       width: min(110rem, 100%);
+      min-width: auto;
     }
   }
 }
