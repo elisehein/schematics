@@ -21,7 +21,7 @@ export default class ViewSwitcher {
 
     this._toolbar.hide();
     this._figure.hide(() => {
-      this._figure.num = null;
+      this._figure.removeAttribute("num");
       document.body.dataset.visibleView = "figure-previews";
       this._previews.show();
       this.ensureOtherElementsVisible();
@@ -33,11 +33,12 @@ export default class ViewSwitcher {
     this._previews.hide(() => {
       document.body.dataset.visibleView = "individual-figure";
       this._toolbar.active = num;
-      this._figure.num = num;
 
-      if (this._state != viewStates.SHOWING_FIGURE) {
+      if (this._state == viewStates.SHOWING_FIGURE) {
+        this._figure.switchNum(num);
+      } else {
         this._toolbar.show();
-        this._figure.show();
+        this._figure.showWithNum(num);
       }
 
       this.ensureOtherElementsVisible();

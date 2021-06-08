@@ -61,7 +61,8 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    if (newNum === null) {
+    // eslint-disable-next-line no-negated-condition
+    if (!newNum) {
       this.cleanUpCurrentFigure();
     } else {
       this.switchFigure(oldNum);
@@ -126,9 +127,13 @@ export default class SchematicsFigure extends HTMLElement {
     }
   }
 
-  show() {
+  switchNum(newNum) {
+    this.num = newNum;
+  }
+
+  showWithNum(newNum) {
     this.style.display = "block";
-    transitionWithClasses(this.figureNode, ["schematics-figure__figure--showing"]);
+    this.switchNum(newNum);
   }
 
   hide(onDone) {
