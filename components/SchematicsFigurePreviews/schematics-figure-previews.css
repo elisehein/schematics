@@ -7,6 +7,8 @@ schematics-figure-previews {
       1
     );
 
+  --fade-duration: .1s;
+  --pre-fade-duration: .2s;
   --grid-gap: var(--page-padding);
   --item-max-relative-width: 62vw;
   --item-max-static-width: 16rem;
@@ -28,13 +30,13 @@ schematics-figure-previews {
   }
 
   .&--transitioning--showing {
-    animation: fade var(--micro-interaction-animation-duration) ease-in;
+    animation: fade var(--fade-duration) ease-in;
   }
 
   .&--transitioning--hiding {
-    animation: fade var(--micro-interaction-animation-duration) ease-in;
+    animation: fade var(--fade-duration) ease-in;
     animation-direction: reverse;
-    animation-delay: var(--micro-interaction-animation-duration);
+    animation-delay: var(--pre-fade-duration);
   }
 
   ul {
@@ -70,6 +72,7 @@ schematics-figure-previews {
       overflow: hidden;
       border-radius: .4rem;
       background-color: var(--preview-bg);
+      transition: transform calc(var(--fade-duration) + (var(--pre-fade-duration) / 2)) cubic-bezier(.55, 0, 1, .45);
     }
 
     &__diagram {
@@ -77,9 +80,9 @@ schematics-figure-previews {
       align-items: center;
       justify-content: center;
       transition:
-        transform var(--micro-interaction-animation-duration),
-        filter var(--micro-interaction-animation-duration) ease-out,
-        color var(--micro-interaction-animation-duration) ease-out;
+        transform var(--pre-fade-duration),
+        filter var(--pre-fade-duration) ease-out,
+        color var(--pre-fade-duration) ease-out;
       padding-top: var(--double-baseline);
 
       .diagram {
@@ -89,9 +92,19 @@ schematics-figure-previews {
       }
     }
 
+    a:focus {
+      transform: scale(1.15);
+      transition-delay: calc(var(--pre-fade-duration) / 2);
+    }
+
     a:hover &__diagram,
     a:focus &__diagram {
       transform: scale(1.05);
+    }
+
+    a:focus &__diagram {
+      filter: drop-shadow(0 0 .15em #fff);
+      color: #fff;
     }
 
     &__fig-num {
@@ -116,11 +129,6 @@ schematics-figure-previews {
       pointer-events: none;
       color: var(--preview-bg);
       z-index: 2;
-    }
-
-    a:focus &__diagram {
-      filter: drop-shadow(0 0 .15em #fff);
-      color: #fff;
     }
   }
 }
