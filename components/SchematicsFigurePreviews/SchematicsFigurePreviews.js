@@ -1,4 +1,5 @@
 import { orderedFigures, getDiagram } from "../../figureData.js";
+import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 const transitioningClassName = "schematics-figure-previews--transitioning";
 
@@ -45,35 +46,15 @@ export default class SchematicsFigurePreviews extends HTMLElement {
 
   show() {
     this.style.visibility = "visible";
-    this.classList.add(`${transitioningClassName}--showing`);
     this.style.display = "block";
-    this.transition(() => {
-      this.classList.remove(`${transitioningClassName}--showing`);
-    });
+    transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--showing`]);
   }
 
   hide(onDone) {
-    this.classList.add(`${transitioningClassName}--hiding`);
-    this.transition(() => {
-      this.classList.remove(`${transitioningClassName}--hiding`);
+    transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--hiding`], () => {
       this.style.display = "none";
       onDone();
     });
-  }
-
-  transition(onDone = () => {}) {
-    this.classList.add(transitioningClassName);
-
-    const stopTransitioning = () => {
-      this.classList.remove(transitioningClassName);
-      onDone();
-    };
-
-    if (this.getAnimations().length > 0) {
-      this.addEventListener("animationend", stopTransitioning, { once: true });
-    } else {
-      stopTransitioning();
-    }
   }
 }
 

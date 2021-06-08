@@ -1,10 +1,15 @@
+import transitionWithClasses from "/helpers/transitionWithClasses.js";
+
 const DIRECTION = {
   previous: -1,
   next: 1
 };
 
+const transitioningClassName = "schematics-figure-toolbar--transitioning";
+
 export default class SchematicsFigureToolbar extends HTMLElement {
   connectedCallback() {
+    this.classList.add("schematics-figure-toolbar");
     this.render();
   }
 
@@ -86,6 +91,17 @@ export default class SchematicsFigureToolbar extends HTMLElement {
     return classes.join(" ");
   }
 
+  show() {
+    this.style.display = "flex";
+    transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--showing`]);
+  }
+
+  hide() {
+    transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--hiding`], () => {
+      this.style.display = "none";
+    });
+  }
+
   get activeNumIndex() {
     return this.nums.indexOf(this.active);
   }
@@ -129,14 +145,6 @@ export default class SchematicsFigureToolbar extends HTMLElement {
     if (newValue !== this.active) {
       this.setAttribute("active", newValue);
     }
-  }
-
-  show() {
-    this.style.display = "flex";
-  }
-
-  hide() {
-    this.style.display = "none";
   }
 }
 

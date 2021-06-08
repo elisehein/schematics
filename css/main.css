@@ -4,6 +4,7 @@
 @import "./header.css";
 @import "./aside.css";
 @import "./footer.css";
+@import "./shared-animations.css";
 @import "../components/SchematicsFigure/schematics-figure.css";
 @import "../components/SchematicsFigure/schematics-figure-placements.css";
 @import "../components/SchematicsFigurePreviews/schematics-figure-previews.css";
@@ -55,6 +56,7 @@
   --schematics-figure-shadow-filter: drop-shadow(0 0 .05rem #fff);
 
   --figure-exit-transition-duration: .6s;
+  --figure-exit-fade-out-timing: cubic-bezier(.55, 0, 1, .45);
 
   @media (--baseline-and-font-scaled-up) {
     --baseline: 1.2rem;

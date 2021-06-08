@@ -38,7 +38,7 @@
 
 .schematics-figure__figure--transitioning {
   opacity: 0;
-  transition: opacity calc(var(--figure-exit-transition-duration) - .2s) cubic-bezier(.55, 0, 1, .45);
+  transition: opacity calc(var(--figure-exit-transition-duration) - .2s) var(--figure-exit-fade-out-timing);
   transition-delay: .2s;
 }
 

@@ -1,6 +1,6 @@
 @custom-media --toolbar-layout-all-links-visible (min-width: 75em);
 
-schematics-figure-toolbar {
+.schematics-figure-toolbar {
   --item-width: calc(var(--baseline) * 5);
   --directional-item-width: 5rem;
   --item-spacing: var(--baseline);
@@ -14,19 +14,23 @@ schematics-figure-toolbar {
   letter-spacing: var(--schematics-letter-spacing);
   color: var(--faded-nav-link-color);
   text-shadow: var(--schematics-text-shadow);
+  transition:
+    text-shadow var(--micro-interaction-animation-duration),
+    color var(--micro-interaction-animation-duration);
 
-  @media (min-width: 40em) {
-    --directional-item-width: 2rem;
+  &--transitioning {
+    text-shadow: 0 0 .2em var(--color-text-light);
+    color: #fff;
   }
 
-  @media (--toolbar-layout-all-links-visible) {
-    --item-spacing: calc(var(--baseline) * 4);
+  &--transitioning--showing {
+    animation: fade var(--micro-interaction-animation-duration) ease-in;
   }
 
-  @media (--layout-aside-always-visible) {
-    --item-width: calc(var(--baseline) * 4);
-
-    font-size: var(--ms-1);
+  &--transitioning--hiding {
+    animation: fade var(--micro-interaction-animation-duration) var(--figure-exit-fade-out-timing);
+    animation-direction: reverse;
+    animation-delay: calc(var(--figure-exit-transition-duration) - var(--micro-interaction-animation-duration));
   }
 
   nav {
@@ -57,9 +61,7 @@ schematics-figure-toolbar {
       width: auto;
     }
   }
-}
 
-.schematics-figure-toolbar {
   &__figure-links-container {
     position: relative;
     display: flex;
@@ -189,5 +191,19 @@ schematics-figure-toolbar {
       transform: translateY(-50%);
       width: var(--double-baseline);
     }
+  }
+
+  @media (min-width: 40em) {
+    --directional-item-width: 2rem;
+  }
+
+  @media (--toolbar-layout-all-links-visible) {
+    --item-spacing: calc(var(--baseline) * 4);
+  }
+
+  @media (--layout-aside-always-visible) {
+    --item-width: calc(var(--baseline) * 4);
+
+    font-size: var(--ms-1);
   }
 }

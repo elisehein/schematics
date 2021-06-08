@@ -1,4 +1,5 @@
 import { getPoetry, getDiagram } from "../../figureData.js";
+import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 import CaptionTyping from "./CaptionTyping.js";
 
@@ -63,27 +64,7 @@ export default class SchematicsFigure extends HTMLElement {
   }
 
   transition(onDone) {
-    if (this._stopTransitioningTimer) {
-      clearTimeout(this._stopTransitioningTimer);
-    }
-
-    this.figureNode.classList.add("schematics-figure__figure--transitioning");
-
-    const stopTransitioning = () => {
-      this._stopTransitioningTimer = setTimeout(() => {
-        this.figureNode.classList.remove("schematics-figure__figure--transitioning");
-        this._stopTransitioningTimer = null;
-        onDone();
-      }, 1000);
-    };
-
-    // figure--transitioning may or may not trigger transitions/animations;
-    // we don't want to depend on that.
-    if (this.figureNode.getAnimations().length > 0) {
-      this.figureNode.addEventListener("transitionend", stopTransitioning, { once: true });
-    } else {
-      stopTransitioning();
-    }
+    transitionWithClasses(this.figureNode, ["schematics-figure__figure--transitioning"], onDone);
   }
 
   update() {
