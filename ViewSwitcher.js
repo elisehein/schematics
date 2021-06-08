@@ -1,3 +1,8 @@
+const viewStates = {
+  SHOWING_FIGURE: "SHOWING_FIGURE",
+  SHOWING_PREVIEWS: "SHOWING_PREVIEWS"
+};
+
 export default class ViewSwitcher {
   constructor(previews, figure, toolbar, aside, footer) {
     this._previews = previews;
@@ -5,24 +10,36 @@ export default class ViewSwitcher {
     this._toolbar = toolbar;
     this._aside = aside;
     this._footer = footer;
+
+    this._state = null;
   }
 
   showPreviews() {
+    if (this._state == viewStates.SHOWING_PREVIEWS) {
+      return;
+    }
+
     this._toolbar.hide();
     this._figure.hide(() => {
       document.body.dataset.visibleView = "figure-previews";
       this._previews.show();
       this.ensureOtherElementsVisible();
+      this._state = viewStates.SHOWING_PREVIEWS;
     });
   }
 
-  showFigure(num, { forceRestart }) {
+  showFigure(num) {
     this._previews.hide(() => {
       this._toolbar.active = num;
-      this._toolbar.show();
+
+      if (this._state != viewStates.SHOWING_FIGURE) {
+        this._toolbar.show();
+      }
+
       document.body.dataset.visibleView = "individual-figure";
-      this._figure.showNewFigure(num, { forceRestart });
+      this._figure.showNewFigure(num, { forceRestart: this._state == viewStates.SHOWING_PREVIEWS });
       this.ensureOtherElementsVisible();
+      this._state = viewStates.SHOWING_FIGURE;
     });
   }
 

@@ -20,16 +20,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function initNav(viewSwitcher) {
-  let showingPreviews;
-
   const nav = new HashNavigation({
     onNavigateToRoot: () => {
-      if (showingPreviews) {
-        return;
-      }
-
       viewSwitcher.showPreviews();
-      showingPreviews = true;
     },
     onNavigateToFigure: newFigureNum => {
       if (!figureExists(newFigureNum)) {
@@ -37,8 +30,7 @@ function initNav(viewSwitcher) {
         return;
       }
 
-      viewSwitcher.showFigure(newFigureNum, { forceRestart: showingPreviews });
-      showingPreviews = false;
+      viewSwitcher.showFigure(newFigureNum);
     }
   });
 
