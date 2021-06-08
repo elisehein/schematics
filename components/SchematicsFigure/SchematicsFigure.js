@@ -30,7 +30,9 @@ export default class SchematicsFigure extends HTMLElement {
     } });
   }
 
-  cleanUpCurrentFigure() {
+  cleanUpCurrentFigure(num) {
+    this.classList.remove(this.className(num));
+
     if (this._captionTyping) {
       this._captionTyping.cancelCurrentSession();
     }
@@ -61,11 +63,10 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    // eslint-disable-next-line no-negated-condition
-    if (!newNum) {
-      this.cleanUpCurrentFigure();
-    } else {
+    if (newNum) {
       this.switchFigure(oldNum);
+    } else {
+      this.cleanUpCurrentFigure(oldNum);
     }
   }
 
@@ -74,9 +75,7 @@ export default class SchematicsFigure extends HTMLElement {
       clearTimeout(this._transitionTimer);
     }
 
-    transitionWithClasses(this.figureNode, ["schematics-figure__figure--hiding"], () => {
-      this.cleanUpCurrentFigure();
-      this.classList.remove(this.className(oldNum));
+    const showNewFigure = () => {
       this._transitionTimer = setTimeout(() => {
         this.classList.add(this.className(this.num));
         this.renderFigure();
@@ -84,7 +83,16 @@ export default class SchematicsFigure extends HTMLElement {
           this._transitionTimer = null;
         });
       }, 1000);
-    });
+    };
+
+    if (oldNum) {
+      transitionWithClasses(this.figureNode, ["schematics-figure__figure--hiding"], () => {
+        this.cleanUpCurrentFigure(oldNum);
+        showNewFigure();
+      });
+    } else {
+      showNewFigure();
+    }
   }
 
   renderDiagram() {
@@ -118,7 +126,8 @@ export default class SchematicsFigure extends HTMLElement {
   }
 
   get num() {
-    return parseInt(this.getAttribute("num"));
+    const raw = this.getAttribute("num");
+    return raw ? parseInt(raw) : null;
   }
 
   set num(newValue) {
