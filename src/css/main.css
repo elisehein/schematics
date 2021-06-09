@@ -5,6 +5,7 @@
 @import "./aside.css";
 @import "./footer.css";
 @import "./shared-animations.css";
+@import "../components/AboutSchematics/about-schematics.css";
 @import "../components/SchematicsFigure/schematics-figure.css";
 @import "../components/SchematicsFigure/schematics-figure-placements.css";
 @import "../components/SchematicsFigurePreviews/schematics-figure-previews.css";
@@ -24,13 +25,18 @@
   --color-bg-dark: hsla(var(--hue-main), var(--sat-main), var(--color-bg-dark-lightness), 1);
   --color-bg-light: hsla(var(--hue-main), var(--sat-main), var(--color-bg-light-lightness), 1);
 
-  --color-page-bg: var(--color-bg-dark);
-  --color-page-bg-accent: hsla(var(--hue-main), var(--sat-main), calc(var(--color-bg-dark-lightness) * .3), 1);
-
-  --color-text-light-lightness: 72%;
+  --color-text-light-lightness: calc(var(--color-white-lightness) - 23%);
+  --color-text-dark-lightness: var(--color-black-lightness);
 
   --color-text-light: hsla(var(--hue-main), var(--sat-main), var(--color-text-light-lightness), 1);
-  --color-text-dark: hsla(var(--hue-main), var(--sat-main), var(--color-black-lightness), 1);
+  --color-text-dark: hsla(var(--hue-main), var(--sat-main), var(--color-text-dark-lightness), 1);
+
+  --color-page-bg: var(--color-bg-dark);
+  --color-page-bg-contrast: var(--color-bg-light);
+  --color-text: var(--color-text-light);
+  --color-text-contrast: var(--color-text-dark);
+  --color-text-hover: #fff;
+  --color-highest-contrast: #fff;
 
   --baseline: .9rem;
 
@@ -51,9 +57,9 @@
   --micro-interaction-animation-duration: .2s;
   --micro-interaction-animation-ease-out: cubic-bezier(.22, 1, .36, 1);
 
-  --schematics-text-shadow: 0 0 .11rem var(--color-text-light);
+  --schematics-text-shadow: 0 0 .11rem var(--color-text);
   --schematics-letter-spacing: .1em;
-  --schematics-figure-shadow-filter: drop-shadow(0 0 .05rem #fff);
+  --schematics-figure-shadow-filter: drop-shadow(0 0 .05rem var(--color-highest-contrast));
 
   --figure-pre-exit-transition-duration: .5s;
   --figure-exit-transition-duration: .3s;
@@ -90,11 +96,14 @@ body {
   width: 100vw;
   min-height: 100%;
   min-height: -webkit-fill-available;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
   font-family: helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
   background-color: var(--color-page-bg);
-  color: var(--color-text-light);
-  scroll-behavior: smooth;
-  overflow-x: scroll;
+  color: var(--color-text);
+  transition:
+    background-color var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
+    color var(--micro-interaction-animation-duration) var()--micro-interaction-animation-ease-out;
 
   &[data-visible-view*="individual"] {
     height: 100%;
@@ -112,7 +121,7 @@ body {
 a {
   &:hover,
   &:focus {
-    color: #fff;
+    color: var(--color-text-hover);
   }
 }
 
@@ -123,23 +132,27 @@ main {
 .button {
   --button-side-padding: var(--double-baseline);
   --button-height: var(--triple-baseline);
-  --button-bg-color: #000;
-  --button-text-color: var(--color-text-light);
+  --color-button-bg: #000;
+  --color-button-text: var(--color-text);
+  --color-button-bg-hover: var(--color-bg-light);
+  --color-button-text-hover: var(--color-text-dark);
 
   display: inline-block;
   position: relative;
+  min-width: calc(var(--baseline) * 11);
   padding: 0 var(--button-side-padding);
   border-radius: .3rem;
   font-size: var(--ms-1);
   line-height: var(--button-height);
   letter-spacing: .05em;
-  color: var(--button-text-color);
-  background-color: var(--button-bg-color);
+  text-align: center;
+  color: var(--color-button-text);
+  background-color: var(--color-button-bg);
   transition: color .1s, background-color .1s;
 }
 
 .button:hover,
 .button:focus {
-  color: var(--color-text-dark);
-  background-color: var(--color-bg-light);
+  color: var(--color-button-text-hover);
+  background-color: var(--color-button-bg-hover);
 }

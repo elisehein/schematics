@@ -5,6 +5,7 @@ const oldWindowLocation = window.location;
 describe("HashNavigation", () => {
   let onNavigateToRoot;
   let onNavigateToFigure;
+  let onNavigateToAbout;
   let hashChangeTrigger;
   let sut;
 
@@ -24,7 +25,8 @@ describe("HashNavigation", () => {
       jest.spyOn(window.history, "pushState");
       onNavigateToRoot = jest.fn();
       onNavigateToFigure = jest.fn();
-      sut = new HashNavigation({ onNavigateToRoot, onNavigateToFigure });
+      onNavigateToAbout = jest.fn();
+      sut = new HashNavigation({ onNavigateToRoot, onNavigateToFigure, onNavigateToAbout });
     });
 
     afterEach(() => {
@@ -129,6 +131,33 @@ describe("HashNavigation", () => {
           expect(window.history.pushState).toHaveBeenCalledWith(null, null, "#");
           expect(onNavigateToRoot).toHaveBeenCalledTimes(1); // Leftover from init
           expect(onNavigateToFigure).not.toBeCalled();
+        });
+      });
+    });
+
+    describe("if the current hash is #about", () => {
+      beforeEach(() => {
+        mockHash("#about");
+        sut.init();
+      });
+
+      test("calls onNavigateToAbout", () => {
+        expect(onNavigateToAbout).toHaveBeenCalledTimes(1);
+        expect(onNavigateToFigure).not.toBeCalled();
+        expect(onNavigateToRoot).not.toBeCalled();
+      });
+
+      describe("when the hash changes to #", () => {
+        beforeEach(() => {
+          mockHash("#")
+          hashChangeTrigger({ oldURL: "http://localhost:3000#about" });
+        });
+
+        test("clears the hash and calls onNavigateToRoot", () => {
+          expect(window.history.pushState).toHaveBeenCalledWith(null, null, "#");
+          expect(onNavigateToRoot).toHaveBeenCalledTimes(1);
+          expect(onNavigateToFigure).toHaveBeenCalledTimes(0);
+          expect(onNavigateToAbout).toHaveBeenCalledTimes(1); // Leftover from init
         });
       });
     });

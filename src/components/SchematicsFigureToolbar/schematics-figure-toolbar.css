@@ -6,7 +6,7 @@
   --directional-item-width: 5rem;
   --item-spacing: var(--baseline);
 
-  --normal-nav-link-color: var(--color-text-light);
+  --normal-nav-link-color: var(--color-text);
   --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
   --underline-height: .17rem;
 
@@ -16,16 +16,16 @@
   letter-spacing: var(--schematics-letter-spacing);
 
   &--transitioning {
-    --normal-nav-link-color: #fff;
-    --faded-nav-link-color: #fff;
-    --schematics-text-shadow: 0 0 .3em #fff;
+    --normal-nav-link-color: var(--color-highest-contrast);
+    --faded-nav-link-color: var(--color-highest-contrast);
+    --schematics-text-shadow: 0 0 .3em var(--color-highest-contrast);
   }
 
   &__item--figure__transitioning-active {
     @media (--toolbar-layout-active-link-visible) {
-      --normal-nav-link-color: #fff;
-      --faded-nav-link-color: #fff;
-      --schematics-text-shadow: 0 0 .3em #fff;
+      --normal-nav-link-color: var(--color-highest-contrast);
+      --faded-nav-link-color: var(--color-highest-contrast);
+      --schematics-text-shadow: 0 0 .3em var(--color-highest-contrast);
     }
   }
 

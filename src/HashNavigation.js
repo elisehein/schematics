@@ -1,7 +1,8 @@
 export default class HashNavigation {
-  constructor({ onNavigateToRoot, onNavigateToFigure }) {
+  constructor({ onNavigateToRoot, onNavigateToFigure, onNavigateToAbout }) {
     this._onNavigateToFigure = onNavigateToFigure;
     this._onNavigateToRoot = onNavigateToRoot;
+    this._onNavigateToAbout = onNavigateToAbout;
     window.addEventListener("hashchange", this.onHashChange.bind(this));
   }
 
@@ -11,6 +12,8 @@ export default class HashNavigation {
       // If we already have a figure number given on start, the hashchange event won't fire,
       // So we trigger the handler manually.
       this._onNavigateToFigure(figureNumFromHash);
+    } else if (window.location.hash == "#about") {
+      this._onNavigateToAbout();
     } else {
       this.goToRoot();
     }
@@ -19,6 +22,11 @@ export default class HashNavigation {
   onHashChange(event) {
     if (this.isRoot(window.location.hash)) {
       this.goToRoot();
+      return;
+    }
+
+    if (window.location.hash == "#about") {
+      this._onNavigateToAbout();
       return;
     }
 

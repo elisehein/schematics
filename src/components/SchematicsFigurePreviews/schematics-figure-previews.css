@@ -103,8 +103,8 @@ schematics-figure-previews {
     }
 
     a:focus &__diagram {
-      filter: drop-shadow(0 0 .15em #fff);
-      color: #fff;
+      filter: drop-shadow(0 0 .15em var(--color-highest-contrast));
+      color: var(--color-highest-contrast);
     }
 
     &__fig-num {

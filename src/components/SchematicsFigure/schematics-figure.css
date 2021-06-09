@@ -1,29 +1,29 @@
 @keyframes text-shadow-flicker {
   0% {
-    text-shadow: 0 0 .2em var(--color-text-light);
-    color: #fff;
+    text-shadow: 0 0 .2em var(--color-text);
+    color: var(--color-highest-contrast);
   }
 
   30% {
-    text-shadow: 0 0 .03em var(--color-text-light);
+    text-shadow: 0 0 .03em var(--color-text);
   }
 
   40% {
-    text-shadow: 0 0 .3em var(--color-text-light);
-    color: #fff;
+    text-shadow: 0 0 .3em var(--color-text);
+    color: var(--color-highest-contrast);
   }
 
   55% {
-    text-shadow: 0 0 .02em var(--color-text-light);
+    text-shadow: 0 0 .02em var(--color-text);
   }
 
   70% {
-    text-shadow: 0 0 .1em var(--color-text-light);
-    color: #fff;
+    text-shadow: 0 0 .1em var(--color-text);
+    color: var(--color-highest-contrast);
   }
 
   100% {
-    text-shadow: 0 0 .07em var(--color-text-light);
+    text-shadow: 0 0 .07em var(--color-text);
     color: var(--page-bg-color);
   }
 }
@@ -35,15 +35,15 @@
 
 @keyframes light-up-diagram {
   50% {
-    filter: drop-shadow(0 0 .1em #fff);
-    color: #fff;
+    filter: drop-shadow(0 0 .1em var(--color-highest-contrast));
+    color: var(--color-highest-contrast);
   }
 }
 
 @keyframes light-up-text {
   50% {
-    text-shadow: 0 0 .2em var(--color-text-light);
-    color: #fff;
+    text-shadow: 0 0 .2em var(--color-text);
+    color: var(--color-highest-contrast);
   }
 }
 
@@ -111,8 +111,8 @@
 
     &--showing &__diagram-container,
     &--hiding &__diagram-container {
-      filter: drop-shadow(0 0 .15em #fff);
-      color: #fff;
+      filter: drop-shadow(0 0 .15em var(--color-highest-contrast));
+      color: var(--color-highest-contrast);
     }
 
     &--hiding &__diagram-container {

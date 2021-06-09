@@ -1,14 +1,17 @@
 const viewStates = {
   SHOWING_FIGURE: "SHOWING_FIGURE",
-  SHOWING_PREVIEWS: "SHOWING_PREVIEWS"
+  SHOWING_PREVIEWS: "SHOWING_PREVIEWS",
+  SHOWING_ABOUT: "SHOWING_ABOUT"
 };
 
 export default class ViewSwitcher {
-  constructor(previews, figure, toolbar, aside, footer) {
+  constructor({ previews, figure, toolbar, about, asideFigures, asideAbout, footer }) {
     this._previews = previews;
     this._figure = figure;
     this._toolbar = toolbar;
-    this._aside = aside;
+    this._about = about;
+    this._asideFigures = asideFigures;
+    this._asideAbout = asideAbout;
     this._footer = footer;
 
     this._state = null;
@@ -19,17 +22,19 @@ export default class ViewSwitcher {
       return;
     }
 
+    this._about.hide();
     this._toolbar.hide();
     this._figure.hide(() => {
       this._figure.removeAttribute("num");
       document.body.dataset.visibleView = "figure-previews";
       this._previews.show();
-      this.ensureOtherElementsVisible();
+      this.ensureSecondaryElementsVisible();
       this._state = viewStates.SHOWING_PREVIEWS;
     });
   }
 
   showFigure(num) {
+    this._about.hide();
     this._previews.hide(() => {
       document.body.dataset.visibleView = "individual-figure";
       this._toolbar.active = num;
@@ -41,15 +46,37 @@ export default class ViewSwitcher {
         this._figure.showWithNum(num);
       }
 
-      this.ensureOtherElementsVisible();
+      this.ensureSecondaryElementsVisible();
       this._state = viewStates.SHOWING_FIGURE;
     });
   }
 
+  showAbout() {
+    if (this._state == viewStates.SHOWING_ABOUT) {
+      return;
+    }
+
+    const show = () => {
+      document.body.dataset.visibleView = "about-schematics";
+      this._about.show();
+      this.ensureSecondaryElementsVisible();
+      this._state = viewStates.SHOWING_ABOUT;
+    };
+
+    if (this._state == viewStates.SHOWING_PREVIEWS) {
+      this._previews.hide(show);
+    } else {
+      this._previews.hide(() => {}); /* Previews start out with visibility: visible to avoid layout shifts */
+      this._toolbar.hide();
+      this._figure.hide(show);
+    }
+  }
+
   /* Don't show these elements until the first requested view has
    * been rendered in order to avoid funky layout shifts */
-  ensureOtherElementsVisible() {
-    this._aside.style.opacity = 1;
+  ensureSecondaryElementsVisible() {
+    this._asideFigures.style.opacity = 1;
+    this._asideAbout.style.opacity = 1;
     this._footer.style.opacity = 1;
   }
 }

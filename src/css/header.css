@@ -14,106 +14,108 @@ header {
   @media (--layout-aside-always-visible) {
     overflow: visible;
   }
-}
 
-h1,
-h2 {
-  display: inline-block;
-  font-size: var(--ms-2);
-  font-weight: 400;
-  line-height: var(--schematics-title-line-height);
-  white-space: nowrap;
-
-  span {
+  h1,
+  h2 {
     display: inline-block;
-    transform: scaleY(1.1);
-  }
+    font-size: var(--ms-2);
+    font-weight: 400;
+    line-height: var(--schematics-title-line-height);
+    white-space: nowrap;
 
-  scan-lines {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    color: var(--color-text-dark);
-  }
-}
+    span {
+      display: inline-block;
+      transform: scaleY(1.1);
+    }
 
-h1 {
-  position: relative;
-  background: var(--color-bg-light);
-  text-transform: uppercase;
-  letter-spacing: .5em;
-  text-shadow: 0 0 .03em var(--color-text-dark);
-  color: var(--color-text-dark);
-  transform-origin: top left;
-
-  a {
-    display: inline-block;
-    padding: var(--schematics-title-vertical-padding) var(--schematics-title-horizontal-padding);
-    transition: padding var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
-
-    &:hover,
-    &:focus {
-      color: inherit;
+    scan-lines {
+      position: absolute;
+      top: 0;
+      bottom: 0;
     }
   }
 
-  scan-lines {
-    opacity: .6;
-    right: 0;
-    left: 0;
-  }
+  h1 {
+    /* Don't use theme-responsive color vars here, h1 always needs to look the same */
+    position: relative;
+    background: var(--color-bg-light);
+    text-transform: uppercase;
+    letter-spacing: .5em;
+    text-shadow: 0 0 .03em var(--color-text-dark);
+    color: var(--color-text-dark);
+    transform-origin: top left;
 
-  @media (--layout-full-screen-figure-with-small-logo) {
-    transition:
-      transform var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
-      opacity var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
-
-    [data-visible-view*="individual"] & {
-      --schematics-title-vertical-padding: .1rem;
-      --schematics-title-horizontal-padding: 1em;
-
-      transform: scale(.75);
-      opacity: .5;
+    a {
+      display: inline-block;
+      padding: var(--schematics-title-vertical-padding) var(--schematics-title-horizontal-padding);
+      transition: padding var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
 
       &:hover,
       &:focus {
-        opacity: 1;
+        color: inherit;
+      }
+    }
+
+    scan-lines {
+      opacity: .6;
+      right: 0;
+      left: 0;
+      color: var(--color-text-dark);
+    }
+
+    @media (--layout-full-screen-figure-with-small-logo) {
+      transition:
+        transform var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
+        opacity var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out);
+
+      [data-visible-view*="individual"] & {
+        --schematics-title-vertical-padding: .1rem;
+        --schematics-title-horizontal-padding: 1em;
+
+        transform: scale(.75);
+        opacity: .5;
+
+        &:hover,
+        &:focus {
+          opacity: 1;
+        }
       }
     }
   }
-}
 
-h2 {
-  --h2-border-width: .12em;
+  h2 {
+    --h2-border-width: .12em;
 
-  display: inline-block;
-  position: relative;
-  float: right;
-  margin-top: var(--baseline);
-  padding: var(--schematics-title-vertical-padding) var(--schematics-title-horizontal-padding);
-  border: var(--h2-border-width) solid var(--color-text-light);
-  letter-spacing: .2em;
-  text-shadow: var(--schematics-text-shadow);
+    display: inline-block;
+    position: relative;
+    float: right;
+    margin-top: var(--baseline);
+    padding: var(--schematics-title-vertical-padding) var(--schematics-title-horizontal-padding);
+    border: var(--h2-border-width) solid var(--color-text);
+    letter-spacing: .2em;
+    text-shadow: var(--schematics-text-shadow);
 
-  &::before {
-    content: "\2192";
-    position: absolute;
-    right: calc(100% + var(--baseline));
-  }
-
-  scan-lines {
-    right: calc(var(--h2-border-width) * -1);
-    left: calc(var(--triple-baseline) * -1);
-  }
-
-  [data-visible-view*="individual"] & {
-    @media (--layout-full-screen-figure-with-small-logo) {
-      display: none;
+    &::before {
+      content: "\2192";
+      position: absolute;
+      right: calc(100% + var(--baseline));
     }
-  }
 
-  @media (--layout-aside-always-visible) {
-    position: absolute; /* So that h1 is the anchor, vertically centered */
-    margin-left: calc(var(--baseline) * 8);
+    scan-lines {
+      right: calc(var(--h2-border-width) * -1);
+      left: calc(var(--triple-baseline) * -1);
+      color: var(--color-page-bg)
+    }
+
+    [data-visible-view*="individual"] & {
+      @media (--layout-full-screen-figure-with-small-logo) {
+        display: none;
+      }
+    }
+
+    @media (--layout-aside-always-visible) {
+      position: absolute; /* So that h1 is the anchor, vertically centered */
+      margin-left: calc(var(--baseline) * 8);
+    }
   }
 }
