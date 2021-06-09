@@ -23,6 +23,7 @@ export default class ScanLines extends HTMLElement {
   }
 
   connectedCallback() {
+    this.style.pointerEvents = "none";
     this.setAttribute("role", "presentation");
     this.replaceChildren(this.renderSVGPattern());
   }

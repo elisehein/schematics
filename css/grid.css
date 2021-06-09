@@ -120,7 +120,8 @@ schematics-figure {
 
 .schematics-figure__figure {
   display: grid;
-  width: 100%;
+  width: min-content;
+  min-width: max(100%, var(--figure-min-width, 100%));
   height: 100%;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(7, 1fr);

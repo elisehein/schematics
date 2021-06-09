@@ -64,6 +64,16 @@
   --schematics-figure-light-up-easing: ease-in;
   --jitter-animation-duration: calc(var(--figure-pre-exit-transition-duration) + (var(--figure-exit-transition-duration) / 2));
 
+  scan-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    color: var(--color-page-bg);
+    z-index: 10;
+  }
+
   &__figure {
     position: relative;
     color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) + 5%), 1);

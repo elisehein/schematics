@@ -34,7 +34,6 @@ h2 {
     top: 0;
     bottom: 0;
     color: var(--color-text-dark);
-    pointer-events: none;
   }
 }
 

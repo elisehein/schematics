@@ -215,4 +215,14 @@
 
     font-size: var(--ms-1);
   }
+
+  scan-lines {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+    color: var(--color-page-bg);
+  }
 }

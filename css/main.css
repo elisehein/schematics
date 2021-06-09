@@ -120,22 +120,6 @@ main {
   position: relative;
 }
 
-main > scan-lines {
-  position: absolute;
-  display: block;
-  top: 0;
-  right: 0;
-  bottom: calc(var(--page-padding) * -1); /* To account for toolbar overflowing elements */
-  left: 0;
-  color: var(--color-bg-dark);
-  z-index: 10;
-  pointer-events: none;
-
-  [data-visible-view*="previews"] & {
-    display: none;
-  }
-}
-
 .button {
   --button-side-padding: var(--double-baseline);
   --button-height: var(--triple-baseline);

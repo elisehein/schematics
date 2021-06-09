@@ -4,7 +4,7 @@
   }
 
   &--14 &__figure {
-    min-width: 40em;
+    --figure-min-width: 40em;
 
     &__diagram-container {
       grid-row: 3 / -1;
@@ -43,7 +43,7 @@
     }
 
     @media (--layout-full-screen-figure-with-full-size-logo) {
-      min-width: 100%;
+      --figure-min-width: 100%;
 
       &__diagram-container {
         grid-column: 1 / -4;
@@ -57,7 +57,7 @@
   }
 
   &--18 &__figure {
-    min-width: 32rem;
+    --figure-min-width: 32rem;
 
     &__diagram-container {
       grid-column: 1 / -1;
