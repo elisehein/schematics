@@ -2,13 +2,15 @@
 
 This is a proof of concept JavaScript project to try out [The Stackless Way](https://tutorials.yax.com/articles/build-websites-the-yax-way/quicktakes/what-is-the-yax-way.html), an optimistic approach to client-side JavaScript development that proposes we “use the platform” (modern features built into the language) instead of build tools and frameworks.
 
-As such, there is no build command to run or dependencies to install to view this project locally. Spin up a server in the project folder and point your (Custom Elements, ES6 modules, modern CSS capable) browser to `localhost:3000`.
+As such, there is no build command to run or dependencies to install to view this project locally. Spin up a server in the `src` folder and point your (Custom Elements, ES6 modules, modern CSS capable) browser to `localhost:3000`.
 
 ```
 python3 -m http.server 3000
 ```
 
 ## About this project
+
+![Screenshot of the website](/screenshot.png)
 
 #### Motion design
 

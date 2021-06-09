@@ -25,17 +25,19 @@
   },
   "scripts": {
     "test": "jest",
-    "postcss": "postcss css/main.css --use postcss-import postcss-custom-media postcss-nested -o main.css --watch --verbose",
-    "postcss:production": "postcss css/main.css --use postcss-import postcss-custom-media postcss-nested --no-map -o main.css",
-    "serve": "http-server --port=3000",
-    "watch-css": "npm-watch postcss",
+    "lint:css": "stylelint ./src/**/*.css",
+    "lint:js": "eslint ./src/**/*.js",
+    "postcss": "postcss src/css/main.css --use postcss-import postcss-custom-media postcss-nested -o src/main.css --watch --verbose",
+    "postcss:production": "postcss src/css/main.css --use postcss-import postcss-custom-media postcss-nested --no-map -o src/main.css",
+    "serve": "http-server ./src --port=4000",
+    "watch:css": "npm-watch postcss",
     "livereload": "livereload -w 2000",
-    "dev": "concurrently \"npm run watch-css\" \"npm run serve\" \"npm run livereload\""
+    "dev": "concurrently \"npm run watch:css\" \"npm run serve\" \"npm run livereload\""
   },
   "watch": {
     "postcss": {
       "extensions": "css",
-      "ignore": "./main.css"
+      "ignore": "./src/main.css"
     }
   },
   "repository": {
