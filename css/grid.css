@@ -55,7 +55,7 @@
   @media (--layout-aside-always-visible) {
     grid-template-rows: min-content 1fr;
     grid-template-columns: var(--grid-template-columns);
-    min-height: 100vh;
+    min-height: 100%;
     margin: auto;
 
     [data-visible-view] & {
