@@ -14,7 +14,7 @@ python3 -m http.server 3000
 
 #### Motion design
 
-In 2011, I bought [Julian Hibbard](http://julianhibbard.com/)’s mesmerising book *[Schematics: A Love Story](http://julianhibbard.com/schematics.html)*, a collection of mathematical diagrams accompanied by short pieces of poetry. I’ll be the first to admit I’m only vaguely aware of the meaning each figure tries to convey. Still, the book has kept me hooked, and the aesthetic always seemed like it would be fun to replicate digitally.
+In 2011, I bought [Julian Hibbard](http://julianhibbard.com/)’s book *[Schematics: A Love Story](http://julianhibbard.com/schematics.html)*, a collection of mathematical diagrams accompanied by short pieces of poetry. I’ll be the first to admit I’m only vaguely aware of the meaning each figure tries to convey. Still, the book has kept me hooked, and the aesthetic always seemed like it would be fun to replicate digitally.
 
 #### JavaScript without the build tools or frameworks
 
