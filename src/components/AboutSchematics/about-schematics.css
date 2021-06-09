@@ -16,7 +16,7 @@
 @keyframes slide-up-fade {
   from {
     opacity: 0;
-    transform: translateY(10rem);
+    transform: translateY(5rem);
   }
   to {
     opacity: 1;
@@ -35,7 +35,7 @@ about-schematics {
     opacity: 0;
     font-size: var(--ms1);
     line-height: var(--triple-baseline);
-    animation: slide-up-fade .7s cubic-bezier(0.22, 1, 0.36, 1) .5s;
+    animation: slide-up-fade .8s cubic-bezier(0.16, 1, 0.3, 1) .3s;
     animation-fill-mode: forwards;
 
     > p:nth-of-type(1)::first-line {

@@ -45,7 +45,14 @@ aside {
   display: block;
 }
 
-[data-visible-view*="individual"] #aside-figures,
-[data-visible-view*="previews"] #aside-figures {
-  display: block;
+#aside-figures {
+  [data-visible-view*="previews"] & {
+    display: block;
+  }
+
+  @media (--layout-aside-always-visible) {
+    [data-visible-view*="individual"] & {
+      display: block;
+    }
+  }
 }
