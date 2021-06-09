@@ -76,10 +76,10 @@ export default class Diagram extends HTMLElement {
   }
 
   /* Until we have other use cases, keep it simple with the assumption that scrolling
-   * body all the way to the left will bring the diagram into view.
+   * main all the way to the left will bring the diagram into view.
    */
   smoothScrollIntoView({ onDone }) {
-    smoothScroll(document.documentElement, 0, 0, 700, BezierEasing.easeOutCubic, { onDone });
+    smoothScroll(document.querySelector("main"), 0, 0, 700, BezierEasing.easeOutCubic, { onDone });
   }
 
   scrollIntoView() {
