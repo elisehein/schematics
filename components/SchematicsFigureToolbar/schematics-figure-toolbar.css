@@ -1,3 +1,4 @@
+@custom-media --toolbar-layout-active-link-visible (max-width: 74.9375em);
 @custom-media --toolbar-layout-all-links-visible (min-width: 75em);
 
 .schematics-figure-toolbar {
@@ -18,6 +19,14 @@
     --normal-nav-link-color: #fff;
     --faded-nav-link-color: #fff;
     --schematics-text-shadow: 0 0 .3em #fff;
+  }
+
+  &__item--figure__transitioning-active {
+    @media (--toolbar-layout-active-link-visible) {
+      --normal-nav-link-color: #fff;
+      --faded-nav-link-color: #fff;
+      --schematics-text-shadow: 0 0 .3em #fff;
+    }
   }
 
   &--transitioning--showing {
@@ -101,17 +110,25 @@
   a {
     color: var(--faded-nav-link-color);
     text-shadow: var(--schematics-text-shadow);
+    filter: var(--transitioning-link-filter);
     transition:
+      filter var(--micro-interaction-animation-duration),
       text-shadow var(--micro-interaction-animation-duration),
       color var(--micro-interaction-animation-duration);
   }
 
-  &--transitioning--hiding a {
-    transition-duration: var(--figure-pre-exit-transition-duration);
+  a&__item--figure__transitioning-active {
+    @media (--toolbar-layout-active-link-visible) {
+      filter: blur(.1em);
+    }
   }
 
   &--transitioning--showing a {
     transition-duration: var(--figure-appear-transition-duration);
+  }
+
+  &--transitioning--hiding a {
+    transition-duration: var(--figure-pre-exit-transition-duration);
   }
 
   &__item {

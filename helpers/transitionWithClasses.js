@@ -1,3 +1,4 @@
+
 export default function transitionWithClasses(node, classNames, onDone = () => {}) {
   classNames.forEach(name => node.classList.add(name));
 

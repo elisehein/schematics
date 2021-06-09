@@ -48,7 +48,7 @@ export default class SchematicsFigureToolbar extends HTMLElement {
 
     return `
     <li
-      class="${this.itemClass({ directional: true })}"
+      class="${this.itemClasses({ directional: true })}"
       aria-hidden="${targetNum ? "false" : "true"}" >
       <a
         id="${this.directionalLinkID(direction)}"
@@ -63,32 +63,49 @@ export default class SchematicsFigureToolbar extends HTMLElement {
 
   renderFigureLinks() {
     return this.nums.map(num => `
-      <li class="${this.itemClass({ active: num == this.active, figure: true })}" data-figure-link="${num}">
+      <li class="${this.itemClasses({ active: num == this.active, figure: true })}" data-figure-link="${num}">
         <a href="#fig${num}">fig. ${num}</a>
       </li>
     `).join("");
   }
 
-  update() {
-    this.querySelector("[data-active-item-index]").dataset.activeItemIndex = this.activeNumIndex;
-    this.querySelector("ul").innerHTML = this.renderLinks();
+  update(oldNum) {
+    [oldNum, this.active]
+      .filter(num => num)
+      .forEach((num, index) => {
+        const node = this.querySelector(`[data-figure-link="${num}"] a`);
+
+        transitionWithClasses(node, [this.itemClass("figure__transitioning-active")], () => {
+          if (index > 0) {
+            // No need to run completion more than once
+            return;
+          }
+
+          this.querySelector("[data-active-item-index]").dataset.activeItemIndex = this.activeNumIndex;
+          this.querySelector("ul").innerHTML = this.renderLinks();
+        });
+      });
   }
 
   directionalLinkID(direction) {
     return `${direction == DIRECTION.next ? "next" : "previous"}-figure-link`;
   }
 
-  itemClass(variations = {}) {
-    const baseClass = "schematics-figure-toolbar__item";
-    const classes = [baseClass];
+  itemClasses(variations = {}) {
+    const classes = [this.itemClass()];
 
     Object.keys(variations).forEach(variation => {
       if (variations[variation]) {
-        classes.push(`${baseClass}--${variation}`);
+        classes.push(this.itemClass(variation));
       }
     });
 
     return classes.join(" ");
+  }
+
+  itemClass(variation) {
+    const baseClass = "schematics-figure-toolbar__item";
+    return variation ? `${baseClass}--${variation}` : baseClass;
   }
 
   show() {
@@ -120,7 +137,7 @@ export default class SchematicsFigureToolbar extends HTMLElement {
         this.render();
         break;
       case "active":
-        this.update();
+        this.update(oldValue);
         break;
       default:
         break;
