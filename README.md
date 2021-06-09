@@ -32,13 +32,13 @@ In the spirit of The Stackless Way, I initially wanted to bite the bullet and, a
 
 Because CSS needs to be preprocessed, it's not *technically* a matter of spinning up a server and opening `localhost` (I've committed the built `main.css` file into the repo to make the point, though).
 
-If you'd like to take a closer look at the codebase locally:
+If you'd like to take a closer look at the codebase locally...
 
 ```
 > npm install
 > npm run dev
 ```
 
-Which processes CSS files when changed, and fires up a local server with livereload at port `3000`.
+This processes CSS files when changed, and fires up a local server with livereload at port `3000`.
 
 Installing npm dependencies also means you can run the Jest tests (`npm test`) and linters (`npm run lint:js`, `npm run lint:css`).
