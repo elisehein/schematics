@@ -161,17 +161,6 @@
             opacity: 0;
             animation-iteration-count: 5;
           }
-
-          @media (max-width: 40em) {
-            /* To keep the extra whitespace next to the character when scrolling */
-            white-space: nowrap;
-
-            /* The extra width is to give it some air in cases where it is scrolledIntoView */
-            &::after {
-              display: inline-block;
-              width: 3rem;
-            }
-          }
         }
       }
     }
