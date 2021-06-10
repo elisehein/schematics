@@ -174,7 +174,7 @@
     }
   }
 
-  &--40 &__figure {
+  &--42 &__figure {
     &__diagram-container {
       grid-column: 1 / -1;
       grid-row: 1 / -1;

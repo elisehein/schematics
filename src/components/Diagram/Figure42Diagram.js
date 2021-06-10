@@ -12,9 +12,9 @@ const commonAnimationProps = dur => ({
   keySplines: BezierEasing.easeInOutCubic.smilString
 });
 
-export default class Figure40Diagram extends Diagram {
+export default class Figure42Diagram extends Diagram {
   constructor(isThumbnail) {
-    super(40, isThumbnail);
+    super(42, isThumbnail);
 
     this._stars = [];
   }
@@ -174,4 +174,4 @@ export default class Figure40Diagram extends Diagram {
 
 const randomIntBetween = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
-customElements.define("figure-40-diagram", Figure40Diagram);
+customElements.define("figure-40-diagram", Figure42Diagram);
