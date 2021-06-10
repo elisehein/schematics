@@ -11,7 +11,7 @@ export const directives = {
 
 const figures = {
   14: {
-    a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system (the space-time continuum).",
+    a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system.",
     poetry: `[TYPE:NORMAL]I return [TYPE:FAST][PAUSE:SHORT]and sense,
 [PAUSE:LONG]things [PAUSE:SHORT]are\n[PAUSE:gMEDIUM]not [TYPE:SLOWEST]the same[TYPE:SLOW] as[TYPE:NORMAL] before,[PAUSE:MEDIUM]
 but feel[PAUSE:SHORT] had I stayed,
@@ -28,8 +28,8 @@ but feel[PAUSE:SHORT] had I stayed,
 [TYPE:FAST]if I[TYPE:SLOW]\ncould.`
   },
   40: {
-    a11yDescription: "Don't remember",
-    poetry: "Alone."
+    a11yDescription: "A scatter plot with discrete x-axis groupings that gets denser towarsds the bottom right.",
+    poetry: "[TYPE:SLOW]Si[TYPE:SLOWEST]len[TYPE:NORMAL]ce."
   },
   43: {
     a11yDescription: "A rotating Necker cube.",

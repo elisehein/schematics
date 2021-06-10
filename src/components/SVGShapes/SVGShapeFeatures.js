@@ -80,16 +80,22 @@ export const animatable = ({ node }) => ({
     node.appendChild(animate);
   },
 
-  animateTransform(type, { values, keyTimes, calcMode, keySplines, dur, begin, repeatCount, fill, id }) {
+  animateTransform(type, { from, to, values, keyTimes, calcMode, keySplines, dur, begin, repeatCount, fill, additive, id }) {
     const animate = document.createElementNS("http://www.w3.org/2000/svg", "animateTransform");
     animate.setAttribute("attributeName", "transform");
     animate.setAttribute("attributeType", "XML");
     animate.setAttribute("type", type);
-    animate.setAttribute("values", values);
     animate.setAttribute("dur", `${dur}s`);
 
+    if (from && to) {
+      animate.setAttribute("from", from);
+      animate.setAttribute("to", to);
+    } else if (values) {
+      animate.setAttribute("values", values);
+    }
+
     this.setAttributesIfPresent({
-      keyTimes, calcMode, keySplines, begin, repeatCount, fill, id
+      keyTimes, calcMode, keySplines, begin, repeatCount, fill, additive, id
     }, animate);
 
     node.appendChild(animate);

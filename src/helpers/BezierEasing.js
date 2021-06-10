@@ -55,3 +55,4 @@ BezierEasing.easeOutSine = new BezierEasing(0.61, 1, 0.88, 1);
 BezierEasing.easeOutCubic = new BezierEasing(0.33, 1, 0.68, 1);
 
 BezierEasing.easeInOutSine = new BezierEasing(0.37, 0, 0.63, 1);
+BezierEasing.easeInOutCubic = new BezierEasing(0.65, 0, 0.35, 1);

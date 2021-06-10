@@ -1,15 +1,40 @@
-import { createSVGElement } from "../../../components/SVGShapes/SVGShapes.js";
+import { animatable } from "/components/SVGShapes/SVGShapeFeatures.js";
+import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
+import BezierEasing from "/helpers/BezierEasing.js";
 import Diagram from "./Diagram.js";
+
+const commonAnimationProps = dur => ({
+  fill: "freeze",
+  begin: "indefinite",
+  dur,
+  keyTimes: "0; 1",
+  calcMode: "spline",
+  keySplines: BezierEasing.easeInOutCubic.smilString
+});
 
 export default class Figure40Diagram extends Diagram {
   constructor(isThumbnail) {
     super(40, isThumbnail);
 
-    this._starsAlongYAxes = {};
+    this._stars = [];
+  }
+
+  drawBeforeCaption({ onDone }) {
+    this.drawStars();
+
+    runActionsSequentially([
+      waitBeforeNextAction(1000, this._timerManager),
+      this.animateTemperatureOnXAxis.bind(this, 5),
+      this.animateMagnitudeOnYAxis.bind(this, 5),
+      waitBeforeNextAction(1000, this._timerManager)
+    ], onDone);
+  }
+
+  drawThumbnail() {
   }
 
   // eslint-disable-next-line max-statements
-  drawBeforeCaption({ onDone }) {
+  drawStars() {
     this.drawStarsAlongYAxis(15, 29, 50, 63, 67);
     this.drawStarsAlongYAxis(28, 70);
     this.drawStarsAlongYAxis(42, 63, 67);
@@ -37,47 +62,113 @@ export default class Figure40Diagram extends Diagram {
     this.drawStarsAlongYAxis(286, 46, 53, 191, 194, 205, 211, 215, 218, 222, 263);
   }
 
-  drawThumbnail() {
-  }
-
   drawStarsAlongYAxis(x, ...yCoords) {
-    this._starsAlongYAxes.x = yCoords.map(y => this.drawStar(x, y));
+    this._stars = this._stars.concat(yCoords.map(y => this.drawStar(x, y)));
   }
 
   drawStar(x, y) {
-    const g = createSVGElement("g");
     const width = 2;
     const height = 3;
 
-    const horizontalLine = this._svgShapeFactory.getLine({ x: x - (width / 2), y }, { x: x + (width / 2), y });
-    horizontalLine.stroke(2);
-    horizontalLine.node.style.strokeLinecap = "square";
+    const circle = this._svgShapeFactory.getCircle(x, y, width, height);
+    circle.fill();
 
-    const verticalLine = this._svgShapeFactory.getLine({ x, y: y - (height / 2) }, { x, y: y + (height / 2) });
-    verticalLine.stroke(2);
-    verticalLine.node.style.strokeLinecap = "square";
+    // Keep track of the intended coordinates as we will override them with random ones
+    circle.node.dataset.x = x;
+    circle.node.dataset.y = y;
 
-    g.appendChild(horizontalLine.node);
-    g.appendChild(verticalLine.node);
-    this.scatterRandomly(g, x, y);
-    this.addSVGChildElement(g);
+    this.scatterRandomly(circle.node, x, y);
+    this.addSVGChildElement(circle.node);
 
-    return g;
+    return circle;
   }
 
   scatterRandomly(node, x, y) {
     const viewBox = this.querySelector("svg").viewBox.baseVal;
+    node.setAttribute("fill-opacity", x / viewBox.width);
+
+    node.dataset.appliedScale = y / (viewBox.height / 2);
+    node.setAttribute("transform-origin", `${x} ${y}`);
+    node.setAttribute("transform", `scale(${node.dataset.appliedScale})`);
+
     const randomXTranslation = this.getRandomTranslationWithinBounds(x, viewBox.width, 7);
     const randomYTranslation = this.getRandomTranslationWithinBounds(y, viewBox.height, 10);
-    node.setAttribute("opacity", x / viewBox.width);
-    node.setAttribute("transform-origin", `${x} ${y}`);
-    node.setAttribute("transform", `translate(${randomXTranslation} ${randomYTranslation}) scale(${y / (viewBox.height / 2)})`);
+    node.setAttribute("cx", x + randomXTranslation);
+    node.setAttribute("cy", y + randomYTranslation);
   }
 
   getRandomTranslationWithinBounds(originalValue, bounds, inset) {
     const randomPositiveTranslation = randomIntBetween(0, bounds - originalValue - inset);
     const randomNegativeTranslation = randomIntBetween(0, originalValue - inset) * -1;
     return Math.random() > 0.5 ? randomPositiveTranslation : randomNegativeTranslation;
+  }
+
+  animateTemperatureOnXAxis(durationSec, { onDone }) {
+    this._stars.forEach((star, index) => {
+      const animatableStar = animatable(star);
+      const opacityAnimationID = this.opacityAnimationID(index);
+      const translationAnimationID = this.xTranslationAnimationID(index);
+
+      animatableStar.animateAttribute("fill-opacity", Object.assign({
+        id: opacityAnimationID,
+        from: star.node.getAttribute("fill-opacity"),
+        to: 1,
+      }, commonAnimationProps(durationSec)));
+
+      animatableStar.animateAttribute("cx", Object.assign({
+        id: translationAnimationID,
+        values: `${star.node.getAttribute("cx")};${star.node.dataset.x}`,
+      }, commonAnimationProps(durationSec)));
+
+      animatableStar.beginAnimation(opacityAnimationID);
+      animatableStar.beginAnimation(translationAnimationID, () => {
+        if (index == 0) {
+          onDone();
+        }
+      });
+    });
+  }
+
+  animateMagnitudeOnYAxis(durationSec, { onDone }) {
+    this._stars.forEach((star, index) => {
+      const animatableStar = animatable(star);
+      const scaleAnimationID = this.scaleAnimationID(index);
+      const translationAnimationID = this.yTranslationAnimationID(index);
+
+      animatableStar.animateTransform("scale", Object.assign({
+        id: scaleAnimationID,
+        from: star.node.dataset.appliedScale,
+        to: "1"
+      }, commonAnimationProps(durationSec)));
+
+      animatableStar.animateAttribute("cy", Object.assign({
+        id: translationAnimationID,
+        values: `${star.node.getAttribute("cy")};${star.node.dataset.y}`,
+      }, commonAnimationProps(durationSec)));
+
+      animatableStar.beginAnimation(scaleAnimationID);
+      animatableStar.beginAnimation(translationAnimationID, () => {
+        if (index == 0) {
+          onDone();
+        }
+      });
+    });
+  }
+
+  xTranslationAnimationID(index) {
+    return `x-translation-animation-${index}`;
+  }
+
+  opacityAnimationID(index) {
+    return `opacity-animation-${index}`;
+  }
+
+  yTranslationAnimationID(index) {
+    return `y-translation-animation-${index}`;
+  }
+
+  scaleAnimationID(index) {
+    return `scale-animation-${index}`;
   }
 }
 

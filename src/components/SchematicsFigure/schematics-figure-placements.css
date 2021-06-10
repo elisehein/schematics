@@ -181,10 +181,9 @@
     }
 
     &__figcaption {
-      grid-column: 1 / -1;
-      grid-row: 1 / -1;
-      justify-self: center;
-      align-self: center;
+      grid-column: 2 / span 2;
+      grid-row: 6;
+      align-self: flex-end;
     }
   }
 }
