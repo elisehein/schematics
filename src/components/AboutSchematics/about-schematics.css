@@ -1,16 +1,4 @@
 [data-visible-view*="about"] {
-  --color-page-bg: var(--color-bg-light);
-  --color-page-bg-contrast: var(--color-bg-dark);
-  --color-text: var(--color-text-dark);
-  --color-text-contrast: var(--color-text-light);
-  --color-text-hover: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-dark-lightness) + 30%), 1);
-  --color-highest-contrast: #fff;
-
-  .button {
-    --color-button-text: var(--color-bg-light);
-    --color-button-text-hover: var(--color-text-dark);
-    --color-button-bg-hover: hsla(var(--hue-main), var(--sat-main), calc(var(--color-bg-light-lightness) - 20%), 1);
-  }
 }
 
 @keyframes slide-up-fade {
@@ -26,6 +14,7 @@
 
 about-schematics {
   max-width: 70ch;
+  transition: opacity var(--micro-interaction-transition-duration) ease-out;
 
   @media (--layout-aside-always-visible) {
     margin: calc(var(--baseline) * 12) 0;
@@ -56,6 +45,10 @@ about-schematics {
       line-height: var(--double-baseline);
       opacity: .8;
     }
+  }
+
+  .&--hiding {
+    opacity: 0;
   }
 
   a {

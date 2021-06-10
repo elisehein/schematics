@@ -72,11 +72,13 @@
     bottom: 0;
     color: var(--color-page-bg);
     z-index: 10;
+    transition: color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
   }
 
   &__figure {
     position: relative;
-    color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) + 5%), 1);
+    color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-lightness) + 5%), 1);
+    transition: color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
 
     &--showing {
       animation: fade var(--figure-appear-transition-duration) ease-in;

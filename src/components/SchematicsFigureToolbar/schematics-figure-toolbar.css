@@ -7,7 +7,7 @@
   --item-spacing: var(--baseline);
 
   --normal-nav-link-color: var(--color-text);
-  --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-light-lightness) - 15%), 1);
+  --faded-nav-link-color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-lightness) - 15%), 1);
   --underline-height: .17rem;
 
   display: flex;
@@ -241,5 +241,6 @@
     left: 0;
     z-index: 10;
     color: var(--color-page-bg);
+    transition: color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
   }
 }

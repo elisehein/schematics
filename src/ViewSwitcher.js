@@ -1,3 +1,5 @@
+import { waitForAnimations } from "/helpers/transitionWithClasses.js";
+
 const viewStates = {
   SHOWING_FIGURE: "SHOWING_FIGURE",
   SHOWING_PREVIEWS: "SHOWING_PREVIEWS",
@@ -22,20 +24,26 @@ export default class ViewSwitcher {
       return;
     }
 
-    this._about.hide();
-    this._toolbar.hide();
-    this._figure.hide(() => {
+    const show = () => {
       this._figure.removeAttribute("num");
       document.body.dataset.visibleView = "figure-previews";
       this._previews.show();
       this.ensureSecondaryElementsVisible();
       this._state = viewStates.SHOWING_PREVIEWS;
+    };
+
+    this.ensureAboutIsHiddenAndColorSchemeIsDark(() => {
+      if (this._state == viewStates.SHOWING_ABOUT) {
+        show();
+      } else {
+        this._toolbar.hide();
+        this._figure.hide(show);
+      }
     });
   }
 
   showFigure(num) {
-    this._about.hide();
-    this._previews.hide(() => {
+    const show = () => {
       document.body.dataset.visibleView = "individual-figure";
       this._toolbar.active = num;
 
@@ -48,6 +56,14 @@ export default class ViewSwitcher {
 
       this.ensureSecondaryElementsVisible();
       this._state = viewStates.SHOWING_FIGURE;
+    };
+
+    this.ensureAboutIsHiddenAndColorSchemeIsDark(() => {
+      if (this._state == viewStates.SHOWING_ABOUT) {
+        show();
+      } else {
+        this._previews.hide(show);
+      }
     });
   }
 
@@ -56,20 +72,33 @@ export default class ViewSwitcher {
       return;
     }
 
+    this.hideAsides();
+
     const show = () => {
-      document.body.dataset.visibleView = "about-schematics";
-      this._about.show();
-      this.ensureSecondaryElementsVisible();
-      this._state = viewStates.SHOWING_ABOUT;
+      this.setColorScheme("light", () => {
+        document.body.dataset.visibleView = "about-schematics";
+        this._about.show();
+        this.ensureSecondaryElementsVisible();
+        this._state = viewStates.SHOWING_ABOUT;
+      });
     };
 
     if (this._state == viewStates.SHOWING_PREVIEWS) {
       this._previews.hide(show);
     } else {
-      this._previews.hide(() => {}); /* Previews start out with visibility: visible to avoid layout shifts */
+      this._previews.hide();
       this._toolbar.hide();
       this._figure.hide(show);
     }
+  }
+
+  ensureAboutIsHiddenAndColorSchemeIsDark(onDone) {
+    if (this._state == viewStates.SHOWING_ABOUT) {
+      this._about.hide();
+      this.hideAsides();
+    }
+
+    this.setColorScheme("dark", onDone);
   }
 
   /* Don't show these elements until the first requested view has
@@ -78,5 +107,15 @@ export default class ViewSwitcher {
     this._asideFigures.style.opacity = 1;
     this._asideAbout.style.opacity = 1;
     this._footer.style.opacity = 1;
+  }
+
+  hideAsides() {
+    this._asideAbout.style.opacity = 0;
+    this._asideFigures.style.opacity = 0;
+  }
+
+  setColorScheme(scheme, onDone = () => {}) {
+    document.body.dataset.colorScheme = scheme;
+    waitForAnimations(document.body, onDone);
   }
 }

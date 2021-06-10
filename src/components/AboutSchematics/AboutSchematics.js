@@ -1,3 +1,5 @@
+import transitionWithClasses from "/helpers/transitionWithClasses.js";
+
 export default class AboutSchematics extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
@@ -45,8 +47,11 @@ export default class AboutSchematics extends HTMLElement {
     document.documentElement.scrollTop = 0;
   }
 
-  hide() {
-    this.style.display = "none";
+  hide(onDone = () => {}) {
+    transitionWithClasses(this, ["about-schematics--hiding"], () => {
+      this.style.display = "none";
+      onDone();
+    });
   }
 }
 

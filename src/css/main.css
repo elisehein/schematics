@@ -5,6 +5,7 @@
 @import "./aside.css";
 @import "./footer.css";
 @import "./shared-animations.css";
+@import "./color-schemes.css";
 @import "../components/AboutSchematics/about-schematics.css";
 @import "../components/SchematicsFigure/schematics-figure.css";
 @import "../components/SchematicsFigure/schematics-figure-placements.css";
@@ -13,31 +14,6 @@
 @import "../components/SchematicsFigureToolbar/schematics-figure-toolbar.css";
 
 :root {
-  --hue-main: 0;
-  --sat-main: 0%;
-
-  --color-white-lightness: 95%;
-  --color-black-lightness: 10%;
-
-  --color-bg-dark-lightness: var(--color-black-lightness);
-  --color-bg-light-lightness: var(--color-white-lightness);
-
-  --color-bg-dark: hsla(var(--hue-main), var(--sat-main), var(--color-bg-dark-lightness), 1);
-  --color-bg-light: hsla(var(--hue-main), var(--sat-main), var(--color-bg-light-lightness), 1);
-
-  --color-text-light-lightness: calc(var(--color-white-lightness) - 23%);
-  --color-text-dark-lightness: var(--color-black-lightness);
-
-  --color-text-light: hsla(var(--hue-main), var(--sat-main), var(--color-text-light-lightness), 1);
-  --color-text-dark: hsla(var(--hue-main), var(--sat-main), var(--color-text-dark-lightness), 1);
-
-  --color-page-bg: var(--color-bg-dark);
-  --color-page-bg-contrast: var(--color-bg-light);
-  --color-text: var(--color-text-light);
-  --color-text-contrast: var(--color-text-dark);
-  --color-text-hover: #fff;
-  --color-highest-contrast: #fff;
-
   --baseline: .9rem;
 
   --double-baseline: calc(var(--baseline) * 2);
@@ -65,6 +41,9 @@
   --figure-exit-transition-duration: .3s;
   --figure-appear-transition-duration: .2s;
   --figure-exit-fade-out-timing: cubic-bezier(.55, 0, 1, .45);
+
+  --color-scheme-transition-duration: .3s;
+  --color-scheme-transition-easing: cubic-bezier(0.25, 1, 0.5, 1);
 
   @media (--baseline-and-font-scaled-up) {
     --baseline: 1.2rem;
@@ -102,8 +81,8 @@ body {
   background-color: var(--color-page-bg);
   color: var(--color-text);
   transition:
-    background-color var(--micro-interaction-animation-duration) var(--micro-interaction-animation-ease-out),
-    color var(--micro-interaction-animation-duration) var()--micro-interaction-animation-ease-out;
+    background-color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing),
+    color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
 
   &[data-visible-view*="individual"] {
     height: 100%;
@@ -134,7 +113,7 @@ main {
   --button-height: var(--triple-baseline);
   --color-button-bg: #000;
   --color-button-text: var(--color-text);
-  --color-button-bg-hover: var(--color-bg-light);
+  --color-button-bg-hover: var(--color-white);
   --color-button-text-hover: var(--color-text-dark);
 
   display: inline-block;

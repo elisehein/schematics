@@ -145,7 +145,7 @@ export default class SchematicsFigure extends HTMLElement {
     this.switchNum(newNum);
   }
 
-  hide(onDone) {
+  hide(onDone = () => {}) {
     transitionWithClasses(this.figureNode, ["schematics-figure__figure--hiding"], () => {
       this.style.display = "none";
       onDone();

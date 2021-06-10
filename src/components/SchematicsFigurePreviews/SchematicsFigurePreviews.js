@@ -50,7 +50,7 @@ export default class SchematicsFigurePreviews extends HTMLElement {
     transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--showing`]);
   }
 
-  hide(onDone) {
+  hide(onDone = () => {}) {
     transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--hiding`], () => {
       this.style.display = "none";
       onDone();

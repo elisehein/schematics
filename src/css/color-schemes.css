@@ -1,0 +1,43 @@
+:root {
+  --hue-main: 0;
+  --sat-main: 0%;
+
+  --color-white-lightness: 95%;
+  --color-white: hsla(var(--hue-main), var(--sat-main), var(--color-white-lightness), 1);
+
+  --color-black-lightness: 10%;
+  --color-black: hsla(var(--hue-main), var(--sat-main), var(--color-black-lightness), 1);
+
+  --color-text-light-lightness: calc(var(--color-white-lightness) - 23%);
+  --color-text-dark-lightness: var(--color-black-lightness);
+
+  --color-text-light: hsla(var(--hue-main), var(--sat-main), var(--color-text-light-lightness), 1);
+  --color-text-dark: hsla(var(--hue-main), var(--sat-main), var(--color-text-dark-lightness), 1);
+
+  --color-page-bg-lightness: var(--color-black-lightness);
+  --color-page-bg: var(--color-black);
+
+  --color-text-lightness: var(--color-text-light-lightness);
+  --color-text: var(--color-text-light);
+  --color-text-contrast: var(--color-text-dark);
+  --color-text-hover: #fff;
+  --color-highest-contrast: #fff;
+}
+
+[data-color-scheme="light"] {
+  --color-page-bg-lightness: var(--color-white-lightness);
+  --color-page-bg: var(--color-white);
+
+  --color-text-lightness: var(--color-text-dark-lightness);
+  --color-text: var(--color-text-dark);
+  --color-text-contrast: var(--color-text-light);
+
+  --color-text-hover: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-dark-lightness) + 30%), 1);
+  --color-highest-contrast: #fff;
+
+  .button {
+    --color-button-text: var(--color-white);
+    --color-button-text-hover: var(--color-text-dark);
+    --color-button-bg-hover: hsla(var(--hue-main), var(--sat-main), calc(var(--color-white-lightness) - 20%), 1);
+  }
+}

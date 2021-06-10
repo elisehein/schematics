@@ -3,7 +3,7 @@ schematics-figure-previews {
     hsla(
       var(--hue-main),
       var(--sat-main),
-      calc(var(--color-bg-dark-lightness) * .7),
+      calc(var(--color-page-bg-lightness) * .7),
       1
     );
 
@@ -72,7 +72,9 @@ schematics-figure-previews {
       overflow: hidden;
       border-radius: .4rem;
       background-color: var(--preview-bg);
-      transition: transform calc(var(--fade-duration) + (var(--pre-fade-duration) / 2)) cubic-bezier(.55, 0, 1, .45);
+      transition:
+        transform calc(var(--fade-duration) + (var(--pre-fade-duration) / 2)) cubic-bezier(.55, 0, 1, .45),
+        background-color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
     }
 
     &__diagram {
@@ -128,6 +130,7 @@ schematics-figure-previews {
       left: 0;
       color: var(--preview-bg);
       z-index: 2;
+      transition: color var(--color-scheme-transition-duration) var(--color-shceme-transition-easing);
     }
   }
 }

@@ -38,7 +38,7 @@ header {
   h1 {
     /* Don't use theme-responsive color vars here, h1 always needs to look the same */
     position: relative;
-    background: var(--color-bg-light);
+    background: var(--color-white);
     text-transform: uppercase;
     letter-spacing: .5em;
     text-shadow: 0 0 .03em var(--color-text-dark);
@@ -94,6 +94,9 @@ header {
     border: var(--h2-border-width) solid var(--color-text);
     letter-spacing: .2em;
     text-shadow: var(--schematics-text-shadow);
+    transition:
+      color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing),
+      border-color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
 
     &::before {
       content: "\2192";
@@ -104,7 +107,8 @@ header {
     scan-lines {
       right: calc(var(--h2-border-width) * -1);
       left: calc(var(--triple-baseline) * -1);
-      color: var(--color-page-bg)
+      color: var(--color-page-bg);
+      transition: color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
     }
 
     [data-visible-view*="individual"] & {
