@@ -59,8 +59,17 @@ export default class Figure40Diagram extends Diagram {
 
     g.appendChild(horizontalLine.node);
     g.appendChild(verticalLine.node);
+    this.applyOpacityAndScaleBasedOnCoordinates(g, x, y);
     this.addSVGChildElement(g);
+
     return g;
+  }
+
+  applyOpacityAndScaleBasedOnCoordinates(node, x, y) {
+    const viewBox = this.querySelector("svg").viewBox.baseVal;
+    node.setAttribute("transform-origin", `${x} ${y}`);
+    node.setAttribute("opacity", x / viewBox.width);
+    node.setAttribute("transform", `scale(${y / (viewBox.height / 2)})`);
   }
 }
 
