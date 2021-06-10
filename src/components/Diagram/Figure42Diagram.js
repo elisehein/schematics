@@ -1,6 +1,7 @@
 import { animatable } from "/components/SVGShapes/SVGShapeFeatures.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 import BezierEasing from "/helpers/BezierEasing.js";
+import { randomIntBetween } from "/helpers/random.js";
 import Diagram from "./Diagram.js";
 
 const commonAnimationProps = dur => ({
@@ -171,7 +172,5 @@ export default class Figure42Diagram extends Diagram {
     return `scale-animation-${index}`;
   }
 }
-
-const randomIntBetween = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
 customElements.define("figure-40-diagram", Figure42Diagram);

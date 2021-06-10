@@ -1,6 +1,7 @@
 import { havingLength } from "../../SVGShapes/SVGShapeFeatures.js";
 import { createSVGElement } from "../../SVGShapes/SVGShapes.js";
 import { targetSideTouchPoints } from "./data.js";
+import { randomIntBetween } from "/helpers/random.js";
 
 export default function Figure18BoxedText(shapeFactory, text, fontSize, { x, y, width, height }, animated, targetSideTouchPoint) {
   // eslint-disable-next-line id-length
@@ -81,8 +82,4 @@ function getPathD(...points) {
     .join(" ");
 
     return `${d} Z`;
-}
-
-function randomIntBetween(min, max) {
-  return Math.floor((Math.random() * (max - min + 1)) + min);
 }
