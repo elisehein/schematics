@@ -72,7 +72,7 @@ export default class ViewSwitcher {
       return;
     }
 
-    this.hideAsides();
+    this.hideSecondaryElements();
 
     const show = () => {
       this.setColorScheme("light", () => {
@@ -95,7 +95,7 @@ export default class ViewSwitcher {
   ensureAboutIsHiddenAndColorSchemeIsDark(onDone) {
     if (this._state == viewStates.SHOWING_ABOUT) {
       this._about.hide();
-      this.hideAsides();
+      this.hideSecondaryElements();
     }
 
     this.setColorScheme("dark", onDone);
@@ -104,14 +104,16 @@ export default class ViewSwitcher {
   /* Don't show these elements until the first requested view has
    * been rendered in order to avoid funky layout shifts */
   ensureSecondaryElementsVisible() {
-    this._asideFigures.style.opacity = 1;
-    this._asideAbout.style.opacity = 1;
-    this._footer.style.opacity = 1;
+    this._asideFigures.style.visibility = "visible";
+    this._asideAbout.style.visibility = "visible";
+    this._footer.style.visibility = "visible";
   }
 
-  hideAsides() {
-    this._asideAbout.style.opacity = 0;
-    this._asideFigures.style.opacity = 0;
+  hideSecondaryElements() {
+    // Use visibility to avoid layout shifts
+    this._asideAbout.style.visibility = "hidden";
+    this._asideFigures.style.visibility = "hidden";
+    this._footer.style.visibility = "hidden";
   }
 
   setColorScheme(scheme, onDone = () => {}) {

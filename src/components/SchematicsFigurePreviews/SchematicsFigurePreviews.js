@@ -45,7 +45,6 @@ export default class SchematicsFigurePreviews extends HTMLElement {
   }
 
   show() {
-    this.style.visibility = "visible";
     this.style.display = "block";
     transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--showing`]);
   }
