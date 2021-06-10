@@ -24,11 +24,12 @@ export function Line(strokeable, ...points) {
   return result;
 }
 
-export function Circle(strokeable, cx, cy, r) {
-  const node = createSVGElement("circle");
+export function Circle(strokeable, cx, cy, rx, ry) {
+  const node = createSVGElement("ellipse");
   node.setAttribute("cx", cx);
   node.setAttribute("cy", cy);
-  node.setAttribute("r", r);
+  node.setAttribute("rx", rx);
+  node.setAttribute("ry", ry || rx); // Default to a circle
 
   const self = { node };
 
