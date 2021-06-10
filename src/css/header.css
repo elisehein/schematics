@@ -72,7 +72,7 @@ header {
         --schematics-title-vertical-padding: .1rem;
         --schematics-title-horizontal-padding: 1em;
 
-        transform: scale(.75);
+        transform: scale(.8);
         opacity: .5;
 
         &:hover,

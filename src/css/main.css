@@ -14,13 +14,12 @@
 @import "../components/SchematicsFigureToolbar/schematics-figure-toolbar.css";
 
 :root {
-  --baseline: .9rem;
+  --baseline: .85rem;
+  --scale-factor: 1.05;
+  --base-font-size: 1rem;
 
   --double-baseline: calc(var(--baseline) * 2);
   --triple-baseline: calc(var(--baseline) * 3);
-
-  --scale-factor: 1.1;
-  --base-font-size: 1.1rem;
 
   --ms-2: calc(var(--ms-1) / var(--scale-factor));
   --ms-1: calc(var(--base-font-size) / var(--scale-factor));
@@ -44,6 +43,12 @@
 
   --color-scheme-transition-duration: .3s;
   --color-scheme-transition-easing: cubic-bezier(0.25, 1, 0.5, 1);
+
+  @media (min-width: 40em) {
+    --baseline: .9rem;
+    --scale-factor: 1.1;
+    --base-font-size: 1.1rem;
+  }
 
   @media (--baseline-and-font-scaled-up) {
     --baseline: 1.2rem;
