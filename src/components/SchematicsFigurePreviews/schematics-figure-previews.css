@@ -1,9 +1,17 @@
 schematics-figure-previews {
+  [data-color-scheme="dark"] & {
+    --preview-bg-lightness-factor: .5;
+  }
+
+  [data-color-scheme="light"] & {
+    --preview-bg-lightness-factor: .9;
+  }
+
   --preview-bg:
     hsla(
       var(--hue-main),
       var(--sat-main),
-      calc(var(--color-page-bg-lightness) * .7),
+      calc(var(--color-page-bg-lightness) * var(--preview-bg-lightness-factor)),
       1
     );
 
