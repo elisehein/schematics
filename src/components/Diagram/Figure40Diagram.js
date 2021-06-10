@@ -59,18 +59,28 @@ export default class Figure40Diagram extends Diagram {
 
     g.appendChild(horizontalLine.node);
     g.appendChild(verticalLine.node);
-    this.applyOpacityAndScaleBasedOnCoordinates(g, x, y);
+    this.scatterRandomly(g, x, y);
     this.addSVGChildElement(g);
 
     return g;
   }
 
-  applyOpacityAndScaleBasedOnCoordinates(node, x, y) {
+  scatterRandomly(node, x, y) {
     const viewBox = this.querySelector("svg").viewBox.baseVal;
-    node.setAttribute("transform-origin", `${x} ${y}`);
+    const randomXTranslation = this.getRandomTranslationWithinBounds(x, viewBox.width, 7);
+    const randomYTranslation = this.getRandomTranslationWithinBounds(y, viewBox.height, 10);
     node.setAttribute("opacity", x / viewBox.width);
-    node.setAttribute("transform", `scale(${y / (viewBox.height / 2)})`);
+    node.setAttribute("transform-origin", `${x} ${y}`);
+    node.setAttribute("transform", `translate(${randomXTranslation} ${randomYTranslation}) scale(${y / (viewBox.height / 2)})`);
+  }
+
+  getRandomTranslationWithinBounds(originalValue, bounds, inset) {
+    const randomPositiveTranslation = randomIntBetween(0, bounds - originalValue - inset);
+    const randomNegativeTranslation = randomIntBetween(0, originalValue - inset) * -1;
+    return Math.random() > 0.5 ? randomPositiveTranslation : randomNegativeTranslation;
   }
 }
+
+const randomIntBetween = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
 customElements.define("figure-40-diagram", Figure40Diagram);
