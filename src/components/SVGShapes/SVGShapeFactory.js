@@ -1,4 +1,4 @@
-import { Line, Path, Circle, Text, TypingText } from "./SVGShapes.js";
+import { Line, Path, Circle, Ellipse, Text, TypingText } from "./SVGShapes.js";
 import { strokeable } from "./SVGShapeFeatures.js";
 
 export default class SVGShapeFactory {
@@ -17,6 +17,10 @@ export default class SVGShapeFactory {
 
   getCircle(...args) {
     return new Circle(this.strokeable, ...args);
+  }
+
+  getEllipse(...args) {
+    return new Ellipse(this.strokeable, ...args);
   }
 
   getText(...args) {

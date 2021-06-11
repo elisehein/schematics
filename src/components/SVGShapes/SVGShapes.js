@@ -24,12 +24,28 @@ export function Line(strokeable, ...points) {
   return result;
 }
 
-export function Circle(strokeable, cx, cy, rx, ry) {
+export function Ellipse(strokeable, cx, cy, rx, ry) {
   const node = createSVGElement("ellipse");
   node.setAttribute("cx", cx);
   node.setAttribute("cy", cy);
   node.setAttribute("rx", rx);
-  node.setAttribute("ry", ry || rx); // Default to a circle
+  node.setAttribute("ry", ry);
+
+  const self = { node };
+
+  return Object.assign(
+    self,
+    animatable(self),
+    strokeable(self),
+    fillable(self)
+  );
+}
+
+export function Circle(strokeable, cx, cy, r) {
+  const node = createSVGElement("circle");
+  node.setAttribute("cx", cx);
+  node.setAttribute("cy", cy);
+  node.setAttribute("r", r);
 
   const self = { node };
 

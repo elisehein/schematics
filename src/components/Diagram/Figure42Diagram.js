@@ -71,7 +71,7 @@ export default class Figure42Diagram extends Diagram {
     const width = 2;
     const height = 3;
 
-    const circle = this._svgShapeFactory.getCircle(x, y, width, height);
+    const circle = this._svgShapeFactory.getEllipse(x, y, width, height);
     circle.fill();
 
     // Keep track of the intended coordinates as we will override them with random ones
