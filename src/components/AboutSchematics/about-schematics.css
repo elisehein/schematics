@@ -34,8 +34,8 @@ about-schematics {
     }
 
     > * {
-      margin-top: var(--triple-baseline);
-      margin-bottom: var(--triple-baseline);
+      margin-top: var(--double-baseline);
+      margin-bottom: var(--double-baseline);
     }
 
     small {
