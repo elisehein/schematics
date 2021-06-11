@@ -118,7 +118,7 @@ export default class Figure42Diagram extends Diagram {
 
   scatterRandomly(node, x, y, rx, ry) {
     const viewBox = this.querySelector("svg").viewBox.baseVal;
-    node.setAttribute("fill-opacity", x / viewBox.width);
+    node.style.filter = `drop-shadow(0 0 ${x / viewBox.width / 10}rem var(--color-highest-contrast))`;
 
     const scale = y / (viewBox.height / 2);
     node.setAttribute("rx", rx * scale);
@@ -141,21 +141,16 @@ export default class Figure42Diagram extends Diagram {
 
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
-      const opacityAnimationID = this.opacityAnimationID(index);
       const translationAnimationID = this.xTranslationAnimationID(index);
 
-      animatableStar.animateAttribute("fill-opacity", Object.assign({
-        id: opacityAnimationID,
-        from: star.node.getAttribute("fill-opacity"),
-        to: 1
-      }, commonAnimationProps(durationSec)));
+      star.node.style.transition = `filter ${durationSec}s ${BezierEasing.easeInOutCubic.cssString}`;
+      star.node.style.filter = "none";
 
       animatableStar.animateAttribute("cx", Object.assign({
         id: translationAnimationID,
         values: `${star.node.getAttribute("cx")};${star.node.dataset.x}`
       }, commonAnimationProps(durationSec)));
 
-      animatableStar.beginAnimation(opacityAnimationID);
       animatableStar.beginAnimation(translationAnimationID, () => {
         if (index == 0) {
           onDone();
@@ -210,10 +205,6 @@ export default class Figure42Diagram extends Diagram {
 
   xTranslationAnimationID(index) {
     return `x-translation-animation-${index}`;
-  }
-
-  opacityAnimationID(index) {
-    return `opacity-animation-${index}`;
   }
 
   yTranslationAnimationID(index) {
