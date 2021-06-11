@@ -13,7 +13,6 @@
 }
 
 about-schematics {
-  max-width: 70ch;
   transition: opacity var(--micro-interaction-transition-duration) ease-out;
 
   @media (--layout-aside-always-visible) {
@@ -21,6 +20,7 @@ about-schematics {
   }
 
   article {
+    max-width: 70ch;
     opacity: 0;
     font-size: var(--ms1);
     line-height: var(--triple-baseline);
