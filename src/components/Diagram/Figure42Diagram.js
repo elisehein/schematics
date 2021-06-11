@@ -83,21 +83,22 @@ export default class Figure42Diagram extends Diagram {
     // Keep track of the intended coordinates as we will override them with random ones
     circle.node.dataset.x = x;
     circle.node.dataset.y = y;
+    circle.node.dataset.rx = width;
+    circle.node.dataset.ry = height;
 
-    this.scatterRandomly(circle.node, x, y);
+    this.scatterRandomly(circle.node, x, y, width, height);
     this.addSVGChildElement(circle.node);
 
     return circle;
   }
 
-  scatterRandomly(node, x, y) {
+  scatterRandomly(node, x, y, rx, ry) {
     const viewBox = this.querySelector("svg").viewBox.baseVal;
     node.setAttribute("fill-opacity", x / viewBox.width);
 
-    node.dataset.appliedScale = y / (viewBox.height / 2);
-    node.style.transformBox = "fill-box";
-    node.setAttribute("transform-origin", "center");
-    node.setAttribute("transform", `scale(${node.dataset.appliedScale})`);
+    const scale = y / (viewBox.height / 2);
+    node.setAttribute("rx", rx * scale);
+    node.setAttribute("ry", ry * scale);
 
     const randomXTranslation = this.getRandomTranslationWithinBounds(x, viewBox.width, 7);
     const randomYTranslation = this.getRandomTranslationWithinBounds(y, viewBox.height, 10);
@@ -144,13 +145,20 @@ export default class Figure42Diagram extends Diagram {
 
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
-      const scaleAnimationID = this.scaleAnimationID(index);
+      const scaleXAnimationID = this.scaleAnimationID(index, "x");
+      const scaleYAnimationID = this.scaleAnimationID(index, "y");
       const translationAnimationID = this.yTranslationAnimationID(index);
 
-      animatableStar.animateTransform("scale", Object.assign({
-        id: scaleAnimationID,
-        from: star.node.dataset.appliedScale,
-        to: "1"
+      animatableStar.animateAttribute("rx", Object.assign({
+        id: scaleXAnimationID,
+        from: star.node.getAttribute("rx"),
+        to: star.node.dataset.rx
+      }, commonAnimationProps(durationSec)));
+
+      animatableStar.animateAttribute("ry", Object.assign({
+        id: scaleYAnimationID,
+        from: star.node.getAttribute("ry"),
+        to: star.node.dataset.ry
       }, commonAnimationProps(durationSec)));
 
       animatableStar.animateAttribute("cy", Object.assign({
@@ -158,7 +166,8 @@ export default class Figure42Diagram extends Diagram {
         values: `${star.node.getAttribute("cy")};${star.node.dataset.y}`
       }, commonAnimationProps(durationSec)));
 
-      animatableStar.beginAnimation(scaleAnimationID);
+      animatableStar.beginAnimation(scaleXAnimationID);
+      animatableStar.beginAnimation(scaleYAnimationID);
       animatableStar.beginAnimation(translationAnimationID, () => {
         if (index == 0) {
           onDone();
@@ -187,8 +196,8 @@ export default class Figure42Diagram extends Diagram {
     return `y-translation-animation-${index}`;
   }
 
-  scaleAnimationID(index) {
-    return `scale-animation-${index}`;
+  scaleAnimationID(index, axis) {
+    return `scale-${axis}-animation-${index}`;
   }
 }
 
