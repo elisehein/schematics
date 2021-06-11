@@ -5,7 +5,7 @@ export default class AboutSchematics extends HTMLElement {
     this.innerHTML = `
 <article>
   <p>
-    In 2011, I bought <em><a href="http://julianhibbard.com/schematics.html">Schematics: A Love Story</a></em>, a collection of mathematical diagrams accompanied by short pieces of poetry by <a href="http://julianhibbard.com/schematics.html">Julian Hibbard</a>. As someone largely ignorant of art, I’ll be the first to admit I’m only vaguely aware of the story each figure tries to tell. But I keep getting drawn in anyway, and the book's aesthetic always seemed like it would be fun to replicate digitally.
+    In 2011, I bought <em><a href="http://julianhibbard.com/schematics.html">Schematics: A Love Story</a></em>, a collection of mathematical diagrams accompanied by short pieces of poetry by <a href="http://julianhibbard.com/schematics.html">Julian Hibbard</a>. As someone largely ignorant of art, I’m only vaguely aware of the story each figure tries to tell. But I keep getting drawn in anyway, and the book's aesthetic always seemed like it would be fun to replicate digitally.
   </p>
 
   <p>
