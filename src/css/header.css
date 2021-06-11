@@ -94,6 +94,7 @@ header {
     border: var(--h2-border-width) solid var(--color-text);
     letter-spacing: .2em;
     text-shadow: var(--schematics-text-shadow);
+    color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-lightness) + 10%), 1);
     transition:
       color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing),
       border-color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
