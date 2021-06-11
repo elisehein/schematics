@@ -164,7 +164,7 @@ main {
     overflow-x: hidden
 }
 
-    [data-visible-view*=individual] main {
+    [data-visible-view*="individual"] main {
       grid-template-rows: repeat(8, 1fr);
     }
 
@@ -175,10 +175,10 @@ main {
     }
   }
 @media (min-height: 60em) and (min-width: 60em) {
-main {
-    height: min(50rem, 100%);
-    align-self: flex-end
-}
+    [data-visible-view*="individual"] main {
+      height: min(50rem, 100%);
+      align-self: flex-end;
+    }
   }
 schematics-figure {
   grid-row: 1 / -2;

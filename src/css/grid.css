@@ -104,7 +104,7 @@ main {
     max-width: 100%;
     overflow-x: hidden;
 
-    [data-visible-view*=individual] & {
+    [data-visible-view*="individual"] & {
       grid-template-rows: repeat(8, 1fr);
     }
 
@@ -116,8 +116,10 @@ main {
   }
 
   @media (--layout-capped-height) {
-    height: min(50rem, 100%);
-    align-self: flex-end;
+    [data-visible-view*="individual"] & {
+      height: min(50rem, 100%);
+      align-self: flex-end;
+    }
   }
 }
 
