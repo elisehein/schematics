@@ -39,6 +39,6 @@ If you'd like to take a closer look at the codebase locally...
 > npm run dev
 ```
 
-This processes CSS files when changed, and fires up a local server with livereload at port `3000`.
+This processes CSS files when changed, and fires up a local server with livereload at port `4000`.
 
 Installing npm dependencies also means you can run the Jest tests (`npm test`) and linters (`npm run lint:js`, `npm run lint:css`).
