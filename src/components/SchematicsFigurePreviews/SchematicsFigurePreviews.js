@@ -30,6 +30,7 @@ export default class SchematicsFigurePreviews extends HTMLElement {
 
     const anchor = preview.querySelector("a");
     anchor.setAttribute("href", `#fig${num}`);
+    anchor.setAttribute("aria-label", `Figure ${num}`);
 
     const diagram = getDiagram(num, true);
     diagram.classList.add("schematics-figure-previews__item__diagram");
