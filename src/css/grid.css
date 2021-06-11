@@ -27,12 +27,12 @@
 
   @media (--layout-capped-height) {
     --grid-top-spacing: calc(var(--baseline) * 6);
-    --grid-bottom-spacing: calc(var(--baseline) * 6);
+    --grid-bottom-spacing: calc(var(--baseline) * 3);
   }
 
   @media (--very-tall-screen) {
     --grid-top-spacing: 15vh;
-    --grid-bottom-spacing: 15vh;
+    --grid-bottom-spacing: 7vh;
   }
 
   display: grid;
@@ -60,7 +60,7 @@
     grid-template-rows: min-content 1fr;
     grid-template-columns: var(--grid-template-columns);
     min-height: 100%;
-    margin: auto;
+    margin: 0 auto;
 
     [data-visible-view] & {
       width: min(110rem, 100%);
