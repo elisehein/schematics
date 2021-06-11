@@ -25,11 +25,11 @@ export default class Diagram extends HTMLElement {
         preserveAspectRatio="xMidYMid meet"
         role="img"
         viewbox="0 0 300 300"
-        aria-labelledby="figure-desc"
+        aria-labelledby="${this.descID}"
         xmlns="http://www.w3.org/2000/svg">
-        <desc id="figure-desc">
-          fig. <span id="figure-num">${this.num}</span>.
-          <span id="figure-a11y-description">${this.a11yDescription}</span>
+        <desc id="${this.descID}">
+          fig. <span class="diagram__num">${this.num}</span>.
+          <span class="diagram__a11y-description">${this.a11yDescription}</span>
         </desc>
       </svg>
     `;
@@ -58,14 +58,24 @@ export default class Diagram extends HTMLElement {
   }
 
   renderTitle() {
-    const node = this.querySelector("#figure-num");
+    const node = this.querySelector(".diagram__num");
     if (node) {
       node.innerHTML = this.num;
     }
   }
 
+  updateDescID() {
+    const svgNode = this.svgNode;
+    const descNode = this.querySelector("desc");
+
+    if (svgNode && descNode) {
+      svgNode.setAttribute("aria-labelledby", this.descID);
+      descNode.setAttribute("id", this.descID);
+    }
+  }
+
   renderDescription() {
-    const node = this.querySelector("#figure-a11y-description");
+    const node = this.querySelector(".diagram__a11y-description");
     if (node) {
       node.innerHTML = this.a11yDescription;
     }
@@ -99,6 +109,7 @@ export default class Diagram extends HTMLElement {
     switch (attrName) {
       case "num":
         this.renderTitle();
+        this.updateDescID();
         break;
       case "a11ydescription":
         this.renderDescription();
@@ -126,6 +137,10 @@ export default class Diagram extends HTMLElement {
     if (newValue !== this.num) {
       this.setAttribute("num", newValue);
     }
+  }
+
+  get descID() {
+    return `figure-${this.num}-desc`;
   }
 
   get svgNode() {
