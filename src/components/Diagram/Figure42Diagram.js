@@ -95,7 +95,8 @@ export default class Figure42Diagram extends Diagram {
     node.setAttribute("fill-opacity", x / viewBox.width);
 
     node.dataset.appliedScale = y / (viewBox.height / 2);
-    node.setAttribute("transform-origin", `${x} ${y}`);
+    node.style.transformBox = "fill-box";
+    node.setAttribute("transform-origin", "center");
     node.setAttribute("transform", `scale(${node.dataset.appliedScale})`);
 
     const randomXTranslation = this.getRandomTranslationWithinBounds(x, viewBox.width, 7);
