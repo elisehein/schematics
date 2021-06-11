@@ -13,6 +13,34 @@ const commonAnimationProps = dur => ({
   keySplines: BezierEasing.easeInOutCubic.smilString
 });
 
+const starCoords = [
+    { x: 15, allY: [29, 50, 63, 67] },
+    { x: 28, allY: [70] },
+    { x: 42, allY: [63, 67] },
+    { x: 53, allY: [53] },
+    { x: 56, allY: [60, 74, 78] },
+    { x: 66, allY: [57, 74, 78, 90, 94, 105, 133, 222] },
+    { x: 70, allY: [74] },
+    { x: 73, allY: [98, 102, 108] },
+    { x: 77, allY: [105] },
+    { x: 84, allY: [98, 112, 136] },
+    { x: 122, allY: [77, 88, 108, 112] },
+    { x: 132, allY: [132, 143, 153] },
+    { x: 149, allY: [98, 112, 116, 122, 126, 132, 136, 140, 143, 149, 153] },
+    { x: 155, allY: [64] },
+    { x: 162, allY: [77, 81, 88, 112, 116, 119, 136, 143, 146, 150, 157, 163] },
+    { x: 173, allY: [132, 163, 167] },
+    { x: 176, allY: [115, 122, 125, 129, 132, 136, 143, 146, 150, 153, 156, 163, 167, 170, 184, 191, 194] },
+    { x: 180, allY: [129, 150, 167] },
+    { x: 204, allY: [115, 119, 132, 139, 143, 149, 153, 157, 160, 167, 170, 174, 180, 187] },
+    { x: 231, allY: [63, 77, 81, 101, 108, 115, 139, 146, 153, 157, 160, 164, 167, 170, 174, 177, 181, 184, 191, 215, 219] },
+    { x: 235, allY: [77, 153, 157, 164, 170, 177, 181] },
+    { x: 242, allY: [191, 197, 201, 229, 239] },
+    { x: 259, allY: [77, 87, 98, 153, 160, 163, 167, 171, 173, 188, 195, 202, 205, 218, 229, 242, 256] },
+    { x: 269, allY: [56] },
+    { x: 286, allY: [46, 53, 191, 194, 205, 211, 215, 218, 222, 263] }
+];
+
 export default class Figure42Diagram extends Diagram {
   constructor(isThumbnail) {
     super(42, isThumbnail);
@@ -36,31 +64,9 @@ export default class Figure42Diagram extends Diagram {
 
   // eslint-disable-next-line max-statements
   drawStars() {
-    this.drawStarsAlongYAxis(15, 29, 50, 63, 67);
-    this.drawStarsAlongYAxis(28, 70);
-    this.drawStarsAlongYAxis(42, 63, 67);
-    this.drawStarsAlongYAxis(53, 53);
-    this.drawStarsAlongYAxis(56, 60, 74, 78);
-    this.drawStarsAlongYAxis(66, 57, 74, 78, 90, 94, 105, 133, 222);
-    this.drawStarsAlongYAxis(70, 74);
-    this.drawStarsAlongYAxis(73, 98, 102, 108);
-    this.drawStarsAlongYAxis(77, 105);
-    this.drawStarsAlongYAxis(84, 98, 112, 136);
-    this.drawStarsAlongYAxis(122, 77, 88, 108, 112);
-    this.drawStarsAlongYAxis(132, 132, 143, 153);
-    this.drawStarsAlongYAxis(149, 98, 112, 116, 122, 126, 132, 136, 140, 143, 149, 153);
-    this.drawStarsAlongYAxis(155, 64);
-    this.drawStarsAlongYAxis(162, 77, 81, 88, 112, 116, 119, 136, 143, 146, 150, 157, 163);
-    this.drawStarsAlongYAxis(173, 132, 163, 167);
-    this.drawStarsAlongYAxis(176, 115, 122, 125, 129, 132, 136, 143, 146, 150, 153, 156, 163, 167, 170, 184, 191, 194);
-    this.drawStarsAlongYAxis(180, 129, 150, 167);
-    this.drawStarsAlongYAxis(204, 115, 119, 132, 139, 143, 149, 153, 157, 160, 167, 170, 174, 180, 187);
-    this.drawStarsAlongYAxis(231, 63, 77, 81, 101, 108, 115, 139, 146, 153, 157, 160, 164, 167, 170, 174, 177, 181, 184, 191, 215, 219);
-    this.drawStarsAlongYAxis(235, 77, 153, 157, 164, 170, 177, 181);
-    this.drawStarsAlongYAxis(242, 191, 197, 201, 229, 239);
-    this.drawStarsAlongYAxis(259, 77, 87, 98, 153, 160, 163, 167, 171, 173, 188, 195, 202, 205, 218, 229, 242, 256);
-    this.drawStarsAlongYAxis(269, 56);
-    this.drawStarsAlongYAxis(286, 46, 53, 191, 194, 205, 211, 215, 218, 222, 263);
+    starCoords.forEach(({ x, allY }) => {
+      this.drawStarsAlongYAxis(x, ...allY);
+    });
   }
 
   drawStarsAlongYAxis(x, ...yCoords) {
