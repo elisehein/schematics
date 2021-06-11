@@ -48,14 +48,14 @@ export default class Figure42Diagram extends Diagram {
     this._stars = [];
   }
 
-  drawBeforeCaption({ onDone }) {
+  drawBeforeCaption({ onDone, onLightUp }) {
     this.drawStars();
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
-      this.animateTemperatureOnXAxis.bind(this, 5),
-      this.animateMagnitudeOnYAxis.bind(this, 5),
-      waitBeforeNextAction(1000, this._timerManager)
+      this.animateTemperatureOnXAxis.bind(this, 5, onLightUp),
+      this.animateMagnitudeOnYAxis.bind(this, 5, onLightUp),
+      waitBeforeNextAction(2000, this._timerManager)
     ], onDone);
   }
 
@@ -110,7 +110,9 @@ export default class Figure42Diagram extends Diagram {
     return Math.random() > 0.5 ? randomPositiveTranslation : randomNegativeTranslation;
   }
 
-  animateTemperatureOnXAxis(durationSec, { onDone }) {
+  animateTemperatureOnXAxis(durationSec, onLightUp, { onDone }) {
+    this.lightUpWithDelay(0.8, durationSec * 1000, onLightUp);
+
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
       const opacityAnimationID = this.opacityAnimationID(index);
@@ -119,12 +121,12 @@ export default class Figure42Diagram extends Diagram {
       animatableStar.animateAttribute("fill-opacity", Object.assign({
         id: opacityAnimationID,
         from: star.node.getAttribute("fill-opacity"),
-        to: 1,
+        to: 1
       }, commonAnimationProps(durationSec)));
 
       animatableStar.animateAttribute("cx", Object.assign({
         id: translationAnimationID,
-        values: `${star.node.getAttribute("cx")};${star.node.dataset.x}`,
+        values: `${star.node.getAttribute("cx")};${star.node.dataset.x}`
       }, commonAnimationProps(durationSec)));
 
       animatableStar.beginAnimation(opacityAnimationID);
@@ -136,7 +138,9 @@ export default class Figure42Diagram extends Diagram {
     });
   }
 
-  animateMagnitudeOnYAxis(durationSec, { onDone }) {
+  animateMagnitudeOnYAxis(durationSec, onLightUp, { onDone }) {
+    this.lightUpWithDelay(0.8, durationSec * 1000, onLightUp);
+
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
       const scaleAnimationID = this.scaleAnimationID(index);
@@ -150,7 +154,7 @@ export default class Figure42Diagram extends Diagram {
 
       animatableStar.animateAttribute("cy", Object.assign({
         id: translationAnimationID,
-        values: `${star.node.getAttribute("cy")};${star.node.dataset.y}`,
+        values: `${star.node.getAttribute("cy")};${star.node.dataset.y}`
       }, commonAnimationProps(durationSec)));
 
       animatableStar.beginAnimation(scaleAnimationID);
@@ -160,6 +164,14 @@ export default class Figure42Diagram extends Diagram {
         }
       });
     });
+  }
+
+  lightUpWithDelay(delayFactor, durationMS, onLightUp) {
+    const lightUpDelay = durationMS * delayFactor;
+    const lightUpDuration = durationMS * ((1 - delayFactor) * 2);
+    this._timerManager.setTimeout(() => {
+      onLightUp(lightUpDuration);
+    }, lightUpDelay);
   }
 
   xTranslationAnimationID(index) {

@@ -35,7 +35,7 @@
 
 @keyframes light-up-diagram {
   50% {
-    filter: drop-shadow(0 0 .1em var(--color-highest-contrast));
+    filter: drop-shadow(0 0 .25em var(--color-highest-contrast));
     color: var(--color-highest-contrast);
   }
 }

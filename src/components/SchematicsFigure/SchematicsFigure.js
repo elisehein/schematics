@@ -22,12 +22,17 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    this._diagramElement.drawBeforeCaption({ onDone: () => {
-      this._diagramElement.drawAlongsideCaption();
-      this.renderCaption({ onDone: () => {
-        this._diagramElement.drawAfterCaption({ onLightUp: this.lightUpFigure.bind(this) });
-      } });
-    } });
+    const onLightUp = this.lightUpFigure.bind(this);
+
+    this._diagramElement.drawBeforeCaption({
+      onLightUp,
+      onDone: () => {
+        this._diagramElement.drawAlongsideCaption();
+        this.renderCaption({
+          onDone: () => this._diagramElement.drawAfterCaption({ onLightUp })
+        });
+      }
+    });
   }
 
   cleanUpCurrentFigure(num) {
