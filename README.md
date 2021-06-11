@@ -24,7 +24,7 @@ I combined these two ideas in this codebase.
 
 * On the design side of things (motion and otherwise), I did my best to reproduce the vibe I got from *Schematics* (with kind feedback from the author). The diagrams are SVGs created programmatically with JavaScript and animated with [SMIL](https://developer.mozilla.org/en-US/docs/Web/SVG/SVG_animation_with_SMIL). I’ve enjoyed working with SVGs in the past and wanted to learn about the more complex aspects of SMIL animation beyond what can be done in CSS.
 
-* On the technical side of things, I focused on vanilla JavaScript without the distraction of transpilers and bundlers. This has helped me to clear my head of the clutter of React, Babel, webpack and Rollup, and discover exactly what I get for free in 2021, and what’s missing – so that I know what value I’m adding by bringing a framework to the mix.
+* On the technical side of things, I focused on vanilla JavaScript without the distraction of transpilers and bundlers. This has helped me to clear my head of the clutter of React, Babel, webpack and Rollup, and discover exactly what I get for free in 2021, and what’s missing.
 
 ## Dependencies
 
