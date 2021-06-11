@@ -41,6 +41,13 @@ const starCoords = [
     { x: 286, allY: [46, 53, 191, 194, 205, 211, 215, 218, 222, 263] }
 ];
 
+const previewStarCoords = [
+  { x: 80, allY: [167] },
+  { x: 155, allY: [128, 150] },
+  { x: 213, allY: [70] },
+  { x: 233, allY: [107, 183, 205] }
+];
+
 export default class Figure42Diagram extends Diagram {
   constructor(isThumbnail) {
     super(42, isThumbnail);
@@ -60,6 +67,15 @@ export default class Figure42Diagram extends Diagram {
   }
 
   drawThumbnail() {
+    previewStarCoords.forEach(({ x, allY }) => allY.forEach(y => {
+      this._stars.push(this.drawStar(x, y));
+    }));
+    this._stars.forEach(star => {
+      star.node.style.transformOrigin = "center";
+      star.node.style.transformBox = "fill-box";
+      star.node.style.transform = "scale(6)";
+      star.node.style.opacity = "0.9";
+    });
   }
 
   // eslint-disable-next-line max-statements
@@ -71,6 +87,15 @@ export default class Figure42Diagram extends Diagram {
 
   drawStarsAlongYAxis(x, ...yCoords) {
     this._stars = this._stars.concat(yCoords.map(y => this.drawStar(x, y)));
+    this._stars.forEach(star => {
+      this.scatterRandomly(
+        star.node,
+        parseFloat(star.node.dataset.x),
+        parseFloat(star.node.dataset.y),
+        parseFloat(star.node.dataset.rx),
+        parseFloat(star.node.dataset.ry)
+      );
+    });
   }
 
   drawStar(x, y) {
@@ -86,7 +111,6 @@ export default class Figure42Diagram extends Diagram {
     circle.node.dataset.rx = width;
     circle.node.dataset.ry = height;
 
-    this.scatterRandomly(circle.node, x, y, width, height);
     this.addSVGChildElement(circle.node);
 
     return circle;
