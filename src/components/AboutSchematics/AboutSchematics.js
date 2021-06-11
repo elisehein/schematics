@@ -24,7 +24,7 @@ export default class AboutSchematics extends HTMLElement {
     </li>
     <li>
       <p>
-        On the technical side of things, I focused on vanilla JavaScript without the distraction of transpilers and bundlers. This has helped me to clear my head of the clutter of React, Babel, webpack and Rollup, and discover exactly what I get for free in 2021, and what’s missing – so that I know what value I’m adding by bringing a framework to the mix.
+        On the technical side of things, I focused on vanilla JavaScript without the distraction of transpilers and bundlers. This has helped me to clear my head of the clutter of React, Babel, webpack and Rollup, and discover exactly what I get for free in 2021, and what value I'm adding by bringing a framework to the mix.
       </p>
     </li>
   </ul>
