@@ -74,8 +74,8 @@ export default class Figure42Diagram extends Diagram {
   }
 
   drawStar(x, y) {
-    const width = 2;
-    const height = 3;
+    const width = 1.5;
+    const height = 2;
 
     const circle = this._svgShapeFactory.getEllipse(x, y, width, height);
     circle.fill();
