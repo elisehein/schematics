@@ -1,0 +1,41 @@
+name: Run linter and tests
+
+on:
+  pull_request:
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # Check out the repo
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Cache node modules
+      uses: actions/cache@v1
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+
+    - name: Install dependencies
+      run: npm install;
+
+    - name: Lint JS files
+      run: npm run lint:js
+      continue-on-error: true
+
+    - name: Lint CSS files
+      run: npm run lint:css
+      continue-on-error: true
+
+    - name: Run tests
+      run: FORCE_COLOR=1 npm test
