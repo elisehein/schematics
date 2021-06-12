@@ -1,13 +1,16 @@
 import { animatable } from "/components/SVGShapes/SVGShapeFeatures.js";
+
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
-import BezierEasing from "/helpers/BezierEasing.js";
 import { randomIntBetween } from "/helpers/random.js";
+import BezierEasing from "/helpers/BezierEasing.js";
+import Duration from "/helpers/Duration.js";
+
 import Diagram from "./Diagram.js";
 
-const commonAnimationProps = dur => ({
+const commonAnimationProps = duration => ({
   fill: "freeze",
   begin: "indefinite",
-  dur,
+  dur: duration.s,
   keyTimes: "0; 1",
   calcMode: "spline",
   keySplines: BezierEasing.easeInOutCubic.smilString
@@ -57,11 +60,12 @@ export default class Figure42Diagram extends Diagram {
 
   drawBeforeCaption({ onDone, onLightUp }) {
     this.drawStars();
+    const axisAnimationDuration = new Duration({ seconds: 5 });
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
-      this.animateTemperatureOnXAxis.bind(this, 5, onLightUp),
-      this.animateMagnitudeOnYAxis.bind(this, 5, onLightUp),
+      this.animateTemperatureOnXAxis.bind(this, axisAnimationDuration, onLightUp),
+      this.animateMagnitudeOnYAxis.bind(this, axisAnimationDuration, onLightUp),
       waitBeforeNextAction(2000, this._timerManager)
     ], onDone);
   }
@@ -136,20 +140,20 @@ export default class Figure42Diagram extends Diagram {
     return Math.random() > 0.5 ? randomPositiveTranslation : randomNegativeTranslation;
   }
 
-  animateTemperatureOnXAxis(durationSec, onLightUp, { onDone }) {
-    this.lightUpWithDelay(0.8, durationSec * 1000, onLightUp);
+  animateTemperatureOnXAxis(duration, onLightUp, { onDone }) {
+    this.lightUpWithDelay(0.8, duration, onLightUp);
 
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
       const translationAnimationID = this.xTranslationAnimationID(index);
 
-      star.node.style.transition = `filter ${durationSec}s ${BezierEasing.easeInOutCubic.cssString}`;
+      star.node.style.transition = `filter ${duration.s}s ${BezierEasing.easeInOutCubic.cssString}`;
       star.node.style.filter = "none";
 
       animatableStar.animateAttribute("cx", Object.assign({
         id: translationAnimationID,
         values: `${star.node.getAttribute("cx")};${star.node.dataset.x}`
-      }, commonAnimationProps(durationSec)));
+      }, commonAnimationProps(duration)));
 
       animatableStar.beginAnimation(translationAnimationID, () => {
         if (index == 0) {
@@ -159,8 +163,8 @@ export default class Figure42Diagram extends Diagram {
     });
   }
 
-  animateMagnitudeOnYAxis(durationSec, onLightUp, { onDone }) {
-    this.lightUpWithDelay(0.8, durationSec * 1000, onLightUp);
+  animateMagnitudeOnYAxis(duration, onLightUp, { onDone }) {
+    this.lightUpWithDelay(0.8, duration, onLightUp);
 
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
@@ -172,18 +176,18 @@ export default class Figure42Diagram extends Diagram {
         id: scaleXAnimationID,
         from: star.node.getAttribute("rx"),
         to: star.node.dataset.rx
-      }, commonAnimationProps(durationSec)));
+      }, commonAnimationProps(duration)));
 
       animatableStar.animateAttribute("ry", Object.assign({
         id: scaleYAnimationID,
         from: star.node.getAttribute("ry"),
         to: star.node.dataset.ry
-      }, commonAnimationProps(durationSec)));
+      }, commonAnimationProps(duration)));
 
       animatableStar.animateAttribute("cy", Object.assign({
         id: translationAnimationID,
         values: `${star.node.getAttribute("cy")};${star.node.dataset.y}`
-      }, commonAnimationProps(durationSec)));
+      }, commonAnimationProps(duration)));
 
       animatableStar.beginAnimation(scaleXAnimationID);
       animatableStar.beginAnimation(scaleYAnimationID);
@@ -195,12 +199,11 @@ export default class Figure42Diagram extends Diagram {
     });
   }
 
-  lightUpWithDelay(delayFactor, durationMS, onLightUp) {
-    const lightUpDelay = durationMS * delayFactor;
-    const lightUpDuration = durationMS * ((1 - delayFactor) * 2);
+  lightUpWithDelay(delayFactor, duration, onLightUp) {
+    const lightUpDuration = new Duration({ milliseconds: duration.ms * ((1 - delayFactor) * 2) });
     this._timerManager.setTimeout(() => {
       onLightUp(lightUpDuration);
-    }, lightUpDelay);
+    }, duration.ms * delayFactor);
   }
 
   xTranslationAnimationID(index) {

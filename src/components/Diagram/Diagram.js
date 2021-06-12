@@ -3,6 +3,7 @@ import TimerManager from "../../helpers/TimerManager.js";
 import SVGShapeFactory from "../SVGShapes/SVGShapeFactory.js";
 import smoothScroll from "/helpers/smoothScroll.js";
 import BezierEasing from "/helpers/BezierEasing.js";
+import Duration from "../../helpers/Duration.js";
 
 export default class Diagram extends HTMLElement {
   constructor(num, isThumbnail) {
@@ -89,7 +90,8 @@ export default class Diagram extends HTMLElement {
    * main all the way to the left will bring the diagram into view.
    */
   smoothScrollIntoView({ onDone }) {
-    smoothScroll(document.querySelector("main"), 0, 0, 700, BezierEasing.easeOutCubic, { onDone });
+    const duration = new Duration({ milliseconds: 700 });
+    smoothScroll(document.querySelector("main"), 0, 0, duration, BezierEasing.easeOutCubic, { onDone });
   }
 
   scrollIntoView() {

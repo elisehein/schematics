@@ -1,5 +1,5 @@
 export const swingable = ({ arm, circle }, anchorPoint, initialAngle) => ({
-  swing(totalSwings, easing, durationSec, { onSwing }) {
+  swing(totalSwings, easing, duration, { onSwing }) {
     const angleChangeStep = initialAngle / totalSwings;
 
     const baseParamsForSwing = index => ({
@@ -7,7 +7,7 @@ export const swingable = ({ arm, circle }, anchorPoint, initialAngle) => ({
       keyTimes: "0; 1",
       calcMode: "spline",
       keySplines: easing.smilString,
-      dur: durationSec,
+      dur: duration.s,
       begin: index == 0 ? "indefinite" : `swinganimation${index - 1}.end`,
       fill: "freeze"
     });

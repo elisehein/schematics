@@ -1,4 +1,4 @@
-export default function animateWithEasing(durationMS, easing, animationFrameHandler, { onDone } = {}) {
+export default function animateWithEasing(duration, easing, animationFrameHandler, { onDone } = {}) {
   let start;
 
   const step = timestamp => {
@@ -7,11 +7,11 @@ export default function animateWithEasing(durationMS, easing, animationFrameHand
     }
 
     const elapsed = timestamp - start;
-    const interval = elapsed / durationMS;
+    const interval = elapsed / duration.ms;
 
     animationFrameHandler(easing.pointAlongCurve(interval).y);
 
-    if (elapsed < durationMS) {
+    if (elapsed < duration.ms) {
       window.requestAnimationFrame(step);
     } else if (onDone) {
       onDone();
