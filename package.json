@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Schematics: A Love Story",
   "main": "index.html",
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.14.2",
     "@babel/preset-env": "^7.14.2",
@@ -12,6 +11,7 @@
     "cssnano": "^5.0.6",
     "eslint": "^7.26.0",
     "eslint-plugin-jest": "^24.3.6",
+    "foreach-cli": "^1.8.1",
     "http-server": "^0.12.3",
     "jest": "^26.6.3",
     "livereload": "^0.9.3",
@@ -22,17 +22,25 @@
     "postcss-import": "^14.0.2",
     "postcss-nested": "^5.0.5",
     "stylelint": "^13.13.1",
-    "stylelint-config-standard": "^22.0.0"
+    "stylelint-config-standard": "^22.0.0",
+    "terser": "^5.7.0"
   },
   "scripts": {
     "test": "jest",
+
     "lint:css": "stylelint ./src/**/*.css",
     "lint:js": "eslint ./src/**/*.js",
+
     "postcss": "postcss src/css/main.css --use postcss-import postcss-custom-media postcss-nested -o src/main.css --watch --verbose",
-    "postcss:production": "postcss src/css/main.css --use postcss-import postcss-custom-media postcss-nested cssnano --no-map -o src/main.css",
+
+    "compress:css": "postcss src/css/main.css --use postcss-import postcss-custom-media postcss-nested cssnano --no-map -o src/main.css",
+    "compress:js": "foreach -g \"src/**/*.js\" -x \"terser #{path} --compress --mangle --module --output #{path}\"",
+    "compress": "concurrently \"npm run compress:css\" \"npm run compress:js\"",
+
     "serve": "http-server ./src --port=4000",
     "watch:css": "npm-watch postcss",
     "livereload": "livereload -w 2000",
+
     "dev": "concurrently \"npm run watch:css\" \"npm run serve\" \"npm run livereload\""
   },
   "watch": {
