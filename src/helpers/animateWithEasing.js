@@ -2,7 +2,7 @@ export default function animateWithEasing(durationMS, easing, animationFrameHand
   let start;
 
   const step = timestamp => {
-    if (start === undefined) {
+    if (!start) {
       start = timestamp;
     }
 
@@ -13,7 +13,7 @@ export default function animateWithEasing(durationMS, easing, animationFrameHand
 
     if (elapsed < durationMS) {
       window.requestAnimationFrame(step);
-    } else if (onDone !== undefined) {
+    } else if (onDone) {
       onDone();
     }
   };
