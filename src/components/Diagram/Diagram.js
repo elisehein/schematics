@@ -1,4 +1,4 @@
-import { getA11yDescription } from "../../figureData.js";
+import { getA11yDescription, getA11yThumbnailDescription } from "../../figureData.js";
 import TimerManager from "../../helpers/TimerManager.js";
 import SVGShapeFactory from "../SVGShapes/SVGShapeFactory.js";
 import smoothScroll from "/helpers/smoothScroll.js";
@@ -9,7 +9,7 @@ export default class Diagram extends HTMLElement {
   constructor(num, isThumbnail) {
     super();
     this.num = num;
-    this.a11yDescription = getA11yDescription(num);
+    this.a11yDescription = isThumbnail ? getA11yThumbnailDescription(num) : getA11yDescription(num);
     this._timerManager = new TimerManager();
     this._isThumbnail = isThumbnail;
 
@@ -142,7 +142,7 @@ export default class Diagram extends HTMLElement {
   }
 
   get descID() {
-    return `figure-${this.num}-desc`;
+    return `figure-${this.num}-${this._isThumbnail ? "thumbnail-" : ""}desc`;
   }
 
   get svgNode() {
