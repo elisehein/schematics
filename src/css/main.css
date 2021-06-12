@@ -42,7 +42,7 @@
   --figure-exit-fade-out-timing: cubic-bezier(.55, 0, 1, .45);
 
   --color-scheme-transition-duration: .3s;
-  --color-scheme-transition-easing: cubic-bezier(0.25, 1, 0.5, 1);
+  --color-scheme-transition-easing: cubic-bezier(.25, 1, .5, 1);
 
   @media (min-width: 40em) {
     --baseline: .9rem;
