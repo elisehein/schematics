@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Compression scripts for CSS (using `cssnano`) and JS (using `terser` and `foreach-cli`) to run in production on Netlify (#4).
+* Compression scripts for CSS (using `cssnano`) and JS (using `terser` and `foreach-cli`) to run in production on Netlify ([#4](https://github.com/elisehein/schematics/pull/4)).
 
 ### Changed
 
-* Refactored how millisecond-second durations are handled (#8).
+* Refactored how millisecond-second durations are handled ([#8](https://github.com/elisehein/schematics/pull/8)).
 
 ## [1.0.0] – 2021-06-12
 
