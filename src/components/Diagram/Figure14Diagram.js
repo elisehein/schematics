@@ -28,7 +28,7 @@ export default class Figure14Diagram extends Diagram {
   }
 
   drawBeforeCaption({ onDone }) {
-    const animationStepDuration = new Duration({ seconds: 3 });
+    const animationStepDuration = Duration.threeSec;
     this.animateAxes(animationStepDuration, onDone);
   }
 

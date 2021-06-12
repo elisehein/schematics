@@ -15,7 +15,7 @@ export default class Figure36Diagram extends Diagram {
     this._initialAngle = 30;
     this._arrowOffsetAngle = 10;
 
-    this._swingDuration = new Duration({ seconds: 2 });
+    this._swingDuration = Duration.twoSec;
     this._swingEasing = new BezierEasing(0.4, 0, 0.6, 1);
     this._totalSwings = 30;
   }

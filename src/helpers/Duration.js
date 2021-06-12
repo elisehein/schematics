@@ -12,3 +12,7 @@ export default function Duration({ seconds, milliseconds }) {
     s: seconds || milliseconds / 1000
   });
 }
+
+Duration.oneSec = new Duration({ seconds: 1 });
+Duration.twoSec = new Duration({ seconds: 2 });
+Duration.threeSec = new Duration({ seconds: 3 });
