@@ -176,7 +176,7 @@
     }
 
     a:focus {
-      outline-offset: 1em;
+      outline-offset: .1em;
     }
 
     @media (--toolbar-layout-all-links-visible) {
@@ -216,6 +216,11 @@
       top: 50%;
       transform: translateY(-50%);
       width: var(--double-baseline);
+    }
+
+    &:focus {
+      /* The outline gets slightly hidden behind the <main> overflow otherwise */
+      outline-offset: -.2em;
     }
   }
 
