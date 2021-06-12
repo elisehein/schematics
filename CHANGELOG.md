@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Refactored how millisecond-second durations are handled (#8).
 
-## [1.0.0] – 2019-02-25
+## [1.0.0] – 2021-06-12
 
 The initial release of Schematics including the first five figures (figs 14, 18, 36, 42, 43).
 
