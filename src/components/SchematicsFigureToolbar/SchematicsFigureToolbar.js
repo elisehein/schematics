@@ -53,6 +53,7 @@ export default class SchematicsFigureToolbar extends HTMLElement {
       <a
         id="${this.directionalLinkID(direction)}"
         class="schematics-figure-toolbar__directional-link"
+        aria-controls="individual-figure"
         aria-labelledby="${labelID}"
         ${targetNum ? `href="#fig${targetNum}"` : ""} >
         ${anchorContents}
@@ -63,8 +64,13 @@ export default class SchematicsFigureToolbar extends HTMLElement {
 
   renderFigureLinks() {
     return this.nums.map(num => `
-      <li class="${this.itemClasses({ active: num == this.active, figure: true })}" data-figure-link="${num}">
-        <a href="#fig${num}">fig. ${num}</a>
+      <li
+        class="${this.itemClasses({ active: num == this.active, figure: true })}"
+        data-figure-link="${num}">
+        <a
+          aria-controls="individual-figure"
+          aria-selected="${num == this.active}"
+          href="#fig${num}">fig. ${num}</a>
       </li>
     `).join("");
   }
