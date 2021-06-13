@@ -24,11 +24,14 @@ export default class SchematicsFigure extends HTMLElement {
 
     const onLightUp = this.lightUpFigure.bind(this);
 
+    this._captionTyping = new CaptionTyping(getPoetry(this.num));
+    this.renderA11yCaption(this._captionTyping.fullCaption);
+
     this._diagramElement.drawBeforeCaption({
       onLightUp,
       onDone: () => {
         this._diagramElement.drawAlongsideCaption();
-        this.renderCaption({
+        this.renderCaption(this._captionTyping, {
           onDone: () => this._diagramElement.drawAfterCaption({ onLightUp })
         });
       }
@@ -50,8 +53,9 @@ export default class SchematicsFigure extends HTMLElement {
       clearTimeout(this._lightUpTimer);
     }
 
-    this.querySelector(".schematics-figure__figure__figcaption").innerHTML = "";
-    this.querySelector(".schematics-figure__figure__diagram-container").innerHTML = "";
+    this.animatedFigcaptionNode.innerHTML = "";
+    this.visuallyHiddenFigcaptionNode.innerHTML = "";
+    this.diagramContainerNode.innerHTML = "";
   }
 
   lightUpFigure(duration) {
@@ -115,20 +119,23 @@ export default class SchematicsFigure extends HTMLElement {
     }
 
     const diagramElement = getDiagram(this.num);
-    this.querySelector(".schematics-figure__figure__diagram-container").replaceChildren(diagramElement);
+    this.diagramContainerNode.replaceChildren(diagramElement);
     return diagramElement;
   }
 
-  renderCaption({ onDone }) {
+  renderCaption(captionTyping, { onDone }) {
     if (!Number.isInteger(this.num)) {
       return;
     }
 
     const onPause = (index, duration) => this._diagramElement.onCaptionPause(index, duration);
+    captionTyping.animate(this.animatedFigcaptionNode, onPause, onDone);
+  }
 
-    const captionNode = this.querySelector(".schematics-figure__figure__figcaption");
-    this._captionTyping = new CaptionTyping(getPoetry(this.num));
-    this._captionTyping.animate(captionNode, onPause, onDone);
+  renderA11yCaption(caption) {
+    // We never want to force screen reader users to wait until the diagram has animated before they
+    // can hear the caption.
+    this.visuallyHiddenFigcaptionNode.innerText = caption;
   }
 
   className(num) {
@@ -137,6 +144,18 @@ export default class SchematicsFigure extends HTMLElement {
 
   get figureNode() {
     return this.querySelector(".schematics-figure__figure");
+  }
+
+  get animatedFigcaptionNode() {
+    return this.querySelector(".schematics-figure__figure__figcaption__animated");
+  }
+
+  get visuallyHiddenFigcaptionNode() {
+    return this.querySelector(".schematics-figure__figure__figcaption__visually-hidden");
+  }
+
+  get diagramContainerNode() {
+    return this.querySelector(".schematics-figure__figure__diagram-container");
   }
 
   get num() {

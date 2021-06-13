@@ -25,6 +25,7 @@ export default class CaptionTyping {
 
     const { parsedAndWrappedCaption, singleCharacterDelayRanges } = this.parse(unparsedCaption);
 
+    this._unparsedCaption = unparsedCaption;
     this.parsedAndWrappedCaption = parsedAndWrappedCaption;
     this.singleCharacterDelayRanges = singleCharacterDelayRanges;
   }
@@ -200,5 +201,9 @@ export default class CaptionTyping {
     if (this._timer) {
       clearTimeout(this._timer);
     }
+  }
+
+  get fullCaption() {
+    return this._unparsedCaption.replace(/\[[^\[]*\]/g, "");
   }
 }
