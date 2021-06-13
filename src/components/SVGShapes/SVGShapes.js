@@ -143,12 +143,15 @@ export function TypingText(strokeable, isThumbnailSize, text, { x, y }, animatio
 
   g.append(textPath.node, textShape.node);
 
-  return {
-    node: g,
-    animateTyping: (...args) => textPath.beginAnimation(...args),
-    textNode: textShape.node,
-    intrinsicSize: textSize
-  };
+  return Object.assign(
+    {
+      node: g,
+      animateTyping: (...args) => textPath.beginAnimation(...args),
+      textNode: textShape.node,
+      intrinsicSize: textSize
+    },
+    clickableWithKeyboardFocus({ node: g })
+  );
 }
 
 export function createSVGElement(elementName) {

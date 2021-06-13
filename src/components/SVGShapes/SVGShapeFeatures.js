@@ -162,24 +162,33 @@ export const clickableWithKeyboardFocus = ({ node }) => ({
   onClickOnce(onFocusAndMouseover, onBlurAndMouseout, onClick) {
     this.indicateClickability(onFocusAndMouseover, onBlurAndMouseout);
 
-    node.addEventListener("click", () => {
-      this.disableClickability(onFocusAndMouseover, onBlurAndMouseout);
-      onClick();
-    }, { once: true });
-
-    const keyupHandler = event => {
-      if (event.keyCode !== 13) {
-        console.log("We hit a key, but not enter, retutn");
-        return;
-      }
-
-      console.log("preventdefault");
+    const clickHandler = event => {
       event.preventDefault();
       this.disableClickability(onFocusAndMouseover, onBlurAndMouseout);
-      node.removeEventListener("keyup", keyupHandler);
+      node.removeEventListener("mousedown", clickHandler);
+      node.removeEventListener("touchstart", clickHandler);
+      node.blur();
       onClick();
     };
 
+    const keyupHandler = event => {
+      if (event.keyCode !== 13) {
+        return;
+      }
+
+      this.disableClickability(onFocusAndMouseover, onBlurAndMouseout);
+      event.preventDefault();
+      event.stopPropagation();
+      node.removeEventListener("keyup", keyupHandler);
+      node.blur();
+      onClick();
+    };
+
+    // We want to prevent the focus event firing in case of click (to avoid visible outline)
+    // so we use mousedown instead of click and preventDefault();
+    // https://stackoverflow.com/questions/8735764/prevent-firing-focus-event-when-clicking-on-div
+    node.addEventListener("mousedown", clickHandler);
+    node.addEventListener("touchstart", clickHandler);
     node.addEventListener("keyup", keyupHandler);
   },
 

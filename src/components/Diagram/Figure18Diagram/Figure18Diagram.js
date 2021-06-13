@@ -83,7 +83,6 @@ export default class Figure18Diagram extends Diagram {
 
     const label = this._svgShapeFactory.getTypingText(option.label, { x, y }, animationDurationSeconds, 8);
     this.addSVGChildElement(label.node);
-    label.textNode.style.cursor = "pointer";
 
     label.animateTyping();
 
@@ -103,15 +102,22 @@ export default class Figure18Diagram extends Diagram {
   }
 
   bindOptionLabelClick(label, underlineNode, originBoxText, option) {
-    label.node.addEventListener("click", () => {
-      label.textNode.style.cursor = "default";
+    label.onClickOnce(() => {
+      label.node.style.color = "var(--color-highest-contrast)";
+      label.textNode.style.textShadow = "0 0 .3em var(--color-highest-contrast)";
+      underlineNode.style.color = "var(--color-highest-contrast)";
+    }, () => {
+      label.node.style.color = "currentColor";
+      label.textNode.style.textShadow = "none";
+      underlineNode.style.color = "currentColor";
+    }, () => {
       underlineNode.remove();
       this.drawOptionArrow({
         originBoxText,
         option,
         onDone: () => this.drawBoxWithOptions(option.target, option.touchPoint)
       });
-    }, { once: true });
+    });
   }
 
   drawOptionArrow({ originBoxText, option, onDone, animated = true }) {
