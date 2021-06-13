@@ -54,6 +54,16 @@ function configurePulseAnimation(circle) {
     keyTimes
   });
 
+  circle.animateAttribute("fill", {
+    begin,
+    dur,
+    repeatCount: "indefinite",
+    values: "transparent; currentcolor; transparent",
+    calcMode: "spline",
+    keySplines: `${BezierEasing.easeInExpo.smilString}; ${BezierEasing.easeOutCubic.smilString}`,
+    keyTimes
+  });
+
   circle.animateAttribute({ type: "xml", name: "stroke-opacity" }, {
     begin,
     dur,
