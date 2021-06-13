@@ -68,8 +68,7 @@ export default class SchematicsFigureToolbar extends HTMLElement {
         class="${this.itemClasses({ active: num == this.active, figure: true })}"
         data-figure-link="${num}">
         <a
-          aria-controls="individual-figure"
-          aria-selected="${num == this.active}"
+          aria-controls="individual-figure" ${num == this.active ? "aria-current=\"page\"" : ""}
           href="#fig${num}">fig. ${num}</a>
       </li>
     `).join("");
