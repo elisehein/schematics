@@ -36,10 +36,8 @@ export default class Figure18Diagram extends Diagram {
   drawBoxWithOptions(boxText, boxOriginPoint, animated = true, { onDone } = {}) {
     const boxData = data[boxText];
     const coords = this._grid.getBoxCoords(boxData.position);
-    const existingBox = this.boxWithOptionsAtCoords(coords);
 
-    if (existingBox !== null) {
-      existingBox.scrollIntoView({ inline: "center", behavior: "smooth" });
+    if (this.boxWithOptionsExists(coords)) {
       onDone && onDOne();
       return;
     }
@@ -58,14 +56,14 @@ export default class Figure18Diagram extends Diagram {
     });
   }
 
-  boxWithOptionsAtCoords(coords) {
-    return this.querySelector(`#${this.getBoxID(coords)}`);
+  boxWithOptionsExists(coords) {
+    return this.querySelector(`#${this.getBoxID(coords)}`) !== null;
   }
 
   drawOptions(originBoxText, options, animated = true) {
     options.forEach((option, index) => {
       if (option.label == "") {
-        this.drawOptionArrow({ originBoxText, option, onDone: () => this.drawBoxWithOptions(option.target) });
+        this.drawOptionArrow({ originBoxText, option, onDone: () => {} });
         return;
       }
 
@@ -160,7 +158,6 @@ export default class Figure18Diagram extends Diagram {
     if (animated) {
       this.animateBasedOnLength(boxedText);
       boxedText.animateTyping(onDone);
-      boxedText.node.scrollIntoView({ inline: "center", behavior: "smooth" });
     } else {
       onDone();
     }
