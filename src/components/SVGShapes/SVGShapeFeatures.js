@@ -156,3 +156,56 @@ export const havingIntrinsicSize = ({ node }) => ({
     return { width, height };
   }
 });
+
+// eslint-disable-next-line max-lines-per-function
+export const clickableWithKeyboardFocus = ({ node }) => ({
+  onClickOnce(onFocusAndMouseover, onBlurAndMouseout, onClick) {
+    this.indicateClickability(onFocusAndMouseover, onBlurAndMouseout);
+
+    node.addEventListener("click", () => {
+      this.disableClickability(onFocusAndMouseover, onBlurAndMouseout);
+      onClick();
+    }, { once: true });
+
+    const keyupHandler = event => {
+      if (event.keyCode !== 13) {
+        console.log("We hit a key, but not enter, retutn");
+        return;
+      }
+
+      console.log("preventdefault");
+      event.preventDefault();
+      this.disableClickability(onFocusAndMouseover, onBlurAndMouseout);
+      node.removeEventListener("keyup", keyupHandler);
+      onClick();
+    };
+
+    node.addEventListener("keyup", keyupHandler);
+  },
+
+  indicateClickability(onFocusAndMouseover, onBlurAndMouseout) {
+    node.setAttribute("focusable", true);
+    node.setAttribute("tabindex", 0);
+    node.setAttribute("role", "button");
+
+    node.style.cursor = "pointer";
+    node.addEventListener("focus", onFocusAndMouseover);
+    node.addEventListener("blur", onBlurAndMouseout);
+    node.addEventListener("mouseover", onFocusAndMouseover);
+    node.addEventListener("mouseleave", onBlurAndMouseout);
+
+  },
+
+  disableClickability(onFocusAndMouseover, onBlurAndMouseout) {
+    onBlurAndMouseout();
+    node.setAttribute("focusable", false);
+    node.removeAttribute("tabindex");
+    node.removeAttribute("role");
+
+    node.style.cursor = "default";
+    node.removeEventListener("focus", onFocusAndMouseover);
+    node.removeEventListener("blur", onBlurAndMouseout);
+    node.removeEventListener("mouseover", onFocusAndMouseover);
+    node.removeEventListener("mouseleave", onBlurAndMouseout);
+  }
+});

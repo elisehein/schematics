@@ -1,4 +1,4 @@
-import { fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
+import { fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize, clickableWithKeyboardFocus } from "./SVGShapeFeatures.js";
 
 /*
  * The components here are not Web Components but rather your vanilla
@@ -37,7 +37,8 @@ export function Ellipse(strokeable, cx, cy, rx, ry) {
     self,
     animatable(self),
     strokeable(self),
-    fillable(self)
+    fillable(self),
+    clickableWithKeyboardFocus(self)
   );
 }
 
@@ -53,7 +54,8 @@ export function Circle(strokeable, cx, cy, r) {
     self,
     animatable(self),
     strokeable(self),
-    fillable(self)
+    fillable(self),
+    clickableWithKeyboardFocus(self)
   );
 }
 
