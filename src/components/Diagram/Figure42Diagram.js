@@ -62,7 +62,6 @@ export default class Figure42Diagram extends Diagram {
 
   drawBeforeCaption({ onDone, onLightUp }) {
     this.drawStars();
-    this._onLightUp = onLightUp;
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
@@ -72,14 +71,14 @@ export default class Figure42Diagram extends Diagram {
     ], onDone);
   }
 
-  drawAfterCaption() {
+  drawAfterCaption({ onLightUp }) {
     runActionsSequentially([
       waitBeforeNextAction(4000, this._timerManager),
-      this.animateMagnitudeOnYAxis.bind(this, this._onLightUp, true),
-      this.animateTemperatureOnXAxis.bind(this, this._onLightUp, true),
+      this.animateMagnitudeOnYAxis.bind(this, onLightUp, true),
+      this.animateTemperatureOnXAxis.bind(this, onLightUp, true),
       waitBeforeNextAction(4000, this._timerManager),
-      this.animateTemperatureOnXAxis.bind(this, this._onLightUp, false),
-      this.animateMagnitudeOnYAxis.bind(this, this._onLightUp, false)
+      this.animateTemperatureOnXAxis.bind(this, onLightUp, false),
+      this.animateMagnitudeOnYAxis.bind(this, onLightUp, false)
     ], this.drawAfterCaption.bind(this));
   }
 
