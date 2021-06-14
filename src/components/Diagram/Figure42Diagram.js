@@ -56,18 +56,38 @@ export default class Figure42Diagram extends Diagram {
     super(42, isThumbnail);
 
     this._stars = [];
+    this._axisAnimationDuration = new Duration({ seconds: 5 });
+    this._reverseAxisAnimationDuration = new Duration({ seconds: 3 });
+    this._animationLoop = 0;
   }
 
   drawBeforeCaption({ onDone, onLightUp }) {
     this.drawStars();
-    const axisAnimationDuration = new Duration({ seconds: 5 });
+    this._onLightUp = onLightUp;
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
-      this.animateTemperatureOnXAxis.bind(this, axisAnimationDuration, onLightUp),
-      this.animateMagnitudeOnYAxis.bind(this, axisAnimationDuration, onLightUp),
+      this.animateTemperatureOnXAxis.bind(this, onLightUp, false),
+      this.animateMagnitudeOnYAxis.bind(this, onLightUp, false),
       waitBeforeNextAction(2000, this._timerManager)
     ], onDone);
+  }
+
+  drawAfterCaption() {
+    this._animationLoop += 1;
+
+    runActionsSequentially([
+      waitBeforeNextAction(3000, this._timerManager),
+      this.animateMagnitudeOnYAxis.bind(this, this._onLightUp, true),
+      this.animateTemperatureOnXAxis.bind(this, this._onLightUp, true),
+      ({ onDone }) => {
+        this._animationLoop += 1;
+        onDone();
+      },
+      waitBeforeNextAction(3000, this._timerManager),
+      this.animateTemperatureOnXAxis.bind(this, this._onLightUp, false),
+      this.animateMagnitudeOnYAxis.bind(this, this._onLightUp, false)
+    ], this.drawAfterCaption.bind(this));
   }
 
   drawThumbnail() {
@@ -94,44 +114,49 @@ export default class Figure42Diagram extends Diagram {
     this._stars.forEach(star => {
       this.scatterRandomly(
         star.node,
-        parseFloat(star.node.dataset.x),
-        parseFloat(star.node.dataset.y),
-        parseFloat(star.node.dataset.rx),
-        parseFloat(star.node.dataset.ry)
+        parseFloat(star.node.dataset.cxAligned),
+        parseFloat(star.node.dataset.cyAligned),
+        parseFloat(star.node.dataset.rxUnscaled),
+        parseFloat(star.node.dataset.ryUnscaled)
       );
     });
   }
 
-  drawStar(x, y) {
+  drawStar(cx, cy) {
     const width = 1.5;
     const height = 2;
 
-    const circle = this._svgShapeFactory.getEllipse(x, y, width, height);
+    const circle = this._svgShapeFactory.getEllipse(cx, cy, width, height);
     circle.fill();
 
     // Keep track of the intended coordinates as we will override them with random ones
-    circle.node.dataset.x = x;
-    circle.node.dataset.y = y;
-    circle.node.dataset.rx = width;
-    circle.node.dataset.ry = height;
+    circle.node.dataset.cxAligned = cx;
+    circle.node.dataset.cyAligned = cy;
+    circle.node.dataset.rxUnscaled = width;
+    circle.node.dataset.ryUnscaled = height;
 
     this.addSVGChildElement(circle.node);
 
     return circle;
   }
 
-  scatterRandomly(node, x, y, rx, ry) {
+  scatterRandomly(node, cxAligned, cyAligned, rxUnscaled, ryUnscaled) {
     const viewBox = this.querySelector("svg").viewBox.baseVal;
-    node.style.filter = `drop-shadow(0 0 ${x / viewBox.width / 10}rem var(--color-highest-contrast))`;
+    node.style.filter = `drop-shadow(0 0 ${cxAligned / viewBox.width / 10}rem var(--color-highest-contrast))`;
+    node.dataset.filter = node.style.filter;
 
-    const scale = y / (viewBox.height / 2);
-    node.setAttribute("rx", rx * scale);
-    node.setAttribute("ry", ry * scale);
+    const scale = cyAligned / (viewBox.height / 2);
+    node.dataset.rxScaled = rxUnscaled * scale;
+    node.dataset.ryScaled = ryUnscaled * scale;
+    node.setAttribute("rx", node.dataset.rxScaled);
+    node.setAttribute("ry", node.dataset.ryScaled);
 
-    const randomXTranslation = this.getRandomTranslationWithinBounds(x, viewBox.width, 7);
-    const randomYTranslation = this.getRandomTranslationWithinBounds(y, viewBox.height, 10);
-    node.setAttribute("cx", x + randomXTranslation);
-    node.setAttribute("cy", y + randomYTranslation);
+    const randomXTranslation = this.getRandomTranslationWithinBounds(cxAligned, viewBox.width, 7);
+    const randomYTranslation = this.getRandomTranslationWithinBounds(cyAligned, viewBox.height, 10);
+    node.dataset.cxTranslated = cxAligned + randomXTranslation;
+    node.dataset.cyTranslated = cyAligned + randomYTranslation;
+    node.setAttribute("cx", node.dataset.cxTranslated);
+    node.setAttribute("cy", node.dataset.cyTranslated);
   }
 
   getRandomTranslationWithinBounds(originalValue, bounds, inset) {
@@ -140,7 +165,8 @@ export default class Figure42Diagram extends Diagram {
     return Math.random() > 0.5 ? randomPositiveTranslation : randomNegativeTranslation;
   }
 
-  animateTemperatureOnXAxis(duration, onLightUp, { onDone }) {
+  animateTemperatureOnXAxis(onLightUp, reverse, { onDone }) {
+    const duration = reverse ? this._reverseAxisAnimationDuration : this._axisAnimationDuration;
     this.lightUpWithDelay(0.8, duration, onLightUp);
 
     this._stars.forEach((star, index) => {
@@ -148,11 +174,13 @@ export default class Figure42Diagram extends Diagram {
       const translationAnimationID = this.xTranslationAnimationID(index);
 
       star.node.style.transition = `filter ${duration.s}s ${BezierEasing.easeInOutCubic.cssString}`;
-      star.node.style.filter = "none";
+      star.node.style.filter = reverse ? star.node.dataset.filter : "none";
+
+      const cxValues = [star.node.dataset.cxTranslated, star.node.dataset.cxAligned];
 
       animatableStar.animateAttribute("cx", Object.assign({
         id: translationAnimationID,
-        values: `${star.node.getAttribute("cx")};${star.node.dataset.x}`
+        values: (reverse ? cxValues.reverse() : cxValues).join(";")
       }, commonAnimationProps(duration)));
 
       animatableStar.beginAnimation(translationAnimationID, () => {
@@ -163,7 +191,8 @@ export default class Figure42Diagram extends Diagram {
     });
   }
 
-  animateMagnitudeOnYAxis(duration, onLightUp, { onDone }) {
+  animateMagnitudeOnYAxis(onLightUp, reverse, { onDone }) {
+    const duration = reverse ? this._reverseAxisAnimationDuration : this._axisAnimationDuration;
     this.lightUpWithDelay(0.8, duration, onLightUp);
 
     this._stars.forEach((star, index) => {
@@ -172,21 +201,23 @@ export default class Figure42Diagram extends Diagram {
       const scaleYAnimationID = this.scaleAnimationID(index, "y");
       const translationAnimationID = this.yTranslationAnimationID(index);
 
+      const rxValues = [star.node.dataset.rxScaled, star.node.dataset.rxUnscaled];
+      const ryValues = [star.node.dataset.ryScaled, star.node.dataset.ryUnscaled];
+      const cyValues = [star.node.dataset.cyTranslated, star.node.dataset.cyAligned];
+
       animatableStar.animateAttribute("rx", Object.assign({
         id: scaleXAnimationID,
-        from: star.node.getAttribute("rx"),
-        to: star.node.dataset.rx
+        values: (reverse ? rxValues.reverse() : rxValues).join(";"),
       }, commonAnimationProps(duration)));
 
       animatableStar.animateAttribute("ry", Object.assign({
         id: scaleYAnimationID,
-        from: star.node.getAttribute("ry"),
-        to: star.node.dataset.ry
+        values: (reverse ? ryValues.reverse() : ryValues).join(";")
       }, commonAnimationProps(duration)));
 
       animatableStar.animateAttribute("cy", Object.assign({
         id: translationAnimationID,
-        values: `${star.node.getAttribute("cy")};${star.node.dataset.y}`
+        values: (reverse ? cyValues.reverse() : cyValues).join(";")
       }, commonAnimationProps(duration)));
 
       animatableStar.beginAnimation(scaleXAnimationID);
@@ -207,15 +238,15 @@ export default class Figure42Diagram extends Diagram {
   }
 
   xTranslationAnimationID(index) {
-    return `x-translation-animation-${index}`;
+    return `x-translation-animation-${index}-${this._animationLoop}`;
   }
 
   yTranslationAnimationID(index) {
-    return `y-translation-animation-${index}`;
+    return `y-translation-animation-${index}-${this._animationLoop}`;
   }
 
   scaleAnimationID(index, axis) {
-    return `scale-${axis}-animation-${index}`;
+    return `scale-${axis}-animation-${index}-${this._animationLoop}`;
   }
 }
 
