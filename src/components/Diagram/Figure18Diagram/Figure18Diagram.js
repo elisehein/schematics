@@ -3,6 +3,7 @@ import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
+import Duration from "../../../helpers/Duration.js";
 
 const firstBox = "good?";
 
@@ -22,8 +23,10 @@ export default class Figure18Diagram extends Diagram {
     });
   }
 
-  drawAfterCaption() {
+  drawAfterCaption({ onLightUp }) {
     super.drawAfterCaption();
+
+    this._onLightUp = onLightUp;
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
@@ -135,7 +138,7 @@ export default class Figure18Diagram extends Diagram {
     }
 
     if (animated) {
-      this.animateBasedOnLength(arrowLine, addArrowHeadAndFinish);
+      this.animateBasedOnLength(arrowLine, false, addArrowHeadAndFinish);
     } else {
       addArrowHeadAndFinish();
     }
@@ -163,8 +166,12 @@ export default class Figure18Diagram extends Diagram {
     }
   }
 
-  animateBasedOnLength(path, onDone = () => {}) {
-    const durationExpression = lengthCSSProperty => `calc(.15s * (var(${lengthCSSProperty}) / 30))`;
+  animateBasedOnLength(path, lightUp = true, onDone = () => {}) {
+    const duration = new Duration({ seconds: path.getLength() / 30 * 0.15 });
+    if (lightUp) {
+      this._onLightUp(duration);
+    }
+    const durationExpression = `${duration.s}s`;
     path.animateStroke(durationExpression, "ease-out", onDone);
   }
 
