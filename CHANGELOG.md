@@ -10,8 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Compression scripts for CSS (using `cssnano`) and JS (using `terser` and `foreach-cli`) to run in production on Netlify ([#4](https://github.com/elisehein/schematics/pull/4)).
+* Keyboard focusability for the SVG elements in figs. 18 and 36 ([#9](https://github.com/elisehein/schematics/pull/9)).
+* ARIA roles and attributes to indicate the live figure region and toolbar controlling it ([#9](https://github.com/elisehein/schematics/pull/9)).
+* A different a11y description for each figure depending on whether it's a thumbnail or not ([#9](https://github.com/elisehein/schematics/pull/9));
 
-### Changed
+### Fixed
+
+* Screen-reader friendly figure caption ([#9](https://github.com/elisehein/schematics/pull/9));
+
+### Refactored
 
 * Refactored how millisecond-second durations are handled ([#8](https://github.com/elisehein/schematics/pull/8)).
 
