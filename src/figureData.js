@@ -17,6 +17,14 @@ but feel[PAUSE:SHORT] had I stayed,
     a11yThumbnailDescription: "A box with the question \"Good?\"",
     poetry: "[TYPE:NORMAL]I will send [PAUSE:SHORT]you flowers[PAUSE:MEDIUM], [TYPE:SLOWEST]pearls[PAUSE:LONG],\n[TYPE:NORMAL]letters[TYPE:FAST][PAUSE:SHORT] written in[TYPE:SLOW] ink."
   },
+  20: {
+    a11yDescription: "An illustration of the propagation of sound waves across arrays of vertical lines.",
+    a11yThumbnailDescription: "Ten parallel vertical lines.",
+    poetry: `[TYPE:NORMAL]You lay out some newspaper.
+[PAUSE:LONG]We lie on it.
+[PAUSE:LONG]The fairytale music,
+[PAUSE:SHORT]drifts through the trees.`
+  },
   36: {
     a11yDescription: "A swinging pendulum.",
     a11yThumbnailDescription: "A pendulum with two arms.",
