@@ -96,7 +96,7 @@ schematics-figure-previews {
       padding-top: var(--double-baseline);
 
       figure-40-diagram& {
-        filter: blur(.06rem);
+        filter: blur(.04rem);
       }
 
       .diagram {
