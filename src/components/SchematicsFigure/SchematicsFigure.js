@@ -22,22 +22,24 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
+    this._captionTyping = new CaptionTyping(getPoetry(this.num));
+    this.renderA11yCaption();
+
     const onLightUp = this.lightUpFigure.bind(this);
     const onJitter = this.jitterDiagram.bind(this);
-
-    this._captionTyping = new CaptionTyping(getPoetry(this.num));
-    this.renderA11yCaption(this._captionTyping.fullCaption);
-
-    this._diagramElement.drawBeforeCaption({
+    const onDeleteCaption = this.deleteCaption.bind(this);
+    const onRetypeCaption = this.renderCaption.bind(this);
+    const drawAfterCaption = () => this._diagramElement.drawAfterCaption({
       onLightUp,
       onJitter,
-      onDone: () => {
-        this._diagramElement.drawAlongsideCaption();
-        this.renderCaption(this._captionTyping, {
-          onDone: () => this._diagramElement.drawAfterCaption({ onLightUp, onJitter })
-        });
-      }
+      onDeleteCaption,
+      onRetypeCaption
     });
+
+    this._diagramElement.drawBeforeCaption({ onLightUp, onJitter, onDone: () => {
+      this._diagramElement.drawAlongsideCaption();
+      this.renderCaption({ onDone: drawAfterCaption });
+    } });
   }
 
   cleanUpCurrentFigure(num) {
@@ -130,19 +132,27 @@ export default class SchematicsFigure extends HTMLElement {
     return diagramElement;
   }
 
-  renderCaption(captionTyping, { onDone }) {
+  renderCaption({ onDone }) {
     if (!Number.isInteger(this.num)) {
       return;
     }
 
     const onPause = (index, duration) => this._diagramElement.onCaptionPause(index, duration);
-    captionTyping.animate(this.animatedFigcaptionNode, onPause, onDone);
+    this._captionTyping.animate(this.animatedFigcaptionNode, onPause, onDone);
   }
 
-  renderA11yCaption(caption) {
+  deleteCaption({ onDone }) {
+    if (!Number.isInteger(this.num)) {
+      return;
+    }
+
+    this._captionTyping.animateDelete(this.animatedFigcaptionNode, onDone);
+  }
+
+  renderA11yCaption() {
     // We never want to force screen reader users to wait until the diagram has animated before they
     // can hear the caption.
-    this.visuallyHiddenFigcaptionNode.innerText = caption;
+    this.visuallyHiddenFigcaptionNode.innerText = this._captionTyping.fullCaption;
   }
 
   className(num) {

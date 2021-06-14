@@ -71,10 +71,11 @@ export default class Figure42Diagram extends Diagram {
     ], onDone);
   }
 
-  drawAfterCaption({ onLightUp, onJitter }) {
+  drawAfterCaption({ onLightUp, onJitter, onDeleteCaption, onRetypeCaption }) {
     runActionsSequentially([
       waitBeforeNextAction(3000, this._timerManager),
       ({ onDone }) => {
+        onDeleteCaption({ onDone: () => {} });
         onLightUp(Duration.oneSec);
         onJitter(Duration.oneSec, { onDone });
       },
@@ -82,8 +83,10 @@ export default class Figure42Diagram extends Diagram {
       this.animateTemperatureOnXAxis.bind(this, () => {}, true),
       waitBeforeNextAction(4000, this._timerManager),
       this.animateTemperatureOnXAxis.bind(this, onLightUp, false),
-      this.animateMagnitudeOnYAxis.bind(this, onLightUp, false)
-    ], this.drawAfterCaption.bind(this, { onLightUp, onJitter }));
+      this.animateMagnitudeOnYAxis.bind(this, onLightUp, false),
+      waitBeforeNextAction(2000, this._timerManager),
+      onRetypeCaption
+    ], this.drawAfterCaption.bind(this, { onLightUp, onJitter, onDeleteCaption, onRetypeCaption }));
   }
 
   drawThumbnail() {
@@ -228,7 +231,7 @@ export default class Figure42Diagram extends Diagram {
     const rxValues = [star.node.dataset.rxScaled, star.node.dataset.rxUnscaled];
     animatableStar.animateAttribute("rx", Object.assign({
       id: animationID,
-      values: (reverse ? rxValues.reverse() : rxValues).join(";"),
+      values: (reverse ? rxValues.reverse() : rxValues).join(";")
     }, commonAnimationProps(duration)));
   }
 
