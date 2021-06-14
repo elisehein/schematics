@@ -57,7 +57,7 @@ export default class Figure42Diagram extends Diagram {
 
     this._stars = [];
     this._axisAnimationDuration = new Duration({ seconds: 5 });
-    this._reverseAxisAnimationDuration = new Duration({ seconds: 3 });
+    this._reverseAxisAnimationDuration = new Duration({ seconds: 2.2 });
   }
 
   drawBeforeCaption({ onDone, onLightUp }) {
@@ -71,15 +71,19 @@ export default class Figure42Diagram extends Diagram {
     ], onDone);
   }
 
-  drawAfterCaption({ onLightUp }) {
+  drawAfterCaption({ onLightUp, onJitter }) {
     runActionsSequentially([
-      waitBeforeNextAction(4000, this._timerManager),
-      this.animateMagnitudeOnYAxis.bind(this, onLightUp, true),
-      this.animateTemperatureOnXAxis.bind(this, onLightUp, true),
+      waitBeforeNextAction(3000, this._timerManager),
+      ({ onDone }) => {
+        onLightUp(Duration.oneSec);
+        onJitter(Duration.oneSec, { onDone });
+      },
+      this.animateMagnitudeOnYAxis.bind(this, () => {}, true),
+      this.animateTemperatureOnXAxis.bind(this, () => {}, true),
       waitBeforeNextAction(4000, this._timerManager),
       this.animateTemperatureOnXAxis.bind(this, onLightUp, false),
       this.animateMagnitudeOnYAxis.bind(this, onLightUp, false)
-    ], this.drawAfterCaption.bind(this));
+    ], this.drawAfterCaption.bind(this, { onLightUp, onJitter }));
   }
 
   drawThumbnail() {

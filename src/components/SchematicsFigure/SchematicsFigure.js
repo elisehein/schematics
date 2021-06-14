@@ -23,16 +23,18 @@ export default class SchematicsFigure extends HTMLElement {
     }
 
     const onLightUp = this.lightUpFigure.bind(this);
+    const onJitter = this.jitterDiagram.bind(this);
 
     this._captionTyping = new CaptionTyping(getPoetry(this.num));
     this.renderA11yCaption(this._captionTyping.fullCaption);
 
     this._diagramElement.drawBeforeCaption({
       onLightUp,
+      onJitter,
       onDone: () => {
         this._diagramElement.drawAlongsideCaption();
         this.renderCaption(this._captionTyping, {
-          onDone: () => this._diagramElement.drawAfterCaption({ onLightUp })
+          onDone: () => this._diagramElement.drawAfterCaption({ onLightUp, onJitter })
         });
       }
     });
@@ -70,6 +72,11 @@ export default class SchematicsFigure extends HTMLElement {
       this.figureNode.classList.remove("schematics-figure__figure--light-up");
       this._lightUpTimer = null;
     }, duration.ms);
+  }
+
+  jitterDiagram(duration, { onDone } = {}) {
+    this.style.setProperty("--schematics-figure-jitter-duration", `${duration.s}s`);
+    transitionWithClasses(this.diagramContainerNode, ["schematics-figure__figure__diagram-container--jitter"], onDone);
   }
 
   static get observedAttributes()  {
