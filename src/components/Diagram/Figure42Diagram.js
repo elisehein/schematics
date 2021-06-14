@@ -58,7 +58,6 @@ export default class Figure42Diagram extends Diagram {
     this._stars = [];
     this._axisAnimationDuration = new Duration({ seconds: 5 });
     this._reverseAxisAnimationDuration = new Duration({ seconds: 3 });
-    this._animationLoop = 0;
   }
 
   drawBeforeCaption({ onDone, onLightUp }) {
@@ -74,17 +73,11 @@ export default class Figure42Diagram extends Diagram {
   }
 
   drawAfterCaption() {
-    this._animationLoop += 1;
-
     runActionsSequentially([
-      waitBeforeNextAction(3000, this._timerManager),
+      waitBeforeNextAction(4000, this._timerManager),
       this.animateMagnitudeOnYAxis.bind(this, this._onLightUp, true),
       this.animateTemperatureOnXAxis.bind(this, this._onLightUp, true),
-      ({ onDone }) => {
-        this._animationLoop += 1;
-        onDone();
-      },
-      waitBeforeNextAction(3000, this._timerManager),
+      waitBeforeNextAction(4000, this._timerManager),
       this.animateTemperatureOnXAxis.bind(this, this._onLightUp, false),
       this.animateMagnitudeOnYAxis.bind(this, this._onLightUp, false)
     ], this.drawAfterCaption.bind(this));
@@ -171,17 +164,15 @@ export default class Figure42Diagram extends Diagram {
 
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
-      const translationAnimationID = this.xTranslationAnimationID(index);
+      const translationAnimationID = this.xTranslationAnimationID(index, reverse);
+      const existingAnimation = this.querySelector(`#${translationAnimationID}`);
+
+      if (!existingAnimation) {
+        this.addXTranslationAnimation(star, animatableStar, reverse, duration, translationAnimationID);
+      }
 
       star.node.style.transition = `filter ${duration.s}s ${BezierEasing.easeInOutCubic.cssString}`;
       star.node.style.filter = reverse ? star.node.dataset.filter : "none";
-
-      const cxValues = [star.node.dataset.cxTranslated, star.node.dataset.cxAligned];
-
-      animatableStar.animateAttribute("cx", Object.assign({
-        id: translationAnimationID,
-        values: (reverse ? cxValues.reverse() : cxValues).join(";")
-      }, commonAnimationProps(duration)));
 
       animatableStar.beginAnimation(translationAnimationID, () => {
         if (index == 0) {
@@ -191,34 +182,34 @@ export default class Figure42Diagram extends Diagram {
     });
   }
 
+  addXTranslationAnimation(star, animatableStar, reverse, duration, animationID) {
+    const cxValues = [star.node.dataset.cxTranslated, star.node.dataset.cxAligned];
+
+    animatableStar.animateAttribute("cx", Object.assign({
+      id: animationID,
+      values: (reverse ? cxValues.reverse() : cxValues).join(";")
+    }, commonAnimationProps(duration)));
+  }
+
   animateMagnitudeOnYAxis(onLightUp, reverse, { onDone }) {
     const duration = reverse ? this._reverseAxisAnimationDuration : this._axisAnimationDuration;
     this.lightUpWithDelay(0.8, duration, onLightUp);
 
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
-      const scaleXAnimationID = this.scaleAnimationID(index, "x");
-      const scaleYAnimationID = this.scaleAnimationID(index, "y");
-      const translationAnimationID = this.yTranslationAnimationID(index);
+      const scaleXAnimationID = this.scaleAnimationID(index, "x", reverse);
+      const scaleYAnimationID = this.scaleAnimationID(index, "y", reverse);
+      const translationAnimationID = this.yTranslationAnimationID(index, reverse);
 
-      const rxValues = [star.node.dataset.rxScaled, star.node.dataset.rxUnscaled];
-      const ryValues = [star.node.dataset.ryScaled, star.node.dataset.ryUnscaled];
-      const cyValues = [star.node.dataset.cyTranslated, star.node.dataset.cyAligned];
+      const existingScaleXAnimation = this.querySelector(`#${scaleXAnimationID}`);
+      const existingScaleYAnimation = this.querySelector(`#${scaleYAnimationID}`);
+      const existingTranslationAnimation = this.querySelector(`#${translationAnimationID}`);
 
-      animatableStar.animateAttribute("rx", Object.assign({
-        id: scaleXAnimationID,
-        values: (reverse ? rxValues.reverse() : rxValues).join(";"),
-      }, commonAnimationProps(duration)));
-
-      animatableStar.animateAttribute("ry", Object.assign({
-        id: scaleYAnimationID,
-        values: (reverse ? ryValues.reverse() : ryValues).join(";")
-      }, commonAnimationProps(duration)));
-
-      animatableStar.animateAttribute("cy", Object.assign({
-        id: translationAnimationID,
-        values: (reverse ? cyValues.reverse() : cyValues).join(";")
-      }, commonAnimationProps(duration)));
+      if (!existingScaleXAnimation || !existingScaleYAnimation || !existingTranslationAnimation) {
+        this.addScaleXAnimation(star, animatableStar, reverse, duration, scaleXAnimationID);
+        this.addScaleYAnimation(star, animatableStar, reverse, duration, scaleYAnimationID);
+        this.addYTranslationAnimation(star, animatableStar, reverse, duration, translationAnimationID);
+      }
 
       animatableStar.beginAnimation(scaleXAnimationID);
       animatableStar.beginAnimation(scaleYAnimationID);
@@ -230,6 +221,31 @@ export default class Figure42Diagram extends Diagram {
     });
   }
 
+  addScaleXAnimation(star, animatableStar, reverse, duration, animationID) {
+    const rxValues = [star.node.dataset.rxScaled, star.node.dataset.rxUnscaled];
+    animatableStar.animateAttribute("rx", Object.assign({
+      id: animationID,
+      values: (reverse ? rxValues.reverse() : rxValues).join(";"),
+    }, commonAnimationProps(duration)));
+  }
+
+  addScaleYAnimation(star, animatableStar, reverse, duration, animationID) {
+    const ryValues = [star.node.dataset.ryScaled, star.node.dataset.ryUnscaled];
+    animatableStar.animateAttribute("ry", Object.assign({
+      id: animationID,
+      values: (reverse ? ryValues.reverse() : ryValues).join(";")
+    }, commonAnimationProps(duration)));
+  }
+
+  addYTranslationAnimation(star, animatableStar, reverse, duration, animationID) {
+    const cyValues = [star.node.dataset.cyTranslated, star.node.dataset.cyAligned];
+
+    animatableStar.animateAttribute("cy", Object.assign({
+      id: animationID,
+      values: (reverse ? cyValues.reverse() : cyValues).join(";")
+    }, commonAnimationProps(duration)));
+  }
+
   lightUpWithDelay(delayFactor, duration, onLightUp) {
     const lightUpDuration = new Duration({ milliseconds: duration.ms * ((1 - delayFactor) * 2) });
     this._timerManager.setTimeout(() => {
@@ -237,16 +253,16 @@ export default class Figure42Diagram extends Diagram {
     }, duration.ms * delayFactor);
   }
 
-  xTranslationAnimationID(index) {
-    return `x-translation-animation-${index}-${this._animationLoop}`;
+  xTranslationAnimationID(index, reverse) {
+    return `x-translation-animation-${index}-${reverse ? "reverse" : ""}`;
   }
 
-  yTranslationAnimationID(index) {
-    return `y-translation-animation-${index}-${this._animationLoop}`;
+  yTranslationAnimationID(index, reverse) {
+    return `y-translation-animation-${index}-${reverse ? "reverse" : ""}`;
   }
 
-  scaleAnimationID(index, axis) {
-    return `scale-${axis}-animation-${index}-${this._animationLoop}`;
+  scaleAnimationID(index, axis, reverse) {
+    return `scale-${axis}-animation-${index}-${reverse ? "reverse" : ""}`;
   }
 }
 
