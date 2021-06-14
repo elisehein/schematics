@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * ARIA roles and attributes to indicate the live figure region and toolbar controlling it ([#9](https://github.com/elisehein/schematics/pull/9)).
 * A different a11y description for each figure depending on whether it's a thumbnail or not ([#9](https://github.com/elisehein/schematics/pull/9)).
 * Reverse looping in fig. 42 after the caption has appeared ([#10](https://github.com/elisehein/schematics/pull/10)).
+* Light up fig. 18 when new boxes are drawn ([#11](https://github.com/elisehein/schematics/pull/11)).
 
 ### Fixed
 
