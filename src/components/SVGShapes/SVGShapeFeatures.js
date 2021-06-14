@@ -113,7 +113,7 @@ export const animatable = ({ node }) => ({
     const animationNode = this.getTargetAnimationNode(id);
 
     if (animationNode) {
-      animationNode.addEventListener("endEvent", callback, false);
+      animationNode.addEventListener("endEvent", callback, { once: true });
       animationNode.beginElement();
     } else {
       callback();
