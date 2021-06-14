@@ -33,8 +33,14 @@
       </header>
 
       <main>
-        <schematics-figure-previews></schematics-figure-previews>
-        <schematics-figure style="display: none;"></schematics-figure>
+        <schematics-figure-previews role="main"></schematics-figure-previews>
+
+        <schematics-figure
+          role="main"
+          id="individual-figure"
+          aria-live="polite"
+          style="display: none;"></schematics-figure>
+
         <schematics-figure-toolbar style="display: none;"></schematics-figure-toolbar>
         <about-schematics style="display: none;"></about-schematics>
       </main>
@@ -70,7 +76,10 @@
     <template id="schematics-figure-template">
       <figure id="figure" class="schematics-figure__figure">
         <div class="schematics-figure__figure__diagram-container"></div>
-        <figcaption class="schematics-figure__figure__figcaption" role="text"></figcaption>
+        <figcaption class="schematics-figure__figure__figcaption">
+          <p class="schematics-figure__figure__figcaption__animated" aria-hidden="true" aria-live="off"></p>
+          <p class="schematics-figure__figure__figcaption__visually-hidden sr-only"></p>
+        </figcaption>
         <scan-lines></scan-lines>
       </figure>
     </template>

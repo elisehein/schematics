@@ -54,6 +54,10 @@ header {
       &:focus {
         color: inherit;
       }
+
+      &:focus {
+        outline-offset: .5em;
+      }
     }
 
     scan-lines {
