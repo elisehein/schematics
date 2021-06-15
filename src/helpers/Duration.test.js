@@ -13,6 +13,13 @@ describe("Duration", () => {
     expect((new Duration({ seconds: 3, milliseconds: 3000 })).s).toEqual(3);
   });
 
+  test("doesn't throw an error when passing in 0", () => {
+    expect(() => new Duration({ seconds: 0 })).not.toThrow();
+    expect(() => new Duration({ milliseconds: 0 })).not.toThrow();
+    expect(new Duration({ seconds: 0 }).ms).toEqual(0);
+    expect(new Duration({ milliseconds: 0 }).s).toEqual(0);
+  })
+
   test("throws an error when initialising with an incorrect conversion", () => {
     expect(() => new Duration({ seconds: 3, milliseconds: 2000 })).toThrow();
   });
