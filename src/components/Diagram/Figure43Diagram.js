@@ -11,8 +11,8 @@ export default class Figure43Diagram extends HTMLDiagram {
   }
 
   drawThumbnail() {
+    this.divContainerNode.innerHTML = cubeMarkup;
   }
-
 }
 
 customElements.define("figure-43-diagram", Figure43Diagram);

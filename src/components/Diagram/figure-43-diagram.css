@@ -27,22 +27,13 @@ figure-43-diagram {
   --cube-size: 40vw;
   --half-cube-size: calc(var(--cube-size) / 2);
 
-  @media (min-width: 40em) {
-    --cube-size: 30vw;
-  }
-
-  @media (--layout-aside-always-visible) {
-    --cube-size: 15rem;
-  }
-
   .cube {
+    --border-width: .0625rem;
+
     position: relative;
     width: var(--cube-size);
     height: var(--cube-size);
     transform-style: preserve-3d;
-    animation: erratic-rotate-scale 70s linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
 
     &__face {
       position: absolute;
@@ -50,7 +41,7 @@ figure-43-diagram {
       left: 0;
       width: var(--cube-size);
       height: var(--cube-size);
-      border: .0625rem solid var(--color-text);
+      border: var(--border-width) solid var(--color-text);
 
       &--front {
         transform: rotateY(0deg) translateZ(var(--half-cube-size));
@@ -75,6 +66,40 @@ figure-43-diagram {
       &--bottom {
         transform: rotateX(-90deg) translateZ(var(--half-cube-size));
       }
+    }
+  }
+
+  .diagram--thumbnail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .cube {
+      --cube-size: 4rem;
+      --half-cube-size: 2rem;
+      --border-width: .15625rem;
+
+      transform: translateZ(var(--half-cube-size)) rotate3d(1, 1, 1, 30deg);
+    }
+  }
+
+  .cube:not(.diagram--thumbnail .cube) {
+    animation: erratic-rotate-scale 70s linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+
+  @media (min-width: 40em) {
+    .cube:not(.diagram--thumbnail .cube) {
+      --cube-size: 30vw;
+      --half-cube-size: 15vw;
+    }
+  }
+
+  @media (--layout-aside-always-visible) {
+    .cube:not(.diagram--thumbnail .cube) {
+      --cube-size: 15rem;
+      --half-cube-size: 7.5rem;
     }
   }
 }
