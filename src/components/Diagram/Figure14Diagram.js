@@ -1,9 +1,9 @@
-import Diagram from "./Diagram.js";
+import { SVGDiagram } from "./Diagram.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 import BezierEasing from "../../helpers/BezierEasing.js";
 import Duration from "../../helpers/Duration.js";
 
-export default class Figure14Diagram extends Diagram {
+export default class Figure14Diagram extends SVGDiagram {
   constructor(isThumbnail) {
     super(14, isThumbnail);
 

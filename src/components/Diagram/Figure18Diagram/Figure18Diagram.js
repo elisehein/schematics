@@ -1,4 +1,4 @@
-import Diagram from "../Diagram.js";
+import { SVGDiagram } from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
@@ -7,7 +7,7 @@ import Duration from "../../../helpers/Duration.js";
 
 const firstBox = "good?";
 
-export default class Figure18Diagram extends Diagram {
+export default class Figure18Diagram extends SVGDiagram {
   constructor(isThumbnail) {
     super(18, isThumbnail);
     this._grid = new Figure18DiagramGridCoordinateSystem();

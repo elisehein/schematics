@@ -1,4 +1,4 @@
-import Diagram from "../Diagram.js";
+import { SVGDiagram } from "../Diagram.js";
 import PendulumArm from "./PendulumArm.js";
 import PendulumTrajectoryArrow from "./PendulumTrajectoryArrow.js";
 
@@ -6,7 +6,7 @@ import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentia
 import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "/helpers/Duration.js";
 
-export default class Figure36Diagram extends Diagram {
+export default class Figure36Diagram extends SVGDiagram {
   constructor(isThumbnail) {
     super(36, isThumbnail);
 

@@ -5,7 +5,7 @@ import { randomIntBetween } from "/helpers/random.js";
 import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "/helpers/Duration.js";
 
-import Diagram from "./Diagram.js";
+import { SVGDiagram } from "./Diagram.js";
 
 const commonAnimationProps = duration => ({
   fill: "freeze",
@@ -51,7 +51,7 @@ const previewStarCoords = [
   { x: 233, allY: [107, 183, 205] }
 ];
 
-export default class Figure42Diagram extends Diagram {
+export default class Figure42Diagram extends SVGDiagram {
   constructor(isThumbnail) {
     super(42, isThumbnail);
 

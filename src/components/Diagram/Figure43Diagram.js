@@ -1,6 +1,6 @@
-import Diagram from "./Diagram.js";
+import { SVGDiagram } from "./Diagram.js";
 
-export default class Figure43Diagram extends Diagram {
+export default class Figure43Diagram extends SVGDiagram {
 
   /*
    *          A-------B   A-------B   A-------B
