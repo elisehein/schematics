@@ -16,9 +16,6 @@ class Diagram extends HTMLElement {
   }
 
   connectedCallback() {
-    this.style.width = "100%";
-    this.style.height = "100%";
-
     if (this._isThumbnail) {
       this.drawThumbnail();
     }
@@ -82,6 +79,9 @@ export class SVGDiagram extends Diagram {
       <desc id="${this.descID}">${this.a11yLabel}</desc>
     </svg>
     `;
+
+    this.style.width = "100%";
+    this.style.height = "100%";
 
     super.connectedCallback();
   }
