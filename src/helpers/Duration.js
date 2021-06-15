@@ -3,8 +3,12 @@ export default function Duration({ seconds, milliseconds }) {
     throw new Error();
   }
 
-  if (!milliseconds && !seconds) {
+  if (milliseconds == undefined && seconds == undefined) {
     throw new Error();
+  }
+
+  if (milliseconds == 0 || seconds == 0) {
+    return Object.freeze({ ms: 0, s: 0 });
   }
 
   return Object.freeze({

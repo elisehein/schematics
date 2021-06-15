@@ -26,6 +26,7 @@ export default class SchematicsFigure extends HTMLElement {
     this.renderA11yCaption();
 
     const onLightUp = this.lightUpFigure.bind(this);
+    const onFuzzy = this.makeFigureFuzzy.bind(this);
     const onJitter = this.jitterDiagram.bind(this);
     const onDeleteCaption = this.deleteCaption.bind(this);
     const onRetypeCaption = this.renderCaption.bind(this);
@@ -36,7 +37,7 @@ export default class SchematicsFigure extends HTMLElement {
       onRetypeCaption
     });
 
-    this._diagramElement.drawBeforeCaption({ onLightUp, onJitter, onDone: () => {
+    this._diagramElement.drawBeforeCaption({ onLightUp, onJitter, onFuzzy, onDone: () => {
       this._diagramElement.drawAlongsideCaption();
       this.renderCaption({ onDone: drawAfterCaption });
     } });
@@ -53,9 +54,8 @@ export default class SchematicsFigure extends HTMLElement {
       this._diagramElement.clearAllTimers();
     }
 
-    if (this._lightUpTimer) {
-      clearTimeout(this._lightUpTimer);
-    }
+    clearTimeout(this._lightUpTimer);
+    clearTimeout(this._fuzzyTimer);
 
     this.animatedFigcaptionNode.innerHTML = "";
     this.visuallyHiddenFigcaptionNode.innerHTML = "";
@@ -73,6 +73,21 @@ export default class SchematicsFigure extends HTMLElement {
     this._lightUpTimer = setTimeout(() => {
       this.figureNode.classList.remove("schematics-figure__figure--light-up");
       this._lightUpTimer = null;
+    }, duration.ms);
+  }
+
+  makeFigureFuzzy(duration, { onDone } = {}) {
+    if (this._fuzzyTimer) {
+      clearTimeout(this._fuzzyTimer);
+    }
+
+    this.style.setProperty("--schematics-figure-fuzzy-duration", `${duration.s}s`);
+    this.figureNode.classList.add("schematics-figure__figure--fuzzy");
+
+    this._fuzzyTimer = setTimeout(() => {
+      this.figureNode.classList.remove("schematics-figure__figure--fuzzy");
+      this._fuzzyTimer = null;
+      onDone && onDone();
     }, duration.ms);
   }
 
