@@ -116,18 +116,36 @@
   90% { transform: scale(1); }
 }
 
+@keyframes fuzzy {
+  50% { filter: drop-shadow(0 0 var(--fuzzy-amount) var(--color-text)) blur(var(--fuzzy-amount)); }
+}
+
+@keyframes fuzzy-border {
+  50% { border-width: .25rem; }
+}
+
 figure-43-diagram {
+  --fuzzy-duration: 2s;
+
+  --cube-border-width: .0625rem;
+
   /* Percentage units in translateZ aren't supported, so we need to modify the cube size manually */
   --cube-size: 40vw;
   --half-cube-size: calc(var(--cube-size) / 2);
+
+  .&--fuzzy {
+    animation: fuzzy var(--fuzzy-duration) ease-in-out;
+
+    .cube__face {
+      animation: fuzzy-border var(--fuzzy-duration) ease-in-out;
+    }
+  }
 
   .diagram:not(.diagram--thumbnail) {
     animation: random-scaling 90s linear infinite;
   }
 
   .cube {
-    --border-width: .0625rem;
-
     position: relative;
     width: var(--cube-size);
     height: var(--cube-size);
@@ -139,7 +157,8 @@ figure-43-diagram {
       left: 0;
       width: var(--cube-size);
       height: var(--cube-size);
-      border: var(--border-width) solid var(--color-text);
+      border: var(--cube-border-width) solid var(--color-text);
+      transition: border-width var(--micro-interaction-animation-duration);
 
       &--front {
         transform: rotateY(0deg) translateZ(var(--half-cube-size));
@@ -173,9 +192,9 @@ figure-43-diagram {
     justify-content: center;
 
     .cube {
+      --cube-border-width: .15625rem;
       --cube-size: 3rem;
       --half-cube-size: 1.5rem;
-      --border-width: .15625rem;
 
       transform: translateZ(var(--half-cube-size)) rotate3d(1, 1, 1, 30deg);
     }
