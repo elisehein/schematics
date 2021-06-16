@@ -1,6 +1,5 @@
 import { HTMLDiagram } from "./Diagram.js";
 import { randomIntBetween } from "/helpers/random.js";
-import transitionWithClasses from "/helpers/transitionWithClasses.js";
 import Duration from "/helpers/Duration.js";
 
 export default class Figure43Diagram extends HTMLDiagram {

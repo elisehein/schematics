@@ -56,6 +56,8 @@ export default class SchematicsFigure extends HTMLElement {
 
     clearTimeout(this._lightUpTimer);
     clearTimeout(this._fuzzyTimer);
+    this.figureNode.classList.remove("schematics-figure__figure--light-up");
+    this.figureNode.classList.remove("schematics-figure__figure--fuzzy");
 
     this.animatedFigcaptionNode.innerHTML = "";
     this.visuallyHiddenFigcaptionNode.innerHTML = "";
