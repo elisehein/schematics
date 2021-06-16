@@ -4,8 +4,8 @@ import BezierEasing from "../../helpers/BezierEasing.js";
 import Duration from "../../helpers/Duration.js";
 
 export default class Figure14Diagram extends SVGDiagram {
-  constructor(isThumbnail) {
-    super(14, isThumbnail);
+  constructor(...args) {
+    super(14, ...args);
 
     this._timeAxis = {
       coords2D: [{ x: 120, y: 100 }, { x: 180, y: 100 }],

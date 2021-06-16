@@ -7,8 +7,8 @@ import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "/helpers/Duration.js";
 
 export default class Figure36Diagram extends SVGDiagram {
-  constructor(isThumbnail) {
-    super(36, isThumbnail);
+  constructor(...args) {
+    super(36, ...args);
 
     this._pendulumLength = 200;
     this._circleRadius = 20;

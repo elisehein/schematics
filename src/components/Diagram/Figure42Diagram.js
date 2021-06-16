@@ -52,8 +52,8 @@ const previewStarCoords = [
 ];
 
 export default class Figure42Diagram extends SVGDiagram {
-  constructor(isThumbnail) {
-    super(42, isThumbnail);
+  constructor(...args) {
+    super(42, ...args);
 
     this._stars = [];
     this._axisAnimationDuration = new Duration({ seconds: 5 });

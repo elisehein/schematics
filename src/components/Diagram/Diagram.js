@@ -6,12 +6,13 @@ import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "../../helpers/Duration.js";
 
 class Diagram extends HTMLElement {
-  constructor(num, isThumbnail) {
+  constructor(num, isThumbnail, figureBehaviorCallbacks = {}) {
     super();
     this.num = num;
     this.a11yDescription = isThumbnail ? getA11yThumbnailDescription(num) : getA11yDescription(num);
 
     this._isThumbnail = isThumbnail;
+    this._figureBehavior = figureBehaviorCallbacks;
     this._timerManager = new TimerManager();
   }
 
@@ -54,10 +55,6 @@ class Diagram extends HTMLElement {
     document.documentElement.scrollTop = 0;
   }
 
-  attachFigureBehaviorCallbacks({ onLightUp, onFuzzy, onJitter, onDeleteCaption, onRetypeCaption } = {}) {
-    this._figureBehavior = { onLightUp, onFuzzy, onJitter, onDeleteCaption, onRetypeCaption };
-  }
-
   get a11yLabel() {
     return `Figure ${this.num}: ${this.a11yDescription}`;
   }
@@ -68,8 +65,8 @@ class Diagram extends HTMLElement {
 }
 
 export class SVGDiagram extends Diagram {
-  constructor(num, isThumbnail) {
-    super(num, isThumbnail);
+  constructor(num, isThumbnail, ...args) {
+    super(num, isThumbnail, ...args);
     this._svgShapeFactory = new SVGShapeFactory(isThumbnail);
   }
 

@@ -1,4 +1,5 @@
-import { getPoetry, getDiagram } from "../../figureData.js";
+import { getPoetry } from "../../figureData.js";
+import DiagramFactory  from "../Diagram/DiagramFactory.js";
 import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 import CaptionTyping from "./CaptionTyping.js";
@@ -7,6 +8,13 @@ export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
     super();
     this.num = num || this.getAttribute("num");
+    this._diagramFactory = new DiagramFactory({
+      onLightUp: this.lightUpFigure.bind(this),
+      onFuzzy: this.makeFigureFuzzy.bind(this),
+      onJitter: this.jitterDiagram.bind(this),
+      onDeleteCaption: this.deleteCaption.bind(this),
+      onRetypeCaption: this.renderCaption.bind(this)
+    });
   }
 
   connectedCallback() {
@@ -132,14 +140,7 @@ export default class SchematicsFigure extends HTMLElement {
       return null;
     }
 
-    const diagramElement = getDiagram(this.num);
-    diagramElement.attachFigureBehaviorCallbacks({
-      onLightUp: this.lightUpFigure.bind(this),
-      onFuzzy: this.makeFigureFuzzy.bind(this),
-      onJitter: this.jitterDiagram.bind(this),
-      onDeleteCaption: this.deleteCaption.bind(this),
-      onRetypeCaption: this.renderCaption.bind(this)
-    });
+    const diagramElement = this._diagramFactory(this.num);
     this.diagramContainerNode.replaceChildren(diagramElement);
     return diagramElement;
   }

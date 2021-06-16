@@ -3,8 +3,8 @@ import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 
 export default class Figure43Diagram extends HTMLDiagram {
-  constructor(isThumbnail) {
-    super(43, isThumbnail);
+  constructor(...args) {
+    super(43, ...args);
   }
 
   drawBeforeCaption({ onDone }) {

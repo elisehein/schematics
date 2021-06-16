@@ -8,8 +8,8 @@ import Duration from "../../../helpers/Duration.js";
 const firstBox = "good?";
 
 export default class Figure18Diagram extends SVGDiagram {
-  constructor(isThumbnail) {
-    super(18, isThumbnail);
+  constructor(...args) {
+    super(18, ...args);
     this._grid = new Figure18DiagramGridCoordinateSystem();
   }
 
