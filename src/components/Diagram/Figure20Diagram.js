@@ -7,7 +7,7 @@ export default class Figure20Diagram extends SVGDiagram {
     super(20, ...args);
 
     this._numberOfRows = 7;
-    this._barSpacing = 9;
+    this._barSpacing = 10;
     this._barsPerRow = 200;
     this._verticalInset = 30;
     this._waveWidth = 300 / 3.5;
@@ -18,7 +18,7 @@ export default class Figure20Diagram extends SVGDiagram {
     ) / (this._numberOfRows * 2 - 1);
     this._rowSpacing = this._rowHeight;
 
-    this._getDistanceFromWaveCenter = generateBarDistancesFromWaveCenter(1.5, this._barSpacing);
+    this._getDistanceFromWaveCenter = generateBarDistancesFromWaveCenter(1.2, this._barSpacing);
   }
 
   drawThumbnail() {
@@ -28,7 +28,7 @@ export default class Figure20Diagram extends SVGDiagram {
     // onDone();
     this._bars = this.drawBars();
 
-    this.addWaves({ n: 1, cx: 150, rowBars: this._bars[0] });
+    this.addWaves({ n: 1, cx: 0, rowBars: this._bars[0] });
     // this.addWaves({ n: 1, cx: this._waveWidth / 2, row: this._bars[1] });
     // this.addWaves({ n: 2, cx: this._waveWidth, row: this._bars[2] });
     // this.addWaves({ n: 2, cx: this._waveWidth * 2, row: this._bars[3] });
@@ -87,8 +87,6 @@ export default class Figure20Diagram extends SVGDiagram {
 
   addWaves({ n, cx, rowBars }) {
     const waveCenterBarIndex = this.getClosestBarIndex(cx, rowBars);
-    // rowBars[waveCenterBarIndex].node.style.stroke = "red";
-
     this.pullBarsCloser({ waveCenterBarIndex, direction: 1, bars: rowBars });
     this.pullBarsCloser({ waveCenterBarIndex, direction: -1, bars: rowBars });
   }
@@ -124,16 +122,11 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getClosestBarIndex(x, bars) {
-    return bars.findIndex((bar, index) => {
-      const barX = this.parseXCoord(bar.node.getAttribute("points"));
-
-      if (index + 1 < bars.length) {
-        const nextBarX = this.parseXCoord(bars[index + 1].node.getAttribute("points"));
-        return x >= barX && x <= nextBarX;
-      } else {
-        return x >= barX;
-      }
-    });
+    return bars
+      .map((bar, index) => ({ x: this.parseXCoord(bar.node.getAttribute("points")), index }))
+      .reduce((prevBar, currBar) => (
+        Math.abs(currBar.x - x) < Math.abs(prevBar.x - x) ? currBar : prevBar
+      )).index;
   }
 
   parseXCoord(points) {
@@ -147,9 +140,12 @@ export default class Figure20Diagram extends SVGDiagram {
 customElements.define("figure-20-diagram", Figure20Diagram);
 
 function generateBarDistancesFromWaveCenter(scaleFactor, barSpacing) {
-  const getDistances = (distancesSoFar = [1]) => {
-    const currentDistance = distancesSoFar[distancesSoFar.length - 1];
-    const nextDistance = currentDistance * scaleFactor;
+  const getDistances = (distancesSoFar = [0, 1]) => {
+    const length = distancesSoFar.length;
+    const previousDistance = distancesSoFar[length - 2];
+    const currentDistance = distancesSoFar[length - 1];
+    const nextDistance = scaleDistance(currentDistance, previousDistance, scaleFactor);
+
     if (nextDistance - currentDistance < barSpacing) {
       const newDistances = [...distancesSoFar, nextDistance];
       return getDistances(newDistances);
@@ -167,4 +163,10 @@ function generateBarDistancesFromWaveCenter(scaleFactor, barSpacing) {
       return distances[barDistance - 1];
     }
   };
+}
+
+function scaleDistance(distance, previousDistance, scaleFactor) {
+  const differenceBetweenDistances = distance - previousDistance;
+  const scaledDifference = differenceBetweenDistances * scaleFactor;
+  return distance + scaledDifference;
 }
