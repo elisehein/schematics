@@ -104,6 +104,12 @@ schematics-figure-previews {
         width: 50%;
         height: 50%;
         transform: translateY(calc(var(--double-baseline) * -1));
+
+        &--html {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
     }
 

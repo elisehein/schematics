@@ -152,16 +152,12 @@ figure-43-diagram {
   }
 
   .diagram--thumbnail {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     .cube {
-      --cube-border-width: .15625rem;
+      --cube-border-width: .13rem;
       --cube-size: 3rem;
       --half-cube-size: 1.5rem;
 
-      transform: translateZ(var(--half-cube-size)) rotate3d(1, 1, 1, 30deg);
+      transform: translateZ(var(--half-cube-size)) rotate3d(1, 1, 1, 100deg);
     }
   }
 

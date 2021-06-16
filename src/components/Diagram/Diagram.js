@@ -70,7 +70,7 @@ export class SVGDiagram extends Diagram {
   connectedCallback() {
     this.innerHTML = `
     <svg
-      class="${this.containerClassname}"
+      class="${this.containerClassname} diagram--svg"
       preserveAspectRatio="xMidYMid meet"
       role="img"
       viewbox="0 0 300 300"
@@ -104,7 +104,7 @@ export class SVGDiagram extends Diagram {
 export class HTMLDiagram extends Diagram {
   connectedCallback() {
     this.innerHTML = `
-    <div class="${this.containerClassname}" role="img" aria-label="${this.a11yLabel}"></div>
+    <div class="${this.containerClassname} diagram--html" role="img" aria-label="${this.a11yLabel}"></div>
     `;
 
     super.connectedCallback();
