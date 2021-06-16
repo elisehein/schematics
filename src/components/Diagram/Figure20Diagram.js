@@ -18,7 +18,7 @@ export default class Figure20Diagram extends SVGDiagram {
     ) / (this._numberOfRows * 2 - 1);
     this._rowSpacing = this._rowHeight;
 
-    this._distancesFromWaveCenter = generateBarDistancesFromWaveCenter();
+    this._getDistanceFromWaveCenter = generateBarDistancesFromWaveCenter(1.5, this._barSpacing);
   }
 
   drawThumbnail() {
@@ -87,7 +87,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   addWaves({ n, cx, rowBars }) {
     const waveCenterBarIndex = this.getClosestBarIndex(cx, rowBars);
-    rowBars[waveCenterBarIndex].node.style.stroke = "red";
+    // rowBars[waveCenterBarIndex].node.style.stroke = "red";
 
     this.pullBarsCloser({ waveCenterBarIndex, direction: 1, bars: rowBars });
     this.pullBarsCloser({ waveCenterBarIndex, direction: -1, bars: rowBars });
@@ -107,37 +107,20 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   adjustPositionRelativeToWaveCenterBar({ bars, indexOfBarToAdjust, waveCenterBarIndex, direction }) {
-    const barsFromCenter = Math.abs(indexOfBarToAdjust - waveCenterBarIndex);
     const barNode = bars[indexOfBarToAdjust].node;
-
     const currentXTranslation = parseFloat(barNode.dataset.xTranslation) || 0;
-    const newXTranslation = currentXTranslation + (this.translationAmount(barsFromCenter) * direction * -1);
+
+    const barsFromWaveCenter = Math.abs(indexOfBarToAdjust - waveCenterBarIndex);
+    const newXTranslation = currentXTranslation + this.getTranslationAmount(barsFromWaveCenter, direction);
+
     barNode.setAttribute("transform", `translate(${newXTranslation} 0)`);
     barNode.dataset.xTranslation = newXTranslation;
   }
 
-  translationAmount(barsFromWaveCenter) {
-    const distanceFromWaveCenter = this.getDistanceFromWaveCenter(barsFromWaveCenter);
-    if (distanceFromWaveCenter) {
-      const distanceBetweenBars = barsFromWaveCenter * this._barSpacing;
-      return distanceBetweenBars - distanceFromWaveCenter;
-    } else {
-      return this._distancesFromWaveCenter[this._distancesFromWaveCenter.length - 1] + this._barSpacing;
-    }
-  }
-
-  getDistanceFromWaveCenter(barsFromWaveCenter) {
-    if (barsFromWaveCenter == 0) {
-      return 0;
-    }
-
-    const scaleFactor = 1.5;
-    const fibScale = fibonacci(barsFromWaveCenter);
-    const fibNumber = fibScale[fibScale.length - 1];
-    const distance = fibNumber * scaleFactor;
-
-    if (distance )
-
+  getTranslationAmount(barsFromWaveCenter, direction) {
+    const distanceFromWaveCenter = this._getDistanceFromWaveCenter(barsFromWaveCenter);
+    const distanceBetweenBars = barsFromWaveCenter * this._barSpacing;
+    return (distanceBetweenBars - distanceFromWaveCenter) * direction * -1;
   }
 
   getClosestBarIndex(x, bars) {
@@ -163,29 +146,25 @@ export default class Figure20Diagram extends SVGDiagram {
 
 customElements.define("figure-20-diagram", Figure20Diagram);
 
-function generateBarDistancesFromWaveCenter() {
-  return [
-    1 * 2,
-    2 * 2,
-    3 * 2,
-    5 * 2,
-    8 * 2,
-    13 * 2,
-    21 * 2
-  ];
-}
+function generateBarDistancesFromWaveCenter(scaleFactor, barSpacing) {
+  const getDistances = (distancesSoFar = [1]) => {
+    const currentDistance = distancesSoFar[distancesSoFar.length - 1];
+    const nextDistance = currentDistance * scaleFactor;
+    if (nextDistance - currentDistance < barSpacing) {
+      const newDistances = [...distancesSoFar, nextDistance];
+      return getDistances(newDistances);
+    } else {
+      return distancesSoFar;
+    }
+  };
 
-// eslint-disable-next-line id-length
-function fibonacci(n) {
-  const fibList = [];
-  // eslint-disable-next-line id-length
-  let [a, b] = [0, 1];
+  const distances = getDistances();
 
-  while (a < n) {
-    fibList.push(a);
-    // eslint-disable-next-line id-length
-    [a, b] = [b, a + b];
-  }
-
-  return fibList;
+  return barDistance => {
+    if (barDistance > distances.length) {
+      return distances[distances.length - 1] + ((barDistance - distances.length) * barSpacing);
+    } else {
+      return distances[barDistance - 1];
+    }
+  };
 }
