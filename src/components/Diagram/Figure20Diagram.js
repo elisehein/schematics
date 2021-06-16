@@ -7,18 +7,18 @@ export default class Figure20Diagram extends SVGDiagram {
     super(20, ...args);
 
     this._numberOfRows = 7;
-    this._barSpacing = 10;
+    this._numberOfGaps = this._numberOfRows - 1;
+    this._barGap = 10;
     this._barsPerRow = 200;
-    this._verticalInset = 30;
-    this._waveWidth = 300 / 3.5;
+    this._verticalInset = 15;
+    this._waveWidth = 40;
 
-    this._rowHeight = (
-      300 -
-      (2 * this._verticalInset)
-    ) / (this._numberOfRows * 2 - 1);
-    this._rowSpacing = this._rowHeight;
+    const rowToRowGapRatio = 0.8;
+    const height = 300 - (2 * this._verticalInset);
+    this._rowGap =  height / (this._numberOfRows * rowToRowGapRatio + this._numberOfGaps);
+    this._rowHeight = this._rowGap * rowToRowGapRatio;
 
-    this._getDistanceFromWaveCenter = generateBarDistancesFromWaveCenter(1.2, this._barSpacing);
+    this._translationAmountsFromWaveCenter = generateTranslationAmountsFromWaveCenter(1.2, this._barGap, this._barsPerRow - 1);
   }
 
   drawThumbnail() {
@@ -29,7 +29,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this._bars = this.drawBars();
 
     this.addWaves({ n: 1, cx: 0, rowBars: this._bars[0] });
-    // this.addWaves({ n: 1, cx: this._waveWidth / 2, row: this._bars[1] });
+    this.addWaves({ n: 1, cx: this._waveWidth, rowBars: this._bars[1] });
     // this.addWaves({ n: 2, cx: this._waveWidth, row: this._bars[2] });
     // this.addWaves({ n: 2, cx: this._waveWidth * 2, row: this._bars[3] });
     // this.addWaves({ n: 3, cx: this._waveWidth * 2.5, row: this._bars[4] });
@@ -48,7 +48,7 @@ export default class Figure20Diagram extends SVGDiagram {
       const groupNode = this._svgShapeFactory.getGroupNode();
       groupNode.dataset.rowIndex = rowIndex;
 
-      const topY = this._verticalInset + (rowIndex * (this._rowHeight + this._rowSpacing));
+      const topY = this._verticalInset + (rowIndex * (this._rowHeight + this._rowGap));
       const bottomY = topY + this._rowHeight;
 
       for (let barIndex = 0; barIndex < this._barsPerRow; barIndex += 1) {
@@ -70,11 +70,11 @@ export default class Figure20Diagram extends SVGDiagram {
     // Draw half the bars to the left of the midpoint, and the other half to the right,
     // creating overflow on both sides, keeping bars ordered from left to right.
     if (barIndex < this._barsPerRow / 2) {
-      const leftMostBarX = this._barsPerRow / 2 * this._barSpacing;
-      x = 150 - leftMostBarX + (barIndex * this._barSpacing);
+      const leftMostBarX = this._barsPerRow / 2 * this._barGap;
+      x = 150 - leftMostBarX + (barIndex * this._barGap);
     } else {
       const adjustedIndex = barIndex - this._barsPerRow / 2;
-      x = 150 + (adjustedIndex * this._barSpacing);
+      x = 150 + (adjustedIndex * this._barGap);
     }
 
     const lineTopPoint = { x, y: topY };
@@ -116,9 +116,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getTranslationAmount(barsFromWaveCenter, direction) {
-    const distanceFromWaveCenter = this._getDistanceFromWaveCenter(barsFromWaveCenter);
-    const distanceBetweenBars = barsFromWaveCenter * this._barSpacing;
-    return (distanceBetweenBars - distanceFromWaveCenter) * direction * -1;
+    return this._translationAmountsFromWaveCenter[barsFromWaveCenter - 1] * direction * -1;
   }
 
   getClosestBarIndex(x, bars) {
@@ -139,14 +137,28 @@ export default class Figure20Diagram extends SVGDiagram {
 
 customElements.define("figure-20-diagram", Figure20Diagram);
 
-function generateBarDistancesFromWaveCenter(scaleFactor, barSpacing) {
-  const getDistances = (distancesSoFar = [0, 1]) => {
+// These translation amounts never change, so calculate them
+// once instead of for every bar whenever we change a wave
+function generateTranslationAmountsFromWaveCenter(scaleFactor, barGap, maxDistanceFromWaveCenter) {
+  const getDistanceFromWaveCenter = generateBarDistancesFromWaveCenter(scaleFactor, barGap);
+
+  return Array(maxDistanceFromWaveCenter)
+    .fill()
+    .map((_, index) => {
+      const distanceFromWaveCenter = getDistanceFromWaveCenter(index + 1);
+      const distanceBetweenBars = (index + 1) * barGap;
+      return (distanceBetweenBars - distanceFromWaveCenter);
+    });
+}
+
+function generateBarDistancesFromWaveCenter(scaleFactor, barGap) {
+  const getDistances = (distancesSoFar = [1.5]) => {
     const length = distancesSoFar.length;
-    const previousDistance = distancesSoFar[length - 2];
+    const previousDistance = length > 1 ? distancesSoFar[length - 2] : 0;
     const currentDistance = distancesSoFar[length - 1];
     const nextDistance = scaleDistance(currentDistance, previousDistance, scaleFactor);
 
-    if (nextDistance - currentDistance < barSpacing) {
+    if (nextDistance - currentDistance < barGap) {
       const newDistances = [...distancesSoFar, nextDistance];
       return getDistances(newDistances);
     } else {
@@ -158,7 +170,7 @@ function generateBarDistancesFromWaveCenter(scaleFactor, barSpacing) {
 
   return barDistance => {
     if (barDistance > distances.length) {
-      return distances[distances.length - 1] + ((barDistance - distances.length) * barSpacing);
+      return distances[distances.length - 1] + ((barDistance - distances.length) * barGap);
     } else {
       return distances[barDistance - 1];
     }
