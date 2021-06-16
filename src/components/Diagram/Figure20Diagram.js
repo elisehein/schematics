@@ -11,7 +11,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this._barGap = 10;
     this._barsPerRow = 200;
     this._verticalInset = 15;
-    this._waveWidth = 40;
+    this._waveWidth = 70;
 
     const rowToRowGapRatio = 0.8;
     const height = 300 - (2 * this._verticalInset);
@@ -28,13 +28,13 @@ export default class Figure20Diagram extends SVGDiagram {
     // onDone();
     this._bars = this.drawBars();
 
-    this.addWaves({ n: 1, cx: 0, rowBars: this._bars[0] });
-    this.addWaves({ n: 1, cx: this._waveWidth, rowBars: this._bars[1] });
-    // this.addWaves({ n: 2, cx: this._waveWidth, row: this._bars[2] });
-    // this.addWaves({ n: 2, cx: this._waveWidth * 2, row: this._bars[3] });
-    // this.addWaves({ n: 3, cx: this._waveWidth * 2.5, row: this._bars[4] });
-    // this.addWaves({ n: 3, cx: this._waveWidth * 4.5, row: this._bars[5] });
-    // this.addWaves({ n: 6, cx: this._waveWidth * 6, row: this._bars[6] });
+    this.addWaves({ waveCenters: [0], rowBars: this._bars[0] });
+    this.addWaves({ waveCenters: [40], rowBars: this._bars[1] });
+    this.addWaves({ waveCenters: [0, 70], rowBars: this._bars[2] });
+    this.addWaves({ waveCenters: [40, 125], rowBars: this._bars[3] });
+    this.addWaves({ waveCenters: [0, 85, 170], rowBars: this._bars[4] });
+    this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
+    this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
   }
 
   drawAfterCaption({ onLightUp }) {
@@ -85,10 +85,12 @@ export default class Figure20Diagram extends SVGDiagram {
     return bar;
   }
 
-  addWaves({ n, cx, rowBars }) {
-    const waveCenterBarIndex = this.getClosestBarIndex(cx, rowBars);
-    this.pullBarsCloser({ waveCenterBarIndex, direction: 1, bars: rowBars });
-    this.pullBarsCloser({ waveCenterBarIndex, direction: -1, bars: rowBars });
+  addWaves({ waveCenters, rowBars }) {
+    waveCenters.forEach(x => {
+      const waveCenterBarIndex = this.getClosestBarIndex(x, rowBars);
+      this.pullBarsCloser({ waveCenterBarIndex, direction: 1, bars: rowBars });
+      this.pullBarsCloser({ waveCenterBarIndex, direction: -1, bars: rowBars });
+    });
   }
 
   pullBarsCloser({ waveCenterBarIndex, direction, bars }) {
