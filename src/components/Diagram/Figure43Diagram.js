@@ -7,9 +7,9 @@ export default class Figure43Diagram extends HTMLDiagram {
     super(43, isThumbnail);
   }
 
-  drawBeforeCaption({ onDone, onFuzzy }) {
+  drawBeforeCaption({ onDone }) {
     this.divContainerNode.innerHTML = cubeMarkup;
-    this.makeFuzzyAtRandomIntervals(onFuzzy);
+    this.makeFuzzyAtRandomIntervals();
 
     this._timerManager.setTimeout(onDone, 1000);
   }
@@ -18,13 +18,13 @@ export default class Figure43Diagram extends HTMLDiagram {
     this.divContainerNode.innerHTML = cubeMarkup;
   }
 
-  makeFuzzyAtRandomIntervals(onFuzzy) {
+  makeFuzzyAtRandomIntervals() {
     const randomDelay = new Duration({ seconds: randomIntBetween(0, 5) });
     const randomDuration = new Duration({ milliseconds: randomIntBetween(1500, 4000) });
 
     this._timerManager.setTimeout(() => {
-      onFuzzy(randomDuration, { onDone: () => {
-        this.makeFuzzyAtRandomIntervals(onFuzzy);
+      this._figureBehavior.onFuzzy(randomDuration, { onDone: () => {
+        this.makeFuzzyAtRandomIntervals();
       } });
     }, randomDelay.ms);
   }

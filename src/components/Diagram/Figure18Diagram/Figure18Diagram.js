@@ -23,10 +23,8 @@ export default class Figure18Diagram extends SVGDiagram {
     });
   }
 
-  drawAfterCaption({ onLightUp }) {
+  drawAfterCaption() {
     super.drawAfterCaption();
-
-    this._onLightUp = onLightUp;
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
@@ -169,7 +167,7 @@ export default class Figure18Diagram extends SVGDiagram {
   animateBasedOnLength(path, lightUp = true, onDone = () => {}) {
     const duration = new Duration({ seconds: path.getLength() / 30 * 0.15 });
     if (lightUp) {
-      this._onLightUp(duration);
+      this._figureBehavior.onLightUp(duration);
     }
     const durationExpression = `${duration.s}s`;
     path.animateStroke(durationExpression, "ease-out", onDone);

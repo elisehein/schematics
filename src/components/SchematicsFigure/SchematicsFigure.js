@@ -25,21 +25,9 @@ export default class SchematicsFigure extends HTMLElement {
     this._captionTyping = new CaptionTyping(getPoetry(this.num));
     this.renderA11yCaption();
 
-    const onLightUp = this.lightUpFigure.bind(this);
-    const onFuzzy = this.makeFigureFuzzy.bind(this);
-    const onJitter = this.jitterDiagram.bind(this);
-    const onDeleteCaption = this.deleteCaption.bind(this);
-    const onRetypeCaption = this.renderCaption.bind(this);
-    const drawAfterCaption = () => this._diagramElement.drawAfterCaption({
-      onLightUp,
-      onJitter,
-      onDeleteCaption,
-      onRetypeCaption
-    });
-
-    this._diagramElement.drawBeforeCaption({ onLightUp, onJitter, onFuzzy, onDone: () => {
+    this._diagramElement.drawBeforeCaption({ onDone: () => {
       this._diagramElement.drawAlongsideCaption();
-      this.renderCaption({ onDone: drawAfterCaption });
+      this.renderCaption({ onDone: () => this._diagramElement.drawAfterCaption() });
     } });
   }
 
@@ -145,6 +133,13 @@ export default class SchematicsFigure extends HTMLElement {
     }
 
     const diagramElement = getDiagram(this.num);
+    diagramElement.attachFigureBehaviorCallbacks({
+      onLightUp: this.lightUpFigure.bind(this),
+      onFuzzy: this.makeFigureFuzzy.bind(this),
+      onJitter: this.jitterDiagram.bind(this),
+      onDeleteCaption: this.deleteCaption.bind(this),
+      onRetypeCaption: this.renderCaption.bind(this)
+    });
     this.diagramContainerNode.replaceChildren(diagramElement);
     return diagramElement;
   }

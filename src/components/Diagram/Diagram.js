@@ -54,6 +54,10 @@ class Diagram extends HTMLElement {
     document.documentElement.scrollTop = 0;
   }
 
+  attachFigureBehaviorCallbacks({ onLightUp, onFuzzy, onJitter, onDeleteCaption, onRetypeCaption } = {}) {
+    this._figureBehavior = { onLightUp, onFuzzy, onJitter, onDeleteCaption, onRetypeCaption };
+  }
+
   get a11yLabel() {
     return `Figure ${this.num}: ${this.a11yDescription}`;
   }
