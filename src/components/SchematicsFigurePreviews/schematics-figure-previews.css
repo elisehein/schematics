@@ -86,9 +86,6 @@ schematics-figure-previews {
     }
 
     &__diagram {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       height: 100%;
       transition:
         transform var(--pre-fade-duration),

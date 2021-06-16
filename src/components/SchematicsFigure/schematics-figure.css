@@ -122,14 +122,6 @@
       transition-property: filter, color;
       transition-duration: var(--jitter-animation-duration);
 
-      > * {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-      }
-
       &--jitter {
         animation: jitter var(--schematics-figure-jitter-duration);
         animation-direction: reverse;
