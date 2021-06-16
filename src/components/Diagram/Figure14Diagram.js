@@ -1,11 +1,11 @@
-import Diagram from "./Diagram.js";
+import { SVGDiagram } from "./Diagram.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 import BezierEasing from "../../helpers/BezierEasing.js";
 import Duration from "../../helpers/Duration.js";
 
-export default class Figure14Diagram extends Diagram {
-  constructor(isThumbnail) {
-    super(14, isThumbnail);
+export default class Figure14Diagram extends SVGDiagram {
+  constructor(...args) {
+    super(14, ...args);
 
     this._timeAxis = {
       coords2D: [{ x: 120, y: 100 }, { x: 180, y: 100 }],

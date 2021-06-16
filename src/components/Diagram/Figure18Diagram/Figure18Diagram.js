@@ -1,4 +1,4 @@
-import Diagram from "../Diagram.js";
+import { SVGDiagram } from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
@@ -7,9 +7,9 @@ import Duration from "../../../helpers/Duration.js";
 
 const firstBox = "good?";
 
-export default class Figure18Diagram extends Diagram {
-  constructor(isThumbnail) {
-    super(18, isThumbnail);
+export default class Figure18Diagram extends SVGDiagram {
+  constructor(...args) {
+    super(18, ...args);
     this._grid = new Figure18DiagramGridCoordinateSystem();
   }
 
@@ -23,10 +23,8 @@ export default class Figure18Diagram extends Diagram {
     });
   }
 
-  drawAfterCaption({ onLightUp }) {
+  drawAfterCaption() {
     super.drawAfterCaption();
-
-    this._onLightUp = onLightUp;
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
@@ -169,7 +167,7 @@ export default class Figure18Diagram extends Diagram {
   animateBasedOnLength(path, lightUp = true, onDone = () => {}) {
     const duration = new Duration({ seconds: path.getLength() / 30 * 0.15 });
     if (lightUp) {
-      this._onLightUp(duration);
+      this._figureBehavior.onLightUp(duration);
     }
     const durationExpression = `${duration.s}s`;
     path.animateStroke(durationExpression, "ease-out", onDone);

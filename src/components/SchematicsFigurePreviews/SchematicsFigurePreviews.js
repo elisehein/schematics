@@ -1,9 +1,15 @@
-import { orderedFigures, getDiagram } from "../../figureData.js";
+import { orderedFigures } from "../../figureData.js";
+import DiagramFactory from "../Diagram/DiagramFactory.js";
 import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 const transitioningClassName = "schematics-figure-previews--transitioning";
 
 export default class SchematicsFigurePreviews extends HTMLElement {
+  constructor() {
+    super();
+    this._diagramFactory = new DiagramFactory();
+  }
+
   connectedCallback() {
     const itemTemplate = document.getElementById("schematics-figure-preview-template");
 
@@ -32,7 +38,7 @@ export default class SchematicsFigurePreviews extends HTMLElement {
     anchor.setAttribute("href", `#fig${num}`);
     anchor.setAttribute("aria-label", `Figure ${num}`);
 
-    const diagram = getDiagram(num, true);
+    const diagram = this._diagramFactory(num, true);
     diagram.classList.add("schematics-figure-previews__item__diagram");
     anchor.appendChild(diagram);
 

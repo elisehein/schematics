@@ -5,7 +5,7 @@ import { randomIntBetween } from "/helpers/random.js";
 import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "/helpers/Duration.js";
 
-import Diagram from "./Diagram.js";
+import { SVGDiagram } from "./Diagram.js";
 
 const commonAnimationProps = duration => ({
   fill: "freeze",
@@ -51,42 +51,42 @@ const previewStarCoords = [
   { x: 233, allY: [107, 183, 205] }
 ];
 
-export default class Figure42Diagram extends Diagram {
-  constructor(isThumbnail) {
-    super(42, isThumbnail);
+export default class Figure42Diagram extends SVGDiagram {
+  constructor(...args) {
+    super(42, ...args);
 
     this._stars = [];
     this._axisAnimationDuration = new Duration({ seconds: 5 });
     this._reverseAxisAnimationDuration = new Duration({ seconds: 2.2 });
   }
 
-  drawBeforeCaption({ onDone, onLightUp }) {
+  drawBeforeCaption({ onDone }) {
     this.drawStars();
 
     runActionsSequentially([
       waitBeforeNextAction(1000, this._timerManager),
-      this.animateTemperatureOnXAxis.bind(this, onLightUp, false),
-      this.animateMagnitudeOnYAxis.bind(this, onLightUp, false),
+      this.animateTemperatureOnXAxis.bind(this, false),
+      this.animateMagnitudeOnYAxis.bind(this, false),
       waitBeforeNextAction(2000, this._timerManager)
     ], onDone);
   }
 
-  drawAfterCaption({ onLightUp, onJitter, onDeleteCaption, onRetypeCaption }) {
+  drawAfterCaption() {
     runActionsSequentially([
       waitBeforeNextAction(3000, this._timerManager),
       ({ onDone }) => {
-        onDeleteCaption({ onDone: () => {} });
-        onLightUp(Duration.oneSec);
-        onJitter(Duration.oneSec, { onDone });
+        this._figureBehavior.onDeleteCaption({ onDone: () => {} });
+        this._figureBehavior.onLightUp(Duration.oneSec);
+        this._figureBehavior.onJitter(Duration.oneSec, { onDone });
       },
-      this.animateMagnitudeOnYAxis.bind(this, () => {}, true),
-      this.animateTemperatureOnXAxis.bind(this, () => {}, true),
+      this.animateMagnitudeOnYAxis.bind(this, true),
+      this.animateTemperatureOnXAxis.bind(this, true),
       waitBeforeNextAction(4000, this._timerManager),
-      this.animateTemperatureOnXAxis.bind(this, onLightUp, false),
-      this.animateMagnitudeOnYAxis.bind(this, onLightUp, false),
+      this.animateTemperatureOnXAxis.bind(this, false),
+      this.animateMagnitudeOnYAxis.bind(this, false),
       waitBeforeNextAction(2000, this._timerManager),
-      onRetypeCaption
-    ], this.drawAfterCaption.bind(this, { onLightUp, onJitter, onDeleteCaption, onRetypeCaption }));
+      this._figureBehavior.onRetypeCaption
+    ], this.drawAfterCaption.bind(this));
   }
 
   drawThumbnail() {
@@ -164,9 +164,9 @@ export default class Figure42Diagram extends Diagram {
     return Math.random() > 0.5 ? randomPositiveTranslation : randomNegativeTranslation;
   }
 
-  animateTemperatureOnXAxis(onLightUp, reverse, { onDone }) {
+  animateTemperatureOnXAxis(reverse, { onDone }) {
     const duration = reverse ? this._reverseAxisAnimationDuration : this._axisAnimationDuration;
-    this.lightUpWithDelay(0.8, duration, onLightUp);
+    this.lightUpWithDelay(0.8, duration);
 
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
@@ -197,9 +197,9 @@ export default class Figure42Diagram extends Diagram {
     }, commonAnimationProps(duration)));
   }
 
-  animateMagnitudeOnYAxis(onLightUp, reverse, { onDone }) {
+  animateMagnitudeOnYAxis(reverse, { onDone }) {
     const duration = reverse ? this._reverseAxisAnimationDuration : this._axisAnimationDuration;
-    this.lightUpWithDelay(0.8, duration, onLightUp);
+    this.lightUpWithDelay(0.8, duration);
 
     this._stars.forEach((star, index) => {
       const animatableStar = animatable(star);
@@ -252,10 +252,10 @@ export default class Figure42Diagram extends Diagram {
     }, commonAnimationProps(duration)));
   }
 
-  lightUpWithDelay(delayFactor, duration, onLightUp) {
+  lightUpWithDelay(delayFactor, duration) {
     const lightUpDuration = new Duration({ milliseconds: duration.ms * ((1 - delayFactor) * 2) });
     this._timerManager.setTimeout(() => {
-      onLightUp(lightUpDuration);
+      this._figureBehavior.onLightUp(lightUpDuration);
     }, duration.ms * delayFactor);
   }
 

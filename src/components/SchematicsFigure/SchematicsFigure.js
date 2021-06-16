@@ -1,4 +1,5 @@
-import { getPoetry, getDiagram } from "../../figureData.js";
+import { getPoetry } from "../../figureData.js";
+import DiagramFactory  from "../Diagram/DiagramFactory.js";
 import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 import CaptionTyping from "./CaptionTyping.js";
@@ -7,6 +8,13 @@ export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
     super();
     this.num = num || this.getAttribute("num");
+    this._diagramFactory = new DiagramFactory({
+      onLightUp: this.lightUpFigure.bind(this),
+      onFuzzy: this.makeFigureFuzzy.bind(this),
+      onJitter: this.jitterDiagram.bind(this),
+      onDeleteCaption: this.deleteCaption.bind(this),
+      onRetypeCaption: this.renderCaption.bind(this)
+    });
   }
 
   connectedCallback() {
@@ -25,20 +33,9 @@ export default class SchematicsFigure extends HTMLElement {
     this._captionTyping = new CaptionTyping(getPoetry(this.num));
     this.renderA11yCaption();
 
-    const onLightUp = this.lightUpFigure.bind(this);
-    const onJitter = this.jitterDiagram.bind(this);
-    const onDeleteCaption = this.deleteCaption.bind(this);
-    const onRetypeCaption = this.renderCaption.bind(this);
-    const drawAfterCaption = () => this._diagramElement.drawAfterCaption({
-      onLightUp,
-      onJitter,
-      onDeleteCaption,
-      onRetypeCaption
-    });
-
-    this._diagramElement.drawBeforeCaption({ onLightUp, onJitter, onDone: () => {
+    this._diagramElement.drawBeforeCaption({ onDone: () => {
       this._diagramElement.drawAlongsideCaption();
-      this.renderCaption({ onDone: drawAfterCaption });
+      this.renderCaption({ onDone: () => this._diagramElement.drawAfterCaption() });
     } });
   }
 
@@ -53,9 +50,10 @@ export default class SchematicsFigure extends HTMLElement {
       this._diagramElement.clearAllTimers();
     }
 
-    if (this._lightUpTimer) {
-      clearTimeout(this._lightUpTimer);
-    }
+    clearTimeout(this._lightUpTimer);
+    clearTimeout(this._fuzzyTimer);
+    this.figureNode.classList.remove("schematics-figure__figure--light-up");
+    this.figureNode.classList.remove("schematics-figure__figure--fuzzy");
 
     this.animatedFigcaptionNode.innerHTML = "";
     this.visuallyHiddenFigcaptionNode.innerHTML = "";
@@ -73,6 +71,21 @@ export default class SchematicsFigure extends HTMLElement {
     this._lightUpTimer = setTimeout(() => {
       this.figureNode.classList.remove("schematics-figure__figure--light-up");
       this._lightUpTimer = null;
+    }, duration.ms);
+  }
+
+  makeFigureFuzzy(duration, { onDone } = {}) {
+    if (this._fuzzyTimer) {
+      clearTimeout(this._fuzzyTimer);
+    }
+
+    this.style.setProperty("--schematics-figure-fuzzy-duration", `${duration.s}s`);
+    this.figureNode.classList.add("schematics-figure__figure--fuzzy");
+
+    this._fuzzyTimer = setTimeout(() => {
+      this.figureNode.classList.remove("schematics-figure__figure--fuzzy");
+      this._fuzzyTimer = null;
+      onDone && onDone();
     }, duration.ms);
   }
 
@@ -127,7 +140,7 @@ export default class SchematicsFigure extends HTMLElement {
       return null;
     }
 
-    const diagramElement = getDiagram(this.num);
+    const diagramElement = this._diagramFactory(this.num);
     this.diagramContainerNode.replaceChildren(diagramElement);
     return diagramElement;
   }

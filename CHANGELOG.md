@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Reverse looping in fig. 42 after the caption has appeared ([#10](https://github.com/elisehein/schematics/pull/10)).
 * Light up fig. 18 when new boxes are drawn ([#11](https://github.com/elisehein/schematics/pull/11)).
 
+### Changed
+
+* Replaced simplistic SVG cube animation with HTML + CSS 3D animation in fig. 43 ([#12](https://github.com/elisehein/schematics/pull/12)).
+
 ### Fixed
 
 * Screen-reader friendly figure caption ([#9](https://github.com/elisehein/schematics/pull/9));
@@ -23,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Refactored
 
 * Refactored how millisecond-second durations are handled ([#8](https://github.com/elisehein/schematics/pull/8)).
+* Split `Diagram` into `SVG` and `HTML` subtypes ([#12](https://github.com/elisehein/schematics/pull/12)).
 
 ## [1.0.0] – 2021-06-12
 
