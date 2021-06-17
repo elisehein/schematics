@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Replaced simplistic SVG cube animation with HTML + CSS 3D animation in fig. 43 ([#12](https://github.com/elisehein/schematics/pull/12)).
+* Changed the figure hiding effect to include a quick subtle drop-shadow.
 
 ### Fixed
 
