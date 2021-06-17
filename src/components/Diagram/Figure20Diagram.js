@@ -36,6 +36,8 @@ export default class Figure20Diagram extends SVGDiagram {
     this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
     this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
 
+    this.animateWaves();
+
     onDone();
   }
 
@@ -124,28 +126,42 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getClosestBarIndex(x, bars) {
-    console.log("\nGetting closest bar index to", x, "in bars", bars);
-
-    const xs = bars.map((bar, index) => ({
-        x: this.parseXCoord(bar.node.getAttribute("points")) + (parseFloat(bar.node.dataset.xTranslation) || 0),
+    return bars
+      .map((bar, index) => ({
+        x: this.parseXCoord(bar) + (parseFloat(bar.node.dataset.xTranslation) || 0),
         index
-      }));
-
-    console.log("All the xs are", xs);
-
-    const index = xs.reduce((prevBar, currBar) => (
+      }))
+      .reduce((prevBar, currBar) => (
         Math.abs(currBar.x - x) < Math.abs(prevBar.x - x) ? currBar : prevBar
       )).index;
-      console.log("closes index is", index);
-      return index;
   }
 
-  parseXCoord(points) {
+  parseXCoord(bar) {
     // Everything until the first comma is the X coordinate
     // e.g., "140,30 140,60", x = 140
-    return parseFloat(points.match(/([^,]*)/)[0]);
+    return parseFloat(bar.node.getAttribute("points").match(/([^,]*)/)[0]);
   }
 
+  animateWaves() {
+    const totalRowLength = this._barsPerRow * this._barGap;
+    const overflowLength = (totalRowLength - 300) / 2;
+    this._bars[1].forEach((bar, index) => {
+      const xTranslation = parseFloat(bar.node.dataset.xTranslation) || 0;
+      const originalX = this.parseXCoord(bar);
+      const distanceToAnimate = xTranslation + 350;
+
+      bar.animateTransform("translate", {
+        from: `${xTranslation - 50} 0`,
+        to: `${distanceToAnimate} 0`,
+        dur: "3",
+        begin: "0s",
+        calcMode: "spline",
+        keyTimes: "0; 1",
+        keySplines: BezierEasing.easeInSine.smilString,
+        repeatCount: "indefinite"
+      });
+    });
+  }
 }
 
 customElements.define("figure-20-diagram", Figure20Diagram);
