@@ -41,6 +41,13 @@
   @media (--layout-aside-always-visible) {
     --page-padding: var(--triple-baseline);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    --micro-interaction-animation-duration: 0s;
+    --figure-pre-exit-transition-duration: 0s;
+    --figure-exit-transition-duration: 0s;
+    --figure-appear-transition-duration: 0s;
+  }
 }
 
 [data-visible-view*="individual"] {

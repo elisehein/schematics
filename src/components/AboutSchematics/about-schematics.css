@@ -17,6 +17,10 @@ about-schematics {
     --appear-animation-duration: .8s;
     --appear-animation-easing: cubic-bezier(.16, 1, .3, 1);
 
+    @media (prefers-reduced-motion: reduce) {
+      --appear-animation-duration: 0s;
+    }
+
     max-width: 70ch;
     font-size: var(--ms1);
     line-height: var(--triple-baseline);
