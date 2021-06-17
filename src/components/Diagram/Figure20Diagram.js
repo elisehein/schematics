@@ -37,7 +37,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
     this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
 
-    // this.animateWaves();
+    this.animateWaves([0], this._bars[0]);
 
     onDone();
   }
@@ -143,14 +143,28 @@ export default class Figure20Diagram extends SVGDiagram {
     return parseFloat(bar.node.getAttribute("points").match(/([^,]*)/)[0]);
   }
 
-  animateWaves(initialWaveCenterPoints) {
-    const finalTransforms = this.getBarTransformsForWaveCenterPoints(
-      initialWaveCenterPoints.map(x => x + 350)
-    );
-    animateWithEasing(fractionOfAnimationDone => {
-      this._bars[1].forEach((bar, index) => {
-        const finalTransformForBar = finalTransforms[index];
-        bar.node.transform = finalTransformForBar * fractionOfAnimationDone;
+  animateWaves(initialWaveCenterPoints, rowBars) {
+    const initialTranslations = this.getBarTranslationsForWaveCenters({
+      waveCenters: initialWaveCenterPoints,
+      rowBars
+    });
+
+    const finalCenters = initialWaveCenterPoints.map(x => x + 200);
+    const finalTranslations = this.getBarTranslationsForWaveCenters({
+      waveCenters: finalCenters,
+      rowBars
+    });
+
+    const duration = new Duration({ seconds: 3 });
+    animateWithEasing(duration, BezierEasing.linear, fractionOfAnimationDone => {
+      rowBars.forEach((bar, index) => {
+        const initialTranslation = initialTranslations[index];
+        const finalTranslation = finalTranslations[index];
+        const translationDifference = Math.abs(finalTranslation - initialTranslation);
+        const amountOfTranslationDone = translationDifference * fractionOfAnimationDone;
+        const direction = finalTranslation > initialTranslation ? 1 : -1;
+        const translation = initialTranslation + (amountOfTranslationDone * direction);
+        bar.node.setAttribute("transform", `translate(${translation} 0)`);
       });
     });
   }
