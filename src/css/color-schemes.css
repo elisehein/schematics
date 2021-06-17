@@ -22,6 +22,9 @@
   --color-text-contrast: var(--color-text-dark);
   --color-text-hover: #fff;
   --color-highest-contrast: #fff;
+
+  --color-scheme-transition-duration: .3s;
+  --color-scheme-transition-easing: cubic-bezier(.25, 1, .5, 1);
 }
 
 [data-color-scheme="light"] {
@@ -33,7 +36,7 @@
   --color-text-contrast: var(--color-text-light);
 
   --color-text-hover: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-dark-lightness) + 30%), 1);
-  --color-highest-contrast: #fff;
+  --color-highest-contrast: #000;
 
   .button {
     --color-button-text: var(--color-white);

@@ -1,12 +1,17 @@
 @import "./reset.css";
 @import "./sr-only.css";
+
 @import "./custom-media.css";
+@import "./rhythm-and-scale.css";
+@import "./shared-animations.css";
+@import "./color-schemes.css";
+
 @import "./grid.css";
 @import "./header.css";
 @import "./aside.css";
 @import "./footer.css";
-@import "./shared-animations.css";
-@import "./color-schemes.css";
+@import "./button.css";
+
 @import "../components/AboutSchematics/about-schematics.css";
 @import "../components/SchematicsFigure/schematics-figure.css";
 @import "../components/SchematicsFigure/schematics-figure-placements.css";
@@ -15,19 +20,6 @@
 @import "../components/SchematicsFigureToolbar/schematics-figure-toolbar.css";
 
 :root {
-  --baseline: .85rem;
-  --scale-factor: 1.05;
-  --base-font-size: 1rem;
-
-  --double-baseline: calc(var(--baseline) * 2);
-  --triple-baseline: calc(var(--baseline) * 3);
-
-  --ms-2: calc(var(--ms-1) / var(--scale-factor));
-  --ms-1: calc(var(--base-font-size) / var(--scale-factor));
-  --ms0: var(--base-font-size);
-  --ms1: calc(var(--ms0) * var(--scale-factor));
-  --ms2: calc(var(--ms1) * var(--scale-factor));
-
   --page-padding: var(--baseline);
 
   --micro-interaction-animation-duration: .2s;
@@ -41,20 +33,6 @@
   --figure-exit-transition-duration: .3s;
   --figure-appear-transition-duration: .2s;
   --figure-exit-fade-out-timing: cubic-bezier(.55, 0, 1, .45);
-
-  --color-scheme-transition-duration: .3s;
-  --color-scheme-transition-easing: cubic-bezier(.25, 1, .5, 1);
-
-  @media (min-width: 40em) {
-    --baseline: .9rem;
-    --scale-factor: 1.1;
-    --base-font-size: 1.1rem;
-  }
-
-  @media (--baseline-and-font-scaled-up) {
-    --baseline: 1.2rem;
-    --base-font-size: 1.4rem;
-  }
 
   @media (min-width: 30em) {
     --page-padding: var(--double-baseline);
@@ -99,7 +77,7 @@ body {
   }
 
   @media (--layout-capped-height) {
-    display: flex; /* For vertical ventering */
+    display: flex; /* For vertical centering */
   }
 }
 
@@ -112,32 +90,4 @@ a {
 
 main {
   position: relative;
-}
-
-.button {
-  --button-side-padding: var(--double-baseline);
-  --button-height: var(--triple-baseline);
-  --color-button-bg: #000;
-  --color-button-text: var(--color-text);
-  --color-button-bg-hover: var(--color-white);
-  --color-button-text-hover: var(--color-text-dark);
-
-  display: inline-block;
-  position: relative;
-  min-width: calc(var(--baseline) * 11);
-  padding: 0 var(--button-side-padding);
-  border-radius: .3rem;
-  font-size: var(--ms-1);
-  line-height: var(--button-height);
-  letter-spacing: .05em;
-  text-align: center;
-  color: var(--color-button-text);
-  background-color: var(--color-button-bg);
-  transition: color .1s, background-color .1s;
-}
-
-.button:hover,
-.button:focus {
-  color: var(--color-button-text-hover);
-  background-color: var(--color-button-bg-hover);
 }
