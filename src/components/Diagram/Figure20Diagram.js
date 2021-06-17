@@ -19,6 +19,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowHeight = this._rowGap * rowToRowGapRatio;
 
     this._translationAmountsFromWaveCenter = generateTranslationAmountsFromWaveCenter(1.2, this._barGap, this._barsPerRow - 1);
+    this._rippleEffectAtFarthestPointFromWave = this._translationAmountsFromWaveCenter[this._translationAmountsFromWaveCenter.length - 1];
   }
 
   drawThumbnail() {
@@ -28,13 +29,13 @@ export default class Figure20Diagram extends SVGDiagram {
     // onDone();
     this._bars = this.drawBars();
 
-    // this.addWaves({ waveCenters: [0], rowBars: this._bars[0] });
-    // this.addWaves({ waveCenters: [40], rowBars: this._bars[1] });
+    this.addWaves({ waveCenters: [0], rowBars: this._bars[0] });
+    this.addWaves({ waveCenters: [40], rowBars: this._bars[1] });
     this.addWaves({ waveCenters: [0, 70], rowBars: this._bars[2] });
-    // this.addWaves({ waveCenters: [40, 125], rowBars: this._bars[3] });
-    // this.addWaves({ waveCenters: [0, 85, 170], rowBars: this._bars[4] });
-    // this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
-    // this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
+    this.addWaves({ waveCenters: [40, 125], rowBars: this._bars[3] });
+    this.addWaves({ waveCenters: [0, 85, 170], rowBars: this._bars[4] });
+    this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
+    this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
   }
 
   drawAfterCaption({ onLightUp }) {
@@ -86,9 +87,10 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   addWaves({ waveCenters, rowBars }) {
-    waveCenters.forEach(x => {
-      const waveCenterBarIndex = this.getClosestBarIndex(x, rowBars);
-      rowBars[waveCenterBarIndex].node.style.stroke = "red";
+    waveCenters.forEach((x, index) => {
+      const wavesToAddAfterCurrent = waveCenters.length - 1 - index
+      const adjustedXAccountingForNumberOfWaves = x - (wavesToAddAfterCurrent * this._rippleEffectAtFarthestPointFromWave);
+      const waveCenterBarIndex = this.getClosestBarIndex(adjustedXAccountingForNumberOfWaves, rowBars);
 
       this.pullBarsCloser({ waveCenterBarIndex, direction: 1, bars: rowBars });
       this.pullBarsCloser({ waveCenterBarIndex, direction: -1, bars: rowBars });
@@ -120,7 +122,6 @@ export default class Figure20Diagram extends SVGDiagram {
     barNode.dataset.xTranslation = newXTranslation;
   }
 
-  /* Need to take into account translation here! */
   getClosestBarIndex(x, bars) {
     console.log("\nGetting closest bar index to", x, "in bars", bars);
 
