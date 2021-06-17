@@ -1,6 +1,7 @@
 import { SVGDiagram } from "./Diagram.js";
-import BezierEasing from "../../helpers/BezierEasing.js";
-import Duration from "../../helpers/Duration.js";
+import BezierEasing from "/helpers/BezierEasing.js";
+import Duration from "/helpers/Duration.js";
+import animateWithEasing from "/helpers/animateWithEasing.js";
 
 export default class Figure20Diagram extends SVGDiagram {
   constructor(...args) {
@@ -8,12 +9,12 @@ export default class Figure20Diagram extends SVGDiagram {
 
     this._numberOfRows = 7;
     this._numberOfGaps = this._numberOfRows - 1;
-    this._barGap = 7; // To match original, use 10
+    this._barGap = 10;
     this._barsPerRow = 200;
-    this._verticalInset = 15; // To match original, use 15
+    this._verticalInset = 15;
     this._waveWidth = 70;
 
-    const rowToRowGapRatio = 0.15; // To match original, use 0.8
+    const rowToRowGapRatio = 0.8;
     const height = 300 - (2 * this._verticalInset);
     this._rowGap =  height / (this._numberOfRows * rowToRowGapRatio + this._numberOfGaps);
     this._rowHeight = this._rowGap * rowToRowGapRatio;
@@ -36,7 +37,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
     this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
 
-    this.animateWaves();
+    // this.animateWaves();
 
     onDone();
   }
@@ -90,45 +91,45 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   addWaves({ waveCenters, rowBars }) {
-    waveCenters.forEach((x, index) => {
-      const wavesToAddAfterCurrent = waveCenters.length - 1 - index
-      const adjustedXAccountingForNumberOfWaves = x - (wavesToAddAfterCurrent * this._rippleEffectAtFarthestPointFromWave);
-      const waveCenterBarIndex = this.getClosestBarIndex(adjustedXAccountingForNumberOfWaves, rowBars);
-
-      this.pullBarsCloser({ waveCenterBarIndex, direction: 1, bars: rowBars });
-      this.pullBarsCloser({ waveCenterBarIndex, direction: -1, bars: rowBars });
+    const translatedXCoordinates = this.getBarTranslationsForWaveCenters({ waveCenters, rowBars });
+    rowBars.forEach((bar, index) => {
+      bar.node.setAttribute("transform", `translate(${translatedXCoordinates[index]} 0)`);
     });
   }
 
-  pullBarsCloser({ waveCenterBarIndex, direction, bars }) {
-    let nextIndex = waveCenterBarIndex + direction;
-    while (nextIndex >= 0 && nextIndex < bars.length) {
-      this.adjustPositionRelativeToWaveCenterBar({
-        bars,
-        indexOfBarToAdjust: nextIndex,
-        waveCenterBarIndex,
-        direction
-      });
-      nextIndex += direction;
-    }
+  getBarTranslationsForWaveCenters({ waveCenters, rowBars }) {
+    return waveCenters.reduce((translationsSoFar, x, waveCenterIndex) => {
+      const wavesToAddAfterCurrent = waveCenters.length - 1 - waveCenterIndex;
+      return this.getTranslationsForWaveCenter(x, wavesToAddAfterCurrent, rowBars, translationsSoFar);
+    }, Array(rowBars.length).fill(0));
   }
 
-  adjustPositionRelativeToWaveCenterBar({ bars, indexOfBarToAdjust, waveCenterBarIndex, direction }) {
-    const barNode = bars[indexOfBarToAdjust].node;
-    const currentXTranslation = parseFloat(barNode.dataset.xTranslation) || 0;
+  getTranslationsForWaveCenter(x, wavesToAddAfterCurrent, rowBars, translationsSoFar) {
+    const adjustedXAccountingForNumberOfWaves = x - (wavesToAddAfterCurrent * this._rippleEffectAtFarthestPointFromWave);
+    const waveCenterBarIndex = this.getClosestBarIndex(adjustedXAccountingForNumberOfWaves, rowBars, translationsSoFar);
 
-    const barsFromWaveCenter = Math.abs(indexOfBarToAdjust - waveCenterBarIndex);
-    const translationAmount = this._translationAmountsFromWaveCenter[barsFromWaveCenter - 1];
-    const newXTranslation = currentXTranslation - (translationAmount * direction);
+    return rowBars.map((bar, index) => {
+      const currentTranslation = translationsSoFar[index];
 
-    barNode.setAttribute("transform", `translate(${newXTranslation} 0)`);
-    barNode.dataset.xTranslation = newXTranslation;
+      if (index == waveCenterBarIndex) {
+        return currentTranslation;
+      }
+
+      const distanceFromWaveCenter = Math.abs(waveCenterBarIndex - index);
+      const direction = index > waveCenterBarIndex ? 1 : -1;
+      return this.getTranslationForBar({ bar, distanceFromWaveCenter, direction, currentTranslation });
+    });
   }
 
-  getClosestBarIndex(x, bars) {
+  getTranslationForBar({ distanceFromWaveCenter, direction, currentTranslation }) {
+    const translationAmount = this._translationAmountsFromWaveCenter[distanceFromWaveCenter - 1];
+    return currentTranslation - (translationAmount * direction);
+  }
+
+  getClosestBarIndex(x, bars, translationsSoFar) {
     return bars
       .map((bar, index) => ({
-        x: this.parseXCoord(bar) + (parseFloat(bar.node.dataset.xTranslation) || 0),
+        x: this.parseXCoord(bar) + translationsSoFar[index],
         index
       }))
       .reduce((prevBar, currBar) => (
@@ -142,23 +143,14 @@ export default class Figure20Diagram extends SVGDiagram {
     return parseFloat(bar.node.getAttribute("points").match(/([^,]*)/)[0]);
   }
 
-  animateWaves() {
-    const totalRowLength = this._barsPerRow * this._barGap;
-    const overflowLength = (totalRowLength - 300) / 2;
-    this._bars[1].forEach((bar, index) => {
-      const xTranslation = parseFloat(bar.node.dataset.xTranslation) || 0;
-      const originalX = this.parseXCoord(bar);
-      const distanceToAnimate = xTranslation + 350;
-
-      bar.animateTransform("translate", {
-        from: `${xTranslation - 50} 0`,
-        to: `${distanceToAnimate} 0`,
-        dur: "3",
-        begin: "0s",
-        calcMode: "spline",
-        keyTimes: "0; 1",
-        keySplines: BezierEasing.easeInSine.smilString,
-        repeatCount: "indefinite"
+  animateWaves(initialWaveCenterPoints) {
+    const finalTransforms = this.getBarTransformsForWaveCenterPoints(
+      initialWaveCenterPoints.map(x => x + 350)
+    );
+    animateWithEasing(fractionOfAnimationDone => {
+      this._bars[1].forEach((bar, index) => {
+        const finalTransformForBar = finalTransforms[index];
+        bar.node.transform = finalTransformForBar * fractionOfAnimationDone;
       });
     });
   }
