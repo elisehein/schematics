@@ -272,4 +272,4 @@ export default class Figure42Diagram extends SVGDiagram {
   }
 }
 
-customElements.define("figure-40-diagram", Figure42Diagram);
+customElements.define("figure-42-diagram", Figure42Diagram);

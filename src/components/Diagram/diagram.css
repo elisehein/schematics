@@ -34,4 +34,8 @@
     align-items: center;
     justify-content: center;
   }
+
+  figure-42-diagram &--thumbnail {
+    filter: blur(.04rem);
+  }
 }

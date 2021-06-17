@@ -93,10 +93,6 @@ schematics-figure-previews {
         color var(--pre-fade-duration) ease-out;
       padding-top: var(--double-baseline);
 
-      figure-40-diagram& {
-        filter: blur(.04rem);
-      }
-
       .diagram {
         width: 50%;
         height: 50%;
