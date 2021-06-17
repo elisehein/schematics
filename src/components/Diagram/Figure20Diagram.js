@@ -19,6 +19,8 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowGap =  height / (this._numberOfRows * rowToRowGapRatio + this._numberOfGaps);
     this._rowHeight = this._rowGap * rowToRowGapRatio;
 
+    // Precalculations for use in positioning and during animation frames.
+    // Translations for each wave center/peak's siblings are always the same.
     this._translationAmountsFromWaveCenter = generateTranslationAmountsFromWaveCenter(1.2, this._barGap, this._barsPerRow - 1);
     this._rippleEffectAtFarthestPointFromWave = this._translationAmountsFromWaveCenter[this._translationAmountsFromWaveCenter.length - 1];
   }
@@ -37,9 +39,9 @@ export default class Figure20Diagram extends SVGDiagram {
     this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
     this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
 
-    this.animateWaves([0], this._bars[0]);
+    this.animateWaves([0, 70], this._bars[2]);
 
-    onDone();
+    // onDone();
   }
 
   drawAfterCaption() {
@@ -144,21 +146,44 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWaves(initialWaveCenters, rowBars) {
-    const waveCenterDifference = 200;
+    const waveCenterDifference = 350;
+    // TODO: Memoize for each set of initial wave centers
+    const precalculatedTranslations = this.getBarTranslationsForRangeOfWaveCenters(
+      initialWaveCenters,
+      waveCenterDifference,
+      rowBars
+    );
 
-    const duration = new Duration({ seconds: 3 });
+    const duration = new Duration({ seconds: 2 });
     animateWithEasing(duration, BezierEasing.linear, fractionOfAnimationDone => {
-      const amountMoved = waveCenterDifference * fractionOfAnimationDone;
-      const centersAtStep = initialWaveCenters.map(x => x + amountMoved);
-      const translations = this.getBarTranslationsForWaveCenters({
-        waveCenters: centersAtStep,
-        rowBars
-      });
+      // TODO: Round to one fraction and use memoization
+      const amountMoved = Math.round(waveCenterDifference * fractionOfAnimationDone);
+      const translationsIndex = Math.min(waveCenterDifference, amountMoved);
+      const translations = precalculatedTranslations[translationsIndex];
 
       rowBars.forEach((bar, index) => {
         bar.node.setAttribute("transform", `translate(${translations[index]} 0)`);
       });
+    }, { onDone: () => {
+      // TODO fix error
+      // this.animateWaves(initialWaveCenters, rowBars);
+    } });
+  }
+
+  getBarTranslationsForRangeOfWaveCenters(centers, range, rowBars) {
+    const translations = {};
+
+    Array(range)
+      .fill()
+      .forEach((_, index) => {
+      const adjustedCenters = centers.map(x => x + index);
+      translations[index] = this.getBarTranslationsForWaveCenters({
+        waveCenters: adjustedCenters,
+        rowBars
+      });
     });
+
+    return translations;
   }
 }
 
