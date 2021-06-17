@@ -4,18 +4,15 @@
     color: var(--color-highest-contrast);
   }
 
-  30% {
-    text-shadow: 0 0 .03em var(--color-text);
-  }
+  30% { text-shadow: 0 0 .03em var(--color-text); }
 
   40% {
     text-shadow: 0 0 .3em var(--color-text);
     color: var(--color-highest-contrast);
   }
 
-  55% {
-    text-shadow: 0 0 .02em var(--color-text);
-  }
+  50% { text-shadow: 0 0 .15em var(--color-text); }
+  55% { text-shadow: 0 0 .02em var(--color-text); }
 
   70% {
     text-shadow: 0 0 .1em var(--color-text);
@@ -56,27 +53,26 @@
 }
 
 @keyframes jitter {
-  0% { transform: translateX(.1em) translateY(.07em); }
+  0% { transform: translateX(.1em) translateY(.07em);}
   10% { transform: translateX(.04em) translateY(.01em); }
-  20% { transform: translateX(.1em) translateY(.07em); }
+
+  20% {
+    transform: translateX(.1em) translateY(.07em);
+    filter: none;
+  }
+
   30% { transform: translateX(.05em) translateY(.12em); }
+
+  35% {
+    filter: drop-shadow(.8rem .3rem .1rem hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-lightness) * .8), 1));
+  }
+
+  40% { filter: none; }
   50% { transform: translateX(0) translateY(.06em); }
   70% { transform: translateX(.08em) translateY(.01em); }
   80% { transform: translateX(.03em) translateY(.07em); }
   90% { transform: translateX(.1em) translateY(-.01em); }
   100% { transform: translateX(.01em) translateY(.08em); }
-}
-
-@keyframes jitter-horizontal {
-  0% { transform: translateX(.2em); }
-  10% { transform: translateX(0); }
-  20% { transform: translateX(.1em); }
-  30% { transform: translateX(.01em); }
-  50% { transform: translateX(.14em); }
-  70% { transform: translateX(.07em); }
-  80% { transform: translateX(.19em); }
-  90% { transform: translateX(.02em); }
-  100% { transform: translateX(.1em); }
 }
 
 .schematics-figure {

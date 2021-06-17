@@ -47,6 +47,7 @@ export default class Figure14Diagram extends SVGDiagram {
 
   animateAxes(animationStepDuration, onAllDone) {
     runActionsSequentially([
+      waitBeforeNextAction(500, this._timerManager),
       this.draw2DXY.bind(this, animationStepDuration),
       this.shiftPerspective.bind(this, animationStepDuration),
       this.drawLabels.bind(this),
@@ -55,6 +56,7 @@ export default class Figure14Diagram extends SVGDiagram {
   }
 
   draw2DXY(duration, { onDone }) {
+    this._figureBehavior.onLightUp(Duration.oneSec);
     this._yAxis.axis = this.drawAxis();
     this._xAxis.axis = this.drawAxis();
     this.animateAxisDrawing(this._yAxis.axis, this._yAxis.coords2D, duration);
