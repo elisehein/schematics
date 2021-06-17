@@ -8,12 +8,12 @@ export default class Figure20Diagram extends SVGDiagram {
 
     this._numberOfRows = 7;
     this._numberOfGaps = this._numberOfRows - 1;
-    this._barGap = 10;
+    this._barGap = 7; // To match original, use 10
     this._barsPerRow = 200;
-    this._verticalInset = 15;
+    this._verticalInset = 15; // To match original, use 15
     this._waveWidth = 70;
 
-    const rowToRowGapRatio = 0.8;
+    const rowToRowGapRatio = 0.15; // To match original, use 0.8
     const height = 300 - (2 * this._verticalInset);
     this._rowGap =  height / (this._numberOfRows * rowToRowGapRatio + this._numberOfGaps);
     this._rowHeight = this._rowGap * rowToRowGapRatio;
@@ -26,7 +26,6 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   drawBeforeCaption({ onDone }) {
-    // onDone();
     this._bars = this.drawBars();
 
     this.addWaves({ waveCenters: [0], rowBars: this._bars[0] });
@@ -36,9 +35,11 @@ export default class Figure20Diagram extends SVGDiagram {
     this.addWaves({ waveCenters: [0, 85, 170], rowBars: this._bars[4] });
     this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
     this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
+
+    onDone();
   }
 
-  drawAfterCaption({ onLightUp }) {
+  drawAfterCaption() {
   }
 
   drawBars() {
