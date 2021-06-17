@@ -28,13 +28,13 @@ export default class Figure20Diagram extends SVGDiagram {
     // onDone();
     this._bars = this.drawBars();
 
-    this.addWaves({ waveCenters: [0], rowBars: this._bars[0] });
-    this.addWaves({ waveCenters: [40], rowBars: this._bars[1] });
+    // this.addWaves({ waveCenters: [0], rowBars: this._bars[0] });
+    // this.addWaves({ waveCenters: [40], rowBars: this._bars[1] });
     this.addWaves({ waveCenters: [0, 70], rowBars: this._bars[2] });
-    this.addWaves({ waveCenters: [40, 125], rowBars: this._bars[3] });
-    this.addWaves({ waveCenters: [0, 85, 170], rowBars: this._bars[4] });
-    this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
-    this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
+    // this.addWaves({ waveCenters: [40, 125], rowBars: this._bars[3] });
+    // this.addWaves({ waveCenters: [0, 85, 170], rowBars: this._bars[4] });
+    // this.addWaves({ waveCenters: [40, 125, 210], rowBars: this._bars[5] });
+    // this.addWaves({ waveCenters: [0, 85, 170, 255], rowBars: this._bars[6] });
   }
 
   drawAfterCaption({ onLightUp }) {
@@ -88,6 +88,8 @@ export default class Figure20Diagram extends SVGDiagram {
   addWaves({ waveCenters, rowBars }) {
     waveCenters.forEach(x => {
       const waveCenterBarIndex = this.getClosestBarIndex(x, rowBars);
+      rowBars[waveCenterBarIndex].node.style.stroke = "red";
+
       this.pullBarsCloser({ waveCenterBarIndex, direction: 1, bars: rowBars });
       this.pullBarsCloser({ waveCenterBarIndex, direction: -1, bars: rowBars });
     });
@@ -111,22 +113,29 @@ export default class Figure20Diagram extends SVGDiagram {
     const currentXTranslation = parseFloat(barNode.dataset.xTranslation) || 0;
 
     const barsFromWaveCenter = Math.abs(indexOfBarToAdjust - waveCenterBarIndex);
-    const newXTranslation = currentXTranslation + this.getTranslationAmount(barsFromWaveCenter, direction);
+    const translationAmount = this._translationAmountsFromWaveCenter[barsFromWaveCenter - 1];
+    const newXTranslation = currentXTranslation - (translationAmount * direction);
 
     barNode.setAttribute("transform", `translate(${newXTranslation} 0)`);
     barNode.dataset.xTranslation = newXTranslation;
   }
 
-  getTranslationAmount(barsFromWaveCenter, direction) {
-    return this._translationAmountsFromWaveCenter[barsFromWaveCenter - 1] * direction * -1;
-  }
-
+  /* Need to take into account translation here! */
   getClosestBarIndex(x, bars) {
-    return bars
-      .map((bar, index) => ({ x: this.parseXCoord(bar.node.getAttribute("points")), index }))
-      .reduce((prevBar, currBar) => (
+    console.log("\nGetting closest bar index to", x, "in bars", bars);
+
+    const xs = bars.map((bar, index) => ({
+        x: this.parseXCoord(bar.node.getAttribute("points")) + (parseFloat(bar.node.dataset.xTranslation) || 0),
+        index
+      }));
+
+    console.log("All the xs are", xs);
+
+    const index = xs.reduce((prevBar, currBar) => (
         Math.abs(currBar.x - x) < Math.abs(prevBar.x - x) ? currBar : prevBar
       )).index;
+      console.log("closes index is", index);
+      return index;
   }
 
   parseXCoord(points) {
