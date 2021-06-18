@@ -1,6 +1,5 @@
 export const strokeable = (isThumbnail, { node }) => ({
   stroke(strokeWidth = 1, strokeColor = "currentcolor") {
-    node.style.fill = "transparent";
     node.style.stroke = strokeColor;
     node.style.strokeLinecap = "round";
     node.style.strokeWidth = isThumbnail && strokeWidth !== 0 ? 5 : strokeWidth;
@@ -27,7 +26,6 @@ export const strokeable = (isThumbnail, { node }) => ({
 export const fillable = ({ node }) => ({
   fill() {
     node.style.fill = "currentcolor";
-    node.style.stroke = "transparent";
   }
 });
 

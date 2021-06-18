@@ -127,6 +127,7 @@ export default class Figure42Diagram extends SVGDiagram {
 
     const circle = this._svgShapeFactory.getEllipse(cx, cy, width, height);
     circle.fill();
+    circle.stroke(0);
 
     // Keep track of the intended coordinates as we will override them with random ones
     circle.node.dataset.cxAligned = cx;
