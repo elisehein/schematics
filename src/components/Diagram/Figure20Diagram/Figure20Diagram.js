@@ -30,6 +30,7 @@ export default class Figure20Diagram extends SVGDiagram {
     const height = 300 - (2 * this._verticalInset);
     this._rowGap =  height / (this._numberOfRows * rowToRowGapRatio + this._numberOfGaps);
     this._rowHeight = this._rowGap * rowToRowGapRatio;
+    this._rowYs = this.precalculateRowYs();
 
     this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
   }
@@ -64,6 +65,18 @@ export default class Figure20Diagram extends SVGDiagram {
   drawAfterCaption() {
   }
 
+  precalculateRowYs() {
+    const rowYs = [];
+
+    for (let rowIndex = 0; rowIndex < this._numberOfRows; rowIndex += 1) {
+      const topY = this._verticalInset + (rowIndex * (this._rowHeight + this._rowGap));
+      const bottomY = topY + this._rowHeight;
+      rowYs.push({ top: topY, bottom: bottomY });
+    }
+
+    return rowYs;
+  }
+
   drawBars() {
     const bars = [];
 
@@ -71,9 +84,7 @@ export default class Figure20Diagram extends SVGDiagram {
       const barsForRow = [];
       const groupNode = this._svgShapeFactory.getGroupNode();
       groupNode.dataset.rowIndex = rowIndex;
-
-      const topY = this._verticalInset + (rowIndex * (this._rowHeight + this._rowGap));
-      const bottomY = topY + this._rowHeight;
+      const { top: topY, bottom: bottomY } = this._rowYs[rowIndex];
 
       for (let barIndex = 0; barIndex < this._barsPerRow; barIndex += 1) {
         const bar = this.drawBar(topY, bottomY, barIndex);
@@ -130,7 +141,12 @@ export default class Figure20Diagram extends SVGDiagram {
 
   bindPointerEventsToWaveMovements() {
     this.addEventListener("mousemove", event => {
-      const { x: pointerX } = this.getPointerPositionInSVG(event);
+      const { x: pointerX, y: pointerY } = this.getPointerPositionInSVG(event);
+      const rowAtPointer = this.getRowAt(pointerY);
+
+      if (rowAtPointer == -1) {
+        return;
+      }
 
       wavePeaksPerBar.forEach((peaks, barIndex) => {
         this.setWavePeaks({
@@ -152,6 +168,10 @@ export default class Figure20Diagram extends SVGDiagram {
     this._svgReferencePoint.x = event.clientX;
     this._svgReferencePoint.y = event.clientY;
     return this._svgReferencePoint.matrixTransform(this.svgNode.getScreenCTM().inverse());
+  }
+
+  getRowAt(y) {
+    return this._rowYs.findIndex(({ top, bottom }) => y >= top && y <= bottom);
   }
 }
 
