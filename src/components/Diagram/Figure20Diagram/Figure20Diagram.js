@@ -6,7 +6,7 @@ import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 import animateWithEasing from "/helpers/animateWithEasing.js";
 
-const wavePeaksPerRow = [
+const originalWavePeaksPerRow = [
   [0],
   [40],
   [0, 70],
@@ -48,12 +48,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
-
-    wavePeaksPerRow.forEach((peaks, barIndex) => {
-      this.setWavePeaks({ peaks, rowBars: this._bars[barIndex] });
-    });
-
-    this.animateWavesRandomly();
+    // this.animateWavesRandomly();
     this.bindPointerEventsToWaveMovements();
 
     // onDone();
@@ -120,7 +115,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
     const travelDistance = this.svgSize * 2;
     this._waveAnimationTimer = this._timerManager.setTimeout(() => {
-      const initialPeaks = wavePeaksPerRow[randomRow].map(x => x - (this.svgSize / 2));
+      const initialPeaks = originalWavePeaksPerRow[randomRow].map(x => x - (this.svgSize / 2));
       this.animateWaves(initialPeaks, travelDistance, randomDuration, randomRow);
       this.animateWavesRandomly();
     }, randomDelay.ms);
@@ -151,21 +146,41 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   bindPointerEventsToWaveMovements() {
-    this.addEventListener("mousemove", event => {
+    this.svgNode.addEventListener("mousemove", event => {
       const { x: pointerX, y: pointerY } = this.getPointerPositionInSVG(event);
-      const rowAtPointer = this.getRowAt(pointerY);
+      const pointerRow = this.getRowAt(pointerY);
 
-      if (rowAtPointer == -1) {
+      if (pointerRow == -1) {
         return;
       }
 
-      wavePeaksPerRow.forEach((peaks, barIndex) => {
-        this.setWavePeaks({
-          peaks: this.peaksAdjustedToEndAt(pointerX, peaks),
-          rowBars: this._bars[barIndex]
-        });
+      this.matchWavePeaksToPointer(pointerX, pointerRow);
+    });
+  }
+
+  matchWavePeaksToPointer(pointerX, pointerRow) {
+    originalWavePeaksPerRow.forEach((peaks, rowIndex) => {
+      this.setWavePeaks({
+        peaks: this.getPeaksAtPointerPosition(
+          { peaks, rowIndex },
+          { pointerX, pointerRow }
+        ),
+        rowBars: this._bars[rowIndex]
       });
     });
+  }
+
+  getPeaksAtPointerPosition({ peaks, rowIndex }, { pointerX, pointerRow }) {
+    if (pointerRow == rowIndex) {
+      return this.peaksAdjustedToEndAt(pointerX, peaks);
+    }
+
+    const diff = this.getRightmostPeaksDifference(rowIndex, pointerRow);
+    if (pointerRow > rowIndex) {
+      return this.peaksAdjustedToEndAt(pointerX - diff, peaks);
+    } else {
+      return this.peaksAdjustedToEndAt(pointerX + diff, peaks);
+    }
   }
 
   peaksAdjustedToEndAt(x, peaks) {
@@ -173,6 +188,12 @@ export default class Figure20Diagram extends SVGDiagram {
     const difference = Math.abs(x - rightMostPeakX);
     const direction = x > rightMostPeakX ? 1 : -1;
     return peaks.map(peakX => peakX + (difference * direction));
+  }
+
+  getRightmostPeaksDifference(rowIndex, otherRowIndex) {
+    const rowPeaks = originalWavePeaksPerRow[rowIndex];
+    const otherRowPeaks = originalWavePeaksPerRow[otherRowIndex];
+    return Math.abs(rowPeaks[rowPeaks.length - 1] - otherRowPeaks[otherRowPeaks.length - 1]);
   }
 
   getPointerPositionInSVG(event){
