@@ -5,6 +5,16 @@ import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "/helpers/Duration.js";
 import animateWithEasing from "/helpers/animateWithEasing.js";
 
+const wavePeaksPerBar = [
+  [0],
+  [40],
+  [0, 70],
+  [40, 125],
+  [0, 85, 170],
+  [40, 125, 210],
+  [0, 85, 170, 255]
+];
+
 export default class Figure20Diagram extends SVGDiagram {
   constructor(...args) {
     super(20, ...args);
@@ -24,21 +34,29 @@ export default class Figure20Diagram extends SVGDiagram {
     this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    this._svgReferencePoint = this.svgNode.createSVGPoint();
+  }
+
   drawThumbnail() {
   }
 
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
 
-    this.addWaves({ peaks: [0], rowBars: this._bars[0] });
-    this.addWaves({ peaks: [40], rowBars: this._bars[1] });
-    this.addWaves({ peaks: [0, 70], rowBars: this._bars[2] });
-    this.addWaves({ peaks: [40, 125], rowBars: this._bars[3] });
-    this.addWaves({ peaks: [0, 85, 170], rowBars: this._bars[4] });
-    this.addWaves({ peaks: [40, 125, 210], rowBars: this._bars[5] });
-    this.addWaves({ peaks: [0, 85, 170, 255], rowBars: this._bars[6] });
+    wavePeaksPerBar.forEach((peaks, barIndex) => {
+      this.setWavePeaks({ peaks, rowBars: this._bars[barIndex] });
+    });
 
-    // this.animateWaves([0, 70], this._bars[2]);
+    // Animate waves from left overflow to right overflow
+    const travelDistance = this.svgSize * 2;
+    wavePeaksPerBar.forEach((peaks, barIndex) => {
+      const initialPeaks = peaks.map(x => x - (this.svgSize / 2));
+      // this.animateWaves(initialPeaks, travelDistance, this._bars[barIndex]);
+    });
+
+    this.bindPointerEventsToWaveMovements();
 
     // onDone();
   }
@@ -80,33 +98,60 @@ export default class Figure20Diagram extends SVGDiagram {
     return bar;
   }
 
-  addWaves({ peaks, rowBars }) {
+  setWavePeaks({ peaks, rowBars }) {
     const translatedXCoordinates = this._coords.getTranslationsForWaves(peaks);
     rowBars.forEach((bar, index) => {
       bar.node.setAttribute("transform", `translate(${translatedXCoordinates[index]} 0)`);
     });
   }
 
-  animateWaves(initialPeaks, rowBars) {
-    const totalTravelDistance = 350;
+  animateWaves(initialPeaks, totalTravelDistance, rowBars) {
     const translationsForTravelDistance = this._coords
       .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
 
     const duration = new Duration({ seconds: 2 });
 
-    animateWithEasing(duration, BezierEasing.linear, fractionOfAnimationDone => {
-      // TODO: Round to one fraction and use memoization
+    rowBars.forEach((bar, index) => {
+      animateWithEasing(duration, BezierEasing.linear, fractionOfAnimationDone => {
       const travelledSoFar = Math.round(totalTravelDistance * fractionOfAnimationDone);
-      const translationsIndex = Math.min(totalTravelDistance, travelledSoFar);
+      const translationsIndex = Math.min(totalTravelDistance - 1, travelledSoFar);
       const translations = translationsForTravelDistance[translationsIndex];
 
-      rowBars.forEach((bar, index) => {
         bar.node.setAttribute("transform", `translate(${translations[index]} 0)`);
+      }, { onDone: () => {
+        if (index == 0) {
+          this._timerManager.setTimeout(() => {
+            this.animateWaves(initialPeaks, totalTravelDistance, rowBars);
+          }, 100);
+        }
+      } });
+    });
+  }
+
+  bindPointerEventsToWaveMovements() {
+    this.addEventListener("mousemove", event => {
+      const { x: pointerX } = this.getPointerPositionInSVG(event);
+
+      wavePeaksPerBar.forEach((peaks, barIndex) => {
+        this.setWavePeaks({
+          peaks: this.peaksAdjustedToEndAt(pointerX, peaks),
+          rowBars: this._bars[barIndex]
+        });
       });
-    }, { onDone: () => {
-      // TODO fix error
-      // this.animateWaves(initialWaveCenters, rowBars);
-    } });
+    });
+  }
+
+  peaksAdjustedToEndAt(x, peaks) {
+    const rightMostPeakX = peaks[peaks.length - 1];
+    const difference = Math.abs(x - rightMostPeakX);
+    const direction = x > rightMostPeakX ? 1 : -1;
+    return peaks.map(peakX => peakX + (difference * direction));
+  }
+
+  getPointerPositionInSVG(event){
+    this._svgReferencePoint.x = event.clientX;
+    this._svgReferencePoint.y = event.clientY;
+    return this._svgReferencePoint.matrixTransform(this.svgNode.getScreenCTM().inverse());
   }
 }
 

@@ -35,8 +35,7 @@ export default class WaveCoordinates {
   getTranslationsForWaves(peaks) {
     const keyForPeaks = peaks.join(";");
     if (this._memoizedTranslationsForWavePeaks[keyForPeaks]) {
-      console.log("We already have translations for peaks at", keyForPeaks, "return!");
-      return this._memoizedTranslationsForWavePeaks;
+      return this._memoizedTranslationsForWavePeaks[keyForPeaks];
     }
 
     const initialTranslations = Array(this._barsPerRow).fill(0);
@@ -75,8 +74,10 @@ export default class WaveCoordinates {
         x: initialX + translationsSoFar[index],
         index
       }))
-      .reduce(({ prevX, prevIndex }, { currX, currIndex }) => (
-        Math.abs(currX - x) < Math.abs(prevX - x) ? { currX, currIndex } : { prevX, prevIndex }
+      .reduce((prevXandIndex, currXandIndex) => (
+        Math.abs(currXandIndex.x - x) < Math.abs(prevXandIndex.x - x)
+        ? currXandIndex
+        : prevXandIndex
       )).index;
   }
 
@@ -86,7 +87,7 @@ export default class WaveCoordinates {
     /* We only calculate translations at each integer for now.
      * If the animation speed is reduced a lot, we may need to also calculate
      * translations at fractional wave travel distances. */
-    for (let travelledSoFar = 0; travelledSoFar < totalTravelDistance; travelledSoFar += 1) {
+    for (let travelledSoFar = 0; travelledSoFar <= totalTravelDistance; travelledSoFar += 1) {
       const adjustedPeaks = initialPeaks.map(x => x + travelledSoFar);
       translations[travelledSoFar] = this.getTranslationsForWaves(adjustedPeaks);
     }
