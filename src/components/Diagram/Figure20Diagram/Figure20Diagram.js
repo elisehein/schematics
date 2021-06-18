@@ -22,7 +22,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this._numberOfRows = 7;
     this._numberOfGaps = this._numberOfRows - 1;
     const barGap = 10;
-    this._barsPerRow = 200;
+    this._barsPerRow = 90;
     this._verticalInset = 15;
     this._waveWidth = 70;
 
