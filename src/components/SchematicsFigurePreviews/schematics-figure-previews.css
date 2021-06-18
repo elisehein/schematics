@@ -22,11 +22,6 @@ schematics-figure-previews {
   --item-max-static-width: 16rem;
   --item-size: min(var(--item-max-static-width), var(--item-max-relative-width));
 
-  @media (prefers-reduced-motion: reduce) {
-    --fade-duration: 0s;
-    --pre-fade-duration: 0s;
-  }
-
   display: block;
   width: 100%;
   min-height: var(--item-size); /* Prevents layout shift before previews load */
