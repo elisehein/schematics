@@ -2,10 +2,11 @@ import { SVGDiagram } from "../Diagram.js";
 import WaveCoordinates from "./Figure20WaveCoordinates.js";
 
 import BezierEasing from "/helpers/BezierEasing.js";
+import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 import animateWithEasing from "/helpers/animateWithEasing.js";
 
-const wavePeaksPerBar = [
+const wavePeaksPerRow = [
   [0],
   [40],
   [0, 70],
@@ -32,6 +33,8 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowHeight = this._rowGap * rowToRowGapRatio;
     this._rowYs = this.precalculateRowYs();
 
+    this._rowsCurrentlyAnimating = [];
+
     this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
   }
 
@@ -46,17 +49,11 @@ export default class Figure20Diagram extends SVGDiagram {
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
 
-    wavePeaksPerBar.forEach((peaks, barIndex) => {
+    wavePeaksPerRow.forEach((peaks, barIndex) => {
       this.setWavePeaks({ peaks, rowBars: this._bars[barIndex] });
     });
 
-    // Animate waves from left overflow to right overflow
-    const travelDistance = this.svgSize * 2;
-    wavePeaksPerBar.forEach((peaks, barIndex) => {
-      const initialPeaks = peaks.map(x => x - (this.svgSize / 2));
-      // this.animateWaves(initialPeaks, travelDistance, this._bars[barIndex]);
-    });
-
+    this.animateWavesRandomly();
     this.bindPointerEventsToWaveMovements();
 
     // onDone();
@@ -116,27 +113,41 @@ export default class Figure20Diagram extends SVGDiagram {
     });
   }
 
-  animateWaves(initialPeaks, totalTravelDistance, rowBars) {
+  animateWavesRandomly() {
+    const randomDelay = new Duration({ milliseconds: randomIntBetween(100, 1000) });
+    const randomDuration = new Duration({ milliseconds: randomIntBetween(2000, 4000) });
+    const randomRow = randomIntBetween(0, this._numberOfRows - 1);
+
+    const travelDistance = this.svgSize * 2;
+    this._waveAnimationTimer = this._timerManager.setTimeout(() => {
+      const initialPeaks = wavePeaksPerRow[randomRow].map(x => x - (this.svgSize / 2));
+      this.animateWaves(initialPeaks, travelDistance, randomDuration, randomRow);
+      this.animateWavesRandomly();
+    }, randomDelay.ms);
+  }
+
+  animateWaves(initialPeaks, totalTravelDistance, duration, rowIndex, onDone = () => {}) {
+    if (this._rowsCurrentlyAnimating.indexOf(rowIndex) > -1) {
+      onDone();
+      return;
+    }
+
+    this._rowsCurrentlyAnimating.push(rowIndex);
+
     const translationsForTravelDistance = this._coords
       .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
 
-    const duration = new Duration({ seconds: 2 });
-
-    rowBars.forEach((bar, index) => {
-      animateWithEasing(duration, BezierEasing.linear, fractionOfAnimationDone => {
-      const travelledSoFar = Math.round(totalTravelDistance * fractionOfAnimationDone);
-      const translationsIndex = Math.min(totalTravelDistance - 1, travelledSoFar);
-      const translations = translationsForTravelDistance[translationsIndex];
-
+    animateWithEasing(duration, BezierEasing.linear, fractionOfAnimationDone => {
+      this._bars[rowIndex].forEach((bar, index) => {
+        const travelledSoFar = Math.round(totalTravelDistance * fractionOfAnimationDone);
+        const translationsIndex = Math.min(totalTravelDistance - 1, travelledSoFar);
+        const translations = translationsForTravelDistance[translationsIndex];
         bar.node.setAttribute("transform", `translate(${translations[index]} 0)`);
-      }, { onDone: () => {
-        if (index == 0) {
-          this._timerManager.setTimeout(() => {
-            this.animateWaves(initialPeaks, totalTravelDistance, rowBars);
-          }, 100);
-        }
-      } });
-    });
+      });
+    }, { onDone: () => {
+      this._rowsCurrentlyAnimating = this._rowsCurrentlyAnimating.filter(i => i !== rowIndex);
+      onDone();
+    } });
   }
 
   bindPointerEventsToWaveMovements() {
@@ -148,7 +159,7 @@ export default class Figure20Diagram extends SVGDiagram {
         return;
       }
 
-      wavePeaksPerBar.forEach((peaks, barIndex) => {
+      wavePeaksPerRow.forEach((peaks, barIndex) => {
         this.setWavePeaks({
           peaks: this.peaksAdjustedToEndAt(pointerX, peaks),
           rowBars: this._bars[barIndex]
