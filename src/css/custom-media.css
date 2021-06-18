@@ -7,7 +7,12 @@
 
 @custom-media --layout-full-screen-figure-with-small-logo (max-width: 47.9375em);
 @custom-media --layout-full-screen-figure-with-full-size-logo (min-width: 48em) and (--layout-full-screen-figure);
+
+/* The negated query is manually specified so we can use it in other queries.
+ * You cannot use "not" for an individual expression, only the entire query
+ * https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Using_media_queries */
 @custom-media --layout-capped-height (min-height: 60em) and (--layout-aside-always-visible);
+@custom-media --layout-not-capped-height (max-height: 59.9375em) and (--layout-aside-always-visible);
 
 @custom-media --very-tall-screen (min-height: 80em) and (--layout-aside-always-visible);
 

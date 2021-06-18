@@ -1,4 +1,5 @@
-import { getPoetry, getDiagram } from "../../figureData.js";
+import { getPoetry } from "../../figureData.js";
+import DiagramFactory  from "../Diagram/DiagramFactory.js";
 import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 import CaptionTyping from "./CaptionTyping.js";
@@ -7,6 +8,13 @@ export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
     super();
     this.num = num || this.getAttribute("num");
+    this._diagramFactory = new DiagramFactory({
+      onLightUp: this.lightUpFigure.bind(this),
+      onFuzzy: this.makeFigureFuzzy.bind(this),
+      onJitter: this.jitterDiagram.bind(this),
+      onDeleteCaption: this.deleteCaption.bind(this),
+      onRetypeCaption: this.renderCaption.bind(this)
+    });
   }
 
   connectedCallback() {
@@ -22,17 +30,13 @@ export default class SchematicsFigure extends HTMLElement {
       return;
     }
 
-    const onLightUp = this.lightUpFigure.bind(this);
+    this._captionTyping = new CaptionTyping(getPoetry(this.num));
+    this.renderA11yCaption();
 
-    this._diagramElement.drawBeforeCaption({
-      onLightUp,
-      onDone: () => {
-        this._diagramElement.drawAlongsideCaption();
-        this.renderCaption({
-          onDone: () => this._diagramElement.drawAfterCaption({ onLightUp })
-        });
-      }
-    });
+    this._diagramElement.drawBeforeCaption({ onDone: () => {
+      this._diagramElement.drawAlongsideCaption();
+      this.renderCaption({ onDone: () => this._diagramElement.drawAfterCaption() });
+    } });
   }
 
   cleanUpCurrentFigure(num) {
@@ -46,17 +50,48 @@ export default class SchematicsFigure extends HTMLElement {
       this._diagramElement.clearAllTimers();
     }
 
-    this.querySelector(".schematics-figure__figure__figcaption").innerHTML = "";
-    this.querySelector(".schematics-figure__figure__diagram-container").innerHTML = "";
+    clearTimeout(this._lightUpTimer);
+    clearTimeout(this._fuzzyTimer);
+    this.figureNode.classList.remove("schematics-figure__figure--light-up");
+    this.figureNode.classList.remove("schematics-figure__figure--fuzzy");
+
+    this.animatedFigcaptionNode.innerHTML = "";
+    this.visuallyHiddenFigcaptionNode.innerHTML = "";
+    this.diagramContainerNode.innerHTML = "";
   }
 
-  lightUpFigure(durationMS) {
-    this.style.setProperty("--schematics-figure-light-up-duration", `${durationMS}ms`);
+  lightUpFigure(duration) {
+    if (this._lightUpTimer) {
+      clearTimeout(this._lightUpTimer);
+    }
+
+    this.style.setProperty("--schematics-figure-light-up-duration", `${duration.s}s`);
     this.figureNode.classList.add("schematics-figure__figure--light-up");
 
-    setTimeout(() => {
+    this._lightUpTimer = setTimeout(() => {
       this.figureNode.classList.remove("schematics-figure__figure--light-up");
-    }, durationMS);
+      this._lightUpTimer = null;
+    }, duration.ms);
+  }
+
+  makeFigureFuzzy(duration, { onDone } = {}) {
+    if (this._fuzzyTimer) {
+      clearTimeout(this._fuzzyTimer);
+    }
+
+    this.style.setProperty("--schematics-figure-fuzzy-duration", `${duration.s}s`);
+    this.figureNode.classList.add("schematics-figure__figure--fuzzy");
+
+    this._fuzzyTimer = setTimeout(() => {
+      this.figureNode.classList.remove("schematics-figure__figure--fuzzy");
+      this._fuzzyTimer = null;
+      onDone && onDone();
+    }, duration.ms);
+  }
+
+  jitterDiagram(duration, { onDone } = {}) {
+    this.style.setProperty("--schematics-figure-jitter-duration", `${duration.s}s`);
+    transitionWithClasses(this.diagramContainerNode, ["schematics-figure__figure__diagram-container--jitter"], onDone);
   }
 
   static get observedAttributes()  {
@@ -105,8 +140,8 @@ export default class SchematicsFigure extends HTMLElement {
       return null;
     }
 
-    const diagramElement = getDiagram(this.num);
-    this.querySelector(".schematics-figure__figure__diagram-container").replaceChildren(diagramElement);
+    const diagramElement = this._diagramFactory(this.num);
+    this.diagramContainerNode.replaceChildren(diagramElement);
     return diagramElement;
   }
 
@@ -116,10 +151,21 @@ export default class SchematicsFigure extends HTMLElement {
     }
 
     const onPause = (index, duration) => this._diagramElement.onCaptionPause(index, duration);
+    this._captionTyping.animate(this.animatedFigcaptionNode, onPause, onDone);
+  }
 
-    const captionNode = this.querySelector(".schematics-figure__figure__figcaption");
-    this._captionTyping = new CaptionTyping(getPoetry(this.num));
-    this._captionTyping.animate(captionNode, onPause, onDone);
+  deleteCaption({ onDone }) {
+    if (!Number.isInteger(this.num)) {
+      return;
+    }
+
+    this._captionTyping.animateDelete(this.animatedFigcaptionNode, onDone);
+  }
+
+  renderA11yCaption() {
+    // We never want to force screen reader users to wait until the diagram has animated before they
+    // can hear the caption.
+    this.visuallyHiddenFigcaptionNode.innerText = this._captionTyping.fullCaption;
   }
 
   className(num) {
@@ -128,6 +174,18 @@ export default class SchematicsFigure extends HTMLElement {
 
   get figureNode() {
     return this.querySelector(".schematics-figure__figure");
+  }
+
+  get animatedFigcaptionNode() {
+    return this.querySelector(".schematics-figure__figure__figcaption__animated");
+  }
+
+  get visuallyHiddenFigcaptionNode() {
+    return this.querySelector(".schematics-figure__figure__figcaption__visually-hidden");
+  }
+
+  get diagramContainerNode() {
+    return this.querySelector(".schematics-figure__figure__diagram-container");
   }
 
   get num() {

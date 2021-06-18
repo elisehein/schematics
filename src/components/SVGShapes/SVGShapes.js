@@ -1,4 +1,4 @@
-import { fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize } from "./SVGShapeFeatures.js";
+import { fillable, animatable, havingLength, withOptionalArrowHead, havingIntrinsicSize, clickableWithKeyboardFocus } from "./SVGShapeFeatures.js";
 
 /*
  * The components here are not Web Components but rather your vanilla
@@ -37,7 +37,8 @@ export function Ellipse(strokeable, cx, cy, rx, ry) {
     self,
     animatable(self),
     strokeable(self),
-    fillable(self)
+    fillable(self),
+    clickableWithKeyboardFocus(self)
   );
 }
 
@@ -53,7 +54,8 @@ export function Circle(strokeable, cx, cy, r) {
     self,
     animatable(self),
     strokeable(self),
-    fillable(self)
+    fillable(self),
+    clickableWithKeyboardFocus(self)
   );
 }
 
@@ -141,12 +143,15 @@ export function TypingText(strokeable, isThumbnailSize, text, { x, y }, animatio
 
   g.append(textPath.node, textShape.node);
 
-  return {
-    node: g,
-    animateTyping: (...args) => textPath.beginAnimation(...args),
-    textNode: textShape.node,
-    intrinsicSize: textSize
-  };
+  return Object.assign(
+    {
+      node: g,
+      animateTyping: (...args) => textPath.beginAnimation(...args),
+      textNode: textShape.node,
+      intrinsicSize: textSize
+    },
+    clickableWithKeyboardFocus({ node: g })
+  );
 }
 
 export function createSVGElement(elementName) {

@@ -5,7 +5,7 @@ import animateWithEasing from "./animateWithEasing.js";
  * scrollIntoView({ behavior: smooth }) works fine, but it's not supported
  * on Safari, and you cannot control timing.
  */
-export default function smoothScroll(node, x, y, durationMS, easing, { onDone } = {}) {
+export default function smoothScroll(node, x, y, duration, easing, { onDone } = {}) {
   const initialScrollX = node.scrollLeft;
   const initialScrollY = node.scrollTop;
 
@@ -19,7 +19,7 @@ export default function smoothScroll(node, x, y, durationMS, easing, { onDone } 
   const totalScrollDistanceX = Math.abs(node.scrollLeft - x);
   const totalScrollDistanceY = Math.abs(node.scrollTop - y);
 
-  animateWithEasing(durationMS, easing, fractionOfAnimationDone => {
+  animateWithEasing(duration, easing, fractionOfAnimationDone => {
     const scrollDistanceXCoveredThisAnimationFrame = totalScrollDistanceX * fractionOfAnimationDone;
     const scrollDistanceYCoveredThisAnimationFrame = totalScrollDistanceY * fractionOfAnimationDone;
 

@@ -106,7 +106,7 @@
         ],
         "max-classes-per-file": [
             "error",
-            2
+            3
         ],
         "max-depth": "error",
         "max-len": "off",

@@ -1,5 +1,6 @@
 import BezierEasing from "/helpers/BezierEasing.js";
 
+// eslint-disable-next-line max-lines-per-function
 export const clickable = ({ node, circle }, getCircle) => ({
   onClick(handler) {
     // We indicate that a pendulum (really just the circle) becomes clickable
@@ -7,33 +8,19 @@ export const clickable = ({ node, circle }, getCircle) => ({
     const pulsingCircle = drawPulsingCircle(node, circle.node, getCircle);
     configurePulseAnimation(pulsingCircle);
 
-    const removeHoverStyling = this.addHoverStyling();
-
-    circle.node.addEventListener("click", () => {
-      removeHoverStyling();
-      pulsingCircle.node.remove();
-      handler();
-    }, { once: true });
-  },
-
-  addHoverStyling() {
-    circle.node.style.cursor = "pointer";
-
     const toggleFill = isFilled => {
       circle.node.style.fill = isFilled ? "currentcolor" : "transparent";
+      if (isFilled) {
+        circle.node.style.outline = "none";
+      }
     };
     const fill = toggleFill.bind(this, true);
     const unfill = toggleFill.bind(this, false);
 
-    circle.node.addEventListener("mouseover", fill);
-    circle.node.addEventListener("mouseleave", unfill);
-
-    return () => {
-      unfill();
-      circle.node.removeEventListener("mouseover", fill);
-      circle.node.removeEventListener("mouseleave", unfill);
-      circle.node.style.cursor = "default";
-    };
+    circle.onClickOnce(fill, unfill, () => {
+      pulsingCircle.node.remove();
+      handler();
+    });
   }
 });
 
@@ -64,6 +51,16 @@ function configurePulseAnimation(circle) {
     values: `${radius}; ${radius}; ${radius * 1.7}`,
     calcMode: "spline",
     keySplines: `${BezierEasing.linear.smilString}; ${pulseEasing.smilString}`,
+    keyTimes
+  });
+
+  circle.animateAttribute("fill", {
+    begin,
+    dur,
+    repeatCount: "indefinite",
+    values: "transparent; currentcolor; transparent",
+    calcMode: "spline",
+    keySplines: `${BezierEasing.easeInExpo.smilString}; ${BezierEasing.easeOutCubic.smilString}`,
     keyTimes
   });
 

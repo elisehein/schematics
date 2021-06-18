@@ -25,6 +25,7 @@ export default class CaptionTyping {
 
     const { parsedAndWrappedCaption, singleCharacterDelayRanges } = this.parse(unparsedCaption);
 
+    this._unparsedCaption = unparsedCaption;
     this.parsedAndWrappedCaption = parsedAndWrappedCaption;
     this.singleCharacterDelayRanges = singleCharacterDelayRanges;
   }
@@ -123,9 +124,22 @@ export default class CaptionTyping {
   }
 
   animate(captionNode, onPause, onDone) {
+    if (this._timer) {
+      clearTimeout(this._timer);
+    }
+
     captionNode.innerHTML = this.parsedAndWrappedCaption;
     const captionChars = captionNode.querySelectorAll("span");
     this.revealChar({ index: 0, captionChars, onPause, onDone });
+  }
+
+  animateDelete(captionNode, onDone) {
+    if (this._timer) {
+      clearTimeout(this._timer);
+    }
+
+    const captionChars = captionNode.querySelectorAll("span");
+    this.hideChar({ index: captionChars.length - 1, captionChars, onDone });
   }
 
   revealChar({ index, captionChars, onPause, onDone }) {
@@ -135,7 +149,7 @@ export default class CaptionTyping {
     }
 
     const revealThisSpanAndNext = () => {
-      this.updateVisibility(index, captionChars);
+      this.makeCharVisible(index, captionChars);
       this.revealChar({ index: index + 1, captionChars, onPause, onDone });
     };
 
@@ -152,7 +166,21 @@ export default class CaptionTyping {
     }
   }
 
-  updateVisibility(index, captionChars) {
+  hideChar({ index, captionChars, onDone }) {
+    if (index < 0) {
+      onDone();
+      return;
+    }
+
+    const hideThisSpanAndPrevious = () => {
+      this.makeCharInvisible(index, captionChars);
+      this.hideChar({ index: index - 1, captionChars, onDone });
+    };
+
+    this._timer = setTimeout(() => hideThisSpanAndPrevious(), 100);
+  }
+
+  makeCharVisible(index, captionChars) {
     captionChars[index].scrollIntoView({ block: "nearest", behavior: "smooth" });
 
     if (index > 0) {
@@ -164,6 +192,20 @@ export default class CaptionTyping {
       "schematics-figure__figure__figcaption__character--visible",
       "schematics-figure__figure__figcaption__character--latest-visible"
       );
+  }
+
+  makeCharInvisible(index, captionChars) {
+    captionChars[index].classList.remove(
+      "schematics-figure__figure__figcaption__character--visible",
+      "schematics-figure__figure__figcaption__character--latest-visible"
+      );
+
+    if (index > 0) {
+      captionChars[index - 1].scrollIntoView({ block: "nearest", behavior: "smooth" });
+      captionChars[index - 1].classList.add(
+        "schematics-figure__figure__figcaption__character--latest-visible"
+        );
+    }
   }
 
   getActiveDelayInfoAtSpan(index) {
@@ -200,5 +242,9 @@ export default class CaptionTyping {
     if (this._timer) {
       clearTimeout(this._timer);
     }
+  }
+
+  get fullCaption() {
+    return this._unparsedCaption.replace(/\[[^\[]*\]/g, "");
   }
 }

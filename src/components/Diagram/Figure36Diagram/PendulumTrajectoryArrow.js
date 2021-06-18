@@ -32,10 +32,10 @@ const appearingWithoutAnimation = ({ arc }, anchorPoint, radius, finalAngles) =>
 });
 
 const appearingInSteps = ({ arc }, anchorPoint, radius, finalAngles) => ({
-  appearInSteps(durationMS, timerManager, { onDone }) {
+  appearInSteps(duration, timerManager, { onDone }) {
     const arcLength  = finalAngles.endAngle - finalAngles.startAngle
     const arcLengthForSingleStep = arcLength / animationSteps;
-    const singleStepDuration = durationMS / animationSteps;
+    const singleStepDuration = duration.ms / animationSteps;
 
     const setArrowArcStartAngle = startAngle => {
       return (objectWithDoneHandler) => {
@@ -62,14 +62,12 @@ const appearingInSteps = ({ arc }, anchorPoint, radius, finalAngles) => ({
  * Instead, we are redrawing a shorter and shorter arc manually using getAnimationFrame()
  */
 const disappearingWithEasing = ({ arc, node }, anchorPoint, radius, angles, ) => ({
-  disappearWithEasing(easing, durationSec) {
-    const durationMS = durationSec * 1000;
-
+  disappearWithEasing(easing, duration) {
     const totalAnglesCovered = angles.startAngle - angles.endAngle;
     const startAngle = angles.startAngle;
     const originalArcLength = arc.getLength();
 
-    animateWithEasing(durationMS, easing, fractionOfAnimationDone => {
+    animateWithEasing(duration, easing, fractionOfAnimationDone => {
       const anglesCoveredThisAnimationFrame = totalAnglesCovered * fractionOfAnimationDone;
       const endAngle = Math.max(angles.startAngle, angles.endAngle + anglesCoveredThisAnimationFrame);
       const d = getArcPathD({ radius, ...anchorPoint }, { startAngle, endAngle });

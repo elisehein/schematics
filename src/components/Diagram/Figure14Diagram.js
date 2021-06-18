@@ -1,10 +1,11 @@
-import Diagram from "./Diagram.js";
+import { SVGDiagram } from "./Diagram.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 import BezierEasing from "../../helpers/BezierEasing.js";
+import Duration from "../../helpers/Duration.js";
 
-export default class Figure14Diagram extends Diagram {
-  constructor(isThumbnail) {
-    super(14, isThumbnail);
+export default class Figure14Diagram extends SVGDiagram {
+  constructor(...args) {
+    super(14, ...args);
 
     this._timeAxis = {
       coords2D: [{ x: 120, y: 100 }, { x: 180, y: 100 }],
@@ -27,8 +28,8 @@ export default class Figure14Diagram extends Diagram {
   }
 
   drawBeforeCaption({ onDone }) {
-    const animationStepDurationSec = 3;
-    this.animateAxes(animationStepDurationSec, onDone);
+    const animationStepDuration = Duration.threeSec;
+    this.animateAxes(animationStepDuration, onDone);
   }
 
   drawAfterCaption() {
@@ -44,30 +45,32 @@ export default class Figure14Diagram extends Diagram {
     ], () => {});
   }
 
-  animateAxes(animationStepDurationSec, onAllDone) {
+  animateAxes(animationStepDuration, onAllDone) {
     runActionsSequentially([
-      this.draw2DXY.bind(this, animationStepDurationSec),
-      this.shiftPerspective.bind(this, animationStepDurationSec),
+      waitBeforeNextAction(500, this._timerManager),
+      this.draw2DXY.bind(this, animationStepDuration),
+      this.shiftPerspective.bind(this, animationStepDuration),
       this.drawLabels.bind(this),
       waitBeforeNextAction(1000, this._timerManager)
     ], onAllDone);
   }
 
-  draw2DXY(durationSec, { onDone }) {
+  draw2DXY(duration, { onDone }) {
+    this._figureBehavior.onLightUp(Duration.oneSec);
     this._yAxis.axis = this.drawAxis();
     this._xAxis.axis = this.drawAxis();
-    this.animateAxisDrawing(this._yAxis.axis, this._yAxis.coords2D, durationSec);
-    this.animateAxisDrawing(this._xAxis.axis, this._xAxis.coords2D, durationSec, onDone);
+    this.animateAxisDrawing(this._yAxis.axis, this._yAxis.coords2D, duration);
+    this.animateAxisDrawing(this._xAxis.axis, this._xAxis.coords2D, duration, onDone);
   }
 
-  shiftPerspective(durationSec, { onDone }) {
+  shiftPerspective(duration, { onDone }) {
     this._timeAxis.axis = this.drawAxis();
 
     [this._timeAxis, this._yAxis, this._xAxis].forEach((axisData, index) => {
       // Since each element should animate for the same duration, it doesn't matter which one
       // the onDone event is attached to.
       const onAxisAnimated = index == 0 ? onDone : () => {};
-      this.animateAxis(axisData.axis, axisData.coords2D, axisData.coords3D, durationSec, onAxisAnimated);
+      this.animateAxis(axisData.axis, axisData.coords2D, axisData.coords3D, duration, onAxisAnimated);
     });
   }
 
@@ -86,12 +89,12 @@ export default class Figure14Diagram extends Diagram {
     return axis;
   }
 
-  animateAxisDrawing(axis, coords, durationSec, onDone = () => {}) {
+  animateAxisDrawing(axis, coords, duration, onDone = () => {}) {
     const [from, to] = coords;
-    this.animateAxis(axis, [from, from], [from, to], durationSec, onDone);
+    this.animateAxis(axis, [from, from], [from, to], duration, onDone);
   }
 
-  animateAxis(axis, fromCoords, toCoords, animationDurationSec, onDone = () => {}) {
+  animateAxis(axis, fromCoords, toCoords, animationDuration, onDone = () => {}) {
     const pointToValue = ({ x, y }) => `${x},${y}`;
     const from = fromCoords.map(pointToValue).join(" ");
     const to = toCoords.map(pointToValue).join(" ");
@@ -102,7 +105,7 @@ export default class Figure14Diagram extends Diagram {
       from,
       to,
       id,
-      dur: animationDurationSec,
+      dur: animationDuration.s,
       fill: "freeze",
       begin: "indefinite",
       calcMode: "spline",
@@ -114,7 +117,7 @@ export default class Figure14Diagram extends Diagram {
     // because otherwise the first thing we see is an arrowhead not attached to a line.
     this._timerManager.setTimeout(() => {
       axis.addArrowHead();
-    }, animationDurationSec * 1000 / 25);
+    }, animationDuration.ms / 25);
 
     axis.beginAnimation(id, onDone);
   }

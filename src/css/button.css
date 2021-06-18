@@ -1,0 +1,27 @@
+.button {
+  --button-side-padding: var(--double-baseline);
+  --button-height: var(--triple-baseline);
+  --color-button-bg: #000;
+  --color-button-text: var(--color-text);
+  --color-button-bg-hover: var(--color-white);
+  --color-button-text-hover: var(--color-text-dark);
+
+  display: inline-block;
+  position: relative;
+  min-width: calc(var(--baseline) * 11);
+  padding: 0 var(--button-side-padding);
+  border-radius: .3rem;
+  font-size: var(--ms-1);
+  line-height: var(--button-height);
+  letter-spacing: .05em;
+  text-align: center;
+  color: var(--color-button-text);
+  background-color: var(--color-button-bg);
+  transition: color .1s, background-color .1s;
+}
+
+.button:hover,
+.button:focus {
+  color: var(--color-button-text-hover);
+  background-color: var(--color-button-bg-hover);
+}

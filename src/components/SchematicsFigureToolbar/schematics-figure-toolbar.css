@@ -1,5 +1,11 @@
-@custom-media --toolbar-layout-active-link-visible (max-width: 74.9375em);
-@custom-media --toolbar-layout-all-links-visible (min-width: 75em);
+@custom-media --toolbar-layout-active-link-visible
+  (max-width: 39.9375em),
+  (min-width: 60em) and (max-width: 69.9375em),
+  (--layout-capped-height) and (max-width: 89.9375em);
+@custom-media --toolbar-layout-all-links-visible
+  (min-width: 40em) and (--layout-full-screen-figure),
+  (min-width: 70em) and (--layout-not-capped-height),
+  (min-width: 90em) and (--layout-capped-height);
 
 .schematics-figure-toolbar {
   --item-width: calc(var(--baseline) * 5);
@@ -64,7 +70,7 @@
     justify-content: space-between;
     width: 100%;
 
-    @media (--layout-aside-always-visible) {
+    @media (--toolbar-layout-all-links-visible) {
       width: auto;
     }
   }
@@ -74,6 +80,15 @@
     display: flex;
     justify-content: stretch;
     width: 100%;
+
+    @media (--toolbar-layout-all-links-visible) {
+      width: auto;
+      margin: 0 auto;
+    }
+
+    @media (--layout-aside-always-visible) {
+      margin: 0;
+    }
 
     @media (--layout-aside-always-visible) {
       justify-content: flex-end;
@@ -176,7 +191,7 @@
     }
 
     a:focus {
-      outline-offset: 1em;
+      outline-offset: .1em;
     }
 
     @media (--toolbar-layout-all-links-visible) {
@@ -216,6 +231,11 @@
       top: 50%;
       transform: translateY(-50%);
       width: var(--double-baseline);
+    }
+
+    &:focus {
+      /* The outline gets slightly hidden behind the <main> overflow otherwise */
+      outline-offset: -.2em;
     }
   }
 

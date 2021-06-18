@@ -113,7 +113,7 @@ export const animatable = ({ node }) => ({
     const animationNode = this.getTargetAnimationNode(id);
 
     if (animationNode) {
-      animationNode.addEventListener("endEvent", callback, false);
+      animationNode.addEventListener("endEvent", callback, { once: true });
       animationNode.beginElement();
     } else {
       callback();
@@ -154,5 +154,67 @@ export const havingIntrinsicSize = ({ node }) => ({
     svg.remove();
 
     return { width, height };
+  }
+});
+
+// eslint-disable-next-line max-lines-per-function
+export const clickableWithKeyboardFocus = ({ node }) => ({
+  onClickOnce(onFocusAndMouseover, onBlurAndMouseout, onClick) {
+    this.indicateClickability(onFocusAndMouseover, onBlurAndMouseout);
+
+    const clickHandler = event => {
+      event.preventDefault();
+      this.disableClickability(onFocusAndMouseover, onBlurAndMouseout);
+      node.removeEventListener("mousedown", clickHandler);
+      node.removeEventListener("touchstart", clickHandler);
+      node.blur();
+      onClick();
+    };
+
+    const keyupHandler = event => {
+      if (event.keyCode !== 13) {
+        return;
+      }
+
+      this.disableClickability(onFocusAndMouseover, onBlurAndMouseout);
+      event.preventDefault();
+      event.stopPropagation();
+      node.removeEventListener("keyup", keyupHandler);
+      node.blur();
+      onClick();
+    };
+
+    // We want to prevent the focus event firing in case of click (to avoid visible outline)
+    // so we use mousedown instead of click and preventDefault();
+    // https://stackoverflow.com/questions/8735764/prevent-firing-focus-event-when-clicking-on-div
+    node.addEventListener("mousedown", clickHandler);
+    node.addEventListener("touchstart", clickHandler);
+    node.addEventListener("keyup", keyupHandler);
+  },
+
+  indicateClickability(onFocusAndMouseover, onBlurAndMouseout) {
+    node.setAttribute("focusable", true);
+    node.setAttribute("tabindex", 0);
+    node.setAttribute("role", "button");
+
+    node.style.cursor = "pointer";
+    node.addEventListener("focus", onFocusAndMouseover);
+    node.addEventListener("blur", onBlurAndMouseout);
+    node.addEventListener("mouseover", onFocusAndMouseover);
+    node.addEventListener("mouseleave", onBlurAndMouseout);
+
+  },
+
+  disableClickability(onFocusAndMouseover, onBlurAndMouseout) {
+    onBlurAndMouseout();
+    node.setAttribute("focusable", false);
+    node.removeAttribute("tabindex");
+    node.removeAttribute("role");
+
+    node.style.cursor = "default";
+    node.removeEventListener("focus", onFocusAndMouseover);
+    node.removeEventListener("blur", onBlurAndMouseout);
+    node.removeEventListener("mouseover", onFocusAndMouseover);
+    node.removeEventListener("mouseleave", onBlurAndMouseout);
   }
 });

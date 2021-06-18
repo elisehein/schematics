@@ -1,14 +1,15 @@
-import Diagram from "../Diagram.js";
+import { SVGDiagram } from "../Diagram.js";
 import data from "./data.js";
 import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
 import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
+import Duration from "../../../helpers/Duration.js";
 
 const firstBox = "good?";
 
-export default class Figure18Diagram extends Diagram {
-  constructor(isThumbnail) {
-    super(18, isThumbnail);
+export default class Figure18Diagram extends SVGDiagram {
+  constructor(...args) {
+    super(18, ...args);
     this._grid = new Figure18DiagramGridCoordinateSystem();
   }
 
@@ -83,7 +84,6 @@ export default class Figure18Diagram extends Diagram {
 
     const label = this._svgShapeFactory.getTypingText(option.label, { x, y }, animationDurationSeconds, 8);
     this.addSVGChildElement(label.node);
-    label.textNode.style.cursor = "pointer";
 
     label.animateTyping();
 
@@ -103,15 +103,22 @@ export default class Figure18Diagram extends Diagram {
   }
 
   bindOptionLabelClick(label, underlineNode, originBoxText, option) {
-    label.node.addEventListener("click", () => {
-      label.textNode.style.cursor = "default";
+    label.onClickOnce(() => {
+      label.node.style.color = "var(--color-highest-contrast)";
+      label.textNode.style.textShadow = "0 0 .3em var(--color-highest-contrast)";
+      underlineNode.style.color = "var(--color-highest-contrast)";
+    }, () => {
+      label.node.style.color = "currentColor";
+      label.textNode.style.textShadow = "none";
+      underlineNode.style.color = "currentColor";
+    }, () => {
       underlineNode.remove();
       this.drawOptionArrow({
         originBoxText,
         option,
         onDone: () => this.drawBoxWithOptions(option.target, option.touchPoint)
       });
-    }, { once: true });
+    });
   }
 
   drawOptionArrow({ originBoxText, option, onDone, animated = true }) {
@@ -129,7 +136,7 @@ export default class Figure18Diagram extends Diagram {
     }
 
     if (animated) {
-      this.animateBasedOnLength(arrowLine, addArrowHeadAndFinish);
+      this.animateBasedOnLength(arrowLine, false, addArrowHeadAndFinish);
     } else {
       addArrowHeadAndFinish();
     }
@@ -157,8 +164,12 @@ export default class Figure18Diagram extends Diagram {
     }
   }
 
-  animateBasedOnLength(path, onDone = () => {}) {
-    const durationExpression = lengthCSSProperty => `calc(.15s * (var(${lengthCSSProperty}) / 30))`;
+  animateBasedOnLength(path, lightUp = true, onDone = () => {}) {
+    const duration = new Duration({ seconds: path.getLength() / 30 * 0.15 });
+    if (lightUp) {
+      this._figureBehavior.onLightUp(duration);
+    }
+    const durationExpression = `${duration.s}s`;
     path.animateStroke(durationExpression, "ease-out", onDone);
   }
 

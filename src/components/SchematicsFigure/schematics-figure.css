@@ -4,18 +4,15 @@
     color: var(--color-highest-contrast);
   }
 
-  30% {
-    text-shadow: 0 0 .03em var(--color-text);
-  }
+  30% { text-shadow: 0 0 .03em var(--color-text); }
 
   40% {
     text-shadow: 0 0 .3em var(--color-text);
     color: var(--color-highest-contrast);
   }
 
-  55% {
-    text-shadow: 0 0 .02em var(--color-text);
-  }
+  50% { text-shadow: 0 0 .15em var(--color-text); }
+  55% { text-shadow: 0 0 .02em var(--color-text); }
 
   70% {
     text-shadow: 0 0 .1em var(--color-text);
@@ -47,11 +44,30 @@
   }
 }
 
+@keyframes fuzzy {
+  50% { filter: drop-shadow(0 0 1rem var(--color-text)) blur(.5rem) brightness(2); }
+}
+
+@keyframes fuzzy-text {
+  50% { filter: blur(.15rem); }
+}
+
 @keyframes jitter {
-  0% { transform: translateX(.1em) translateY(.07em); }
+  0% { transform: translateX(.1em) translateY(.07em);}
   10% { transform: translateX(.04em) translateY(.01em); }
-  10% { transform: translateX(.1em) translateY(.07em); }
+
+  20% {
+    transform: translateX(.1em) translateY(.07em);
+    filter: none;
+  }
+
   30% { transform: translateX(.05em) translateY(.12em); }
+
+  35% {
+    filter: drop-shadow(.8rem .3rem .1rem hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-lightness) * .8), 1));
+  }
+
+  40% { filter: none; }
   50% { transform: translateX(0) translateY(.06em); }
   70% { transform: translateX(.08em) translateY(.01em); }
   80% { transform: translateX(.03em) translateY(.07em); }
@@ -102,12 +118,9 @@
       transition-property: filter, color;
       transition-duration: var(--jitter-animation-duration);
 
-      > * {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
+      &--jitter {
+        animation: jitter var(--schematics-figure-jitter-duration);
+        animation-direction: reverse;
       }
     }
 
@@ -123,6 +136,20 @@
 
     &--light-up &__diagram-container {
       animation: light-up-diagram var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
+    }
+
+    &--light-up &__diagram-container--jitter {
+      animation:
+        light-up-diagram var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing),
+        jitter var(--schematics-figure-jitter-duration) reverse;
+    }
+
+    &--fuzzy &__diagram-container {
+      animation: fuzzy var(--schematics-figure-fuzzy-duration, 1s) ease-in-out;
+    }
+
+    &--fuzzy &__figcaption {
+      animation: fuzzy-text var(--schematics-figure-fuzzy-duration, 1s) ease-in-out;
     }
 
     &__figcaption {

@@ -86,23 +86,23 @@ schematics-figure-previews {
     }
 
     &__diagram {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      height: 100%;
       transition:
         transform var(--pre-fade-duration),
         filter var(--pre-fade-duration) ease-out,
         color var(--pre-fade-duration) ease-out;
       padding-top: var(--double-baseline);
 
-      figure-40-diagram& {
-        filter: blur(.06rem);
-      }
-
       .diagram {
         width: 50%;
         height: 50%;
         transform: translateY(calc(var(--double-baseline) * -1));
+
+        &--html {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
       }
     }
 
