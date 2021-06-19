@@ -13,19 +13,12 @@ export default class WaveCoordinates {
   getInitialXCoordsForBars(viewportWidth) {
     // Half the bars go to the left of the midpoint, and the other half to the right,
     // creating overflow on both sides for translations during animation.
-    const midPoint = viewportWidth / 2;
+    const rowWidth = this._barsPerRow * this._barGap;
+    const firstBarX = (rowWidth - viewportWidth) / -2;
 
     return Array(this._barsPerRow)
       .fill()
-      .map((_, barIndex) => {
-        if (barIndex < this._barsPerRow / 2) {
-          const leftMostBarX = this._barsPerRow / 2 * this._barGap;
-          return midPoint - leftMostBarX + (barIndex * this._barGap);
-        } else {
-          const adjustedIndex = barIndex - this._barsPerRow / 2;
-          return midPoint + (adjustedIndex * this._barGap);
-        }
-      });
+      .map((_, barIndex) => firstBarX + (barIndex * this._barGap));
   }
 
   getInitialXForBar(index) {
