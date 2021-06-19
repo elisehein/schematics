@@ -88,6 +88,15 @@ export default class WaveCoordinates {
     return translations;
   }
 
+  getDistanceToOverlapBarsBetweenPeaks(numberOfPeaks) {
+    const maxTranslation = numberOfPeaks * this.waveWidth;
+    const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
+    const leftwardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
+    const roundedLeftwardCompensation = Math.round(leftwardCompensation * 10) / 10;
+    const rightwardCompensation = this._barGap - roundedLeftwardCompensation;
+    return Math.round(rightwardCompensation * 10) / 10;
+  }
+
   get waveWidth() {
     // This refers to the total reach from the left to the right of the wave
     // where the ripple effect (bar density) is visible.
@@ -103,7 +112,7 @@ function generateDistancesFromWavePeak(scaleFactor, barGap, maxBarsFromWaveCente
     .map((_, index) => {
       const distanceFromWaveCenter = distanceGetter(index + 1);
       const distanceBetweenBars = (index + 1) * barGap;
-      return (distanceBetweenBars - distanceFromWaveCenter);
+      return Math.round((distanceBetweenBars - distanceFromWaveCenter) * 10) / 10;
     });
 }
 

@@ -80,15 +80,16 @@ export default class Figure20Diagram extends SVGDiagram {
    * so that the bars in between line up perfectly. This is to avoid the jump of the whole
    * row when going from final peaks back to initial peaks at the start of an animation. */
   getPeaksForRowWaveAnimation(peaks) {
-    const overflow = this._coords.waveWidth / 2;
+    const overflow = this._coords.waveWidth;
     const initial = this.peaksAdjustedToEndAt(-1 * overflow, peaks);
 
-    const finalPeaksStartX = minMultipleReachingThreshold(this._coords.waveWidth, this.svgSize + overflow);
+    const finalPeaksStartX = this.svgSize + overflow;
     const final = this.peaksAdjustedToStartAt(finalPeaksStartX, peaks);
+
     return { initial, final };
   }
 
-  drawBars() {
+  drawBars(red) {
     const bars = [];
 
     for (let rowIndex = 0; rowIndex < this._numberOfRows; rowIndex += 1) {
@@ -99,6 +100,9 @@ export default class Figure20Diagram extends SVGDiagram {
 
       for (let barIndex = 0; barIndex < this._barsPerRow; barIndex += 1) {
         const bar = this.drawBar(topY, bottomY, barIndex);
+        if (red) {
+          bar.node.style.stroke = "red";
+        }
         groupNode.appendChild(bar.node);
         barsForRow.push(bar);
       }
@@ -141,7 +145,25 @@ export default class Figure20Diagram extends SVGDiagram {
   animateFullWaveLifecycle(duration, rowIndex) {
     const { initial, final } = this._peaksForRowWaveAnimations[rowIndex];
     const travelDistance = final[0] - initial[0];
-    this.animateTravellingWaves(initial, travelDistance, duration, rowIndex);
+    this.removeRowGroupTranslation(rowIndex);
+    this.animateTravellingWaves(initial, travelDistance, duration, rowIndex, () => {
+      this.translateRowGroupToOverlapBars(initial.length, rowIndex);
+    });
+  }
+
+  // Needs better function name.
+  // This function translates the entire row by a little bit so that when
+  // the row wave(s) begin travelling again from the left, there is no jump
+  // (the bars already overlap)
+  translateRowGroupToOverlapBars(numberOfPeaks, rowIndex) {
+    const compensation = this._coords.getDistanceToOverlapBarsBetweenPeaks(numberOfPeaks);
+    this.querySelectorAll("g")[rowIndex].style.transition = `transform .3s ${BezierEasing.easeOutCubic.cssString}`;
+    this.querySelectorAll("g")[rowIndex].setAttribute("transform", `translate(${compensation} 0)`);
+  }
+
+  removeRowGroupTranslation(rowIndex) {
+    this.querySelectorAll("g")[rowIndex].style.transition = "none";
+    this.querySelectorAll("g")[rowIndex].removeAttribute("transform");
   }
 
   animateTravellingWaves(initialPeaks, totalTravelDistance, duration, rowIndex, onDone = () => {}) {
@@ -295,13 +317,4 @@ class InProgressAnimationsTracker {
         .filter(index => index !== rowIndex);
     }
   }
-}
-
-function minMultipleReachingThreshold(numberToMultiply, threshold) {
-  let multiplier = 1;
-  while (numberToMultiply * multiplier < threshold) {
-    multiplier += 1;
-  }
-
-  return numberToMultiply * multiplier;
 }
