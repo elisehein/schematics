@@ -34,9 +34,8 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowHeight = this._rowGap * rowToRowGapRatio;
     this._rowYs = this.precalculateRowYs();
 
-    this._rowsCurrentlyAnimating = [];
+    this._inProgressAnimationTracker = new InProgressAnimationsTracker();
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
-    console.log(this._peaksForRowWaveAnimations);
     this._currentPeaksPerRow = originalWavePeaksPerRow;
 
     this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
@@ -78,10 +77,9 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getPeaksForRowWaveAnimation(peaks) {
-    const overflow = this.svgSize * 0.2;
-    const initial = this.peaksAdjustedToEndAt(overflow * -1, peaks);
+    const initial = this.peaksAdjustedToEndAt(0, peaks);
     const totalCoverage = peaks[peaks.length - 1] - peaks[0];
-    const final = this.peaksAdjustedToEndAt(this.svgSize + overflow + totalCoverage, peaks);
+    const final = this.peaksAdjustedToEndAt(this.svgSize + totalCoverage, peaks);
     return { initial, final };
   }
 
@@ -126,7 +124,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   animateWavesRandomly() {
     const randomDelay = new Duration({ milliseconds: randomIntBetween(100, 1000) });
-    const randomDuration = new Duration({ milliseconds: randomIntBetween(2000, 4000) });
+    const randomDuration = new Duration({ milliseconds: randomIntBetween(1000, 3000) });
     const randomRow = randomIntBetween(0, this._numberOfRows - 1);
 
     this._waveAnimationTimer = this._timerManager.setTimeout(() => {
@@ -138,33 +136,58 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateTravellingWaves(initialPeaks, totalTravelDistance, duration, rowIndex, onDone = () => {}) {
-    if (this._rowsCurrentlyAnimating.indexOf(rowIndex) > -1) {
+    const translationsForTravelDistance = this._coords
+      .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
+
+      this.animateBarsOnRow(rowIndex, (fractionOfAnimationDone, barIndex) => {
+        const travelledSoFar = Math.floor(totalTravelDistance * fractionOfAnimationDone);
+        // const translationsIndex = Math.min(totalTravelDistance - 1, travelledSoFar);
+        const translations = translationsForTravelDistance[travelledSoFar];
+        return translations[barIndex];
+      }, duration, onDone);
+  }
+
+  animateDisappearingWaves(disappearingPeaks) {
+    this._bars.forEach((_, rowIndex) => {
+      this.animateChangingWavePeaks(disappearingPeaks[rowIndex], [], Duration.oneSec, rowIndex);
+    });
+  }
+
+  animateAppearingWaves(appearingPeaks) {
+    this._bars.forEach((_, rowIndex) => {
+      this.animateChangingWavePeaks([], appearingPeaks[rowIndex], Duration.oneSec, rowIndex);
+    });
+  }
+
+  animateChangingWavePeaks(initialPeaks, finalPeaks, duration, rowIndex, onDone = () => {}) {
+    const initialTranslations = this._coords.getTranslationsForWaves(initialPeaks);
+    const finalTranslations = this._coords.getTranslationsForWaves(finalPeaks);
+
+    this.animateBarsOnRow(rowIndex, (fractionOfAnimationDone, barIndex) => {
+      const diff = finalTranslations[barIndex] - initialTranslations[barIndex];
+      return initialTranslations[barIndex] + (diff * fractionOfAnimationDone);
+    }, duration, onDone);
+  }
+
+  animateBarsOnRow(rowIndex, barTranslationGetter, duration, onDone = () => {}) {
+    if (this._inProgressAnimationTracker.isRowAnimating(rowIndex)) {
       onDone();
       return;
     }
 
-    this._rowsCurrentlyAnimating.push(rowIndex);
-
-    const translationsForTravelDistance = this._coords
-      .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
+    this._inProgressAnimationTracker.setRowAnimating(rowIndex, true);
 
     animateWithEasing(duration, BezierEasing.linear, fractionOfAnimationDone => {
-      this._bars[rowIndex].forEach((bar, index) => {
-        const travelledSoFar = Math.round(totalTravelDistance * fractionOfAnimationDone);
-        const translationsIndex = Math.min(totalTravelDistance - 1, travelledSoFar);
-        const translations = translationsForTravelDistance[translationsIndex];
-        bar.node.setAttribute("transform", `translate(${translations[index]} 0)`);
-      });
+      this.setTranslationForEachBar(rowIndex, barTranslationGetter.bind(null, fractionOfAnimationDone));
     }, { onDone: () => {
-      this._rowsCurrentlyAnimating = this._rowsCurrentlyAnimating.filter(i => i !== rowIndex);
+      this._inProgressAnimationTracker.setRowAnimating(rowIndex, false);
       onDone();
     } });
   }
 
-  animateToNoWaves() {
-    this._bars.forEach((_, rowIndex) => {
-      const initialPeaks = this._currentPeaksPerRow[rowIndex];
-      this.animateWaves(initialPeaks, [], Duration.oneSec, rowIndex);
+  setTranslationForEachBar(rowIndex, translationGetter) {
+    this._bars[rowIndex].forEach((bar, index) => {
+      bar.node.setAttribute("transform", `translate(${translationGetter(index)} 0)`);
     });
   }
 
@@ -174,14 +197,16 @@ export default class Figure20Diagram extends SVGDiagram {
       const pointerRow = this.getRowAt(pointerY);
 
       if (pointerRow == -1) {
-        this.animateToNoWaves();
+        this.animateDisappearingWaves(this._currentPeaksPerRow);
         return;
       }
 
       this.matchWavePeaksToPointer(pointerX, pointerRow);
     });
 
-    // this.svgNode.addEventListener("mouseleave", () => this.animateToNoWaves());
+    this.svgNode.addEventListener("mouseleave", () => {
+      this.animateDisappearingWaves(this._currentPeaksPerRow);
+    });
   }
 
   matchWavePeaksToPointer(pointerX, pointerRow) {
@@ -233,3 +258,22 @@ export default class Figure20Diagram extends SVGDiagram {
 }
 
 customElements.define("figure-20-diagram", Figure20Diagram);
+
+class InProgressAnimationsTracker {
+  constructor() {
+    this._rowsCurrentlyAnimating = [];
+  }
+
+  isRowAnimating(rowIndex) {
+    return this._rowsCurrentlyAnimating.indexOf(rowIndex) > -1;
+  }
+
+  setRowAnimating(rowIndex, animating) {
+    if (animating) {
+      this._rowsCurrentlyAnimating.push(rowIndex);
+    } else {
+      this._rowsCurrentlyAnimating = this._rowsCurrentlyAnimating
+        .filter(index => index !== rowIndex);
+    }
+  }
+}
