@@ -33,7 +33,7 @@ export default class WaveCoordinates {
   }
 
   getTranslationsForWaves(peaks) {
-    const keyForPeaks = peaks.join(";");
+    const keyForPeaks = (peaks.length ? peaks : ["empty"]).join(";");
     if (this._memoizedTranslationsForWavePeaks[keyForPeaks]) {
       return this._memoizedTranslationsForWavePeaks[keyForPeaks];
     }

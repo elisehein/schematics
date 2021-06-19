@@ -17,6 +17,7 @@ const originalWavePeaksPerRow = [
 ];
 
 export default class Figure20Diagram extends SVGDiagram {
+  // eslint-disable-next-line max-statements
   constructor(...args) {
     super(20, ...args);
 
@@ -34,6 +35,9 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowYs = this.precalculateRowYs();
 
     this._rowsCurrentlyAnimating = [];
+    this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
+    console.log(this._peaksForRowWaveAnimations);
+    this._currentPeaksPerRow = originalWavePeaksPerRow;
 
     this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
   }
@@ -48,8 +52,8 @@ export default class Figure20Diagram extends SVGDiagram {
 
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
-    // this.animateWavesRandomly();
-    this.bindPointerEventsToWaveMovements();
+    this.animateWavesRandomly();
+    // this.bindPointerEventsToWaveMovements();
 
     // onDone();
   }
@@ -67,6 +71,18 @@ export default class Figure20Diagram extends SVGDiagram {
     }
 
     return rowYs;
+  }
+
+  precalculatePeaksForRowWaveAnimations() {
+    return originalWavePeaksPerRow.map(this.getPeaksForRowWaveAnimation.bind(this));
+  }
+
+  getPeaksForRowWaveAnimation(peaks) {
+    const overflow = this.svgSize * 0.2;
+    const initial = this.peaksAdjustedToEndAt(overflow * -1, peaks);
+    const totalCoverage = peaks[peaks.length - 1] - peaks[0];
+    const final = this.peaksAdjustedToEndAt(this.svgSize + overflow + totalCoverage, peaks);
+    return { initial, final };
   }
 
   drawBars() {
@@ -113,15 +129,15 @@ export default class Figure20Diagram extends SVGDiagram {
     const randomDuration = new Duration({ milliseconds: randomIntBetween(2000, 4000) });
     const randomRow = randomIntBetween(0, this._numberOfRows - 1);
 
-    const travelDistance = this.svgSize * 2;
     this._waveAnimationTimer = this._timerManager.setTimeout(() => {
-      const initialPeaks = originalWavePeaksPerRow[randomRow].map(x => x - (this.svgSize / 2));
-      this.animateWaves(initialPeaks, travelDistance, randomDuration, randomRow);
+      const { initial, final } = this._peaksForRowWaveAnimations[randomRow];
+      const travelDistance = final[0] - initial[0];
+      this.animateTravellingWaves(initial, travelDistance, randomDuration, randomRow);
       this.animateWavesRandomly();
     }, randomDelay.ms);
   }
 
-  animateWaves(initialPeaks, totalTravelDistance, duration, rowIndex, onDone = () => {}) {
+  animateTravellingWaves(initialPeaks, totalTravelDistance, duration, rowIndex, onDone = () => {}) {
     if (this._rowsCurrentlyAnimating.indexOf(rowIndex) > -1) {
       onDone();
       return;
@@ -145,28 +161,37 @@ export default class Figure20Diagram extends SVGDiagram {
     } });
   }
 
+  animateToNoWaves() {
+    this._bars.forEach((_, rowIndex) => {
+      const initialPeaks = this._currentPeaksPerRow[rowIndex];
+      this.animateWaves(initialPeaks, [], Duration.oneSec, rowIndex);
+    });
+  }
+
   bindPointerEventsToWaveMovements() {
     this.svgNode.addEventListener("mousemove", event => {
       const { x: pointerX, y: pointerY } = this.getPointerPositionInSVG(event);
       const pointerRow = this.getRowAt(pointerY);
 
       if (pointerRow == -1) {
+        this.animateToNoWaves();
         return;
       }
 
       this.matchWavePeaksToPointer(pointerX, pointerRow);
     });
+
+    // this.svgNode.addEventListener("mouseleave", () => this.animateToNoWaves());
   }
 
   matchWavePeaksToPointer(pointerX, pointerRow) {
     originalWavePeaksPerRow.forEach((peaks, rowIndex) => {
-      this.setWavePeaks({
-        peaks: this.getPeaksAtPointerPosition(
-          { peaks, rowIndex },
-          { pointerX, pointerRow }
-        ),
-        rowBars: this._bars[rowIndex]
-      });
+      const adjustedPeaks = this.getPeaksAtPointerPosition(
+        { peaks, rowIndex },
+        { pointerX, pointerRow }
+      );
+      this._currentPeaksPerRow[rowIndex] = adjustedPeaks;
+      this.setWavePeaks({ peaks: adjustedPeaks, rowBars: this._bars[rowIndex] });
     });
   }
 
