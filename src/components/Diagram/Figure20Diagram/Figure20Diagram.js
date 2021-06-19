@@ -33,10 +33,12 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowYs = this.precalculateRowYs();
 
     this._inProgressAnimationTracker = new InProgressAnimationsTracker();
-    this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
     this._currentPeaksPerRow = originalWavePeaksPerRow;
 
     this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
+    this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
+
+    window.fig20 = this;
   }
 
   connectedCallback() {
@@ -74,11 +76,15 @@ export default class Figure20Diagram extends SVGDiagram {
     return originalWavePeaksPerRow.map(this.getPeaksForRowWaveAnimation.bind(this));
   }
 
+  /* We want the initial and final peaks on a row during an animation be positioned
+   * so that the bars in between line up perfectly. This is to avoid the jump of the whole
+   * row when going from final peaks back to initial peaks at the start of an animation. */
   getPeaksForRowWaveAnimation(peaks) {
-    const overflow = this.svgSize * 0.1;
+    const overflow = this._coords.waveWidth / 2;
     const initial = this.peaksAdjustedToEndAt(-1 * overflow, peaks);
-    const totalCoverage = peaks[peaks.length - 1] - peaks[0];
-    const final = this.peaksAdjustedToEndAt(this.svgSize + overflow + totalCoverage, peaks);
+
+    const finalPeaksStartX = minMultipleReachingThreshold(this._coords.waveWidth, this.svgSize + overflow);
+    const final = this.peaksAdjustedToStartAt(finalPeaksStartX, peaks);
     return { initial, final };
   }
 
@@ -139,13 +145,12 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateTravellingWaves(initialPeaks, totalTravelDistance, duration, rowIndex, onDone = () => {}) {
-    const translationsForTravelDistance = this._coords
+    const translationsForTravelDistances = this._coords
       .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
 
       this.animateBarsOnRow(rowIndex, (fractionOfAnimationDone, barIndex) => {
         const travelledSoFar = Math.floor(totalTravelDistance * fractionOfAnimationDone);
-        // const translationsIndex = Math.min(totalTravelDistance - 1, travelledSoFar);
-        const translations = translationsForTravelDistance[travelledSoFar];
+        const translations = translationsForTravelDistances[travelledSoFar];
         return translations[barIndex];
       }, duration, onDone);
   }
@@ -181,6 +186,10 @@ export default class Figure20Diagram extends SVGDiagram {
     this._inProgressAnimationTracker.setRowAnimating(rowIndex, true);
 
     animateWithEasing(duration, BezierEasing.linear, fractionOfAnimationDone => {
+      if (fractionOfAnimationDone > 1 || fractionOfAnimationDone < 0) {
+        return;
+      }
+
       this.setTranslationForEachBar(rowIndex, barTranslationGetter.bind(null, fractionOfAnimationDone));
     }, { onDone: () => {
       this._inProgressAnimationTracker.setRowAnimating(rowIndex, false);
@@ -237,9 +246,16 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   peaksAdjustedToEndAt(x, peaks) {
-    const rightMostPeakX = peaks[peaks.length - 1];
-    const difference = Math.abs(x - rightMostPeakX);
-    const direction = x > rightMostPeakX ? 1 : -1;
+    const rightmostPeakX = peaks[peaks.length - 1];
+    const difference = Math.abs(x - rightmostPeakX);
+    const direction = x > rightmostPeakX ? 1 : -1;
+    return peaks.map(peakX => peakX + (difference * direction));
+  }
+
+  peaksAdjustedToStartAt(x, peaks) {
+    const leftmostPeak = peaks[0];
+    const difference = Math.abs(x - leftmostPeak);
+    const direction = x > leftmostPeak ? 1 : -1;
     return peaks.map(peakX => peakX + (difference * direction));
   }
 
@@ -279,4 +295,13 @@ class InProgressAnimationsTracker {
         .filter(index => index !== rowIndex);
     }
   }
+}
+
+function minMultipleReachingThreshold(numberToMultiply, threshold) {
+  let multiplier = 1;
+  while (numberToMultiply * multiplier < threshold) {
+    multiplier += 1;
+  }
+
+  return numberToMultiply * multiplier;
 }

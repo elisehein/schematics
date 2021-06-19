@@ -87,6 +87,12 @@ export default class WaveCoordinates {
 
     return translations;
   }
+
+  get waveWidth() {
+    // This refers to the total reach from the left to the right of the wave
+    // where the ripple effect (bar density) is visible.
+    return this._distancesFromWavePeak[this._distancesFromWavePeak.length - 1];
+  }
 }
 
 function generateDistancesFromWavePeak(scaleFactor, barGap, maxBarsFromWaveCenter) {
