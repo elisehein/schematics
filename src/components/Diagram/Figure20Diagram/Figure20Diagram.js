@@ -17,20 +17,18 @@ const originalWavePeaksPerRow = [
 ];
 
 export default class Figure20Diagram extends SVGDiagram {
-  // eslint-disable-next-line max-statements
   constructor(...args) {
     super(20, ...args);
 
     this._numberOfRows = 7;
-    this._numberOfGaps = this._numberOfRows - 1;
+    const numberOfGaps = this._numberOfRows - 1;
     const barGap = 10;
     this._barsPerRow = 90;
     this._verticalInset = 15;
-    this._waveWidth = 70;
 
     const rowToRowGapRatio = 0.8;
     const height = 300 - (2 * this._verticalInset);
-    this._rowGap =  height / (this._numberOfRows * rowToRowGapRatio + this._numberOfGaps);
+    this._rowGap =  height / (this._numberOfRows * rowToRowGapRatio + numberOfGaps);
     this._rowHeight = this._rowGap * rowToRowGapRatio;
     this._rowYs = this.precalculateRowYs();
 
@@ -77,9 +75,10 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getPeaksForRowWaveAnimation(peaks) {
-    const initial = this.peaksAdjustedToEndAt(0, peaks);
+    const overflow = this.svgSize * 0.1;
+    const initial = this.peaksAdjustedToEndAt(-1 * overflow, peaks);
     const totalCoverage = peaks[peaks.length - 1] - peaks[0];
-    const final = this.peaksAdjustedToEndAt(this.svgSize + totalCoverage, peaks);
+    const final = this.peaksAdjustedToEndAt(this.svgSize + overflow + totalCoverage, peaks);
     return { initial, final };
   }
 
@@ -128,11 +127,15 @@ export default class Figure20Diagram extends SVGDiagram {
     const randomRow = randomIntBetween(0, this._numberOfRows - 1);
 
     this._waveAnimationTimer = this._timerManager.setTimeout(() => {
-      const { initial, final } = this._peaksForRowWaveAnimations[randomRow];
-      const travelDistance = final[0] - initial[0];
-      this.animateTravellingWaves(initial, travelDistance, randomDuration, randomRow);
+      this.animateFullWaveLifecycle(randomDuration, randomRow);
       this.animateWavesRandomly();
     }, randomDelay.ms);
+  }
+
+  animateFullWaveLifecycle(duration, rowIndex) {
+    const { initial, final } = this._peaksForRowWaveAnimations[rowIndex];
+    const travelDistance = final[0] - initial[0];
+    this.animateTravellingWaves(initial, travelDistance, duration, rowIndex);
   }
 
   animateTravellingWaves(initialPeaks, totalTravelDistance, duration, rowIndex, onDone = () => {}) {
