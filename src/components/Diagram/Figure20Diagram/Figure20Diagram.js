@@ -162,35 +162,32 @@ export default class Figure20Diagram extends SVGDiagram {
 
   animateOriginalWavesInParallel(onDone) {
     const animateOriginalWavesAppearing = onAppearingDone => {
-      const duration = new Duration({ milliseconds: 500 });
+      const duration = new Duration({ milliseconds: 600 });
       this.toggleWavePeaksForAllRows(true, originalWavePeaksPerRow, duration, onAppearingDone);
     };
 
     this._timerManager.setTimeout(() => {
-      animateOriginalWavesAppearing(() => this.animateOriginalWavePattern(onDone));
+      animateOriginalWavesAppearing(rowIndex => this.animateOriginalWavePattern(rowIndex, onDone));
     }, 4000);
   }
 
-  animateOriginalWavePattern(onDone) {
-    const duration = Duration.twoSec;
-    this._bars.forEach((_, rowIndex) => {
-      const initialPeaks = originalWavePeaksPerRow[rowIndex];
-      const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
-      const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
-      this._timerManager.setTimeout(() => {
-        this.animateTravellingWaves(initialPeaks, travelData, duration, rowIndex, () => {
-          if (rowIndex == this._bars.length - 1) {
-            onDone();
-          }
-        });
-      }, 200 * (rowIndex + 1));
+  animateOriginalWavePattern(rowIndex, onDone) {
+    const duration = Duration.threeSec;
+    const initialPeaks = originalWavePeaksPerRow[rowIndex];
+    const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
+    const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
+    const easing = BezierEasing.easeOutCubic;
+    this.animateTravellingWaves(initialPeaks, travelData, duration, easing, rowIndex, () => {
+      if (rowIndex == this._bars.length - 1) {
+        onDone();
+      }
     });
   }
 
   animateFullWaveLifecycle(duration, rowIndex) {
     const { initial, final } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initial, final);
-    this.animateTravellingWaves(initial, travelData, duration, rowIndex);
+    this.animateTravellingWaves(initial, travelData, duration, BezierEasing.linear, rowIndex);
   }
 
   getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks) {
@@ -200,17 +197,7 @@ export default class Figure20Diagram extends SVGDiagram {
     return { travelDistance, extraTranslationDuringTravel };
   }
 
-  // Needs better function name.
-  // This function translates the entire row by a little bit so that when
-  // the row wave(s) begin travelling again from the left, there is no jump
-  // (the bars already overlap)
-  translateRowGroupToOverlapBars(numberOfPeaks, rowIndex) {
-    const compensation = this._coords.getDistanceToOverlapBarsBetweenPeaks(numberOfPeaks);
-    this.querySelectorAll("g")[rowIndex].style.transition = `transform .3s ${BezierEasing.easeOutCubic.cssString}`;
-    this.querySelectorAll("g")[rowIndex].setAttribute("transform", `translate(${compensation} 0)`);
-  }
-
-  animateTravellingWaves(initialPeaks, travelData, duration, rowIndex, onDone = () => {}) {
+  animateTravellingWaves(initialPeaks, travelData, duration, easing, rowIndex, onDone = () => {}) {
     const { travelDistance: totalTravelDistance, extraTranslationDuringTravel } = travelData;
     const translationsForTravelDistances = this._coords
       .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
@@ -219,7 +206,7 @@ export default class Figure20Diagram extends SVGDiagram {
         const travelledSoFar = Math.floor(totalTravelDistance * fractionOfAnimationDone);
         const translations = translationsForTravelDistances[travelledSoFar];
         return translations[barIndex] + (extraTranslationDuringTravel || 0) * fractionOfAnimationDone;
-      }, duration, BezierEasing.linear, onDone);
+      }, duration, easing, onDone);
   }
 
   toggleWavePeaksForAllRows(appearing, peaksToToggle, duration, onDone = () => {}) {
@@ -229,11 +216,7 @@ export default class Figure20Diagram extends SVGDiagram {
         initial: appearing ? [] : peaksToToggle[rowIndex],
         final: appearing ? peaksToToggle[rowIndex] : []
       };
-      this.animateChangingWavePeaks(peaks, duration, easing, rowIndex, () => {
-        if (rowIndex == 0) {
-          onDone();
-        }
-      });
+      this.animateChangingWavePeaks(peaks, duration, easing, rowIndex, () => onDone(rowIndex));
     });
   }
 
