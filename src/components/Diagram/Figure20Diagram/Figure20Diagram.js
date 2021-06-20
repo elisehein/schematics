@@ -38,7 +38,7 @@ export default class Figure20Diagram extends SVGDiagram {
     const peaksPerRow = {
       min: originalWavePeaksPerRow[0].length,
       max: originalWavePeaksPerRow[originalWavePeaksPerRow.length - 1].length
-    }
+    };
     this._coords = new WaveCoordinates(
       1.2, barGap, this._barsPerRow, this.svgSize, peaksPerRow
     );
@@ -161,28 +161,25 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateOriginalWavesInParallel(onDone) {
-    const animateOriginalWavesAppearing = onAppearingDone => {
-      const duration = new Duration({ milliseconds: 600 });
-      this.toggleWavePeaksForAllRows(true, originalWavePeaksPerRow, duration, onAppearingDone);
-    };
-
     const timeout = new Duration({ seconds: 5 });
     this._inProgressAnimationTracker.waitForAllAnimationsDone(timeout, () => {
-      animateOriginalWavesAppearing(rowIndex => this.animateOriginalWavePattern(rowIndex, onDone));
+      this._bars.forEach((_, rowIndex) => {
+        this.animateOriginalWavePattern(rowIndex, () => {
+          if (rowIndex == 0) {
+            onDone();
+          }
+        });
+      });
     });
   }
 
   animateOriginalWavePattern(rowIndex, onDone) {
-    const duration = Duration.threeSec;
+    const duration = new Duration({ seconds: 4 });
     const initialPeaks = originalWavePeaksPerRow[rowIndex];
     const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
-    const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
-    const easing = BezierEasing.easeOutCubic;
-    this.animateTravellingWaves(initialPeaks, travelData, duration, easing, rowIndex, () => {
-      if (rowIndex == this._bars.length - 1) {
-        onDone();
-      }
-    });
+    const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks, true);
+    const easing = BezierEasing.easeOutSine;
+    this.animateTravellingWaves(initialPeaks, travelData, duration, easing, rowIndex, onDone);
   }
 
   animateFullWaveLifecycle(duration, rowIndex) {
@@ -191,23 +188,37 @@ export default class Figure20Diagram extends SVGDiagram {
     this.animateTravellingWaves(initial, travelData, duration, BezierEasing.linear, rowIndex);
   }
 
-  getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks) {
+  getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks, animateWaveAppearing = false) {
     const travelDistance = finalPeaks[0] - initialPeaks[0];
     const extraTranslationDuringTravel =
       this._coords.getDistanceToOverlapBarsBetweenPeaks(initialPeaks.length);
-    return { travelDistance, extraTranslationDuringTravel };
+    return { travelDistance, extraTranslationDuringTravel, animateWaveAppearing };
   }
 
   animateTravellingWaves(initialPeaks, travelData, duration, easing, rowIndex, onDone = () => {}) {
-    const { travelDistance: totalTravelDistance, extraTranslationDuringTravel } = travelData;
+    const {
+      travelDistance: totalTravelDistance,
+      extraTranslationDuringTravel,
+      animateWaveAppearing
+    } = travelData;
+
     const translationsForTravelDistances = this._coords
       .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
 
-      this.animateBarsOnRow(rowIndex, (fractionOfAnimationDone, barIndex) => {
-        const travelledSoFar = Math.floor(totalTravelDistance * fractionOfAnimationDone);
-        const translations = translationsForTravelDistances[travelledSoFar];
-        return translations[barIndex] + (extraTranslationDuringTravel || 0) * fractionOfAnimationDone;
-      }, duration, easing, onDone);
+    const waveFullyFormedByAnimationFraction = 0.2;
+    const fractionOfWaveFormed = fractionOfAnimationDone => (
+      Math.min(1, fractionOfAnimationDone / waveFullyFormedByAnimationFraction)
+    );
+
+    this.animateBarsOnRow(rowIndex, (fractionOfAnimationDone, barIndex) => {
+      const extraTranslationSoFar = (extraTranslationDuringTravel || 0) * fractionOfAnimationDone;
+      const travelledSoFar = Math.floor(totalTravelDistance * fractionOfAnimationDone);
+      const travelTranslations = translationsForTravelDistances[travelledSoFar];
+      const travelTranslation = animateWaveAppearing
+        ? travelTranslations[barIndex] * fractionOfWaveFormed(fractionOfAnimationDone)
+        : travelTranslations[barIndex];
+      return travelTranslation + extraTranslationSoFar;
+    }, duration, easing, onDone);
   }
 
   toggleWavePeaksForAllRows(appearing, peaksToToggle, duration, onDone = () => {}) {
