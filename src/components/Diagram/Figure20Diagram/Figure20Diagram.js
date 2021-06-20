@@ -32,7 +32,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowHeight = this._rowGap * rowToRowGapRatio;
     this._rowYs = this.precalculateRowYs();
 
-    this._inProgressAnimationTracker = new InProgressAnimationsTracker();
+    this._inProgressAnimationTracker = new InProgressAnimationsTracker(this._timerManager);
     this._currentPeaksPerRow = originalWavePeaksPerRow;
 
     const peaksPerRow = {
@@ -166,9 +166,10 @@ export default class Figure20Diagram extends SVGDiagram {
       this.toggleWavePeaksForAllRows(true, originalWavePeaksPerRow, duration, onAppearingDone);
     };
 
-    this._timerManager.setTimeout(() => {
+    const timeout = new Duration({ seconds: 5 });
+    this._inProgressAnimationTracker.waitForAllAnimationsDone(timeout, () => {
       animateOriginalWavesAppearing(rowIndex => this.animateOriginalWavePattern(rowIndex, onDone));
-    }, 4000);
+    });
   }
 
   animateOriginalWavePattern(rowIndex, onDone) {
@@ -332,8 +333,9 @@ export default class Figure20Diagram extends SVGDiagram {
 customElements.define("figure-20-diagram", Figure20Diagram);
 
 class InProgressAnimationsTracker {
-  constructor() {
+  constructor(timerManager) {
     this._rowsCurrentlyAnimating = [];
+    this._timerManager = timerManager;
   }
 
   isRowAnimating(rowIndex) {
@@ -347,5 +349,24 @@ class InProgressAnimationsTracker {
       this._rowsCurrentlyAnimating = this._rowsCurrentlyAnimating
         .filter(index => index !== rowIndex);
     }
+  }
+
+  anyRowsAnimating() {
+    return this._rowsCurrentlyAnimating.length > 0;
+  }
+
+  waitForAllAnimationsDone(timeout, onDone) {
+    this._timeoutTimer = this._timerManager.setTimeout(() => {
+      this._timerManager.clearTimeout(this._timeoutTimer);
+      onDone();
+    }, timeout.ms);
+
+    this._animationsInProgressChecker = this._timerManager.setInterval(() => {
+      if (!this.anyRowsAnimating()) {
+        this._timerManager.clearInterval(this._animationsInProgressChecker);
+        this._timerManager.clearTimeout(this._timeoutTimer);
+        onDone();
+      }
+    }, 100);
   }
 }
