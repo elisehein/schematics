@@ -161,14 +161,16 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateOriginalWavesInParallel(onDone) {
-    const timeout = new Duration({ seconds: 5 });
+    const timeout = new Duration({ seconds: 4 });
     this._inProgressAnimationTracker.waitForAllAnimationsDone(timeout, () => {
       this._bars.forEach((_, rowIndex) => {
-        this.animateOriginalWavePattern(rowIndex, () => {
-          if (rowIndex == 0) {
-            onDone();
-          }
-        });
+        this._timerManager.setTimeout(() => {
+          this.animateOriginalWavePattern(rowIndex, () => {
+            if (rowIndex == 0) {
+              onDone();
+            }
+          });
+        }, (this._bars.length - 1 - rowIndex) * 80);
       });
     });
   }
