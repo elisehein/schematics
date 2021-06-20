@@ -35,7 +35,13 @@ export default class Figure20Diagram extends SVGDiagram {
     this._inProgressAnimationTracker = new InProgressAnimationsTracker();
     this._currentPeaksPerRow = originalWavePeaksPerRow;
 
-    this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
+    const peaksPerRow = {
+      min: originalWavePeaksPerRow[0].length,
+      max: originalWavePeaksPerRow[originalWavePeaksPerRow.length - 1].length
+    }
+    this._coords = new WaveCoordinates(
+      1.2, barGap, this._barsPerRow, this.svgSize, peaksPerRow
+    );
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
 
     window.fig20 = this;

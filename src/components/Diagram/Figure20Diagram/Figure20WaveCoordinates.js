@@ -1,13 +1,22 @@
 export default class WaveCoordinates {
-  constructor(waveScaleFactor, barGap, barsPerRow, viewportWidth) {
+  constructor(
+    waveScaleFactor, barGap, barsPerRow, viewportWidth, minMaxPeaksPerRow
+  ) {
     this._barsPerRow = barsPerRow;
     this._barGap = barGap;
 
     const maxBarsFromPeak = barsPerRow - 1;
-    this._distancesFromWavePeak = generateDistancesFromWavePeak(waveScaleFactor, barGap, maxBarsFromPeak);
+    this._distancesFromWavePeak = generateDistancesFromWavePeak(
+      waveScaleFactor, barGap, maxBarsFromPeak
+    );
     this._initialXCoordsForBars = this.getInitialXCoordsForBars(viewportWidth);
+    this._compensationsToOverlap = this.precalculateOverlapCompensations(
+      minMaxPeaksPerRow
+    );
 
     this._memoizedTranslationsForWavePeaks = {};
+
+    console.log(this._compensationsToOverlap);
   }
 
   getInitialXCoordsForBars(viewportWidth) {
@@ -88,13 +97,19 @@ export default class WaveCoordinates {
     return translations;
   }
 
+  precalculateOverlapCompensations({ min: minPeaksPerRow, max: maxPeaksPerRow }) {
+    const compensations = {};
+    for (let peaksPerRow = minPeaksPerRow; peaksPerRow <= maxPeaksPerRow; peaksPerRow += 1) {
+      const maxTranslation = peaksPerRow * this.waveWidth * 2;
+      const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
+      const leftwardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
+      compensations[peaksPerRow] = Math.round(leftwardCompensation * 10) / 10;
+    }
+    return compensations;
+  }
+
   getDistanceToOverlapBarsBetweenPeaks(numberOfPeaks) {
-    const maxTranslation = numberOfPeaks * this.waveWidth;
-    const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
-    const leftwardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
-    const roundedLeftwardCompensation = Math.round(leftwardCompensation * 10) / 10;
-    const rightwardCompensation = this._barGap - roundedLeftwardCompensation;
-    return Math.round(rightwardCompensation * 10) / 10;
+    return this._compensationsToOverlap[numberOfPeaks];
   }
 
   get waveWidth() {
