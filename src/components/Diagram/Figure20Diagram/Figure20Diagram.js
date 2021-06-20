@@ -145,8 +145,12 @@ export default class Figure20Diagram extends SVGDiagram {
 
   animateWavesRandomly() {
     const randomDelay = new Duration({ milliseconds: randomIntBetween(100, 1000) });
-    const randomDuration = new Duration({ milliseconds: randomIntBetween(1000, 3000) });
     const randomRow = randomIntBetween(0, this._numberOfRows - 1);
+    const peaksOnRow = originalWavePeaksPerRow[randomRow].length;
+    const minDurationMS = peaksOnRow * 500;
+    const randomDuration = new Duration({
+      milliseconds: minDurationMS + randomIntBetween(500, 2000)
+    });
 
     this._waveAnimationTimer = this._timerManager.setTimeout(() => {
       this.animateFullWaveLifecycle(randomDuration, randomRow);
