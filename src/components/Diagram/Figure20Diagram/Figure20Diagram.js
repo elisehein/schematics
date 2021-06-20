@@ -43,8 +43,6 @@ export default class Figure20Diagram extends SVGDiagram {
       1.2, barGap, this._barsPerRow, this.svgSize, peaksPerRow
     );
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
-
-    window.fig20 = this;
   }
 
   connectedCallback() {
@@ -57,6 +55,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
+    this.positionBarsForWaveAnimations();
     this.animateWavesRandomly();
     // this.bindPointerEventsToWaveMovements();
 
@@ -137,6 +136,13 @@ export default class Figure20Diagram extends SVGDiagram {
     });
   }
 
+  positionBarsForWaveAnimations() {
+    this._bars.forEach((rowBars, rowIndex) => {
+      const { initial: peaks } = this._peaksForRowWaveAnimations[rowIndex];
+      this.setWavePeaks({ peaks, rowBars });
+    });
+  }
+
   animateWavesRandomly() {
     const randomDelay = new Duration({ milliseconds: randomIntBetween(100, 1000) });
     const randomDuration = new Duration({ milliseconds: randomIntBetween(1000, 3000) });
@@ -151,10 +157,9 @@ export default class Figure20Diagram extends SVGDiagram {
   animateFullWaveLifecycle(duration, rowIndex) {
     const { initial, final } = this._peaksForRowWaveAnimations[rowIndex];
     const travelDistance = final[0] - initial[0];
-    this.removeRowGroupTranslation(rowIndex);
-    this.animateTravellingWaves(initial, travelDistance, duration, rowIndex, () => {
-      this.translateRowGroupToOverlapBars(initial.length, rowIndex);
-    });
+    const extraTranslationDuringTravel = this._coords.getDistanceToOverlapBarsBetweenPeaks(initial.length);
+    const travelData = { travelDistance, extraTranslationDuringTravel };
+    this.animateTravellingWaves(initial, travelData, duration, rowIndex);
   }
 
   // Needs better function name.
@@ -167,19 +172,15 @@ export default class Figure20Diagram extends SVGDiagram {
     this.querySelectorAll("g")[rowIndex].setAttribute("transform", `translate(${compensation} 0)`);
   }
 
-  removeRowGroupTranslation(rowIndex) {
-    this.querySelectorAll("g")[rowIndex].style.transition = "none";
-    this.querySelectorAll("g")[rowIndex].removeAttribute("transform");
-  }
-
-  animateTravellingWaves(initialPeaks, totalTravelDistance, duration, rowIndex, onDone = () => {}) {
+  animateTravellingWaves(initialPeaks, travelData, duration, rowIndex, onDone = () => {}) {
+    const { travelDistance: totalTravelDistance, extraTranslationDuringTravel } = travelData;
     const translationsForTravelDistances = this._coords
       .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
 
       this.animateBarsOnRow(rowIndex, (fractionOfAnimationDone, barIndex) => {
         const travelledSoFar = Math.floor(totalTravelDistance * fractionOfAnimationDone);
         const translations = translationsForTravelDistances[travelledSoFar];
-        return translations[barIndex];
+        return translations[barIndex] + (extraTranslationDuringTravel || 0) * fractionOfAnimationDone;
       }, duration, onDone);
   }
 
