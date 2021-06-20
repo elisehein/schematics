@@ -170,7 +170,7 @@ export default class Figure20Diagram extends SVGDiagram {
               onDone();
             }
           });
-        }, (this._bars.length - 1 - rowIndex) * 80);
+        }, (this._bars.length - 1 - rowIndex) * 150);
       });
     });
   }
@@ -225,14 +225,18 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   toggleWavePeaksForAllRows(appearing, peaksToToggle, duration, onDone = () => {}) {
-    const easing = appearing ? BezierEasing.easeInCubic : BezierEasing.easeOutCubic;
     this._bars.forEach((_, rowIndex) => {
-      const peaks = {
-        initial: appearing ? [] : peaksToToggle[rowIndex],
-        final: appearing ? peaksToToggle[rowIndex] : []
-      };
-      this.animateChangingWavePeaks(peaks, duration, easing, rowIndex, () => onDone(rowIndex));
+      this.toggleWavePeaks(rowIndex, appearing, peaksToToggle[rowIndex], duration, onDone);
     });
+  }
+
+  toggleWavePeaks(rowIndex, appearing, peaksToToggle, duration, onDone = () => {}) {
+    const easing = appearing ? BezierEasing.easeInCubic : BezierEasing.easeOutCubic;
+    const peaks = {
+      initial: appearing ? [] : peaksToToggle,
+      final: appearing ? peaksToToggle : []
+    };
+    this.animateChangingWavePeaks(peaks, duration, easing, rowIndex, () => onDone(rowIndex));
   }
 
   animateChangingWavePeaks(peaks, duration, easing, rowIndex, onDone = () => {}) {

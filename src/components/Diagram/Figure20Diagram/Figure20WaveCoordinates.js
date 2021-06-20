@@ -15,8 +15,6 @@ export default class WaveCoordinates {
     );
 
     this._memoizedTranslationsForWavePeaks = {};
-
-    console.log(this._compensationsToOverlap);
   }
 
   getInitialXCoordsForBars(viewportWidth) {
