@@ -175,10 +175,10 @@ export default class Figure20Diagram extends SVGDiagram {
 
   animateOriginalWavePattern(rowIndex, onDone) {
     const duration = new Duration({ seconds: 4 });
-    const initialPeaks = originalWavePeaksPerRow[rowIndex];
+    const initialPeaks = originalWavePeaksPerRow[rowIndex].map(peakX => peakX - this.svgSize);
     const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
-    const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks, true);
-    const easing = BezierEasing.easeOutSine;
+    const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
+    const easing = BezierEasing.linear;
     this.animateTravellingWaves(initialPeaks, travelData, duration, easing, rowIndex, onDone);
   }
 
@@ -195,7 +195,7 @@ export default class Figure20Diagram extends SVGDiagram {
     return { travelDistance, extraTranslationDuringTravel, animateWaveAppearing };
   }
 
-  animateTravellingWaves(initialPeaks, travelData, duration, easing, rowIndex, onDone = () => {}) {
+  animateTravellingWaves(peaks, travelData, duration, easing, rowIndex, onDone = () => {}) {
     const {
       travelDistance: totalTravelDistance,
       extraTranslationDuringTravel,
@@ -203,10 +203,10 @@ export default class Figure20Diagram extends SVGDiagram {
     } = travelData;
 
     const translationsForTravelDistances = this._coords
-      .getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance);
+      .getTranslationsForTravellingWaves(peaks, totalTravelDistance);
 
     const waveFullyFormedByAnimationFraction = 0.2;
-    const fractionOfWaveFormed = fractionOfAnimationDone => (
+    const getFractionOfWaveFormed = fractionOfAnimationDone => (
       Math.min(1, fractionOfAnimationDone / waveFullyFormedByAnimationFraction)
     );
 
@@ -214,8 +214,9 @@ export default class Figure20Diagram extends SVGDiagram {
       const extraTranslationSoFar = (extraTranslationDuringTravel || 0) * fractionOfAnimationDone;
       const travelledSoFar = Math.floor(totalTravelDistance * fractionOfAnimationDone);
       const travelTranslations = translationsForTravelDistances[travelledSoFar];
+      const fractionOfWaveFormed = getFractionOfWaveFormed(fractionOfAnimationDone);
       const travelTranslation = animateWaveAppearing
-        ? travelTranslations[barIndex] * fractionOfWaveFormed(fractionOfAnimationDone)
+        ? travelTranslations[barIndex] * fractionOfWaveFormed
         : travelTranslations[barIndex];
       return travelTranslation + extraTranslationSoFar;
     }, duration, easing, onDone);
