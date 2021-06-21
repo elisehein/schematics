@@ -32,19 +32,15 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowHeight = this._rowGap * rowToRowGapRatio;
     this._rowYs = this.precalculateRowYs();
 
-    const peaksPerRow = {
-      min: originalWavePeaksPerRow[0].length,
-      max: originalWavePeaksPerRow[originalWavePeaksPerRow.length - 1].length
-    };
-    this._coords = new WaveCoordinates(
-      1.2, barGap, this._barsPerRow, this.svgSize, peaksPerRow
-    );
+    this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this._svgReferencePoint = this.svgNode.createSVGPoint();
+  importDependencies(callback) {
+    Promise.all([
+      import("./Figure20Animations.js"),
+      import("./Figure20PointerEvents.js")
+    ]).then(modules => callback(...modules));
   }
 
   drawThumbnail() {
@@ -53,13 +49,16 @@ export default class Figure20Diagram extends SVGDiagram {
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
 
-    import("./Figure20Animations.js").then(animationsModule => {
+    this.importDependencies((animationsModule, pointerEventsModule) => {
+      this._pointerEvents = new pointerEventsModule.default(this.svgNode);
       this._animations = new animationsModule.default(
         this._timerManager,
         this.setTranslationForEachBar.bind(this)
       );
+
       this.animateWavesRandomly();
       this.bindPointerEventsToWaveMovements();
+      // onDone()
     });
   }
 
@@ -234,17 +233,19 @@ export default class Figure20Diagram extends SVGDiagram {
     this._animations.animateAcrossTranslations(rowIndex, translations, options, onDone);
   }
 
-  toggleWavePeaksForAllRows(appearing, peaksToToggle, duration, onDone = () => {}) {
+  toggleWavePeaksForAllRows(appearing, peaks, duration, extraTranslation = 0, onDone = () => {}) {
     this._bars.forEach((_, rowIndex) => {
-      this.toggleWavePeaks(rowIndex, appearing, peaksToToggle[rowIndex], duration, () => {
-        if (rowIndex == 0) {
-          onDone();
+      this.toggleWavePeaks(
+        rowIndex, appearing, peaks[rowIndex], duration, extraTranslation, () => {
+          if (rowIndex == 0) {
+            onDone();
+          }
         }
-      });
+      );
     });
   }
 
-  toggleWavePeaks(rowIndex, appearing, peaksToToggle, duration, onDone = () => {}) {
+  toggleWavePeaks(rowIndex, appearing, peaksToToggle, duration, extraTranslation, onDone = () => {}) {
     const easing = appearing ? BezierEasing.easeInCubic : BezierEasing.easeOutCubic;
     const options = { duration, easing };
 
@@ -254,7 +255,9 @@ export default class Figure20Diagram extends SVGDiagram {
     };
 
     const initialTranslations = this._coords.getTranslationsForWaves(peaks.initial);
-    const finalTranslations = this._coords.getTranslationsForWaves(peaks.final);
+    const finalTranslations = this._coords
+      .getTranslationsForWaves(peaks.final)
+      .map(translation => translation + extraTranslation);
 
     this._animations.animateBetweenTranslations(
       rowIndex, initialTranslations, finalTranslations, options , onDone
@@ -268,64 +271,48 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   bindPointerEventsToWaveMovements() {
-    let peaksAtPointer;
-    this._wavesAreFollowingPointer = false;
+    const pointerIsOnRow = ({ y }) => {
+      return this.getRowAt(y) > -1;
+    }
 
-    this.svgNode.addEventListener("mousemove", event => {
-      const { x: pointerX, y: pointerY } = this.getPointerPositionInSVG(event);
-      const pointerRow = this.getRowAt(pointerY);
-
-      if (pointerRow == -1) {
-        if (this._wavesAreFollowingPointer) {
-          this._wavesAreFollowingPointer = false;
-          this.dissolveWavesAndRestartRandomAnimation(peaksAtPointer);
-        }
-        return;
-      }
-
-      this.stopAllRowAnimations();
-      this._wavesAreFollowingPointer = true;
-      peaksAtPointer = this.matchWavePeaksToPointer(pointerX, 3);
-      peaksAtPointer.forEach((peaks, rowIndex) => {
-        this.setWavePeaks({ peaks: peaks, rowBars: this._bars[rowIndex] });
-      });
-    });
-
-    this.svgNode.addEventListener("mouseleave", () => {
-      if (this._wavesAreFollowingPointer) {
-        this._wavesAreFollowingPointer = false;
-        this.dissolveWavesAndRestartRandomAnimation(peaksAtPointer);
-      }
+    this._pointerEvents.respondToPointer({
+      positionRespondsToMovement: pointerIsOnRow,
+      onMove: this.matchWavePeaksToPosition.bind(this),
+      onLeave: this.dissolveWavesAndRestartRandomAnimation.bind(this)
     });
   }
 
-  dissolveWavesAndRestartRandomAnimation(currentPeaks) {
+  matchWavePeaksToPosition({ x }) {
+    this.stopAllRowAnimations();
+    this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 })
+      .forEach((peaks, rowIndex) => {
+        this.setWavePeaks({ peaks, rowBars: this._bars[rowIndex] });
+      });
+  }
+
+  dissolveWavesAndRestartRandomAnimation({ x }) {
+    const peaksToDissolve = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
     const duration = new Duration({ milliseconds: 600 });
-    this.toggleWavePeaksForAllRows(false, currentPeaks, duration, () => {
+    const extraTranslation =
+      this._coords.getDistanceToOverlapBars({
+        initialNumberOfPeaks: peaksToDissolve.length,
+        finalNumberOfPeaks: 0
+      });
+    this.toggleWavePeaksForAllRows(false, peaksToDissolve, duration, extraTranslation, () => {
       this.animateWavesRandomly();
     });
   }
 
-  matchWavePeaksToPointer(pointerX, pointerRow) {
-    return originalWavePeaksPerRow.map((peaks, rowIndex) => (
-      this.getPeaksAtPointerPosition(
-        { peaks, rowIndex },
-        { pointerX, pointerRow }
-      )
-    ));
-  }
+  getWavePeaksAnchoredTo({ x, anchorRowIndex }) {
+    return originalWavePeaksPerRow.map((peaks, rowIndex) => {
+      if (rowIndex == anchorRowIndex) {
+        return this.peaksAdjustedToEndAt(x, peaks);
+      }
 
-  getPeaksAtPointerPosition({ peaks, rowIndex }, { pointerX, pointerRow }) {
-    if (pointerRow == rowIndex) {
-      return this.peaksAdjustedToEndAt(pointerX, peaks);
-    }
-
-    const diff = this.getRightmostPeaksDifference(rowIndex, pointerRow);
-    if (pointerRow > rowIndex) {
-      return this.peaksAdjustedToEndAt(pointerX - diff, peaks);
-    } else {
-      return this.peaksAdjustedToEndAt(pointerX + diff, peaks);
-    }
+      const diff = this.getRightmostPeaksDifference(rowIndex, anchorRowIndex)
+      const peaksEndX = anchorRowIndex > rowIndex ? x - diff : x + diff;
+      return this.peaksAdjustedToEndAt(peaksEndX, peaks);
+    });
   }
 
   peaksAdjustedToEndAt(x, peaks) {
@@ -346,12 +333,6 @@ export default class Figure20Diagram extends SVGDiagram {
     const rowPeaks = originalWavePeaksPerRow[rowIndex];
     const otherRowPeaks = originalWavePeaksPerRow[otherRowIndex];
     return Math.abs(rowPeaks[rowPeaks.length - 1] - otherRowPeaks[otherRowPeaks.length - 1]);
-  }
-
-  getPointerPositionInSVG(event){
-    this._svgReferencePoint.x = event.clientX;
-    this._svgReferencePoint.y = event.clientY;
-    return this._svgReferencePoint.matrixTransform(this.svgNode.getScreenCTM().inverse());
   }
 
   getRowAt(y) {

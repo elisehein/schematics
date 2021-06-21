@@ -1,7 +1,5 @@
 export default class WaveCoordinates {
-  constructor(
-    waveScaleFactor, barGap, barsPerRow, viewportWidth, minMaxPeaksPerRow
-  ) {
+  constructor(waveScaleFactor, barGap, barsPerRow, viewportWidth) {
     this._barsPerRow = barsPerRow;
     this._barGap = barGap;
 
@@ -10,10 +8,6 @@ export default class WaveCoordinates {
       waveScaleFactor, barGap, maxBarsFromPeak
     );
     this._initialXCoordsForBars = this.getInitialXCoordsForBars(viewportWidth);
-    this._compensationsToOverlap = this.precalculateOverlapCompensations(
-      minMaxPeaksPerRow
-    );
-
     this._memoizedTranslationsForWavePeaks = {};
   }
 
@@ -92,19 +86,19 @@ export default class WaveCoordinates {
     });
   }
 
-  precalculateOverlapCompensations({ min: minPeaksPerRow, max: maxPeaksPerRow }) {
-    const compensations = {};
-    for (let peaksPerRow = minPeaksPerRow; peaksPerRow <= maxPeaksPerRow; peaksPerRow += 1) {
-      const maxTranslation = peaksPerRow * this.waveWidth * 2;
-      const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
-      const leftwardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
-      compensations[peaksPerRow] = Math.round(leftwardCompensation * 10) / 10;
-    }
-    return compensations;
+  getDistanceToOverlapBarsBetweenPeaks(numberOfPeaks) {
+    const maxTranslation = numberOfPeaks * this.waveWidth * 2;
+    const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
+    const leftwardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
+    return Math.round(leftwardCompensation * 10) / 10;
   }
 
-  getDistanceToOverlapBarsBetweenPeaks(numberOfPeaks) {
-    return this._compensationsToOverlap[numberOfPeaks];
+  getDistanceToOverlapBars({ initialNumberOfPeaks, finalNumberOfPeaks }) {
+    // const maxTranslation = numberOfPeaks * this.waveWidth * 2;
+    // const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
+    // const leftwardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
+    // return Math.round(leftwardCompensation * 10) / 10;
+    return -1.8;
   }
 
   get waveWidth() {
