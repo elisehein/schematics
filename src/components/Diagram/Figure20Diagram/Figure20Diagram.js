@@ -43,6 +43,8 @@ export default class Figure20Diagram extends SVGDiagram {
       1.2, barGap, this._barsPerRow, this.svgSize, peaksPerRow
     );
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
+
+    window.cancelAnims = () => this._inProgressAnimationTracker.cancelAllAnimations();
   }
 
   connectedCallback() {
@@ -55,8 +57,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
-    this.positionBarsForWaveAnimations();
-    // this.animateWavesRandomly();
+    this.animateWavesRandomly();
     this.bindPointerEventsToWaveMovements();
 
     // onDone();
@@ -138,6 +139,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWavesRandomly() {
+    this.positionBarsForWaveAnimations();
     const randomDelay = new Duration({ milliseconds: randomIntBetween(100, 1000) });
 
     this._waveAnimationTimer = this._timerManager.setTimeout(() => {
@@ -226,7 +228,11 @@ export default class Figure20Diagram extends SVGDiagram {
 
   toggleWavePeaksForAllRows(appearing, peaksToToggle, duration, onDone = () => {}) {
     this._bars.forEach((_, rowIndex) => {
-      this.toggleWavePeaks(rowIndex, appearing, peaksToToggle[rowIndex], duration, onDone);
+      this.toggleWavePeaks(rowIndex, appearing, peaksToToggle[rowIndex], duration, () => {
+        if (rowIndex == 0) {
+          onDone();
+        }
+      });
     });
   }
 
@@ -255,18 +261,18 @@ export default class Figure20Diagram extends SVGDiagram {
       return;
     }
 
-    this._inProgressAnimationTracker.setRowAnimating(rowIndex, true);
-
-    animateWithEasing(duration, easing, fractionOfAnimationDone => {
+    const canceler = animateWithEasing(duration, easing, fractionOfAnimationDone => {
       if (fractionOfAnimationDone > 1 || fractionOfAnimationDone < 0) {
         return;
       }
 
       this.setTranslationForEachBar(rowIndex, barTranslationGetter.bind(null, fractionOfAnimationDone));
     }, { onDone: () => {
-      this._inProgressAnimationTracker.setRowAnimating(rowIndex, false);
+      this._inProgressAnimationTracker.unsetRowAnimating(rowIndex);
       onDone();
     } });
+
+    this._inProgressAnimationTracker.setRowAnimating(rowIndex, canceler);
   }
 
   setTranslationForEachBar(rowIndex, translationGetter) {
@@ -284,13 +290,15 @@ export default class Figure20Diagram extends SVGDiagram {
 
       if (pointerRow == -1) {
         if (this._wavesAreFollowingPointer) {
-          // this.toggleWavePeaksForAllRows(false, this._currentPeaksPerRow, Duration.oneSec, () => {
-            // this.animateWavesRandomly();
-          // });
+          this._wavesAreFollowingPointer = false;
+          this.toggleWavePeaksForAllRows(false, this._currentPeaksPerRow, Duration.oneSec, () => {
+            this.animateWavesRandomly();
+          });
         }
         return;
       }
 
+      this.stopAllRowAnimations();
       this._wavesAreFollowingPointer = true;
       this.matchWavePeaksToPointer(pointerX, pointerRow);
     });
@@ -298,9 +306,9 @@ export default class Figure20Diagram extends SVGDiagram {
     this.svgNode.addEventListener("mouseleave", () => {
       if (this._wavesAreFollowingPointer) {
         this._wavesAreFollowingPointer = false;
-        // this.toggleWavePeaksForAllRows(false, this._currentPeaksPerRow, Duration.oneSec, () => {
-          // this.animateWavesRandomly();
-        // });
+        this.toggleWavePeaksForAllRows(false, this._currentPeaksPerRow, Duration.oneSec, () => {
+          this.animateWavesRandomly();
+        });
       }
     });
   }
@@ -358,31 +366,43 @@ export default class Figure20Diagram extends SVGDiagram {
   getRowAt(y) {
     return this._rowYs.findIndex(({ top, bottom }) => y >= top && y <= bottom);
   }
+
+  stopAllRowAnimations() {
+    this._timerManager.clearAllIntervals();
+    this._timerManager.clearAllTimeouts();
+    this._inProgressAnimationTracker.cancelAllAnimations();
+  }
 }
 
 customElements.define("figure-20-diagram", Figure20Diagram);
 
 class InProgressAnimationsTracker {
   constructor(timerManager) {
-    this._rowsCurrentlyAnimating = [];
+    this._animationRefGettersByRowIndex = {};
     this._timerManager = timerManager;
   }
 
   isRowAnimating(rowIndex) {
-    return this._rowsCurrentlyAnimating.indexOf(rowIndex) > -1;
+    return Object.keys(this._animationRefGettersByRowIndex).indexOf(rowIndex) > -1;
   }
 
-  setRowAnimating(rowIndex, animating) {
-    if (animating) {
-      this._rowsCurrentlyAnimating.push(rowIndex);
-    } else {
-      this._rowsCurrentlyAnimating = this._rowsCurrentlyAnimating
-        .filter(index => index !== rowIndex);
-    }
+  setRowAnimating(rowIndex, ref) {
+    this._animationRefGettersByRowIndex[rowIndex] = ref;
+  }
+
+  unsetRowAnimating(rowIndex) {
+    delete this._animationRefGettersByRowIndex[rowIndex];
   }
 
   anyRowsAnimating() {
-    return this._rowsCurrentlyAnimating.length > 0;
+    return Object.keys(this._animationRefGettersByRowIndex).length > 0;
+  }
+
+  cancelAllAnimations() {
+    Object.keys(this._animationRefGettersByRowIndex).forEach(rowIndex => {
+      window.cancelAnimationFrame(this._animationRefGettersByRowIndex[rowIndex]());
+      this.unsetRowAnimating(rowIndex);
+    });
   }
 
   waitForAllAnimationsDone(timeout, onDone) {
