@@ -33,7 +33,6 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowYs = this.precalculateRowYs();
 
     this._inProgressAnimationTracker = new InProgressAnimationsTracker(this._timerManager);
-    this._currentPeaksPerRow = [...originalWavePeaksPerRow];
 
     const peaksPerRow = {
       min: originalWavePeaksPerRow[0].length,
@@ -282,6 +281,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   bindPointerEventsToWaveMovements() {
+    let peaksAtPointer;
     this._wavesAreFollowingPointer = false;
 
     this.svgNode.addEventListener("mousemove", event => {
@@ -291,37 +291,40 @@ export default class Figure20Diagram extends SVGDiagram {
       if (pointerRow == -1) {
         if (this._wavesAreFollowingPointer) {
           this._wavesAreFollowingPointer = false;
-          this.toggleWavePeaksForAllRows(false, this._currentPeaksPerRow, Duration.oneSec, () => {
-            this.animateWavesRandomly();
-          });
+          this.dissolveWavesAndRestartRandomAnimation(peaksAtPointer);
         }
         return;
       }
 
       this.stopAllRowAnimations();
       this._wavesAreFollowingPointer = true;
-      this.matchWavePeaksToPointer(pointerX, pointerRow);
+      peaksAtPointer = this.matchWavePeaksToPointer(pointerX, 3);
+      peaksAtPointer.forEach((peaks, rowIndex) => {
+        this.setWavePeaks({ peaks: peaks, rowBars: this._bars[rowIndex] });
+      });
     });
 
     this.svgNode.addEventListener("mouseleave", () => {
       if (this._wavesAreFollowingPointer) {
         this._wavesAreFollowingPointer = false;
-        this.toggleWavePeaksForAllRows(false, this._currentPeaksPerRow, Duration.oneSec, () => {
-          this.animateWavesRandomly();
-        });
+        this.dissolveWavesAndRestartRandomAnimation(peaksAtPointer);
       }
     });
   }
 
+  dissolveWavesAndRestartRandomAnimation(currentPeaks) {
+    this.toggleWavePeaksForAllRows(false, currentPeaks, Duration.oneSec, () => {
+      this.animateWavesRandomly();
+    });
+}
+
   matchWavePeaksToPointer(pointerX, pointerRow) {
-    originalWavePeaksPerRow.forEach((peaks, rowIndex) => {
-      const adjustedPeaks = this.getPeaksAtPointerPosition(
+    return originalWavePeaksPerRow.map((peaks, rowIndex) => (
+      this.getPeaksAtPointerPosition(
         { peaks, rowIndex },
         { pointerX, pointerRow }
-      );
-      this._currentPeaksPerRow[rowIndex] = adjustedPeaks;
-      this.setWavePeaks({ peaks: adjustedPeaks, rowBars: this._bars[rowIndex] });
-    });
+      )
+    ));
   }
 
   getPeaksAtPointerPosition({ peaks, rowIndex }, { pointerX, pointerRow }) {
