@@ -20,5 +20,5 @@ export default function animateWithEasing(duration, easing, animationFrameHandle
   };
 
   ref = window.requestAnimationFrame(step);
-  return () => ref;
+  return () => window.cancelAnimationFrame(ref);
 }

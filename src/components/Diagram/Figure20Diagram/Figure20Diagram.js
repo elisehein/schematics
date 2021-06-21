@@ -32,8 +32,6 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowHeight = this._rowGap * rowToRowGapRatio;
     this._rowYs = this.precalculateRowYs();
 
-    this._inProgressAnimationTracker = new InProgressAnimationsTracker(this._timerManager);
-
     const peaksPerRow = {
       min: originalWavePeaksPerRow[0].length,
       max: originalWavePeaksPerRow[originalWavePeaksPerRow.length - 1].length
@@ -42,8 +40,6 @@ export default class Figure20Diagram extends SVGDiagram {
       1.2, barGap, this._barsPerRow, this.svgSize, peaksPerRow
     );
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
-
-    window.cancelAnims = () => this._inProgressAnimationTracker.cancelAllAnimations();
   }
 
   connectedCallback() {
@@ -56,10 +52,15 @@ export default class Figure20Diagram extends SVGDiagram {
 
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
-    this.animateWavesRandomly();
-    this.bindPointerEventsToWaveMovements();
 
-    // onDone();
+    import("./Figure20Animations.js").then(animationsModule => {
+      this._animations = new animationsModule.default(
+        this._timerManager,
+        this.setTranslationForEachBar.bind(this)
+      );
+      this.animateWavesRandomly();
+      this.bindPointerEventsToWaveMovements();
+    });
   }
 
   drawAfterCaption() {
@@ -163,7 +164,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   animateOriginalWavesInParallel(onDone) {
     const timeout = new Duration({ seconds: 4 });
-    this._inProgressAnimationTracker.waitForAllAnimationsDone(timeout, () => {
+    this._animations.waitForAnimationsToFinish(timeout, () => {
       this._bars.forEach((_, rowIndex) => {
         this._timerManager.setTimeout(() => {
           this.animateOriginalWavePattern(rowIndex, () => {
@@ -177,18 +178,24 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateOriginalWavePattern(rowIndex, onDone) {
-    const duration = new Duration({ seconds: 4 });
     const initialPeaks = originalWavePeaksPerRow[rowIndex].map(peakX => peakX - this.svgSize);
     const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
-    const easing = BezierEasing.linear;
-    this.animateTravellingWaves(initialPeaks, travelData, duration, easing, rowIndex, onDone);
+    const options = {
+      duration: new Duration({ seconds: 4 }),
+      easing: BezierEasing.linear
+    };
+    this.animateTravellingWaves(initialPeaks, travelData, options, rowIndex, onDone);
   }
 
   animateFullWaveLifecycle(duration, rowIndex) {
     const { initial, final } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initial, final);
-    this.animateTravellingWaves(initial, travelData, duration, BezierEasing.linear, rowIndex);
+    const options = {
+      duration,
+      easing: BezierEasing.linear
+    };
+    this.animateTravellingWaves(initial, travelData, options, rowIndex);
   }
 
   getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks, animateWaveAppearing = false) {
@@ -198,31 +205,33 @@ export default class Figure20Diagram extends SVGDiagram {
     return { travelDistance, extraTranslationDuringTravel, animateWaveAppearing };
   }
 
-  animateTravellingWaves(peaks, travelData, duration, easing, rowIndex, onDone = () => {}) {
+  animateTravellingWaves(peaks, travelData, options, rowIndex, onDone = () => {}) {
     const {
       travelDistance: totalTravelDistance,
-      extraTranslationDuringTravel,
-      animateWaveAppearing
+      extraTranslationDuringTravel = 0,
+      animateWaveAppearing = false
     } = travelData;
 
-    const translationsForTravelDistances = this._coords
-      .getTranslationsForTravellingWaves(peaks, totalTravelDistance);
+    const waveFullyFormedByFractionOfTravelDistance = animateWaveAppearing ? 0.2 : 0;
+    const getFractionOfWaveFormed = fractionOfDistanceTravelled => {
+      if (waveFullyFormedByFractionOfTravelDistance == 0) {
+        return 1;
+      }
+      return Math.min(1, fractionOfDistanceTravelled / waveFullyFormedByFractionOfTravelDistance)
+    };
 
-    const waveFullyFormedByAnimationFraction = 0.2;
-    const getFractionOfWaveFormed = fractionOfAnimationDone => (
-      Math.min(1, fractionOfAnimationDone / waveFullyFormedByAnimationFraction)
-    );
+    const translations = this._coords
+      .getTranslationsForTravellingWaves(peaks, totalTravelDistance)
+      .map((translationsAtDistance, distanceTravelled) => {
+        const fractionOfDistanceTravelled = distanceTravelled / totalTravelDistance;
+        const fractionOfWaveFormed = getFractionOfWaveFormed(fractionOfDistanceTravelled);
+        const extraTranslationSoFar = extraTranslationDuringTravel * fractionOfDistanceTravelled;
+        return translationsAtDistance.map(barTranslation => (
+          (barTranslation * fractionOfWaveFormed) + extraTranslationSoFar
+        ));
+      });
 
-    this.animateBarsOnRow(rowIndex, (fractionOfAnimationDone, barIndex) => {
-      const extraTranslationSoFar = (extraTranslationDuringTravel || 0) * fractionOfAnimationDone;
-      const travelledSoFar = Math.floor(totalTravelDistance * fractionOfAnimationDone);
-      const travelTranslations = translationsForTravelDistances[travelledSoFar];
-      const fractionOfWaveFormed = getFractionOfWaveFormed(fractionOfAnimationDone);
-      const travelTranslation = animateWaveAppearing
-        ? travelTranslations[barIndex] * fractionOfWaveFormed
-        : travelTranslations[barIndex];
-      return travelTranslation + extraTranslationSoFar;
-    }, duration, easing, onDone);
+    this._animations.animateAcrossTranslations(rowIndex, translations, options, onDone);
   }
 
   toggleWavePeaksForAllRows(appearing, peaksToToggle, duration, onDone = () => {}) {
@@ -237,41 +246,19 @@ export default class Figure20Diagram extends SVGDiagram {
 
   toggleWavePeaks(rowIndex, appearing, peaksToToggle, duration, onDone = () => {}) {
     const easing = appearing ? BezierEasing.easeInCubic : BezierEasing.easeOutCubic;
+    const options = { duration, easing };
+
     const peaks = {
       initial: appearing ? [] : peaksToToggle,
       final: appearing ? peaksToToggle : []
     };
-    this.animateChangingWavePeaks(peaks, duration, easing, rowIndex, () => onDone(rowIndex));
-  }
 
-  animateChangingWavePeaks(peaks, duration, easing, rowIndex, onDone = () => {}) {
     const initialTranslations = this._coords.getTranslationsForWaves(peaks.initial);
     const finalTranslations = this._coords.getTranslationsForWaves(peaks.final);
 
-    this.animateBarsOnRow(rowIndex, (fractionOfAnimationDone, barIndex) => {
-      const diff = finalTranslations[barIndex] - initialTranslations[barIndex];
-      return initialTranslations[barIndex] + (diff * fractionOfAnimationDone);
-    }, duration, easing, onDone);
-  }
-
-  animateBarsOnRow(rowIndex, barTranslationGetter, duration, easing = BezierEasing.linear, onDone = () => {}) {
-    if (this._inProgressAnimationTracker.isRowAnimating(rowIndex)) {
-      onDone();
-      return;
-    }
-
-    const canceler = animateWithEasing(duration, easing, fractionOfAnimationDone => {
-      if (fractionOfAnimationDone > 1 || fractionOfAnimationDone < 0) {
-        return;
-      }
-
-      this.setTranslationForEachBar(rowIndex, barTranslationGetter.bind(null, fractionOfAnimationDone));
-    }, { onDone: () => {
-      this._inProgressAnimationTracker.unsetRowAnimating(rowIndex);
-      onDone();
-    } });
-
-    this._inProgressAnimationTracker.setRowAnimating(rowIndex, canceler);
+    this._animations.animateBetweenTranslations(
+      rowIndex, initialTranslations, finalTranslations, options , onDone
+    );
   }
 
   setTranslationForEachBar(rowIndex, translationGetter) {
@@ -313,10 +300,11 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   dissolveWavesAndRestartRandomAnimation(currentPeaks) {
-    this.toggleWavePeaksForAllRows(false, currentPeaks, Duration.oneSec, () => {
+    const duration = new Duration({ milliseconds: 600 });
+    this.toggleWavePeaksForAllRows(false, currentPeaks, duration, () => {
       this.animateWavesRandomly();
     });
-}
+  }
 
   matchWavePeaksToPointer(pointerX, pointerRow) {
     return originalWavePeaksPerRow.map((peaks, rowIndex) => (
@@ -373,53 +361,8 @@ export default class Figure20Diagram extends SVGDiagram {
   stopAllRowAnimations() {
     this._timerManager.clearAllIntervals();
     this._timerManager.clearAllTimeouts();
-    this._inProgressAnimationTracker.cancelAllAnimations();
+    this._animations.cancelAllAnimations();
   }
 }
 
 customElements.define("figure-20-diagram", Figure20Diagram);
-
-class InProgressAnimationsTracker {
-  constructor(timerManager) {
-    this._animationRefGettersByRowIndex = {};
-    this._timerManager = timerManager;
-  }
-
-  isRowAnimating(rowIndex) {
-    return Object.keys(this._animationRefGettersByRowIndex).indexOf(rowIndex) > -1;
-  }
-
-  setRowAnimating(rowIndex, ref) {
-    this._animationRefGettersByRowIndex[rowIndex] = ref;
-  }
-
-  unsetRowAnimating(rowIndex) {
-    delete this._animationRefGettersByRowIndex[rowIndex];
-  }
-
-  anyRowsAnimating() {
-    return Object.keys(this._animationRefGettersByRowIndex).length > 0;
-  }
-
-  cancelAllAnimations() {
-    Object.keys(this._animationRefGettersByRowIndex).forEach(rowIndex => {
-      window.cancelAnimationFrame(this._animationRefGettersByRowIndex[rowIndex]());
-      this.unsetRowAnimating(rowIndex);
-    });
-  }
-
-  waitForAllAnimationsDone(timeout, onDone) {
-    this._timeoutTimer = this._timerManager.setTimeout(() => {
-      this._timerManager.clearTimeout(this._timeoutTimer);
-      onDone();
-    }, timeout.ms);
-
-    this._animationsInProgressChecker = this._timerManager.setInterval(() => {
-      if (!this.anyRowsAnimating()) {
-        this._timerManager.clearInterval(this._animationsInProgressChecker);
-        this._timerManager.clearTimeout(this._timeoutTimer);
-        onDone();
-      }
-    }, 100);
-  }
-}

@@ -82,17 +82,14 @@ export default class WaveCoordinates {
   }
 
   getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance) {
-    const translations = {};
-
     /* We only calculate translations at each integer for now.
      * If the animation speed is reduced a lot, we may need to also calculate
-     * translations at fractional wave travel distances. */
-    for (let travelledSoFar = 0; travelledSoFar <= totalTravelDistance; travelledSoFar += 1) {
-      const adjustedPeaks = initialPeaks.map(x => x + travelledSoFar);
-      translations[travelledSoFar] = this.getTranslationsForWaves(adjustedPeaks);
-    }
-
-    return translations;
+     * translations at fractional wave travel distances. That will require a map instead of an array.
+     * +1 to account for zero distance travelled */
+    return Array(Math.floor(totalTravelDistance) + 1).fill().map((_, distanceTravelledSoFar) => {
+      const adjustedPeaks = initialPeaks.map(x => x + distanceTravelledSoFar);
+      return this.getTranslationsForWaves(adjustedPeaks);
+    });
   }
 
   precalculateOverlapCompensations({ min: minPeaksPerRow, max: maxPeaksPerRow }) {
