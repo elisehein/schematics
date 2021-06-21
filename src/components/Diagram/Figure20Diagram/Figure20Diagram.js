@@ -200,7 +200,7 @@ export default class Figure20Diagram extends SVGDiagram {
   getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks, animateWaveAppearing = false) {
     const travelDistance = finalPeaks[0] - initialPeaks[0];
     const extraTranslationDuringTravel =
-      this._coords.getDistanceToOverlapBarsBetweenPeaks(initialPeaks.length);
+      this._coords.getDistanceToOverlapBarsBetweenPeaks(initialPeaks.length).rightward;
     return { travelDistance, extraTranslationDuringTravel, animateWaveAppearing };
   }
 
@@ -233,8 +233,9 @@ export default class Figure20Diagram extends SVGDiagram {
     this._animations.animateAcrossTranslations(rowIndex, translations, options, onDone);
   }
 
-  toggleWavePeaksForAllRows(appearing, peaks, duration, extraTranslation = 0, onDone = () => {}) {
+  toggleWavePeaksForAllRows(appearing, peaks, duration, extraTranslations, onDone = () => {}) {
     this._bars.forEach((_, rowIndex) => {
+      const extraTranslation = extraTranslations[rowIndex];
       this.toggleWavePeaks(
         rowIndex, appearing, peaks[rowIndex], duration, extraTranslation, () => {
           if (rowIndex == 0) {
@@ -291,14 +292,15 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   dissolveWavesAndRestartRandomAnimation({ x }) {
-    const peaksToDissolve = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
+    const peaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
     const duration = new Duration({ milliseconds: 600 });
-    const extraTranslation =
+    const extraTranslations = peaksPerRow.map(peaks => (
       this._coords.getDistanceToOverlapBars({
-        initialNumberOfPeaks: peaksToDissolve.length,
+        initialNumberOfPeaks: peaks.length,
         finalNumberOfPeaks: 0
-      });
-    this.toggleWavePeaksForAllRows(false, peaksToDissolve, duration, extraTranslation, () => {
+      }).min
+    ));
+    this.toggleWavePeaksForAllRows(false, peaksPerRow, duration, extraTranslations, () => {
       this.animateWavesRandomly();
     });
   }

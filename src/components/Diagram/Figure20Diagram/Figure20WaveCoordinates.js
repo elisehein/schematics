@@ -76,29 +76,48 @@ export default class WaveCoordinates {
   }
 
   getTranslationsForTravellingWaves(initialPeaks, totalTravelDistance) {
+
     /* We only calculate translations at each integer for now.
      * If the animation speed is reduced a lot, we may need to also calculate
      * translations at fractional wave travel distances. That will require a map instead of an array.
      * +1 to account for zero distance travelled */
-    return Array(Math.floor(totalTravelDistance) + 1).fill().map((_, distanceTravelledSoFar) => {
-      const adjustedPeaks = initialPeaks.map(x => x + distanceTravelledSoFar);
-      return this.getTranslationsForWaves(adjustedPeaks);
-    });
+    return Array(Math.floor(totalTravelDistance) + 1).fill()
+      .map((_, distanceTravelledSoFar) => {
+        const adjustedPeaks = initialPeaks.map(x => x + distanceTravelledSoFar);
+        return this.getTranslationsForWaves(adjustedPeaks);
+      });
   }
 
   getDistanceToOverlapBarsBetweenPeaks(numberOfPeaks) {
-    const maxTranslation = numberOfPeaks * this.waveWidth * 2;
-    const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
-    const leftwardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
-    return Math.round(leftwardCompensation * 10) / 10;
+    return this.getDistanceToOverlapBars({
+      initialNumberOfPeaks: numberOfPeaks,
+      finalNumberOfPeaks: numberOfPeaks
+    });
   }
 
   getDistanceToOverlapBars({ initialNumberOfPeaks, finalNumberOfPeaks }) {
-    // const maxTranslation = numberOfPeaks * this.waveWidth * 2;
-    // const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
-    // const leftwardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
-    // return Math.round(leftwardCompensation * 10) / 10;
-    return -1.8;
+    const maxTranslation =
+      (initialNumberOfPeaks * this.waveWidth) +
+      (finalNumberOfPeaks * this.waveWidth);
+    const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
+    const rightWardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
+    const leftwardCompensation = this._barGap - rightWardCompensation;
+
+    const roundedRightWardCompensation = Math.round(rightWardCompensation * 10) / 10;
+    const roundedLeftwardCompensation = Math.round(leftwardCompensation * 10) / 10;
+
+    return {
+      rightward: roundedRightWardCompensation,
+      leftward: roundedLeftwardCompensation * -1,
+      min: (leftwardCompensation > rightWardCompensation
+        ? roundedRightWardCompensation
+        : roundedLeftwardCompensation * -1
+      ),
+      max: (leftwardCompensation < rightWardCompensation
+        ? roundedRightWardCompensation
+        : roundedLeftwardCompensation * -1
+      )
+    };
   }
 
   get waveWidth() {
