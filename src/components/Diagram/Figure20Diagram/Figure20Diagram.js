@@ -33,7 +33,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this._rowYs = this.precalculateRowYs();
 
     this._inProgressAnimationTracker = new InProgressAnimationsTracker(this._timerManager);
-    this._currentPeaksPerRow = originalWavePeaksPerRow;
+    this._currentPeaksPerRow = [...originalWavePeaksPerRow];
 
     const peaksPerRow = {
       min: originalWavePeaksPerRow[0].length,
@@ -56,8 +56,8 @@ export default class Figure20Diagram extends SVGDiagram {
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
     this.positionBarsForWaveAnimations();
-    this.animateWavesRandomly();
-    // this.bindPointerEventsToWaveMovements();
+    // this.animateWavesRandomly();
+    this.bindPointerEventsToWaveMovements();
 
     // onDone();
   }
@@ -276,20 +276,32 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   bindPointerEventsToWaveMovements() {
+    this._wavesAreFollowingPointer = false;
+
     this.svgNode.addEventListener("mousemove", event => {
       const { x: pointerX, y: pointerY } = this.getPointerPositionInSVG(event);
       const pointerRow = this.getRowAt(pointerY);
 
       if (pointerRow == -1) {
-        // this.animateDisappearingWaves(this._currentPeaksPerRow);
+        if (this._wavesAreFollowingPointer) {
+          // this.toggleWavePeaksForAllRows(false, this._currentPeaksPerRow, Duration.oneSec, () => {
+            // this.animateWavesRandomly();
+          // });
+        }
         return;
       }
 
+      this._wavesAreFollowingPointer = true;
       this.matchWavePeaksToPointer(pointerX, pointerRow);
     });
 
     this.svgNode.addEventListener("mouseleave", () => {
-      // this.animateDisappearingWaves(this._currentPeaksPerRow);
+      if (this._wavesAreFollowingPointer) {
+        this._wavesAreFollowingPointer = false;
+        // this.toggleWavePeaksForAllRows(false, this._currentPeaksPerRow, Duration.oneSec, () => {
+          // this.animateWavesRandomly();
+        // });
+      }
     });
   }
 
