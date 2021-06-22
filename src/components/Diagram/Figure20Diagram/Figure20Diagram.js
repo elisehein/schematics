@@ -1,38 +1,16 @@
 import { SVGDiagram } from "../Diagram.js";
 import WaveCoordinates from "./Figure20WaveCoordinates.js";
+import RowBarDrawing, { originalPeaksPerRow } from "./Figure20RowBarDrawing.js";
 
 import BezierEasing from "/helpers/BezierEasing.js";
 import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 
-const originalWavePeaksPerRow = [
-  [0],
-  [40],
-  [0, 70],
-  [40, 125],
-  [0, 85, 170],
-  [40, 125, 210],
-  [0, 85, 170, 255]
-];
-
 export default class Figure20Diagram extends SVGDiagram {
   constructor(...args) {
     super(20, ...args);
 
-    this._numberOfRows = 7;
-    const numberOfGaps = this._numberOfRows - 1;
-    const barGap = 10;
-    this._barsPerRow = 90;
-    this._verticalInset = 15;
-
-    const rowToRowGapRatio = 0.8;
-    const height = 300 - (2 * this._verticalInset);
-    this._rowGap =  height / (this._numberOfRows * rowToRowGapRatio + numberOfGaps);
-    this._rowHeight = this._rowGap * rowToRowGapRatio;
-    this._rowYs = this.precalculateRowYs();
-
-    this._coords = new WaveCoordinates(1.2, barGap, this._barsPerRow, this.svgSize);
-    this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
+    this._waveScaleFactor = 1.2;
   }
 
   importDependencies(callback) {
@@ -46,6 +24,11 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   drawBeforeCaption({ onDone }) {
+    this._drawing = new RowBarDrawing(this.svgSize, this._svgShapeFactory);
+    this._waves = new WaveCoordinates(
+      this._waveScaleFactor, this._drawing.barGap, this._drawing.barsPerRow, this.svgSize
+    );
+    this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
     this._bars = this.drawBars();
 
     this.importDependencies((Animations, PointerEvents) => {
@@ -64,66 +47,28 @@ export default class Figure20Diagram extends SVGDiagram {
   drawAfterCaption() {
   }
 
-  precalculateRowYs() {
-    const rowYs = [];
-
-    for (let rowIndex = 0; rowIndex < this._numberOfRows; rowIndex += 1) {
-      const topY = this._verticalInset + (rowIndex * (this._rowHeight + this._rowGap));
-      const bottomY = topY + this._rowHeight;
-      rowYs.push({ top: topY, bottom: bottomY });
-    }
-
-    return rowYs;
-  }
-
-  precalculatePeaksForRowWaveAnimations() {
-    return originalWavePeaksPerRow.map(this.getPeaksForRowWaveAnimation.bind(this));
-  }
-
-  getPeaksForRowWaveAnimation(peaks) {
-    const overflow = this._coords.waveWidth;
-    const initial = this.peaksAdjustedToEndAt(-1 * overflow, peaks);
-
-    const finalPeaksStartX = this.svgSize + overflow;
-    const final = this.peaksAdjustedToStartAt(finalPeaksStartX, peaks);
-
-    return { initial, final };
-  }
-
   drawBars() {
-    const bars = [];
-
-    for (let rowIndex = 0; rowIndex < this._numberOfRows; rowIndex += 1) {
-      const barsForRow = [];
-      const groupNode = this._svgShapeFactory.getGroupNode();
-      groupNode.dataset.rowIndex = rowIndex;
-      const { top: topY, bottom: bottomY } = this._rowYs[rowIndex];
-
-      for (let barIndex = 0; barIndex < this._barsPerRow; barIndex += 1) {
-        const bar = this.drawBar(topY, bottomY, barIndex);
-        groupNode.appendChild(bar.node);
-        barsForRow.push(bar);
-      }
-
-      this.addSVGChildElement(groupNode);
-      bars.push(barsForRow);
-    }
-
+    const { bars, groupNodes } = this._drawing.drawBars(barIndex => (
+      this._waves.getInitialXForBar(barIndex)
+    ));
+    groupNodes.forEach(this.addSVGChildElement.bind(this));
     return bars;
   }
 
-  drawBar(topY, bottomY, barIndex) {
-    const x = this._coords.getInitialXForBar(barIndex);
-    const lineTopPoint = { x, y: topY };
-    const lineBottomPoint = { x, y: bottomY };
-    const bar = this._svgShapeFactory.getLine(lineTopPoint, lineBottomPoint);
-    bar.stroke();
-    bar.node.style.strokeLinecap = "unset";
-    return bar;
+  precalculatePeaksForRowWaveAnimations() {
+    return originalPeaksPerRow.map(peaks => {
+      const overflow = this._waves.waveWidth;
+      const initial = this.peaksAdjustedToEndAt(-1 * overflow, peaks);
+
+      const finalPeaksStartX = this.svgSize + overflow;
+      const final = this.peaksAdjustedToStartAt(finalPeaksStartX, peaks);
+
+      return { initial, final };
+    });
   }
 
   setWavePeaks({ peaks, rowBars }) {
-    const translatedXCoordinates = this._coords.getTranslationsForWaves(peaks);
+    const translatedXCoordinates = this._waves.getTranslationsForWaves(peaks);
     rowBars.forEach((bar, index) => {
       bar.node.setAttribute("transform", `translate(${translatedXCoordinates[index]} 0)`);
     });
@@ -151,8 +96,8 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWaveOnRandomRow() {
-    const randomRow = randomIntBetween(0, this._numberOfRows - 1);
-    const peaksOnRow = originalWavePeaksPerRow[randomRow].length;
+    const randomRow = randomIntBetween(0, this._drawing.numberOfRows - 1);
+    const peaksOnRow = originalPeaksPerRow[randomRow].length;
     const minDurationMS = peaksOnRow * 500;
     const randomDuration = new Duration({
       milliseconds: minDurationMS + randomIntBetween(500, 2000)
@@ -176,7 +121,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateOriginalWavePattern(rowIndex, onDone) {
-    const initialPeaks = originalWavePeaksPerRow[rowIndex].map(peakX => peakX - this.svgSize);
+    const initialPeaks = originalPeaksPerRow[rowIndex].map(peakX => peakX - this.svgSize);
     const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
     const options = {
@@ -199,7 +144,7 @@ export default class Figure20Diagram extends SVGDiagram {
   getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks, animateWaveAppearing = false) {
     const travelDistance = finalPeaks[0] - initialPeaks[0];
     const extraTranslationDuringTravel =
-      this._coords.getDistanceToOverlapBarsBetweenPeaks(initialPeaks.length).rightward;
+      this._waves.getDistanceToOverlapBarsBetweenPeaks(initialPeaks.length).rightward;
     return { travelDistance, extraTranslationDuringTravel, animateWaveAppearing };
   }
 
@@ -218,7 +163,7 @@ export default class Figure20Diagram extends SVGDiagram {
       return Math.min(1, fractionOfDistanceTravelled / waveFullyFormedByFractionOfTravelDistance);
     };
 
-    const translations = this._coords
+    const translations = this._waves
       .getTranslationsForTravellingWaves(peaks, totalTravelDistance)
       .map((translationsAtDistance, distanceTravelled) => {
         const fractionOfDistanceTravelled = distanceTravelled / totalTravelDistance;
@@ -254,8 +199,8 @@ export default class Figure20Diagram extends SVGDiagram {
       final: appearing ? peaksToToggle : []
     };
 
-    const initialTranslations = this._coords.getTranslationsForWaves(peaks.initial);
-    const finalTranslations = this._coords
+    const initialTranslations = this._waves.getTranslationsForWaves(peaks.initial);
+    const finalTranslations = this._waves
       .getTranslationsForWaves(peaks.final)
       .map(translation => translation + extraTranslation);
 
@@ -271,7 +216,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   bindPointerEventsToWaveMovements() {
-    const pointerIsOnRow = ({ y }) => this.getRowAt(y) > -1;
+    const pointerIsOnRow = ({ y }) => this._drawing.getRowAt(y) > -1;
 
     this._pointerEvents.respondToPointer({
       positionRespondsToMovement: pointerIsOnRow,
@@ -292,7 +237,7 @@ export default class Figure20Diagram extends SVGDiagram {
     const peaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
     const duration = new Duration({ milliseconds: 1600 });
     const extraTranslations = peaksPerRow.map(peaks => (
-      this._coords.getDistanceToOverlapBars({
+      this._waves.getDistanceToOverlapBars({
         initialNumberOfPeaks: peaks.length,
         finalNumberOfPeaks: 0
       }).min
@@ -303,7 +248,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getWavePeaksAnchoredTo({ x, anchorRowIndex }) {
-    return originalWavePeaksPerRow.map((peaks, rowIndex) => {
+    return originalPeaksPerRow.map((peaks, rowIndex) => {
       if (rowIndex == anchorRowIndex) {
         return this.peaksAdjustedToEndAt(x, peaks);
       }
@@ -329,13 +274,9 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getRightmostPeaksDifference(rowIndex, otherRowIndex) {
-    const rowPeaks = originalWavePeaksPerRow[rowIndex];
-    const otherRowPeaks = originalWavePeaksPerRow[otherRowIndex];
+    const rowPeaks = originalPeaksPerRow[rowIndex];
+    const otherRowPeaks = originalPeaksPerRow[otherRowIndex];
     return Math.abs(rowPeaks[rowPeaks.length - 1] - otherRowPeaks[otherRowPeaks.length - 1]);
-  }
-
-  getRowAt(y) {
-    return this._rowYs.findIndex(({ top, bottom }) => y >= top && y <= bottom);
   }
 
   stopAllRowAnimations() {
