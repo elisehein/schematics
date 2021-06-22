@@ -30,6 +30,7 @@ export default class Figure20Diagram extends SVGDiagram {
     );
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
     this._bars = this.drawBars();
+    this.positionBarsForWaveAnimations();
 
     this.importDependencies((Animations, PointerEvents) => {
       this._pointerEvents = new PointerEvents(this.svgNode, this._timerManager);
@@ -40,6 +41,10 @@ export default class Figure20Diagram extends SVGDiagram {
 
       this.animateWavesRandomly();
       this.bindPointerEventsToWaveMovements();
+
+      window.addEventListener("blur", () => this.stopAllRowAnimations());
+      window.addEventListener("focus", () => this.animateWavesRandomly());
+
       // onDone()
     });
   }
@@ -82,7 +87,6 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWavesRandomly() {
-    this.positionBarsForWaveAnimations();
     const randomDelay = new Duration({ milliseconds: randomIntBetween(100, 1000) });
 
     this._waveAnimationTimer = this._timerManager.setTimeout(() => {
