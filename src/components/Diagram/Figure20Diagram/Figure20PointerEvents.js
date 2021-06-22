@@ -41,6 +41,7 @@ export default class Figure20PointerEvents {
     this._svgNode.addEventListener("mouseleave", event => {
       if (this._respondingToMovement) {
         this._respondingToMovement = false;
+        this._timerManager.clearTimeout(this._leaveTimeoutTimer);
         this._leaveTimeoutTimer = null;
         onLeave(this.getPointerPositionInSVG(event));
       }
