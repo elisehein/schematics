@@ -42,9 +42,6 @@ export default class Figure20Diagram extends SVGDiagram {
       this.animateWavesRandomly();
       this.bindPointerEventsToWaveMovements();
 
-      window.addEventListener("blur", () => this.stopAllRowAnimations());
-      window.addEventListener("focus", () => this.animateWavesRandomly());
-
       // onDone()
     });
   }
