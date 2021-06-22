@@ -71,7 +71,7 @@ class InProgressAnimationsTracker {
   }
 
   isTargetAnimating(id) {
-    return Object.keys(this._animationCancelersByTarget).indexOf(id) > -1;
+    return Object.keys(this._animationCancelersByTarget).indexOf(`${id}`) > -1;
   }
 
   setTargetAnimating(id, canceler) {
