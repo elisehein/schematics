@@ -4,7 +4,6 @@ import WaveCoordinates from "./Figure20WaveCoordinates.js";
 import BezierEasing from "/helpers/BezierEasing.js";
 import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
-import animateWithEasing from "/helpers/animateWithEasing.js";
 
 const originalWavePeaksPerRow = [
   [0],
@@ -40,7 +39,7 @@ export default class Figure20Diagram extends SVGDiagram {
     Promise.all([
       import("./Figure20Animations.js"),
       import("./Figure20PointerEvents.js")
-    ]).then(modules => callback(...modules));
+    ]).then(modules => callback(modules[0].default, modules[1].default));
   }
 
   drawThumbnail() {
@@ -49,9 +48,9 @@ export default class Figure20Diagram extends SVGDiagram {
   drawBeforeCaption({ onDone }) {
     this._bars = this.drawBars();
 
-    this.importDependencies((animationsModule, pointerEventsModule) => {
-      this._pointerEvents = new pointerEventsModule.default(this.svgNode);
-      this._animations = new animationsModule.default(
+    this.importDependencies((Animations, PointerEvents) => {
+      this._pointerEvents = new PointerEvents(this.svgNode, this._timerManager);
+      this._animations = new Animations(
         this._timerManager,
         this.setTranslationForEachBar.bind(this)
       );
@@ -216,7 +215,7 @@ export default class Figure20Diagram extends SVGDiagram {
       if (waveFullyFormedByFractionOfTravelDistance == 0) {
         return 1;
       }
-      return Math.min(1, fractionOfDistanceTravelled / waveFullyFormedByFractionOfTravelDistance)
+      return Math.min(1, fractionOfDistanceTravelled / waveFullyFormedByFractionOfTravelDistance);
     };
 
     const translations = this._coords
@@ -272,19 +271,17 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   bindPointerEventsToWaveMovements() {
-    const pointerIsOnRow = ({ y }) => {
-      return this.getRowAt(y) > -1;
-    }
+    const pointerIsOnRow = ({ y }) => this.getRowAt(y) > -1;
 
     this._pointerEvents.respondToPointer({
       positionRespondsToMovement: pointerIsOnRow,
+      onEnter: this.stopAllRowAnimations.bind(this),
       onMove: this.matchWavePeaksToPosition.bind(this),
       onLeave: this.dissolveWavesAndRestartRandomAnimation.bind(this)
     });
   }
 
   matchWavePeaksToPosition({ x }) {
-    this.stopAllRowAnimations();
     this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 })
       .forEach((peaks, rowIndex) => {
         this.setWavePeaks({ peaks, rowBars: this._bars[rowIndex] });
@@ -293,7 +290,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   dissolveWavesAndRestartRandomAnimation({ x }) {
     const peaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
-    const duration = new Duration({ milliseconds: 600 });
+    const duration = new Duration({ milliseconds: 1600 });
     const extraTranslations = peaksPerRow.map(peaks => (
       this._coords.getDistanceToOverlapBars({
         initialNumberOfPeaks: peaks.length,
@@ -311,7 +308,7 @@ export default class Figure20Diagram extends SVGDiagram {
         return this.peaksAdjustedToEndAt(x, peaks);
       }
 
-      const diff = this.getRightmostPeaksDifference(rowIndex, anchorRowIndex)
+      const diff = this.getRightmostPeaksDifference(rowIndex, anchorRowIndex);
       const peaksEndX = anchorRowIndex > rowIndex ? x - diff : x + diff;
       return this.peaksAdjustedToEndAt(peaksEndX, peaks);
     });

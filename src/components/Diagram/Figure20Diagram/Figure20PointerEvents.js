@@ -1,29 +1,39 @@
+import Duration from "/helpers/Duration.js";
+
 export default class Figure20PointerEvents {
-  constructor(svgNode) {
+  constructor(svgNode, timerManager) {
     this._svgNode = svgNode;
     this._svgReferencePoint = svgNode.createSVGPoint();
+
+    this._timerManager = timerManager;
+    this._leaveTimeout = new Duration({ milliseconds: 400 });
   }
 
-  respondToPointer({ positionRespondsToMovement, onMove, onLeave }) {
+  respondToPointer({ positionRespondsToMovement, onEnter, onMove, onLeave }) {
     this._respondingToMovement = false;
     this.respondToMouseLeave(onLeave);
-    this.respondToMouseMove({ positionRespondsToMovement, onMove, onLeave });
+    this.respondToMouseMove({ positionRespondsToMovement, onEnter, onMove, onLeave });
   }
 
-  respondToMouseMove({ positionRespondsToMovement, onMove, onLeave }) {
+  respondToMouseMove({ positionRespondsToMovement, onEnter, onMove, onLeave }) {
     this._svgNode.addEventListener("mousemove", event => {
       const pointerPosition = this.getPointerPositionInSVG(event);
 
-      if (!positionRespondsToMovement(pointerPosition)) {
-        if (this._respondingToMovement) {
-          this._respondingToMovement = false;
-          onLeave(pointerPosition);
+      if (positionRespondsToMovement(pointerPosition)) {
+        if (!this._respondingToMovement) {
+          onEnter();
         }
-        return;
+
+        this._timerManager.clearTimeout(this._leaveTimeoutTimer);
+        this._leaveTimeoutTimer = null;
+        this._respondingToMovement = true;
+      } else {
+        this.leaveAfterTimeout(onLeave, pointerPosition);
       }
 
-      this._respondingToMovement = true;
-      onMove(pointerPosition);
+      if (this._respondingToMovement) {
+        onMove(pointerPosition);
+      }
     });
   }
 
@@ -31,10 +41,22 @@ export default class Figure20PointerEvents {
     this._svgNode.addEventListener("mouseleave", event => {
       if (this._respondingToMovement) {
         this._respondingToMovement = false;
-        const pointerPosition = this.getPointerPositionInSVG(event);
-        onLeave(pointerPosition);
+        this._leaveTimeoutTimer = null;
+        onLeave(this.getPointerPositionInSVG(event));
       }
     });
+  }
+
+  leaveAfterTimeout(onLeave, pointerPosition) {
+    if (!this._respondingToMovement || this._leaveTimeoutTimer) {
+      return;
+    }
+
+    this._leaveTimeoutTimer = this._timerManager.setTimeout(() => {
+      this._respondingToMovement = false;
+      this._leaveTimeoutTimer = null;
+      onLeave(pointerPosition);
+    }, this._leaveTimeout.ms);
   }
 
   getPointerPositionInSVG(event){
