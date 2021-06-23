@@ -1,4 +1,4 @@
-const originalWavePatternData = {
+const originalDrawingData = {
   peaksPerRow: [
     [0],
     [40],
@@ -16,46 +16,46 @@ const originalWavePatternData = {
 };
 
 export default class RowBarDrawing {
-  constructor(svgHeight, svgShapeFactory, wavePatternData = originalWavePatternData) {
+  constructor(svgHeight, svgShapeFactory, drawingData = originalDrawingData) {
     this._svgHeight = svgHeight;
     this._svgShapeFactory = svgShapeFactory;
-    this._wavePatternData = wavePatternData;
+    this._drawingData = drawingData;
 
     this._rowYs = this.precalculateRowYs();
   }
 
   get numberOfRows() {
-    return this._wavePatternData.numberOfRows;
+    return this._drawingData.numberOfRows;
   }
 
   get rowsHeight() {
-    return this._svgHeight - (2 * this._wavePatternData.verticalInset);
+    return this._svgHeight - (2 * this._drawingData.verticalInset);
   }
 
   get numberOfGaps() {
-    return this._wavePatternData.numberOfRows - 1;
+    return this._drawingData.numberOfRows - 1;
   }
 
   get rowGap() {
-    const { numberOfRows, rowToGapRatio } = this._wavePatternData;
+    const { numberOfRows, rowToGapRatio } = this._drawingData;
     return this.rowsHeight / (numberOfRows * rowToGapRatio + this.numberOfGaps);
   }
 
   get singleRowHeight() {
-    return this.rowGap * this._wavePatternData.rowToGapRatio;
+    return this.rowGap * this._drawingData.rowToGapRatio;
   }
 
   get barGap() {
-    return this._wavePatternData.barGap;
+    return this._drawingData.barGap;
   }
 
   get barsPerRow() {
-    return this._wavePatternData.barsPerRow;
+    return this._drawingData.barsPerRow;
   }
 
   precalculateRowYs() {
     const rowYs = [];
-    const { numberOfRows, verticalInset } = this._wavePatternData;
+    const { numberOfRows, verticalInset } = this._drawingData;
 
     for (let rowIndex = 0; rowIndex < numberOfRows; rowIndex += 1) {
       const topY = verticalInset + (rowIndex * (this.singleRowHeight + this.rowGap));
@@ -69,7 +69,7 @@ export default class RowBarDrawing {
   drawBars(barXGetter) {
     const bars = [];
     const groupNodes = [];
-    const { barsPerRow, numberOfRows } = this._wavePatternData;
+    const { barsPerRow, numberOfRows } = this._drawingData;
 
     for (let rowIndex = 0; rowIndex < numberOfRows; rowIndex += 1) {
       const barsForRow = [];
@@ -105,4 +105,4 @@ export default class RowBarDrawing {
 
 }
 
-export const originalPeaksPerRow = originalWavePatternData.peaksPerRow;
+export const originalPeaksPerRowData = originalDrawingData.peaksPerRow;

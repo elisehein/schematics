@@ -1,10 +1,12 @@
 import { SVGDiagram } from "../Diagram.js";
-import WaveCoordinates from "./Figure20WaveCoordinates.js";
-import RowBarDrawing, { originalPeaksPerRow } from "./Figure20RowBarDrawing.js";
+import WaveCoordinates, { WavePeaks } from "./Figure20WaveCoordinates.js";
+import RowBarDrawing, { originalPeaksPerRowData } from "./Figure20RowBarDrawing.js";
 
 import BezierEasing from "/helpers/BezierEasing.js";
 import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
+
+const originalPeaksPerRow = originalPeaksPerRowData.map(peaks => new WavePeaks(peaks));
 
 export default class Figure20Diagram extends SVGDiagram {
   constructor(...args) {
@@ -60,26 +62,30 @@ export default class Figure20Diagram extends SVGDiagram {
   precalculatePeaksForRowWaveAnimations() {
     return originalPeaksPerRow.map(peaks => {
       const overflow = this._waves.waveWidth;
-      const initial = this.peaksAdjustedToEndAt(-1 * overflow, peaks);
-
       const finalPeaksStartX = this.svgSize + overflow;
-      const final = this.peaksAdjustedToStartAt(finalPeaksStartX, peaks);
 
-      return { initial, final };
+      return {
+        initial: peaks.adjustedToEndAt(-1 * overflow),
+        final: peaks.adjustedToStartAt(finalPeaksStartX)
+      };
     });
   }
 
-  setWavePeaks({ peaks, rowBars }) {
+  setWavePeaks({ peaks, rowIndex }) {
     const translatedXCoordinates = this._waves.getTranslationsForWaves(peaks);
-    rowBars.forEach((bar, index) => {
-      bar.node.setAttribute("transform", `translate(${translatedXCoordinates[index]} 0)`);
+    this.setTranslationForEachBar(rowIndex, index => translatedXCoordinates[index]);
+  }
+
+  setTranslationForEachBar(rowIndex, translationGetter) {
+    this._bars[rowIndex].forEach((bar, index) => {
+      bar.node.setAttribute("transform", `translate(${translationGetter(index)} 0)`);
     });
   }
 
   positionBarsForWaveAnimations() {
-    this.forEachRow((rowIndex, rowBars) => {
+    this.forEachRow(rowIndex => {
       const { initial: peaks } = this._peaksForRowWaveAnimations[rowIndex];
-      this.setWavePeaks({ peaks, rowBars });
+      this.setWavePeaks({ peaks, rowIndex });
     });
   }
 
@@ -125,7 +131,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateOriginalWavePeaks(rowIndex, delay, onDone) {
-    const initialPeaks = originalPeaksPerRow[rowIndex].map(peakX => peakX - this.svgSize);
+    const initialPeaks = originalPeaksPerRow[rowIndex].adjustedBy(this.svgSize * -1);
     const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
     const options = {
@@ -148,7 +154,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks, animateWaveAppearing = false) {
-    const travelDistance = finalPeaks[0] - initialPeaks[0];
+    const travelDistance = initialPeaks.rightmostPeakDifference(finalPeaks);
     const extraTranslationDuringTravel =
       this._waves.getDistanceToOverlapBarsBetweenPeaks(initialPeaks.length).rightward;
     return { travelDistance, extraTranslationDuringTravel, animateWaveAppearing };
@@ -188,8 +194,8 @@ export default class Figure20Diagram extends SVGDiagram {
     const options = { duration, easing };
 
     const peaks = {
-      initial: appearing ? [] : peaksToToggle,
-      final: appearing ? peaksToToggle : []
+      initial: appearing ? WavePeaks.none : peaksToToggle,
+      final: appearing ? peaksToToggle : WavePeaks.none
     };
 
     const initialTranslations = this._waves.getTranslationsForWaves(peaks.initial);
@@ -200,12 +206,6 @@ export default class Figure20Diagram extends SVGDiagram {
     this._animations.animateBetweenTranslations(
       rowIndex, initialTranslations, finalTranslations, options , onDone
     );
-  }
-
-  setTranslationForEachBar(rowIndex, translationGetter) {
-    this._bars[rowIndex].forEach((bar, index) => {
-      bar.node.setAttribute("transform", `translate(${translationGetter(index)} 0)`);
-    });
   }
 
   bindPointerEventsToWaveMovements() {
@@ -222,7 +222,7 @@ export default class Figure20Diagram extends SVGDiagram {
   matchWavePeaksToPosition({ x }) {
     this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 })
       .forEach((peaks, rowIndex) => {
-        this.setWavePeaks({ peaks, rowBars: this._bars[rowIndex] });
+        this.setWavePeaks({ peaks, rowIndex });
       });
   }
 
@@ -260,33 +260,14 @@ export default class Figure20Diagram extends SVGDiagram {
   getWavePeaksAnchoredTo({ x, anchorRowIndex }) {
     return originalPeaksPerRow.map((peaks, rowIndex) => {
       if (rowIndex == anchorRowIndex) {
-        return this.peaksAdjustedToEndAt(x, peaks);
+        return peaks.adjustedToEndAt(x);
       }
 
-      const diff = this.getRightmostPeaksDifference(rowIndex, anchorRowIndex);
+      const anchorPeaks = originalPeaksPerRow[anchorRowIndex];
+      const diff = peaks.rightmostPeakDifference(anchorPeaks);
       const peaksEndX = anchorRowIndex > rowIndex ? x - diff : x + diff;
-      return this.peaksAdjustedToEndAt(peaksEndX, peaks);
+      return peaks.adjustedToEndAt(peaksEndX);
     });
-  }
-
-  peaksAdjustedToEndAt(x, peaks) {
-    const rightmostPeakX = peaks[peaks.length - 1];
-    const difference = Math.abs(x - rightmostPeakX);
-    const direction = x > rightmostPeakX ? 1 : -1;
-    return peaks.map(peakX => peakX + (difference * direction));
-  }
-
-  peaksAdjustedToStartAt(x, peaks) {
-    const leftmostPeak = peaks[0];
-    const difference = Math.abs(x - leftmostPeak);
-    const direction = x > leftmostPeak ? 1 : -1;
-    return peaks.map(peakX => peakX + (difference * direction));
-  }
-
-  getRightmostPeaksDifference(rowIndex, otherRowIndex) {
-    const rowPeaks = originalPeaksPerRow[rowIndex];
-    const otherRowPeaks = originalPeaksPerRow[otherRowIndex];
-    return Math.abs(rowPeaks[rowPeaks.length - 1] - otherRowPeaks[otherRowPeaks.length - 1]);
   }
 
   stopAllRowAnimations() {

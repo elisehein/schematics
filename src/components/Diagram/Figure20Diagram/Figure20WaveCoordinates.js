@@ -27,18 +27,17 @@ export default class WaveCoordinates {
   }
 
   getTranslationsForWaves(peaks) {
-    const keyForPeaks = (peaks.length ? peaks : ["empty"]).join(";");
-    if (this._memoizedTranslationsForWavePeaks[keyForPeaks]) {
-      return this._memoizedTranslationsForWavePeaks[keyForPeaks];
+    if (this._memoizedTranslationsForWavePeaks[peaks.key]) {
+      return this._memoizedTranslationsForWavePeaks[peaks.key];
     }
 
     const initialTranslations = Array(this._barsPerRow).fill(0);
-    const translations = peaks.reduce((translationsSoFar, peakX, waveCenterIndex) => {
+    const translations = peaks.values.reduce((translationsSoFar, peakX, waveCenterIndex) => {
       const upcomingWaves = peaks.length - 1 - waveCenterIndex;
       return this.getTranslationsForWave(peakX, upcomingWaves, translationsSoFar);
     }, initialTranslations);
 
-    this._memoizedTranslationsForWavePeaks[keyForPeaks] = translations;
+    this._memoizedTranslationsForWavePeaks[peaks.key] = translations;
     return translations;
   }
 
@@ -83,7 +82,7 @@ export default class WaveCoordinates {
      * +1 to account for zero distance travelled */
     return Array(Math.floor(totalTravelDistance) + 1).fill()
       .map((_, distanceTravelledSoFar) => {
-        const adjustedPeaks = initialPeaks.map(x => x + distanceTravelledSoFar);
+        const adjustedPeaks = initialPeaks.adjustedBy(distanceTravelledSoFar);
         return this.getTranslationsForWaves(adjustedPeaks);
       });
   }
@@ -170,3 +169,44 @@ function scaleDistance(distance, previousDistance, scaleFactor) {
   const scaledDifference = differenceBetweenDistances * scaleFactor;
   return distance + scaledDifference;
 }
+
+export function WavePeaks(peaks) {
+  const rightmostPeak = peaks[peaks.length - 1];
+  const leftmostPeak = peaks[0];
+  const length = peaks.length;
+  const key = peaks.length ? peaks.join(";") : "empty";
+  const values = peaks;
+
+  return Object.freeze({
+    values,
+    length,
+    rightmostPeak,
+    leftmostPeak,
+    key,
+
+    rightmostPeakDifference(otherWavePeaks) {
+      return Math.abs(rightmostPeak - otherWavePeaks.rightmostPeak);
+    },
+
+    adjustedBy(x) {
+      return new WavePeaks(peaks.map(peak => peak + x));
+    },
+
+    anchoredTo(x, anchorPoint) {
+      const difference = Math.abs(x - anchorPoint);
+      const direction = x > anchorPoint ? 1 : -1;
+      return this.adjustedBy(difference * direction);
+    },
+
+    adjustedToStartAt(x) {
+      return this.anchoredTo(x, leftmostPeak);
+    },
+
+    adjustedToEndAt(x) {
+      return this.anchoredTo(x, rightmostPeak);
+    }
+  });
+}
+
+WavePeaks.none = new WavePeaks([]);
+
