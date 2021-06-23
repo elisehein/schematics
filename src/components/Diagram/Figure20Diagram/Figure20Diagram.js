@@ -77,7 +77,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   positionBarsForWaveAnimations() {
-    this._bars.forEach((rowBars, rowIndex) => {
+    this.forEachRow((rowIndex, rowBars) => {
       const { initial: peaks } = this._peaksForRowWaveAnimations[rowIndex];
       this.setWavePeaks({ peaks, rowBars });
     });
@@ -107,21 +107,24 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateOriginalWavesInParallel(onDone) {
-    const timeout = new Duration({ seconds: 4 });
-    this._animations.waitForAnimationsToFinish(timeout, () => {
-      this._bars.forEach((_, rowIndex) => {
-        this._timerManager.setTimeout(() => {
-          this.animateOriginalWavePattern(rowIndex, () => {
-            if (rowIndex == 0) {
-              onDone();
-            }
-          });
-        }, (this._bars.length - 1 - rowIndex) * 150);
+    const animate = () => {
+      this.forEachRow(rowIndex => {
+        const delay = new Duration({
+          milliseconds: (this._drawing.numberOfRows - 1 - rowIndex) * 150
+        });
+        this.animateOriginalWavePeaks(rowIndex, delay, () => {
+          if (rowIndex == 0) {
+            onDone();
+          }
+        });
       });
-    });
+    };
+
+    const timeout = new Duration({ seconds: 4 });
+    this._animations.waitForAnimationsToFinish(timeout, animate);
   }
 
-  animateOriginalWavePattern(rowIndex, onDone) {
+  animateOriginalWavePeaks(rowIndex, delay, onDone) {
     const initialPeaks = originalPeaksPerRow[rowIndex].map(peakX => peakX - this.svgSize);
     const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
@@ -129,7 +132,9 @@ export default class Figure20Diagram extends SVGDiagram {
       duration: new Duration({ seconds: 4 }),
       easing: BezierEasing.linear
     };
-    this.animateTravellingWaves(initialPeaks, travelData, options, rowIndex, onDone);
+    this._timerManager.setTimeout(() => {
+      this.animateTravellingWaves(initialPeaks, travelData, options, rowIndex, onDone);
+    }, delay.ms);
   }
 
   animateFullWaveLifecycle(duration, rowIndex) {
@@ -178,19 +183,6 @@ export default class Figure20Diagram extends SVGDiagram {
     this._animations.animateAcrossTranslations(rowIndex, translations, options, onDone);
   }
 
-  toggleWavePeaksForAllRows(appearing, peaks, duration, extraTranslations, onDone = () => {}) {
-    this._bars.forEach((_, rowIndex) => {
-      const extraTranslation = extraTranslations[rowIndex];
-      this.toggleWavePeaks(
-        rowIndex, appearing, peaks[rowIndex], duration, extraTranslation, () => {
-          if (rowIndex == 0) {
-            onDone();
-          }
-        }
-      );
-    });
-  }
-
   toggleWavePeaks(rowIndex, appearing, peaksToToggle, duration, extraTranslation, onDone = () => {}) {
     const easing = appearing ? BezierEasing.easeInCubic : BezierEasing.easeOutCubic;
     const options = { duration, easing };
@@ -236,15 +228,32 @@ export default class Figure20Diagram extends SVGDiagram {
 
   dissolveWavesAndRestartRandomAnimation({ x }) {
     const peaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
-    const duration = new Duration({ milliseconds: 1600 });
+    const duration = new Duration({ milliseconds: 500 });
     const extraTranslations = peaksPerRow.map(peaks => (
       this._waves.getDistanceToOverlapBars({
         initialNumberOfPeaks: peaks.length,
         finalNumberOfPeaks: 0
       }).min
     ));
-    this.toggleWavePeaksForAllRows(false, peaksPerRow, duration, extraTranslations, () => {
-      this.animateWavesRandomly();
+
+    this.dissolveWavesAfterIncreasingDelay(peaksPerRow, extraTranslations, duration);
+  }
+
+  dissolveWavesAfterIncreasingDelay(peaksPerRow, extraTranslations, duration) {
+    const dissolveWaves = rowIndex => {
+      this.toggleWavePeaks(
+        rowIndex, false, peaksPerRow[rowIndex], duration, extraTranslations[rowIndex], () => {
+          if (rowIndex == 0) {
+            this.animateWavesRandomly();
+          }
+        }
+      );
+    };
+
+    this.forEachRow(rowIndex => {
+      this._timerManager.setTimeout(() => {
+        dissolveWaves(rowIndex);
+      }, 70 * (this._drawing.numberOfRows - rowIndex - 1));
     });
   }
 
@@ -284,6 +293,12 @@ export default class Figure20Diagram extends SVGDiagram {
     this._timerManager.clearAllIntervals();
     this._timerManager.clearAllTimeouts();
     this._animations.cancelAllAnimations();
+  }
+
+  forEachRow(callback) {
+    for (let rowIndex = 0; rowIndex < this._drawing.numberOfRows; rowIndex += 1) {
+      callback(rowIndex, this._bars[rowIndex]);
+    }
   }
 }
 
