@@ -61,7 +61,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   precalculatePeaksForRowWaveAnimations() {
     return originalPeaksPerRow.map(peaks => {
-      const overflow = this._waves.waveWidth;
+      const overflow = Math.round(this._waves.waveWidth);
       const finalPeaksStartX = this.svgSize + overflow;
 
       return {
