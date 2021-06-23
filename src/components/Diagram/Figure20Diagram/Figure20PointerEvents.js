@@ -21,7 +21,7 @@ export default class Figure20PointerEvents {
 
       if (positionRespondsToMovement(pointerPosition)) {
         if (!this._respondingToMovement) {
-          onEnter();
+          onEnter(pointerPosition);
         }
 
         this._timerManager.clearTimeout(this._leaveTimeoutTimer);
