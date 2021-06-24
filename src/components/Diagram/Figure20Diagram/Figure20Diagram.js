@@ -245,7 +245,8 @@ export default class Figure20Diagram extends SVGDiagram {
     const targetPeaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
 
     this.forEachRow(rowIndex => {
-      this.matchWavePeaksToPositionFromCurrentPosition(rowIndex, targetPeaksPerRow[rowIndex])
+      const targetPeaks = targetPeaksPerRow[rowIndex];
+      this.matchWavePeaksToPositionFromCurrentPosition(rowIndex, targetPeaks);
     });
 
     this._pointerEnteredButNotMovedYet = false;
@@ -253,48 +254,52 @@ export default class Figure20Diagram extends SVGDiagram {
 
   matchWavePeaksToPositionFromCurrentPosition(rowIndex, targetPeaks) {
     if (this._pointerEnteredButNotMovedYet || this._animations.anyAnimationsInProgress()) {
-      const duration = new Duration({ milliseconds: 200 });
-      const easing = BezierEasing.linear;
-      const initialTranslations = this._bars[rowIndex].map(bar => parseFloat(bar.node.dataset.translation));
-      const finalTranslations = this._waves.getTranslationsForWaves(targetPeaks);
-      this._animations.animateBetweenTranslations(rowIndex, initialTranslations, finalTranslations, { duration, easing });
+      this.animateWaveFormationFromCurrentPosition(targetPeaks, rowIndex);
     } else {
       this.setWavePeaks({ peaks: targetPeaks, rowIndex });
     }
   }
 
-  dissolveWavesAndRestartRandomAnimation({ x }) {
+  animateWaveFormationFromCurrentPosition(peaks, rowIndex) {
+    const options = {
+      duration: new Duration({ milliseconds: 1000 }),
+      easing: BezierEasing.linear
+    };
+    const initial = this.getCurrentTranslations(rowIndex);
+    const final = this._waves.getTranslationsForWaves(peaks);
+    this._animations.animateBetweenTranslations(rowIndex, initial, final, options);
+  }
+
+  dissolveWavesAndRestartRandomAnimation() {
+    this.stopAllRowAnimations();
     this._pointerEnteredButNotMovedYet = false;
 
-    // Need to dissolve taking into account how far along the wave had actually
-    // formed in the first place
-    const peaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
-    const duration = new Duration({ milliseconds: 300 });
-    const extraTranslations = peaksPerRow.map(peaks => (
+    const duration = new Duration({ milliseconds: 1000 });
+    const options = { duration, easing: BezierEasing.linear };
+    const extraTranslations = originalPeaksPerRow.map(peaks => (
       this._waves.getDistanceToOverlapBars({
         initialNumberOfPeaks: peaks.length,
         finalNumberOfPeaks: 0
       }).min
     ));
 
-    this.dissolveWavesAfterIncreasingDelay(peaksPerRow, extraTranslations, duration, () => {
+    this.dissolveWavesAfterIncreasingDelay(extraTranslations, options, () => {
       this.animateWavesRandomly();
     });
   }
 
-  dissolveWavesAfterIncreasingDelay(peaksPerRow, extraTranslations, duration, onDone) {
-    this._dissolutionInProgressPerRow = Array(this._drawing.numberOfRows).fill(false);
+  dissolveWavesAfterIncreasingDelay(extraTranslationsPerRow, options, onDone) {
+    const final = this._waves.getTranslationsForWaves(WavePeaks.none);
 
     const dissolveWaves = rowIndex => {
-      this._dissolutionInProgressPerRow[rowIndex] = true;
-      this.toggleWavePeaks(
-        rowIndex, false, peaksPerRow[rowIndex], duration, extraTranslations[rowIndex], () => {
-          this._dissolutionInProgressPerRow[rowIndex] = false;
+      const initial = this.getCurrentTranslations(rowIndex);
+      const adjustedFinal = final.map(translation => translation + extraTranslationsPerRow[rowIndex]);
+      this._animations
+        .animateBetweenTranslations(rowIndex, initial, adjustedFinal, options, () => {
           if (rowIndex == 0) {
             onDone();
           }
-        }
-      );
+        });
     };
 
     this.forEachRow(rowIndex => {
@@ -306,10 +311,6 @@ export default class Figure20Diagram extends SVGDiagram {
 
   getWavePeaksAnchoredTo({ x, anchorRowIndex }) {
     return originalPeaksPerRow.map((peaks, rowIndex) => {
-      if (rowIndex == anchorRowIndex) {
-        return peaks.adjustedToEndAt(x);
-      }
-
       const anchorPeaks = originalPeaksPerRow[anchorRowIndex];
       const diff = peaks.rightmostPeakDifference(anchorPeaks);
       const peaksEndX = anchorRowIndex > rowIndex ? x - diff : x + diff;
@@ -327,6 +328,10 @@ export default class Figure20Diagram extends SVGDiagram {
     for (let rowIndex = 0; rowIndex < this._drawing.numberOfRows; rowIndex += 1) {
       callback(rowIndex, this._bars[rowIndex]);
     }
+  }
+
+  getCurrentTranslations(rowIndex) {
+    return this._bars[rowIndex].map(bar => parseFloat(bar.node.dataset.translation));
   }
 }
 
