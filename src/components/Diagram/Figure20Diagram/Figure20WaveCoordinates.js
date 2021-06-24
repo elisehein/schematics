@@ -89,15 +89,13 @@ export default class WaveCoordinates {
 
   getDistanceToOverlapBarsBetweenPeaks(numberOfPeaks) {
     return this.getDistanceToOverlapBars({
-      initialNumberOfPeaks: numberOfPeaks,
-      finalNumberOfPeaks: numberOfPeaks
+      numberOfPeaks,
+      otherNumberOfPeaks: numberOfPeaks
     });
   }
 
-  getDistanceToOverlapBars({ initialNumberOfPeaks, finalNumberOfPeaks }) {
-    const maxTranslation =
-      (initialNumberOfPeaks * this.waveWidth) +
-      (finalNumberOfPeaks * this.waveWidth);
+  getDistanceToOverlapBars({ numberOfPeaks, otherNumberOfPeaks }) {
+    const maxTranslation = (numberOfPeaks + otherNumberOfPeaks) * this.waveWidth;
     const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
     const rightWardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
     const leftwardCompensation = this._barGap - rightWardCompensation;

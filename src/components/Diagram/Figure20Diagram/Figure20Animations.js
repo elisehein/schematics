@@ -27,7 +27,7 @@ export default class Figure20RowAnimations {
     const numberOfTranslations = translations.length;
 
     this.animateBarTranslations(targetRow, (fractionOfAnimationDone, barIndex) => {
-      const index = Math.floor(numberOfTranslations * fractionOfAnimationDone);
+      const index = Math.floor((numberOfTranslations - 1) * fractionOfAnimationDone);
       return translations[index][barIndex];
     }, options, onDone);
   }
@@ -48,6 +48,12 @@ export default class Figure20RowAnimations {
         targetRow, barTranslationGetter.bind(null, fractionOfAnimationDone)
       );
     }, { onDone: () => {
+      // We make sure to finish the animation by getting all bars to the intended
+      // positions. This is necessary for very short durations where we don't call
+      // requestAnimationFrame enough times to make sure the final position is registered.
+      this._applyTranslationsToRowBars(
+        targetRow, barTranslationGetter.bind(null, 1)
+      );
       this._inProgressAnimationTracker.unsetTargetAnimating(targetRow);
       onDone(targetRow);
     } });
