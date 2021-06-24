@@ -41,14 +41,8 @@ export default class Figure20Diagram extends SVGDiagram {
         this.setTranslationForEachBar.bind(this)
       );
 
-      // this.animateWavesRandomly();
-      // this.bindPointerEventsToWaveMovements();
-      this.animateTravellingWaves(
-        new WavePeaks([150]),
-        { travelDistance: 100, fractionOfWaveFormedBeforeTravel: 0.9 },
-        { duration: new Duration({ seconds: 5 }), easing: BezierEasing.linear },
-        0
-      );
+      this.animateWavesRandomly();
+      this.bindPointerEventsToWaveMovements();
 
       // onDone()
     });
@@ -212,7 +206,7 @@ export default class Figure20Diagram extends SVGDiagram {
     return Math.min(1, fractionOfWaveFormed);
   }
 
-  toggleWavePeaks(rowIndex, appearing, peaksToToggle, duration, extraTranslation, onDone = () => {}) {
+  toggleWavePeaks(rowIndex, appearing, peaksToToggle, duration, extraTranslation = 0, onDone = () => {}) {
     const easing = appearing ? BezierEasing.easeInCubic : BezierEasing.easeOutCubic;
     const options = { duration, easing };
 
@@ -236,37 +230,46 @@ export default class Figure20Diagram extends SVGDiagram {
 
     this._pointerEvents.respondToPointer({
       positionRespondsToMovement: pointerIsOnRow,
-      onEnter: this.stopAllRowAnimations.bind(this),
+      onEnter: this.prepareToAnimatePeaks.bind(this),
       onMove: this.matchWavePeaksToPosition.bind(this),
-      onLeave: () => {}
-      // onLeave: this.dissolveWavesAndRestartRandomAnimation.bind(this)
+      onLeave: this.dissolveWavesAndRestartRandomAnimation.bind(this)
     });
   }
 
+  prepareToAnimatePeaks() {
+    this.stopAllRowAnimations();
+    this._pointerEnteredButNotMovedYet = true;
+  }
+
   matchWavePeaksToPosition({ x }) {
-    // If peaks not fully formed yet,
-    //   - animate peak formation while moving from the position they were in before
-    // else
-    //   - no animation, set peaks to given position
-    const targetPeaks = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
-    const currentTranslations = this._bars.map(rowBars => (
-      rowBars.map(bar => parseFloat(bar.node.dataset.translation))
-    ));
+    const targetPeaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
 
-    if (this._waveFormationInProgress) {
+    this.forEachRow(rowIndex => {
+      this.matchWavePeaksToPositionFromCurrentPosition(rowIndex, targetPeaksPerRow[rowIndex])
+    });
 
+    this._pointerEnteredButNotMovedYet = false;
+  }
+
+  matchWavePeaksToPositionFromCurrentPosition(rowIndex, targetPeaks) {
+    if (this._pointerEnteredButNotMovedYet || this._animations.anyAnimationsInProgress()) {
+      const duration = new Duration({ milliseconds: 200 });
+      const easing = BezierEasing.linear;
+      const initialTranslations = this._bars[rowIndex].map(bar => parseFloat(bar.node.dataset.translation));
+      const finalTranslations = this._waves.getTranslationsForWaves(targetPeaks);
+      this._animations.animateBetweenTranslations(rowIndex, initialTranslations, finalTranslations, { duration, easing });
     } else {
-      targetPeaks.forEach((peaks, rowIndex) => {
-        this.setWavePeaks({ peaks, rowIndex });
-      });
+      this.setWavePeaks({ peaks: targetPeaks, rowIndex });
     }
   }
 
   dissolveWavesAndRestartRandomAnimation({ x }) {
+    this._pointerEnteredButNotMovedYet = false;
+
     // Need to dissolve taking into account how far along the wave had actually
     // formed in the first place
     const peaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
-    const duration = new Duration({ milliseconds: 500 });
+    const duration = new Duration({ milliseconds: 300 });
     const extraTranslations = peaksPerRow.map(peaks => (
       this._waves.getDistanceToOverlapBars({
         initialNumberOfPeaks: peaks.length,
@@ -274,15 +277,21 @@ export default class Figure20Diagram extends SVGDiagram {
       }).min
     ));
 
-    this.dissolveWavesAfterIncreasingDelay(peaksPerRow, extraTranslations, duration);
+    this.dissolveWavesAfterIncreasingDelay(peaksPerRow, extraTranslations, duration, () => {
+      this.animateWavesRandomly();
+    });
   }
 
-  dissolveWavesAfterIncreasingDelay(peaksPerRow, extraTranslations, duration) {
+  dissolveWavesAfterIncreasingDelay(peaksPerRow, extraTranslations, duration, onDone) {
+    this._dissolutionInProgressPerRow = Array(this._drawing.numberOfRows).fill(false);
+
     const dissolveWaves = rowIndex => {
+      this._dissolutionInProgressPerRow[rowIndex] = true;
       this.toggleWavePeaks(
         rowIndex, false, peaksPerRow[rowIndex], duration, extraTranslations[rowIndex], () => {
+          this._dissolutionInProgressPerRow[rowIndex] = false;
           if (rowIndex == 0) {
-            this.animateWavesRandomly();
+            onDone();
           }
         }
       );

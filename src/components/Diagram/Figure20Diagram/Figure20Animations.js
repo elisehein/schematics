@@ -55,8 +55,12 @@ export default class Figure20RowAnimations {
     this._inProgressAnimationTracker.setTargetAnimating(targetRow, canceler);
   }
 
+  anyAnimationsInProgress() {
+    return this._inProgressAnimationTracker.anyTargetsAnimating();
+  }
+
   cancelAllAnimations() {
-    this._inProgressAnimationTracker.cancelAllAnimations();
+    return this._inProgressAnimationTracker.cancelAllAnimations();
   }
 
   waitForAnimationsToFinish(timeout, onDone) {
@@ -87,10 +91,13 @@ class InProgressAnimationsTracker {
   }
 
   cancelAllAnimations() {
-    Object.keys(this._animationCancelersByTarget).forEach(rowIndex => {
-      this._animationCancelersByTarget[rowIndex]();
-      this.unsetTargetAnimating(rowIndex);
+    const fractionOfAnimationDoneByTarget = {};
+    Object.keys(this._animationCancelersByTarget).forEach(id => {
+      const fractionOfAnimationDone = this._animationCancelersByTarget[id]();
+      this.unsetTargetAnimating(id);
+      fractionOfAnimationDoneByTarget[id] = fractionOfAnimationDone;
     });
+    return fractionOfAnimationDoneByTarget;
   }
 
   waitForAnimationsToFinish(timeout, onDone) {
