@@ -35,7 +35,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this.positionBarsForWaveAnimations();
 
     this.importDependencies((Animations, PointerEvents) => {
-      this._pointerEvents = new PointerEvents(this.svgNode, this._timerManager);
+      this._pointerEvents = new PointerEvents(this.svgNode);
       this._animations = new Animations(
         this._timerManager,
         this.setTranslationForEachBar.bind(this)
@@ -226,10 +226,10 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   bindPointerEventsToWaveMovements() {
-    const pointerIsOnRow = ({ y }) => this._drawing.getRowAt(y) > -1;
+    const pointerIsOnRows = ({ y }) => !this._drawing.positionIsInInsets(y);
 
     this._pointerEvents.respondToPointer({
-      positionRespondsToMovement: pointerIsOnRow,
+      positionRespondsToMovement: pointerIsOnRows,
       onEnter: this.prepareToAnimatePeaks.bind(this),
       onMove: this.matchWavePeaksToPosition.bind(this),
       onLeave: this.dissolveWavesAndRestartRandomAnimation.bind(this)
@@ -262,7 +262,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   animateWaveFormationFromCurrentPosition(peaks, rowIndex) {
     const options = {
-      duration: new Duration({ milliseconds: 1000 }),
+      duration: new Duration({ milliseconds: 100 }),
       easing: BezierEasing.linear
     };
     const initial = this.getCurrentTranslations(rowIndex);
@@ -274,7 +274,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this.stopAllRowAnimations();
     this._pointerEnteredButNotMovedYet = false;
 
-    const duration = new Duration({ milliseconds: 1000 });
+    const duration = new Duration({ milliseconds: 100 });
     const options = { duration, easing: BezierEasing.linear };
     const extraTranslations = originalPeaksPerRow.map(peaks => (
       this._waves.getDistanceToOverlapBars({

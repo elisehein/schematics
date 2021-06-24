@@ -103,6 +103,13 @@ export default class RowBarDrawing {
     return this._rowYs.findIndex(({ top, bottom }) => y >= top && y <= bottom);
   }
 
+  positionIsInInsets(y) {
+    return (
+      y < this._drawingData.verticalInset &&
+      y > this._svgHeight - this._drawingData.verticalInset
+    );
+  }
+
 }
 
 export const originalPeaksPerRowData = originalDrawingData.peaksPerRow;
