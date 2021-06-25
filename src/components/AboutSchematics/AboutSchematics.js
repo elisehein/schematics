@@ -2,6 +2,7 @@ import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 export default class AboutSchematics extends HTMLElement {
   connectedCallback() {
+    /* eslint-disable max-len */
     this.innerHTML = `
 <article>
   <p>
@@ -40,6 +41,7 @@ export default class AboutSchematics extends HTMLElement {
 
 </article>
     `;
+    /* eslint-enable max-len */
   }
 
   show() {

@@ -78,7 +78,8 @@ export default class WaveCoordinates {
 
     /* We only calculate translations at each integer for now.
      * If the animation speed is reduced a lot, we may need to also calculate
-     * translations at fractional wave travel distances. That will require a map instead of an array.
+     * translations at fractional wave travel distances. That will require a map
+     * instead of an array.
      * +1 to account for zero distance travelled */
     return Array(Math.floor(totalTravelDistance) + 1).fill()
       .map((_, distanceTravelledSoFar) => {
@@ -97,7 +98,8 @@ export default class WaveCoordinates {
   getDistanceToOverlapBars({ numberOfPeaks, otherNumberOfPeaks }) {
     const maxTranslation = (numberOfPeaks + otherNumberOfPeaks) * this.waveWidth;
     const barsPerCumulativeTranslation = Math.floor(maxTranslation / this._barGap);
-    const rightWardCompensation = (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
+    const rightWardCompensation =
+      (barsPerCumulativeTranslation + 1) * this._barGap - maxTranslation;
     const leftwardCompensation = this._barGap - rightWardCompensation;
 
     const roundedRightWardCompensation = Math.round(rightWardCompensation * 10) / 10;
@@ -124,7 +126,9 @@ export default class WaveCoordinates {
   }
 }
 
-function generateDistancesFromWavePeak(scaleFactor, barGap, maxBarsFromWaveCenter, minDistanceFromPeak) {
+function generateDistancesFromWavePeak(
+  scaleFactor, barGap, maxBarsFromWaveCenter, minDistanceFromPeak
+) {
   const distanceGetter = getDistanceGetter(scaleFactor, minDistanceFromPeak, barGap);
 
   return Array(maxBarsFromWaveCenter)

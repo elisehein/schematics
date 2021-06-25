@@ -81,7 +81,9 @@ export default class Figure14Diagram extends SVGDiagram {
       // Since each element should animate for the same duration, it doesn't matter which one
       // the onDone event is attached to.
       const onAxisAnimated = index == 0 ? onDone : () => {};
-      this.animateAxis(axisData.axis, axisData.coords2D, axisData.coords3D, duration, onAxisAnimated);
+      this.animateAxis(
+        axisData.axis, axisData.coords2D, axisData.coords3D, duration, onAxisAnimated
+      );
     });
   }
 

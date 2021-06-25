@@ -12,6 +12,7 @@ const commonAnimationProps = duration => ({
   keySplines: BezierEasing.easeInOutCubic.smilString
 });
 
+/* eslint-disable max-len */
 const starCoords = [
     { x: 15, allY: [29, 50, 63, 67] },
     { x: 28, allY: [70] },
@@ -39,6 +40,7 @@ const starCoords = [
     { x: 269, allY: [56] },
     { x: 286, allY: [46, 53, 191, 194, 205, 211, 215, 218, 222, 263] }
 ];
+/* eslint-enable max-len */
 
 const previewStarCoords = [
   { x: 80, allY: [167] },
@@ -154,7 +156,8 @@ export default class Figure42Diagram extends SVGDiagram {
 
   scatterRandomly(node, cxAligned, cyAligned, rxUnscaled, ryUnscaled) {
     const viewBox = this.querySelector("svg").viewBox.baseVal;
-    node.style.filter = `drop-shadow(0 0 ${cxAligned / viewBox.width / 10}rem var(--color-highest-contrast))`;
+    node.style.filter =
+      `drop-shadow(0 0 ${cxAligned / viewBox.width / 10}rem var(--color-highest-contrast))`;
     node.dataset.filter = node.style.filter;
 
     const scale = cyAligned / (viewBox.height / 2);
@@ -187,7 +190,9 @@ export default class Figure42Diagram extends SVGDiagram {
       const existingAnimation = this.querySelector(`#${translationAnimationID}`);
 
       if (!existingAnimation) {
-        this.addXTranslationAnimation(star, animatableStar, reverse, duration, translationAnimationID);
+        this.addXTranslationAnimation(
+          star, animatableStar, reverse, duration, translationAnimationID
+        );
       }
 
       star.node.style.transition = `filter ${duration.s}s ${BezierEasing.easeInOutCubic.cssString}`;
@@ -230,7 +235,9 @@ export default class Figure42Diagram extends SVGDiagram {
       if (!existingScaleXAnimation || !existingScaleYAnimation || !existingTranslationAnimation) {
         this.addScaleXAnimation(star, animatableStar, reverse, duration, scaleXAnimationID);
         this.addScaleYAnimation(star, animatableStar, reverse, duration, scaleYAnimationID);
-        this.addYTranslationAnimation(star, animatableStar, reverse, duration, translationAnimationID);
+        this.addYTranslationAnimation(
+          star, animatableStar, reverse, duration, translationAnimationID
+        );
       }
 
       animatableStar.beginAnimation(scaleXAnimationID);

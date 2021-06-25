@@ -110,7 +110,7 @@
             3
         ],
         "max-depth": "error",
-        "max-len": "off",
+        "max-len": ["error", { "code": 100 }],
         "max-lines": "error",
         "max-lines-per-function": "error",
         "max-nested-callbacks": "error",

@@ -3,7 +3,9 @@
 export const runActionsSequentially = (orderedActions, onAllDone = () => {}) => {
   const runActions = index => {
     const nextIndex = index + 1;
-    const onActionDone = nextIndex >= orderedActions.length ? onAllDone : runActions.bind(null, nextIndex);
+    const onActionDone = nextIndex >= orderedActions.length
+      ? onAllDone
+      : runActions.bind(null, nextIndex);
     orderedActions[index]({ onDone: onActionDone });
   };
 

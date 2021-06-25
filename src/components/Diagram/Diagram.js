@@ -49,7 +49,9 @@ class Diagram extends HTMLElement {
    */
   smoothScrollIntoView({ onDone }) {
     const duration = new Duration({ milliseconds: 700 });
-    this._smoothScroll(document.querySelector("main"), 0, 0, duration, BezierEasing.easeOutCubic, { onDone });
+    this._smoothScroll(
+      document.querySelector("main"), 0, 0, duration, BezierEasing.easeOutCubic, { onDone }
+    );
   }
 
   scrollIntoView() {
@@ -109,9 +111,11 @@ export class SVGDiagram extends Diagram {
 
 export class HTMLDiagram extends Diagram {
   connectedCallback() {
+    /* eslint-disable max-len */
     this.innerHTML = `
     <div class="${this.containerClassname} diagram--html" role="img" aria-label="${this.a11yLabel}"></div>
     `;
+    /* eslint-enable max-len */
 
     super.connectedCallback();
   }

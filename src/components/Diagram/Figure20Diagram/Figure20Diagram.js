@@ -254,7 +254,8 @@ export default class Figure20Diagram extends SVGDiagram {
 
     const dissolveWaves = rowIndex => {
       const initial = this.getCurrentTranslations(rowIndex);
-      const adjustedFinal = final.map(translation => translation + extraTranslationsPerRow[rowIndex]);
+      const adjustedFinal = final
+        .map(translation => translation + extraTranslationsPerRow[rowIndex]);
       this._animations
         .animateBetweenTranslations(rowIndex, initial, adjustedFinal, options, () => {
           if (rowIndex == 0) {

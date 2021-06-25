@@ -49,7 +49,9 @@ export default class Figure36Diagram extends SVGDiagram {
 
       this._runActionsSequentially([
         this._waitBeforeNextAction(1000, this._timerManager),
-        this._arrow.appearInSteps.bind(this._arrow, new Duration({ milliseconds: 3000 }), this._timerManager),
+        this._arrow.appearInSteps.bind(
+          this._arrow, new Duration({ milliseconds: 3000 }), this._timerManager
+        ),
         this._waitBeforeNextAction(1000, this._timerManager)
       ], onDone);
     });
@@ -61,7 +63,9 @@ export default class Figure36Diagram extends SVGDiagram {
 
   drawArrow(PendulumTrajectoryArrow, angles) {
     const arrowArcRadius = this._pendulumLength + (this._circleRadius * 2) + 10;
-    const arrow = new PendulumTrajectoryArrow(this._svgShapeFactory, this.anchorPoint, arrowArcRadius, angles);
+    const arrow = new PendulumTrajectoryArrow(
+      this._svgShapeFactory, this.anchorPoint, arrowArcRadius, angles
+    );
     this.addSVGChildElement(arrow.node);
     return arrow;
   }
@@ -89,15 +93,21 @@ export default class Figure36Diagram extends SVGDiagram {
     // The arrow needs to disappear *slightly* later and quicker than the swing
     // to account for its angle offset compared to the pendulum
     const totalAnglesCovered = 2 * this._initialAngle;
-    const arrowDisappearanceDelay = new Duration({ seconds: (this._arrowOffsetAngle / totalAnglesCovered) * this._swingDuration.s });
-    const arrowDisappearanceDuration = new Duration({ seconds: this._swingDuration.s - (arrowDisappearanceDelay.s * 2) });
+    const arrowDisappearanceDelay = new Duration({
+      seconds: (this._arrowOffsetAngle / totalAnglesCovered) * this._swingDuration.s
+    });
+    const arrowDisappearanceDuration = new Duration({
+      seconds: this._swingDuration.s - (arrowDisappearanceDelay.s * 2)
+    });
     this._timerManager.setTimeout(() => {
       this._arrow.disappearWithEasing(this._swingEasing, arrowDisappearanceDuration);
     }, arrowDisappearanceDelay.ms);
   }
 
   drawPendulumArm(rotationAngle) {
-    const arm = new PendulumArm(this._svgShapeFactory, this.anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius);
+    const arm = new PendulumArm(
+      this._svgShapeFactory, this.anchorPoint, rotationAngle, this._pendulumLength, this._circleRadius // eslint-disable-line max-len
+    );
     this.addSVGChildElement(arm.node);
     return arm;
   }
@@ -111,7 +121,9 @@ export default class Figure36Diagram extends SVGDiagram {
 
   lightUpJustBeforeNextSwing(index) {
     // 11 is a magic number – the final swing where the swinging pendulum still reaches the echo
-    const lightUpDuration = new Duration({ milliseconds: 1000 - ((index - 1) * 100)  }); // Gradually less time to light up
+    const lightUpDuration = new Duration({
+      milliseconds: 1000 - ((index - 1) * 100)
+    }); // Gradually less time to light up
     const msUntilJustBeforeNextSwing = this._swingDuration.ms - (lightUpDuration.ms / 2);
     const lightUpDelay = new Duration({ milliseconds: msUntilJustBeforeNextSwing });
     this._timerManager.setTimeout(() => {

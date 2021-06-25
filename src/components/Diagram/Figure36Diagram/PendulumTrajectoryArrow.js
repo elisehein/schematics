@@ -6,6 +6,7 @@ import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentia
 const animationSteps = 18;
 
 export default function PendulumTrajectoryArrow(shapeFactory, anchorPoint, radius, angles) {
+  // eslint-disable-next-line id-length
   const g = createSVGElement("g");
 
   const arc = shapeFactory.getPath();
@@ -21,11 +22,12 @@ export default function PendulumTrajectoryArrow(shapeFactory, anchorPoint, radiu
     appearingWithoutAnimation(self, anchorPoint, radius, angles),
     appearingInSteps(self, anchorPoint, radius, angles),
     disappearingWithEasing(self, anchorPoint, radius, angles)
-  )
+  );
 }
 
 const appearingWithoutAnimation = ({ arc }, anchorPoint, radius, finalAngles) => ({
   appearWithoutAnimation() {
+    // eslint-disable-next-line id-length
     const d = getArcPathD({ radius, ...anchorPoint }, finalAngles);
     arc.node.setAttribute("d", d);
   }
@@ -33,22 +35,26 @@ const appearingWithoutAnimation = ({ arc }, anchorPoint, radius, finalAngles) =>
 
 const appearingInSteps = ({ arc }, anchorPoint, radius, finalAngles) => ({
   appearInSteps(duration, timerManager, { onDone }) {
-    const arcLength  = finalAngles.endAngle - finalAngles.startAngle
+    const arcLength  = finalAngles.endAngle - finalAngles.startAngle;
     const arcLengthForSingleStep = arcLength / animationSteps;
     const singleStepDuration = duration.ms / animationSteps;
 
-    const setArrowArcStartAngle = startAngle => {
-      return (objectWithDoneHandler) => {
-        const d = getArcPathD({ radius, ...anchorPoint }, { startAngle, endAngle: finalAngles.endAngle });
+    const setArrowArcStartAngle = startAngle => (
+      objectWithDoneHandler => {
+        const d = getArcPathD( // eslint-disable-line id-length
+          { radius, ...anchorPoint }, { startAngle, endAngle: finalAngles.endAngle }
+        );
         arc.node.setAttribute("d", d);
         objectWithDoneHandler.onDone();
       }
-    }
+    );
 
-    const steppedArrowIncrementActions = emptyArrayOfLength(animationSteps).map((_, index) => [
-      waitBeforeNextAction(singleStepDuration, timerManager),
-      setArrowArcStartAngle(finalAngles.endAngle - ((index + 1) * arcLengthForSingleStep)),
-    ]).flat();
+    const steppedArrowIncrementActions = emptyArrayOfLength(animationSteps)
+      .map((_, index) => [
+        waitBeforeNextAction(singleStepDuration, timerManager),
+        setArrowArcStartAngle(finalAngles.endAngle - ((index + 1) * arcLengthForSingleStep))
+      ])
+      .flat();
 
     runActionsSequentially(steppedArrowIncrementActions, onDone);
   }
@@ -61,7 +67,7 @@ const appearingInSteps = ({ arc }, anchorPoint, radius, finalAngles) => ({
  * an arc appearing/disappearing.
  * Instead, we are redrawing a shorter and shorter arc manually using getAnimationFrame()
  */
-const disappearingWithEasing = ({ arc, node }, anchorPoint, radius, angles, ) => ({
+const disappearingWithEasing = ({ arc, node }, anchorPoint, radius, angles) => ({
   disappearWithEasing(easing, duration) {
     const totalAnglesCovered = angles.startAngle - angles.endAngle;
     const startAngle = angles.startAngle;
@@ -69,15 +75,20 @@ const disappearingWithEasing = ({ arc, node }, anchorPoint, radius, angles, ) =>
 
     animateWithEasing(duration, easing, fractionOfAnimationDone => {
       const anglesCoveredThisAnimationFrame = totalAnglesCovered * fractionOfAnimationDone;
-      const endAngle = Math.max(angles.startAngle, angles.endAngle + anglesCoveredThisAnimationFrame);
+      const endAngle = Math.max(
+        angles.startAngle,
+        angles.endAngle + anglesCoveredThisAnimationFrame
+      );
+      // eslint-disable-next-line id-length
       const d = getArcPathD({ radius, ...anchorPoint }, { startAngle, endAngle });
-      this.updateArcStyle(arc, d, originalArcLength, fractionOfAnimationDone >= 0.8);
+      this.updateArcStyle(d, originalArcLength, fractionOfAnimationDone >= 0.8);
     }, { onDone: () => {
       node.remove();
-    }});
+    } });
   },
 
-  updateArcStyle(arc, d, originalArcLength, almostDisappeared) {
+  // eslint-disable-next-line id-length
+  updateArcStyle(d, originalArcLength, almostDisappeared) {
     arc.node.setAttribute("d", d);
 
     // Adjust stroke-dashoffset so that the dashes begin at the original path start point.
@@ -85,7 +96,8 @@ const disappearingWithEasing = ({ arc, node }, anchorPoint, radius, angles, ) =>
     arc.node.style.strokeDashoffset = (originalArcLength - arc.getLength());
 
     if (almostDisappeared) {
-      arc.removeArrowHead(); // Remove slightly before the full path is hidden to make it look smoother
+      // Remove slightly before the full path is hidden to make it look smoother
+      arc.removeArrowHead();
     }
   }
 });

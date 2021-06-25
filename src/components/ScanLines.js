@@ -49,7 +49,13 @@ export default class ScanLines extends HTMLElement {
         <stop offset="100%" stop-color="currentcolor" stop-opacity="0"/>
       </linearGradient>
 
-      <pattern id="${patternID}" x="0" y="0" width="1" height="${patternHeightEm}em" patternUnits="userSpaceOnUse">
+      <pattern
+        id="${patternID}"
+        x="0"
+        y="0"
+        width="1"
+        height="${patternHeightEm}em"
+        patternUnits="userSpaceOnUse">
         <rect x="0" y="0" width="1" height="${patternHeightEm}em" fill="url(#${gradientID}"></rect>
       </pattern>
     </defs>

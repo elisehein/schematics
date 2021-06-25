@@ -46,8 +46,6 @@ export default class SchematicsFigurePreviews extends HTMLElement {
     figureNum.dataset.num = num;
     figureNum.innerText = num;
 
-    preview.querySelector("scan-lines").setAttribute("color", "var(--schematics-figure-preview-scan-line-color)");
-
     return preview;
   }
 
@@ -57,7 +55,9 @@ export default class SchematicsFigurePreviews extends HTMLElement {
   }
 
   hide(onDone = () => {}) {
-    transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--hiding`], () => {
+    transitionWithClasses(this, [
+      transitioningClassName, `${transitioningClassName}--hiding`
+    ], () => {
       this.style.display = "none";
       onDone();
     });

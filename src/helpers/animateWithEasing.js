@@ -1,4 +1,6 @@
-export default function animateWithEasing(duration, easing, animationFrameHandler, { onDone } = {}) {
+export default function animateWithEasing(
+  duration, easing, animationFrameHandler, { onDone } = {}
+) {
   let start;
   let ref;
   let fractionOfAnimationDone;
