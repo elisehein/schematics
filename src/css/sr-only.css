@@ -1,3 +1,4 @@
+/* stylelint-disable */
 /* Hide something visually completely but keep accessible to screen readers */
 .sr-only {
   border: 0 !important;
