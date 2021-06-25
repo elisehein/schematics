@@ -76,7 +76,7 @@ export class SVGDiagram extends Diagram {
       class="${this.containerClassname} diagram--svg"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      viewbox="0 0 300 300"
+      viewbox="0 0 ${this.svgSize} ${this.svgSize}"
       aria-labelledby="${this.descID}"
       xmlns="http://www.w3.org/2000/svg">
       <desc id="${this.descID}">${this.a11yLabel}</desc>
@@ -92,6 +92,10 @@ export class SVGDiagram extends Diagram {
 
   get descID() {
     return `figure-${this.num}-${this._isThumbnail ? "thumbnail-" : ""}desc`;
+  }
+
+  get svgSize() {
+    return 300;
   }
 
   addSVGChildElement(el) {
@@ -112,5 +116,9 @@ export class HTMLDiagram extends Diagram {
 
   get divContainerNode() {
     return this.querySelector("div.diagram");
+  }
+
+  get replacesCaption() {
+    return false;
   }
 }

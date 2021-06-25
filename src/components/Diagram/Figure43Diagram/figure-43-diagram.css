@@ -1,4 +1,5 @@
 /* Safari is amazingly annoying and takes the shortest route from 0 -> 360deg (as well as 0 -> 180deg -> 360deg) */
+/* stylelint-disable block-opening-brace-space-before */
 @keyframes erratic-rotate {
   0%      { transform: translateZ(var(--half-cube-size)) rotate3d(1, -1, 1, 0deg); }
   1.25%   { transform: translateZ(var(--half-cube-size)) rotate3d(1, -1, 1, 90deg); }
@@ -102,6 +103,7 @@
 
   100%    { transform: translateZ(var(--half-cube-size)) rotate3d(-1, 1, 1, 0deg); }
 }
+/* stylelint-enable block-opening-brace-space-before */
 
 @keyframes random-scaling {
   0% { transform: scale(1); }

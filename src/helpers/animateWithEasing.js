@@ -1,5 +1,7 @@
 export default function animateWithEasing(duration, easing, animationFrameHandler, { onDone } = {}) {
   let start;
+  let ref;
+  let fractionOfAnimationDone;
 
   const step = timestamp => {
     if (!start) {
@@ -8,15 +10,20 @@ export default function animateWithEasing(duration, easing, animationFrameHandle
 
     const elapsed = timestamp - start;
     const interval = elapsed / duration.ms;
+    fractionOfAnimationDone = easing.pointAlongCurve(interval).y;
 
-    animationFrameHandler(easing.pointAlongCurve(interval).y);
+    animationFrameHandler(fractionOfAnimationDone);
 
     if (elapsed < duration.ms) {
-      window.requestAnimationFrame(step);
+      ref = window.requestAnimationFrame(step);
     } else if (onDone) {
       onDone();
     }
   };
 
-  window.requestAnimationFrame(step);
+  ref = window.requestAnimationFrame(step);
+  return () => {
+    window.cancelAnimationFrame(ref);
+    return fractionOfAnimationDone;
+  };
 }

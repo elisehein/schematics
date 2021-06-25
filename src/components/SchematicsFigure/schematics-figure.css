@@ -53,7 +53,7 @@
 }
 
 @keyframes jitter {
-  0% { transform: translateX(.1em) translateY(.07em);}
+  0% { transform: translateX(.1em) translateY(.07em); }
   10% { transform: translateX(.04em) translateY(.01em); }
 
   20% {
@@ -148,10 +148,6 @@
       animation: fuzzy var(--schematics-figure-fuzzy-duration, 1s) ease-in-out;
     }
 
-    &--fuzzy &__figcaption {
-      animation: fuzzy-text var(--schematics-figure-fuzzy-duration, 1s) ease-in-out;
-    }
-
     &__figcaption {
       font-size: var(--ms2);
       line-height: var(--double-baseline);
@@ -180,6 +176,18 @@
           }
         }
       }
+
+      &--hiding {
+        animation:
+          text-shadow-flicker var(--jitter-animation-duration) ease-out,
+          jitter var(--jitter-animation-duration),
+          fade var(--micro-interaction-animation-duration) ease-out calc(var(--jitter-animation-duration) - var(--micro-interaction-animation-duration)) reverse;
+        animation-fill-mode: forwards;
+      }
+
+      &--hidden {
+        display: none;
+      }
     }
 
     &--showing &__figcaption {
@@ -194,6 +202,10 @@
 
     &--light-up &__figcaption {
       animation: light-up-text var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
+    }
+
+    &--fuzzy &__figcaption {
+      animation: fuzzy-text var(--schematics-figure-fuzzy-duration, 1s) ease-in-out;
     }
 
     /* To ensure both the caption and figure are able to receive pointer events */

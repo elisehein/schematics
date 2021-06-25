@@ -8,7 +8,7 @@ const figures = {
     a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system.",
     a11yThumbnailDescription: "A spiral making three loops.",
     poetry: `[TYPE:NORMAL]I return [TYPE:FAST][PAUSE:SHORT]and sense,
-[PAUSE:LONG]things [PAUSE:SHORT]are\n[PAUSE:gMEDIUM]not [TYPE:SLOWEST]the same[TYPE:SLOW] as[TYPE:NORMAL] before,[PAUSE:MEDIUM]
+[PAUSE:LONG]things [PAUSE:SHORT]are\n[PAUSE:MEDIUM]not [TYPE:SLOWEST]the same[TYPE:SLOW] as[TYPE:NORMAL] before,[PAUSE:MEDIUM]
 but feel[PAUSE:SHORT] had I stayed,
 [TYPE:SLOWEST][PAUSE:LONG]every[TYPE:SLOW]thing\n[PAUSE:MEDIUM]would likely[TYPE:NORMAL][PAUSE:MEDIUM] seem[PAUSE:MEDIUM] the same.`
   },
@@ -16,6 +16,14 @@ but feel[PAUSE:SHORT] had I stayed,
     a11yDescription: "A flow diagram for love. Good? Yes. More? Yes. Do it.",
     a11yThumbnailDescription: "A box with the question \"Good?\"",
     poetry: "[TYPE:NORMAL]I will send [PAUSE:SHORT]you flowers[PAUSE:MEDIUM], [TYPE:SLOWEST]pearls[PAUSE:LONG],\n[TYPE:NORMAL]letters[TYPE:FAST][PAUSE:SHORT] written in[TYPE:SLOW] ink."
+  },
+  20: {
+    a11yDescription: "An illustration of the propagation of sound waves across arrays of vertical lines.",
+    a11yThumbnailDescription: "Ten parallel vertical lines.",
+    poetry: `[TYPE:NORMAL]You [TYPE:SLOW]lay out [TYPE:NORMAL][PAUSE:MEDIUM]some newspaper.
+[TYPE:SLOW][PAUSE:LONG]We lie [PAUSE:SHORT]on[TYPE:FAST] it.
+[TYPE:SLOWEST][PAUSE:LONG]The [TYPE:NORMAL]fairy[TYPE:SLOW]tale music,
+[TYPE:NORMAL][PAUSE:SHORT]drifts [PAUSE:MEDIUM]through [TYPE:SLOWEST]the [TYPE:NORMAL]trees.`
   },
   36: {
     a11yDescription: "A swinging pendulum.",

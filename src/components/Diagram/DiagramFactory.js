@@ -1,8 +1,9 @@
 import Figure14Diagram from "./Figure14Diagram.js";
 import Figure18Diagram from "./Figure18Diagram/Figure18Diagram.js";
+import Figure20Diagram from "./Figure20Diagram/Figure20Diagram.js";
 import Figure36Diagram from "./Figure36Diagram/Figure36Diagram.js";
 import Figure42Diagram from "./Figure42Diagram.js";
-import Figure43Diagram from "./Figure43Diagram.js";
+import Figure43Diagram from "./Figure43Diagram/Figure43Diagram.js";
 
 export default function DiagramFactory(figureBehaviorCallbacks) {
   return (num, isThumbnail = false) => {
@@ -11,6 +12,8 @@ export default function DiagramFactory(figureBehaviorCallbacks) {
         return new Figure14Diagram(isThumbnail, figureBehaviorCallbacks);
       case 18:
         return new Figure18Diagram(isThumbnail, figureBehaviorCallbacks);
+      case 20:
+        return new Figure20Diagram(isThumbnail, figureBehaviorCallbacks);
       case 36:
         return new Figure36Diagram(isThumbnail, figureBehaviorCallbacks);
       case 42:

@@ -1,4 +1,4 @@
-import { HTMLDiagram } from "./Diagram.js";
+import { HTMLDiagram } from "../Diagram.js";
 import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 
