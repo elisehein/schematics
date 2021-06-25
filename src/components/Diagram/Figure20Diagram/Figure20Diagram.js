@@ -1,17 +1,14 @@
 import { SVGDiagram } from "../Diagram.js";
 import WaveCoordinates, { WavePeaks } from "./Figure20WaveCoordinates.js";
-import RowBarDrawing, { originalPeaksPerRowData } from "./Figure20RowBarDrawing.js";
+import RowBarDrawing from "./Figure20RowBarDrawing.js";
 
 import BezierEasing from "/helpers/BezierEasing.js";
 import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 
-const originalPeaksPerRow = originalPeaksPerRowData.map(peaks => new WavePeaks(peaks));
-
 export default class Figure20Diagram extends SVGDiagram {
   constructor(...args) {
     super(20, ...args);
-
     this._waveScaleFactor = 1.2;
   }
 
@@ -23,6 +20,12 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   drawThumbnail() {
+    this._drawing = new RowBarDrawing(this.svgSize, this._svgShapeFactory, true);
+    this._waves = new WaveCoordinates(
+      this._waveScaleFactor, this._drawing.barGap, this._drawing.barsPerRow, this.svgSize, 5
+    );
+    this._bars = this.drawBars();
+    this.setWavePeaks({ peaks: this.peaksPerRow[0], rowIndex: 0 });
   }
 
   drawBeforeCaption({ onDone }) {
@@ -65,7 +68,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   precalculatePeaksForRowWaveAnimations() {
-    return originalPeaksPerRow.map(peaks => {
+    return this.peaksPerRow.map(peaks => {
       const overflow = Math.round(this._waves.waveWidth);
       const finalPeaksStartX = this.svgSize + overflow;
 
@@ -111,7 +114,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
   animateWaveOnRandomRow() {
     const randomRow = randomIntBetween(0, this._drawing.numberOfRows - 1);
-    const peaksOnRow = originalPeaksPerRow[randomRow].length;
+    const peaksOnRow = this.peaksPerRow[randomRow].length;
     const minDurationMS = peaksOnRow * 500;
     const randomDuration = new Duration({
       milliseconds: minDurationMS + randomIntBetween(500, 2000)
@@ -138,7 +141,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateOriginalWavePeaks(rowIndex, delay, onDone) {
-    const initialPeaks = originalPeaksPerRow[rowIndex].adjustedBy(this.svgSize * -1);
+    const initialPeaks = this.peaksPerRow[rowIndex].adjustedBy(this.svgSize * -1);
     const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
     const options = {
@@ -285,7 +288,7 @@ export default class Figure20Diagram extends SVGDiagram {
 
     const duration = new Duration({ milliseconds: 200 });
     const options = { duration, easing: BezierEasing.linear };
-    const extraTranslations = originalPeaksPerRow.map(peaks => (
+    const extraTranslations = this.peaksPerRow.map(peaks => (
       this._waves.getDistanceToOverlapBars({
         numberOfPeaks: 0,
         otherNumberOfPeaks: peaks.length
@@ -319,8 +322,8 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getWavePeaksAnchoredTo({ x, anchorRowIndex }) {
-    return originalPeaksPerRow.map((peaks, rowIndex) => {
-      const anchorPeaks = originalPeaksPerRow[anchorRowIndex];
+    return this.peaksPerRow.map((peaks, rowIndex) => {
+      const anchorPeaks = this.peaksPerRow[anchorRowIndex];
       const diff = peaks.rightmostPeakDifference(anchorPeaks);
       const peaksEndX = anchorRowIndex > rowIndex ? x - diff : x + diff;
       return peaks.adjustedToEndAt(peaksEndX);
@@ -341,6 +344,10 @@ export default class Figure20Diagram extends SVGDiagram {
 
   getCurrentTranslations(rowIndex) {
     return this._bars[rowIndex].map(bar => parseFloat(bar.node.dataset.translation));
+  }
+
+  get peaksPerRow() {
+    return this._drawing.peaksPerRow.map(peaks => new WavePeaks(peaks));
   }
 }
 

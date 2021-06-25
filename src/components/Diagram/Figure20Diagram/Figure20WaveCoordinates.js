@@ -1,11 +1,11 @@
 export default class WaveCoordinates {
-  constructor(waveScaleFactor, barGap, barsPerRow, viewportWidth) {
+  constructor(waveScaleFactor, barGap, barsPerRow, viewportWidth, minDistanceFromPeak = 1.5) {
     this._barsPerRow = barsPerRow;
     this._barGap = barGap;
 
     const maxBarsFromPeak = barsPerRow - 1;
     this._distancesFromWavePeak = generateDistancesFromWavePeak(
-      waveScaleFactor, barGap, maxBarsFromPeak
+      waveScaleFactor, barGap, maxBarsFromPeak, minDistanceFromPeak
     );
     this._initialXCoordsForBars = this.getInitialXCoordsForBars(viewportWidth);
     this._memoizedTranslationsForWavePeaks = {};
@@ -124,8 +124,8 @@ export default class WaveCoordinates {
   }
 }
 
-function generateDistancesFromWavePeak(scaleFactor, barGap, maxBarsFromWaveCenter) {
-  const distanceGetter = getDistanceGetter(scaleFactor, 1.5, barGap);
+function generateDistancesFromWavePeak(scaleFactor, barGap, maxBarsFromWaveCenter, minDistanceFromPeak) {
+  const distanceGetter = getDistanceGetter(scaleFactor, minDistanceFromPeak, barGap);
 
   return Array(maxBarsFromWaveCenter)
     .fill()

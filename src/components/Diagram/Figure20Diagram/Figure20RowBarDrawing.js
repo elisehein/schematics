@@ -15,11 +15,20 @@ const originalDrawingData = {
   rowToGapRatio: 0.8
 };
 
+const thumbnailRowData = {
+  peaksPerRow: [[150]],
+  numberOfRows: 1,
+  barGap: 25,
+  barsPerRow: 30,
+  verticalInset: 130,
+  rowToGapRatio: 0.8
+};
+
 export default class RowBarDrawing {
-  constructor(svgHeight, svgShapeFactory, drawingData = originalDrawingData) {
+  constructor(svgHeight, svgShapeFactory, isThumbnail = false) {
     this._svgHeight = svgHeight;
     this._svgShapeFactory = svgShapeFactory;
-    this._drawingData = drawingData;
+    this._drawingData = isThumbnail ? thumbnailRowData : originalDrawingData;
 
     this._rowYs = this.precalculateRowYs();
   }
@@ -110,6 +119,8 @@ export default class RowBarDrawing {
     );
   }
 
-}
+  get peaksPerRow() {
+    return this._drawingData.peaksPerRow;
+  }
 
-export const originalPeaksPerRowData = originalDrawingData.peaksPerRow;
+}
