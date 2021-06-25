@@ -1,6 +1,3 @@
-[data-visible-view*="about"] {
-}
-
 @keyframes slide-up {
   from { transform: translateY(5rem); }
   to { transform: translateY(0); }

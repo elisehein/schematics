@@ -27,6 +27,8 @@ export default class Figure20Diagram extends SVGDiagram {
     this.setWavePeaks({ peaks: this.peaksPerRow[0], rowIndex: 0 });
   }
 
+  
+
   drawAfterCaption() {
     this._drawing = new RowBarDrawing(this.svgSize, this._svgShapeFactory);
     this._waves = new WaveCoordinates(

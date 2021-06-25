@@ -1,3 +1,4 @@
+/* stylelint-disable at-rule-empty-line-before */
 @import "./reset.css";
 @import "./sr-only.css";
 
@@ -18,6 +19,7 @@
 @import "../components/SchematicsFigurePreviews/schematics-figure-previews.css";
 @import "../components/Diagram/diagram.css";
 @import "../components/SchematicsFigureToolbar/schematics-figure-toolbar.css";
+/* stylelint-enable at-rule-empty-line-before */
 
 :root {
   --page-padding: var(--baseline);
