@@ -23,6 +23,11 @@ footer {
       margin-left: calc(var(--baseline) * 3);
     }
   }
+
+  @media (--layout-full-screen-figure) {
+    /* To avoid layout shift; the view switcher will make it visible when ready */
+    visibility: hidden;
+  }
 }
 
 #copyright {
