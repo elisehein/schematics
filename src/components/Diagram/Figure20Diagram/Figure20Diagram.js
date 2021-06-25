@@ -58,11 +58,6 @@ export default class Figure20Diagram extends SVGDiagram {
     const { bars, groupNodes } = this._drawing.drawBars(barIndex => (
       this._waves.getInitialXForBar(barIndex)
     ));
-    bars.forEach(rowBars => {
-      rowBars.forEach(bar => {
-        bar.node.dataset.translation = 0;
-      });
-    });
     groupNodes.forEach(this.addSVGChildElement.bind(this));
     return bars;
   }
@@ -343,7 +338,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   getCurrentTranslations(rowIndex) {
-    return this._bars[rowIndex].map(bar => parseFloat(bar.node.dataset.translation));
+    return this._bars[rowIndex].map(bar => parseFloat(bar.node.dataset.translation || 0));
   }
 
   get peaksPerRow() {
