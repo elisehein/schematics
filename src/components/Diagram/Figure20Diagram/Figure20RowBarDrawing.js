@@ -105,7 +105,7 @@ export default class RowBarDrawing {
 
   positionIsInInsets(y) {
     return (
-      y < this._drawingData.verticalInset &&
+      y < this._drawingData.verticalInset ||
       y > this._svgHeight - this._drawingData.verticalInset
     );
   }
