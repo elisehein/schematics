@@ -27,8 +27,6 @@ export default class Figure20Diagram extends SVGDiagram {
     this.setWavePeaks({ peaks: this.peaksPerRow[0], rowIndex: 0 });
   }
 
-  
-
   drawAfterCaption() {
     this._drawing = new RowBarDrawing(this.svgSize, this._svgShapeFactory);
     this._waves = new WaveCoordinates(
@@ -60,7 +58,11 @@ export default class Figure20Diagram extends SVGDiagram {
     const { bars, groupNodes } = this._drawing.drawBars(barIndex => (
       this._waves.getInitialXForBar(barIndex)
     ));
-    groupNodes.forEach(this.addSVGChildElement.bind(this));
+    groupNodes.forEach((groupNode, index) => {
+      this._timerManager.setTimeout(() => {
+        this.addSVGChildElement(groupNode);
+      }, index * 100);
+    });
     return bars;
   }
 
