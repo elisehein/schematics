@@ -78,7 +78,9 @@ export const animatable = ({ node }) => ({
     node.appendChild(animate);
   },
 
-  animateTransform(type, { from, to, values, keyTimes, calcMode, keySplines, dur, begin, repeatCount, fill, additive, id }) {
+  animateTransform(type, {
+    from, to, values, keyTimes, calcMode, keySplines, dur, begin, repeatCount, fill, additive, id
+  }) {
     const animate = document.createElementNS("http://www.w3.org/2000/svg", "animateTransform");
     animate.setAttribute("attributeName", "transform");
     animate.setAttribute("attributeType", "XML");

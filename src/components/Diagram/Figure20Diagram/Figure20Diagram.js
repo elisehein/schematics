@@ -14,7 +14,9 @@ export default class Figure20Diagram extends SVGDiagram {
       import("./Figure20Animations.js"),
       import("./Figure20PointerEvents.js"),
       import("/helpers/random.js")
-    ]).then(modules => callback(modules[0].default, modules[1].default, modules[2]));
+    ]).then(modules => {
+      callback(modules[0].default, modules[1].default, modules[2]);
+    });
   }
 
   drawThumbnail() {
@@ -22,7 +24,8 @@ export default class Figure20Diagram extends SVGDiagram {
     this._waves = new WaveCoordinates(
       this._waveScaleFactor, this._drawing.barGap, this._drawing.barsPerRow, this.svgSize, 5
     );
-    this._bars = this.drawBars();
+    const { bars } = this.drawBars(false);
+    this._bars = bars;
     this.setWavePeaks({ peaks: this.peaksPerRow[0], rowIndex: 0 });
   }
 
@@ -47,23 +50,22 @@ export default class Figure20Diagram extends SVGDiagram {
 
   drawAndAnimate() {
     this._timerManager.setTimeout(() => {
-      this._bars = this.drawBars();
+      const { bars, groupNodes } = this.drawBars();
+      this._bars = bars;
       this.positionBarsForWaveAnimations();
-      this.animateWavesRandomly();
-      this.bindPointerEventsToWaveMovements();
+      this._drawing.animateRowAppearances(groupNodes, () => {
+        this.animateWavesRandomly();
+        this.bindPointerEventsToWaveMovements();
+      });
     }, 1000);
   }
 
-  drawBars() {
+  drawBars(initiallyInvisible = true) {
     const { bars, groupNodes } = this._drawing.drawBars(barIndex => (
       this._waves.getInitialXForBar(barIndex)
-    ));
-    groupNodes.forEach((groupNode, index) => {
-      this._timerManager.setTimeout(() => {
-        this.addSVGChildElement(groupNode);
-      }, index * 100);
-    });
-    return bars;
+    ), initiallyInvisible);
+    groupNodes.forEach(this.addSVGChildElement.bind(this));
+    return { bars, groupNodes };
   }
 
   precalculatePeaksForRowWaveAnimations() {

@@ -1,3 +1,5 @@
+import BezierEasing from "/helpers/BezierEasing.js";
+
 const originalDrawingData = {
   peaksPerRow: [
     [0],
@@ -75,15 +77,15 @@ export default class RowBarDrawing {
     return rowYs;
   }
 
-  drawBars(barXGetter) {
+  drawBars(barXGetter, initiallyScaledDown) {
     const bars = [];
     const groupNodes = [];
     const { barsPerRow, numberOfRows } = this._drawingData;
 
     for (let rowIndex = 0; rowIndex < numberOfRows; rowIndex += 1) {
       const barsForRow = [];
-      const groupNode = this._svgShapeFactory.getGroupNode();
       const { top: topY, bottom: bottomY } = this._rowYs[rowIndex];
+      const groupNode = this.getRowGroupNode(initiallyScaledDown, topY);
 
       for (let barIndex = 0; barIndex < barsPerRow; barIndex += 1) {
         const bar = this.drawBar(topY, bottomY, barXGetter(barIndex));
@@ -98,6 +100,18 @@ export default class RowBarDrawing {
     return { bars, groupNodes };
   }
 
+  getRowGroupNode(initiallyScaledDown, topY) {
+    const groupNode = this._svgShapeFactory.getGroupNode();
+    groupNode.setAttribute(
+      "transform-origin", `50% ${topY + (this.singleRowHeight / 2)}`
+    );
+    if (initiallyScaledDown) {
+      groupNode.setAttribute("transform", "scale(1 0)");
+    }
+
+    return groupNode;
+  }
+
   drawBar(topY, bottomY, x) {
     const lineTopPoint = { x, y: topY };
     const lineBottomPoint = { x, y: bottomY };
@@ -106,6 +120,40 @@ export default class RowBarDrawing {
     bar.stroke();
     bar.node.style.strokeLinecap = "unset";
     return bar;
+  }
+
+  animateRowAppearances(groupNodes, onDone) {
+    const animate = animatable => {
+      groupNodes.forEach((node, index) => {
+        this.animateScaleAppear(node, index, animatable, onDone);
+      });
+    };
+
+    import("/components/SVGShapes/SVGShapeFeatures.js").then(module => {
+      animate(module.animatable);
+    });
+  }
+
+  animateScaleAppear(node, index, animatable, onDone) {
+    const animatableNode = animatable({ node });
+    const id = `scale-appear-${index}`;
+    animatableNode.animateTransform("scale", {
+      id,
+      from: "1 0",
+      to: "1 1",
+      dur: 1,
+      begin: "indefinite",
+      fill: "freeze",
+      calcMode: "spline",
+      keySplines: BezierEasing.easeOutCubic.smilString
+    });
+    animatableNode.beginAnimation(id, () => {
+      document.getElementById(id).remove();
+      node.setAttribute("transform", "scale(1 1)");
+      if (index == 0) {
+        onDone();
+      }
+    });
   }
 
   getRowAt(y) {
