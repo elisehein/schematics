@@ -1,27 +1,31 @@
-import Figure14Diagram from "./Figure14Diagram.js";
-import Figure18Diagram from "./Figure18Diagram/Figure18Diagram.js";
-import Figure20Diagram from "./Figure20Diagram/Figure20Diagram.js";
-import Figure36Diagram from "./Figure36Diagram/Figure36Diagram.js";
-import Figure42Diagram from "./Figure42Diagram.js";
-import Figure43Diagram from "./Figure43Diagram/Figure43Diagram.js";
-
 export default function DiagramFactory(figureBehaviorCallbacks) {
-  return (num, isThumbnail = false) => {
+  return async (num, isThumbnail = false) => {
+    let module;
+
     switch (num) {
       case 14:
-        return new Figure14Diagram(isThumbnail, figureBehaviorCallbacks);
+        module = await import("./Figure14Diagram.js");
+        break;
       case 18:
-        return new Figure18Diagram(isThumbnail, figureBehaviorCallbacks);
+        module = await import("./Figure18Diagram/Figure18Diagram.js");
+        break;
       case 20:
-        return new Figure20Diagram(isThumbnail, figureBehaviorCallbacks);
+        module = await import("./Figure20Diagram/Figure20Diagram.js");
+        break;
       case 36:
-        return new Figure36Diagram(isThumbnail, figureBehaviorCallbacks);
+        module = await import("./Figure36Diagram/Figure36Diagram.js");
+        break;
       case 42:
-        return new Figure42Diagram(isThumbnail, figureBehaviorCallbacks);
+        module = await import("./Figure42Diagram.js");
+        break;
       case 43:
-        return new Figure43Diagram(isThumbnail, figureBehaviorCallbacks);
+        module = await import("./Figure43Diagram/Figure43Diagram.js");
+        break;
       default:
         throw new Error(`No diagram element specified for figure ${num}.`);
     }
+
+    const Diagram = module.default;
+    return new Diagram(isThumbnail, figureBehaviorCallbacks);
   };
 }

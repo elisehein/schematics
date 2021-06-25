@@ -38,10 +38,6 @@ export default class SchematicsFigurePreviews extends HTMLElement {
     anchor.setAttribute("href", `#fig${num}`);
     anchor.setAttribute("aria-label", `Figure ${num}`);
 
-    const diagram = this._diagramFactory(num, true);
-    diagram.classList.add("schematics-figure-previews__item__diagram");
-    anchor.appendChild(diagram);
-
     const figureNum = preview.querySelector("[data-figure-num]");
     figureNum.dataset.num = num;
     figureNum.innerText = num;
@@ -52,6 +48,7 @@ export default class SchematicsFigurePreviews extends HTMLElement {
   show() {
     this.style.display = "block";
     transitionWithClasses(this, [transitioningClassName, `${transitioningClassName}--showing`]);
+    this.renderThumbnailsIfNeeded();
   }
 
   hide(onDone = () => {}) {
@@ -61,6 +58,37 @@ export default class SchematicsFigurePreviews extends HTMLElement {
       this.style.display = "none";
       onDone();
     });
+  }
+
+  // For performance reasons, we fetch and render the actual diagrams asynchronously
+  // when the previews element is actually show()n. It may have already been on the page
+  // to avoid layout shifts, but if it's about to get hidden in favour of a different view,
+  // no point in rendering the diagrams.
+  renderThumbnailsIfNeeded() {
+    const renderThumbnail = async num => {
+      if (this.thumbnailExists(num)) {
+        return;
+      }
+
+      const diagramElement = await this._diagramFactory(num, true);
+      diagramElement.classList.add(this.thumbnailClassName);
+      this.getAnchor(num).appendChild(diagramElement);
+    };
+
+    orderedFigures.forEach(num => renderThumbnail(num));
+  }
+
+  thumbnailExists(num) {
+    const anchor = this.getAnchor(num);
+    return anchor.querySelector(`.${this.thumbnailClassName}`) !== null;
+  }
+
+  getAnchor(num) {
+    return this.querySelector(`[href="#fig${num}"]`);
+  }
+
+  get thumbnailClassName() {
+    return "schematics-figure-previews__item__diagram";
   }
 }
 

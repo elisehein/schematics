@@ -27,8 +27,8 @@ export default class SchematicsFigure extends HTMLElement {
     this.renderFigure();
   }
 
-  renderFigure() {
-    this._diagramElement = this.renderDiagram();
+  async renderFigure() {
+    this._diagramElement = await this.renderDiagram();
 
     if (!this._diagramElement) {
       return;
@@ -142,9 +142,9 @@ export default class SchematicsFigure extends HTMLElement {
     }
 
     const showNewFigure = () => {
-      this._transitionTimer = setTimeout(() => {
+      this._transitionTimer = setTimeout(async () => {
         this.classList.add(this.className(this.num));
-        this.renderFigure();
+        await this.renderFigure();
         transitionWithClasses(this.figureNode, [figureVariationClassName("showing")], () => {
           this._transitionTimer = null;
         });
@@ -161,12 +161,13 @@ export default class SchematicsFigure extends HTMLElement {
     }
   }
 
-  renderDiagram() {
+  // eslint-disable-next-line consistent-return
+  async renderDiagram() {
     if (!Number.isInteger(this.num)) {
       return null;
     }
 
-    const diagramElement = this._diagramFactory(this.num);
+    const diagramElement = await this._diagramFactory(this.num);
     this.diagramContainerNode.replaceChildren(diagramElement);
     return diagramElement;
   }
