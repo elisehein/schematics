@@ -2,7 +2,6 @@ import { SVGDiagram } from "../Diagram.js";
 import WaveCoordinates, { WavePeaks } from "./Figure20WaveCoordinates.js";
 import RowBarDrawing from "./Figure20RowBarDrawing.js";
 
-import BezierEasing from "/helpers/BezierEasing.js";
 import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 
@@ -151,74 +150,33 @@ export default class Figure20Diagram extends SVGDiagram {
     this.animateTravellingWaves(initial, travelData, { duration }, rowIndex);
   }
 
-  getWaveTravelDataWithOverlapAdjustment(
-    initialPeaks, finalPeaks, fractionOfWaveFormedBeforeTravel = 1
-  ) {
+  getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks) {
     const travelDistance = initialPeaks.rightmostPeakDifference(finalPeaks);
     const extraTranslationDuringTravel =
       this._waves.getDistanceToOverlapBarsBetweenPeaks(initialPeaks.length).rightward;
     return {
       travelDistance,
-      extraTranslationDuringTravel,
-      fractionOfWaveFormedBeforeTravel
+      extraTranslationDuringTravel
     };
   }
 
   animateTravellingWaves(peaks, travelData, options, rowIndex, onDone = () => {}) {
     const {
       travelDistance: totalTravelDistance,
-      extraTranslationDuringTravel = 0,
-      fractionOfWaveFormedBeforeTravel = 1
+      extraTranslationDuringTravel = 0
     } = travelData;
 
     const translations = this._waves
       .getTranslationsForTravellingWaves(peaks, totalTravelDistance)
       .map((translationsAtDistance, distanceTravelled) => {
         const fractionOfDistanceTravelled = distanceTravelled / totalTravelDistance;
-        const fractionOfWaveFormed =
-          this.getFractionOfWaveFormed(fractionOfDistanceTravelled, fractionOfWaveFormedBeforeTravel);
         const extraTranslationSoFar = extraTranslationDuringTravel * fractionOfDistanceTravelled;
         return translationsAtDistance.map(barTranslation => (
-          (barTranslation * fractionOfWaveFormed) + extraTranslationSoFar
+          barTranslation + extraTranslationSoFar
         ));
       });
 
     this._animations.animateAcrossTranslations(rowIndex, translations, options, onDone);
-  }
-
-  getFractionOfWaveFormed(fractionOfDistanceTravelled, fractionOfWaveFormedBeforeTravel) {
-    const fractionOfTravelNeededToFullyFormWave = 0.2;
-
-    const waveFormationDoneByFractionOfTravelDistance =
-      fractionOfTravelNeededToFullyFormWave -
-      (fractionOfWaveFormedBeforeTravel * fractionOfTravelNeededToFullyFormWave);
-
-    if (waveFormationDoneByFractionOfTravelDistance == 0) {
-      return 1;
-    }
-
-    const fractionOfWaveFormed = fractionOfWaveFormedBeforeTravel +
-      (fractionOfDistanceTravelled / waveFormationDoneByFractionOfTravelDistance);
-    return Math.min(1, fractionOfWaveFormed);
-  }
-
-  toggleWavePeaks(rowIndex, appearing, peaksToToggle, duration, extraTranslation = 0, onDone = () => {}) {
-    const easing = appearing ? BezierEasing.easeInCubic : BezierEasing.easeOutCubic;
-    const options = { duration, easing };
-
-    const peaks = {
-      initial: appearing ? WavePeaks.none : peaksToToggle,
-      final: appearing ? peaksToToggle : WavePeaks.none
-    };
-
-    const initialTranslations = this._waves.getTranslationsForWaves(peaks.initial);
-    const finalTranslations = this._waves
-      .getTranslationsForWaves(peaks.final)
-      .map(translation => translation + extraTranslation);
-
-    this._animations.animateBetweenTranslations(
-      rowIndex, initialTranslations, finalTranslations, options , onDone
-    );
   }
 
   bindPointerEventsToWaveMovements() {
@@ -248,12 +206,10 @@ export default class Figure20Diagram extends SVGDiagram {
       const targetPeaks = targetPeaksPerRow[rowIndex];
       this.matchWavePeaksToPositionFromCurrentPosition(rowIndex, targetPeaks);
     });
-
-    this._pointerEnteredButNotMovedYet = false;
   }
 
   matchWavePeaksToPositionFromCurrentPosition(rowIndex, targetPeaks) {
-    if (this._pointerEnteredButNotMovedYet || this._animations.anyAnimationsInProgress()) {
+    if (this._pointerEvents.pointerJustEntered || this._animations.anyAnimationsInProgress()) {
       this.animateWaveFormationFromCurrentPosition(targetPeaks, rowIndex);
     } else {
       this.setWavePeaks({ peaks: targetPeaks, rowIndex });
@@ -269,7 +225,6 @@ export default class Figure20Diagram extends SVGDiagram {
 
   dissolveWavesAndRestartRandomAnimation() {
     this.stopAllRowAnimations();
-    this._pointerEnteredButNotMovedYet = false;
 
     const duration = new Duration({ milliseconds: 200 });
     const extraTranslations = this.peaksPerRow.map(peaks => (
