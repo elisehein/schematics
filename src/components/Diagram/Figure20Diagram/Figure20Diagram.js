@@ -247,7 +247,11 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   matchWavePeaksToPosition({ x }) {
-    const targetPeaksPerRow = this.getWavePeaksAnchoredTo({ x, anchorRowIndex: 3 });
+    // Map x onto a wider range than the svgSize so the wave movement covers a wider area
+    const xRange = { min: -150, max: this.svgSize + 150 };
+    const adjustedX = x * (xRange.max - xRange.min) / this.svgSize + xRange.min;
+
+    const targetPeaksPerRow = this.getWavePeaksAnchoredTo({ x: adjustedX, anchorRowIndex: 3 });
 
     this.forEachRow(rowIndex => {
       const targetPeaks = targetPeaksPerRow[rowIndex];
@@ -279,7 +283,7 @@ export default class Figure20Diagram extends SVGDiagram {
     this.stopAllRowAnimations();
     this._pointerEnteredButNotMovedYet = false;
 
-    const duration = new Duration({ milliseconds: 100 });
+    const duration = new Duration({ milliseconds: 200 });
     const options = { duration, easing: BezierEasing.linear };
     const extraTranslations = originalPeaksPerRow.map(peaks => (
       this._waves.getDistanceToOverlapBars({
