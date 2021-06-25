@@ -96,7 +96,7 @@ export default class Figure20Diagram extends SVGDiagram {
   animateWavesRandomly() {
     const randomDelay = new Duration({ milliseconds: randomIntBetween(100, 1000) });
 
-    this._waveAnimationTimer = this._timerManager.setTimeout(() => {
+    this._timerManager.setTimeout(() => {
       if (Math.random() > 0.2) {
         this.animateWaveOnRandomRow();
         this.animateWavesRandomly();
@@ -135,12 +135,12 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateOriginalWavePeaks(rowIndex, delay, onDone) {
-    const initialPeaks = this.peaksPerRow[rowIndex].adjustedBy(this.svgSize * -1);
-    const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
-    const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
+    const initial = this.peaksPerRow[rowIndex].adjustedBy(this.svgSize * -1);
+    const { final } = this._peaksForRowWaveAnimations[rowIndex];
+    const travelData = this.getWaveTravelDataWithOverlapAdjustment(initial, final);
     const duration = new Duration({ seconds: 4 });
     this._timerManager.setTimeout(() => {
-      this.animateTravellingWaves(initialPeaks, travelData, { duration }, rowIndex, onDone);
+      this.animateTravellingWaves(initial, travelData, { duration }, rowIndex, onDone);
     }, delay.ms);
   }
 
@@ -184,20 +184,15 @@ export default class Figure20Diagram extends SVGDiagram {
 
     this._pointerEvents.respondToPointer({
       positionRespondsToMovement: pointerIsOnRows,
-      onEnter: this.prepareToAnimatePeaks.bind(this),
+      onEnter: this.stopAllRowAnimations.bind(this),
       onMove: this.matchWavePeaksToPosition.bind(this),
       onLeave: this.dissolveWavesAndRestartRandomAnimation.bind(this)
     });
   }
 
-  prepareToAnimatePeaks() {
-    this.stopAllRowAnimations();
-    this._pointerEnteredButNotMovedYet = true;
-  }
-
   matchWavePeaksToPosition({ x }) {
     // Map x onto a wider range than the svgSize so the wave movement covers a wider area
-    const xRange = { min: -150, max: this.svgSize + 150 };
+    const xRange = { min: -100, max: this.svgSize + 100 };
     const adjustedX = x * (xRange.max - xRange.min) / this.svgSize + xRange.min;
 
     const targetPeaksPerRow = this.getWavePeaksAnchoredTo({ x: adjustedX, anchorRowIndex: 3 });
@@ -254,9 +249,8 @@ export default class Figure20Diagram extends SVGDiagram {
     };
 
     this.forEachRow(rowIndex => {
-      this._timerManager.setTimeout(() => {
-        dissolveWaves(rowIndex);
-      }, 70 * (this._drawing.numberOfRows - rowIndex - 1));
+      const delay = 70 * (this._drawing.numberOfRows - rowIndex - 1);
+      this._timerManager.setTimeout(dissolveWaves.bind(this, rowIndex), delay);
     });
   }
 
