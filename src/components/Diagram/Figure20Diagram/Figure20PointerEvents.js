@@ -38,7 +38,7 @@ export default class Figure20PointerEvents {
 
   respondToMouseLeave(onLeave) {
     this._svgNode.addEventListener("mouseleave", event => {
-      if (this.respondintToMovement) {
+      if (this.respondingToMovement) {
         this._state = pointerStates.NOT_ENTERED;
         onLeave(this.getPointerPositionInSVG(event));
       }
