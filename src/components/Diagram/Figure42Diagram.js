@@ -165,10 +165,10 @@ export default class Figure42Diagram extends SVGDiagram {
 
     const randomXTranslation = this.getRandomTranslationWithinBounds(cxAligned, viewBox.width, 7);
     const randomYTranslation = this.getRandomTranslationWithinBounds(cyAligned, viewBox.height, 10);
-    node.dataset.cxTranslated = cxAligned + randomXTranslation;
-    node.dataset.cyTranslated = cyAligned + randomYTranslation;
-    node.setAttribute("cx", node.dataset.cxTranslated);
-    node.setAttribute("cy", node.dataset.cyTranslated);
+    node.dataset.xTranslation = randomXTranslation;
+    node.dataset.yTranslation = randomYTranslation;
+    const transform = `translate(${randomXTranslation} ${randomYTranslation})`;
+    node.setAttribute("transform", transform);
   }
 
   getRandomTranslationWithinBounds(originalValue, bounds, inset) {
@@ -202,11 +202,14 @@ export default class Figure42Diagram extends SVGDiagram {
   }
 
   addXTranslationAnimation(star, animatableStar, reverse, duration, animationID) {
-    const cxValues = [star.node.dataset.cxTranslated, star.node.dataset.cxAligned];
+    const values = [star.node.dataset.xTranslation, 0];
+    const transformValues = array => array.map(translation => (
+      `${translation} ${star.node.dataset.yTranslation || 0}`
+    ));
 
-    animatableStar.animateAttribute("cx", Object.assign({
+    animatableStar.animateTransform("translate", Object.assign({
       id: animationID,
-      values: (reverse ? cxValues.reverse() : cxValues).join(";")
+      values: (reverse ? transformValues(values.reverse()) : transformValues(values)).join(";")
     }, commonAnimationProps(duration)));
   }
 
@@ -257,11 +260,14 @@ export default class Figure42Diagram extends SVGDiagram {
   }
 
   addYTranslationAnimation(star, animatableStar, reverse, duration, animationID) {
-    const cyValues = [star.node.dataset.cyTranslated, star.node.dataset.cyAligned];
+    const values = [star.node.dataset.yTranslation, 0];
+    const transformValues = array => array.map(translation => (
+      `0 ${translation}`
+    ));
 
-    animatableStar.animateAttribute("cy", Object.assign({
+    animatableStar.animateTransform("translate", Object.assign({
       id: animationID,
-      values: (reverse ? cyValues.reverse() : cyValues).join(";")
+      values: (reverse ? transformValues(values.reverse()) : transformValues(values)).join(";")
     }, commonAnimationProps(duration)));
   }
 
