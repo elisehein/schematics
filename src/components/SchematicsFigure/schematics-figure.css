@@ -166,6 +166,9 @@
         &--latest-visible {
           &::after {
             content: "_";
+            display: inline-block;
+            width: 0;
+            overflow: visible;
             animation: blink .5s cubic-bezier(0, .55, .45, 1) infinite;
             animation-delay: .13s;
           }
