@@ -13,18 +13,17 @@ python3 -m http.server 3000
 ![Screenshot of the website](/screenshot.png)
 
 #### Motion design
-
-In 2011, I bought [Julian Hibbard](http://julianhibbard.com/)’s book *[Schematics: A Love Story](http://julianhibbard.com/schematics.html)*, a collection of mathematical diagrams accompanied by short pieces of poetry. I’ll be the first to admit I’m only vaguely aware of the meaning each figure tries to convey. Still, the book has kept me hooked, and the aesthetic always seemed like it would be fun to replicate digitally.
+In 2011, I bought *[Schematics: A Love Story](http://julianhibbard.com/schematics.html), a collection of scientific diagrams accompanied by short pieces of poetry by [Julian Hibbard](http://julianhibbard.com). I don't read much poetry, and I’m only vaguely aware of the story each figure tries to tell. But I keep getting drawn in anyway, and the book's aesthetic always seemed like it would be fun to replicate digitally.
 
 #### JavaScript without the build tools or frameworks
 
-Those familiar with JavaScript know it’s not a language that you dip in and out of. You’d never keep up! I recently came across [The Stackless Way](https://tutorials.yax.com/articles/build-websites-the-yax-way/quicktakes/what-is-the-yax-way.html), an optimistic approach to client-side JavaScript development that proposes we “use the platform” (modern features built into the language) instead of the ever changing, ever more complex frameworks and build tools. As a software engineer who’s spent the last decade trying to navigate the ecosystem all over again each time a project came up, I couldn’t wait to try it out.
+Those familiar with JavaScript know it’s not a language that you dip in and out of. You’d never keep up! I recently came across [The Stackless Way](https://tutorials.yax.com/articles/build-websites-the-yax-way/quicktakes/what-is-the-yax-way.html), an optimistic approach to client-side JavaScript development that proposes we “use the platform” (modern features built into the language) instead of frameworks and build tools that inevitably keep getting replaced by the next one. As a software engineer who’s spent the last decade trying to navigate the ecosystem all over again each time a project came up, the idea resonated.
 
-I combined these two ideas in this codebase.
+This project combines my excitement for *Schematics* in motion with my curiosity about "stackless" web development.
 
 * On the design side of things (motion and otherwise), I did my best to reproduce the vibe I got from *Schematics* (with kind feedback from the author). The diagrams are SVGs created programmatically with JavaScript and animated with [SMIL](https://developer.mozilla.org/en-US/docs/Web/SVG/SVG_animation_with_SMIL). I’ve enjoyed working with SVGs in the past and wanted to learn about the more complex aspects of SMIL animation beyond what can be done in CSS.
 
-* On the technical side of things, I focused on vanilla JavaScript without the distraction of transpilers and bundlers. This has helped me to clear my head of the clutter of React, Babel, webpack and Rollup, and discover exactly what I get for free in 2021, and what’s missing.
+* On the technical side of things, I focused on vanilla JavaScript without the distraction of transpilers and bundlers. This has helped me to clear my head of the clutter of React, Babel, webpack and Rollup, and discover exactly what I get for free in 2021, and what value I'm adding by bringing a framework to the mix.
 
 ## Dependencies
 
