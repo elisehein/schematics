@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Figure 20 ([#14](https://github.com/elisehein/schematics/pull/14))
+* Dynamic imports for diagram drawing (import as few modules as possible to draw the thumbnail, until we actually need to draw the full figure).
 
 ## [1.1.0] – 2021-06-18
 

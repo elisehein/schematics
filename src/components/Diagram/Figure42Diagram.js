@@ -1,7 +1,3 @@
-import { animatable } from "/components/SVGShapes/SVGShapeFeatures.js";
-
-import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
-import { randomIntBetween } from "/helpers/random.js";
 import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "/helpers/Duration.js";
 
@@ -60,20 +56,36 @@ export default class Figure42Diagram extends SVGDiagram {
     this._reverseAxisAnimationDuration = new Duration({ seconds: 2.2 });
   }
 
-  drawBeforeCaption({ onDone }) {
-    this.drawStars();
+  importDependencies(callback) {
+    Promise.all([
+      import("/helpers/sequentialActionRunning.js"),
+      import("/helpers/random.js"),
+      import("/components/SVGShapes/SVGShapeFeatures.js")
+    ]).then(modules => {
+      this._runActionsSequentially = modules[0].runActionsSequentially;
+      this._waitBeforeNextAction = modules[0].waitBeforeNextAction;
+      this._randomIntBetween = modules[1].randomIntBetween;
+      this._animatable = modules[2].animatable;
+      callback();
+    });
+  }
 
-    runActionsSequentially([
-      waitBeforeNextAction(1000, this._timerManager),
-      this.animateTemperatureOnXAxis.bind(this, false),
-      this.animateMagnitudeOnYAxis.bind(this, false),
-      waitBeforeNextAction(2000, this._timerManager)
-    ], onDone);
+  drawBeforeCaption({ onDone }) {
+    super.drawBeforeCaption();
+    this.importDependencies(() => {
+      this.drawStars();
+      this._runActionsSequentially([
+        this._waitBeforeNextAction(1000, this._timerManager),
+        this.animateTemperatureOnXAxis.bind(this, false),
+        this.animateMagnitudeOnYAxis.bind(this, false),
+        this._waitBeforeNextAction(2000, this._timerManager)
+      ], onDone);
+    });
   }
 
   drawAfterCaption() {
-    runActionsSequentially([
-      waitBeforeNextAction(3000, this._timerManager),
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(3000, this._timerManager),
       ({ onDone }) => {
         this._figureBehavior.onDeleteCaption({ onDone: () => {} });
         this._figureBehavior.onLightUp(Duration.oneSec);
@@ -81,10 +93,10 @@ export default class Figure42Diagram extends SVGDiagram {
       },
       this.animateMagnitudeOnYAxis.bind(this, true),
       this.animateTemperatureOnXAxis.bind(this, true),
-      waitBeforeNextAction(4000, this._timerManager),
+      this._waitBeforeNextAction(4000, this._timerManager),
       this.animateTemperatureOnXAxis.bind(this, false),
       this.animateMagnitudeOnYAxis.bind(this, false),
-      waitBeforeNextAction(2000, this._timerManager),
+      this._waitBeforeNextAction(2000, this._timerManager),
       this._figureBehavior.onRetypeCaption
     ], this.drawAfterCaption.bind(this));
   }
@@ -160,8 +172,8 @@ export default class Figure42Diagram extends SVGDiagram {
   }
 
   getRandomTranslationWithinBounds(originalValue, bounds, inset) {
-    const randomPositiveTranslation = randomIntBetween(0, bounds - originalValue - inset);
-    const randomNegativeTranslation = randomIntBetween(0, originalValue - inset) * -1;
+    const randomPositiveTranslation = this._randomIntBetween(0, bounds - originalValue - inset);
+    const randomNegativeTranslation = this._randomIntBetween(0, originalValue - inset) * -1;
     return Math.random() > 0.5 ? randomPositiveTranslation : randomNegativeTranslation;
   }
 
@@ -170,7 +182,7 @@ export default class Figure42Diagram extends SVGDiagram {
     this.lightUpWithDelay(0.8, duration);
 
     this._stars.forEach((star, index) => {
-      const animatableStar = animatable(star);
+      const animatableStar = this._animatable(star);
       const translationAnimationID = this.xTranslationAnimationID(index, reverse);
       const existingAnimation = this.querySelector(`#${translationAnimationID}`);
 
@@ -203,7 +215,7 @@ export default class Figure42Diagram extends SVGDiagram {
     this.lightUpWithDelay(0.8, duration);
 
     this._stars.forEach((star, index) => {
-      const animatableStar = animatable(star);
+      const animatableStar = this._animatable(star);
       const scaleXAnimationID = this.scaleAnimationID(index, "x", reverse);
       const scaleYAnimationID = this.scaleAnimationID(index, "y", reverse);
       const translationAnimationID = this.yTranslationAnimationID(index, reverse);

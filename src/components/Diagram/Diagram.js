@@ -1,7 +1,6 @@
 import { getA11yDescription, getA11yThumbnailDescription } from "../../figureData.js";
 import TimerManager from "../../helpers/TimerManager.js";
 import SVGShapeFactory from "../SVGShapes/SVGShapeFactory.js";
-import smoothScroll from "/helpers/smoothScroll.js";
 import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "../../helpers/Duration.js";
 
@@ -24,9 +23,12 @@ class Diagram extends HTMLElement {
     }
   }
 
-  drawBeforeCaption({ onDone }) {
-    this.scrollIntoView();
-    onDone();
+  drawBeforeCaption({ onDone = () => {} } = {}) {
+    import("/helpers/smoothScroll.js").then(module => {
+      this._smoothScroll = module.default;
+      this.scrollIntoView();
+      onDone();
+    });
   }
 
   drawAlongsideCaption() {}
@@ -47,7 +49,7 @@ class Diagram extends HTMLElement {
    */
   smoothScrollIntoView({ onDone }) {
     const duration = new Duration({ milliseconds: 700 });
-    smoothScroll(document.querySelector("main"), 0, 0, duration, BezierEasing.easeOutCubic, { onDone });
+    this._smoothScroll(document.querySelector("main"), 0, 0, duration, BezierEasing.easeOutCubic, { onDone });
   }
 
   scrollIntoView() {

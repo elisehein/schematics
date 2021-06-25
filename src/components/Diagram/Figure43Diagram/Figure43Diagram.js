@@ -1,5 +1,4 @@
 import { HTMLDiagram } from "../Diagram.js";
-import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 
 export default class Figure43Diagram extends HTMLDiagram {
@@ -7,10 +6,17 @@ export default class Figure43Diagram extends HTMLDiagram {
     super(43, ...args);
   }
 
-  drawBeforeCaption({ onDone }) {
-    this.divContainerNode.innerHTML = cubeMarkup;
-    this.makeFuzzyAtRandomIntervals();
+  importDependencies(callback) {
+    import("/helpers/random.js").then(random => {
+      this._randomIntBetween = random.randomIntBetween;
+      callback();
+    });
+  }
 
+  drawBeforeCaption({ onDone }) {
+    super.drawBeforeCaption();
+    this.divContainerNode.innerHTML = cubeMarkup;
+    this.importDependencies(() => this.makeFuzzyAtRandomIntervals());
     this._timerManager.setTimeout(onDone, 1000);
   }
 
@@ -19,8 +25,8 @@ export default class Figure43Diagram extends HTMLDiagram {
   }
 
   makeFuzzyAtRandomIntervals() {
-    const randomDelay = new Duration({ seconds: randomIntBetween(0, 5) });
-    const randomDuration = new Duration({ milliseconds: randomIntBetween(1500, 4000) });
+    const randomDelay = new Duration({ seconds: this._randomIntBetween(0, 5) });
+    const randomDuration = new Duration({ milliseconds: this._randomIntBetween(1500, 4000) });
 
     this._timerManager.setTimeout(() => {
       this._figureBehavior.onFuzzy(randomDuration, { onDone: () => {

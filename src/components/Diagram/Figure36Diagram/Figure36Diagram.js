@@ -1,8 +1,6 @@
 import { SVGDiagram } from "../Diagram.js";
 import PendulumArm from "./PendulumArm.js";
-import PendulumTrajectoryArrow from "./PendulumTrajectoryArrow.js";
 
-import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 import BezierEasing from "/helpers/BezierEasing.js";
 import Duration from "/helpers/Duration.js";
 
@@ -20,6 +18,17 @@ export default class Figure36Diagram extends SVGDiagram {
     this._totalSwings = 30;
   }
 
+  importDependencies(callback) {
+    Promise.all([
+      import("/helpers/sequentialActionRunning.js"),
+      import("./PendulumTrajectoryArrow.js")
+    ]).then(modules => {
+      this._runActionsSequentially = modules[0].runActionsSequentially;
+      this._waitBeforeNextAction = modules[0].waitBeforeNextAction;
+      callback(modules[1].default);
+    });
+  }
+
   drawThumbnail() {
     this._pendulumLength = 120;
     this.drawAnchor();
@@ -28,25 +37,29 @@ export default class Figure36Diagram extends SVGDiagram {
   }
 
   drawBeforeCaption({ onDone }) {
+    super.drawBeforeCaption();
     this.drawAnchor();
     this._swingingArm = this.drawPendulumArm(this._initialAngle);
-    this._arrow = this.drawArrow({
-      startAngle: 180 - this._initialAngle + this._arrowOffsetAngle,
-      endAngle: 180 + this._initialAngle - this._arrowOffsetAngle
-    });
 
-    runActionsSequentially([
-      waitBeforeNextAction(1000, this._timerManager),
-      this._arrow.appearInSteps.bind(this._arrow, new Duration({ milliseconds: 3000 }), this._timerManager),
-      waitBeforeNextAction(1000, this._timerManager)
-    ], onDone);
+    this.importDependencies(PendulumTrajectoryArrow => {
+      this._arrow = this.drawArrow(PendulumTrajectoryArrow, {
+        startAngle: 180 - this._initialAngle + this._arrowOffsetAngle,
+        endAngle: 180 + this._initialAngle - this._arrowOffsetAngle
+      });
+
+      this._runActionsSequentially([
+        this._waitBeforeNextAction(1000, this._timerManager),
+        this._arrow.appearInSteps.bind(this._arrow, new Duration({ milliseconds: 3000 }), this._timerManager),
+        this._waitBeforeNextAction(1000, this._timerManager)
+      ], onDone);
+    });
   }
 
   drawAfterCaption() {
     this.enableUserTriggeredSwinging();
   }
 
-  drawArrow(angles) {
+  drawArrow(PendulumTrajectoryArrow, angles) {
     const arrowArcRadius = this._pendulumLength + (this._circleRadius * 2) + 10;
     const arrow = new PendulumTrajectoryArrow(this._svgShapeFactory, this.anchorPoint, arrowArcRadius, angles);
     this.addSVGChildElement(arrow.node);

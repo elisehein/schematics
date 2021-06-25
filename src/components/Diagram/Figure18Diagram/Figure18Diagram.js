@@ -1,8 +1,6 @@
 import { SVGDiagram } from "../Diagram.js";
 import data from "./data.js";
-import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
-import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
 import Duration from "../../../helpers/Duration.js";
 
 const firstBox = "good?";
@@ -10,7 +8,19 @@ const firstBox = "good?";
 export default class Figure18Diagram extends SVGDiagram {
   constructor(...args) {
     super(18, ...args);
-    this._grid = new Figure18DiagramGridCoordinateSystem();
+  }
+
+  importDependencies(callback) {
+    Promise.all([
+      import("./Figure18DiagramGridCoordinateSystem.js"),
+      import("/helpers/sequentialActionRunning.js")
+    ]).then(modules => {
+      const Grid = modules[0].default;
+      this._grid = new Grid();
+      this._runActionsSequentially = modules[1].runActionsSequentially;
+      this._waitBeforeNextAction = modules[1].waitBeforeNextAction;
+      callback();
+    });
   }
 
   drawThumbnail() {
@@ -26,12 +36,14 @@ export default class Figure18Diagram extends SVGDiagram {
   drawAfterCaption() {
     super.drawAfterCaption();
 
-    runActionsSequentially([
-      waitBeforeNextAction(1000, this._timerManager),
-      this.smoothScrollIntoView.bind(this),
-      waitBeforeNextAction(1000, this._timerManager),
-      this.drawBoxWithOptions.bind(this, firstBox)
-    ]);
+    this.importDependencies(() => {
+      this._runActionsSequentially([
+        this._waitBeforeNextAction(1000, this._timerManager),
+        this.smoothScrollIntoView.bind(this),
+        this._waitBeforeNextAction(1000, this._timerManager),
+        this.drawBoxWithOptions.bind(this, firstBox)
+      ]);
+    });
   }
 
   drawBoxWithOptions(boxText, boxOriginPoint, animated = true, { onDone } = {}) {

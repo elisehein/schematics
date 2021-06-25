@@ -1,7 +1,7 @@
 import { SVGDiagram } from "./Diagram.js";
-import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
-import BezierEasing from "../../helpers/BezierEasing.js";
-import Duration from "../../helpers/Duration.js";
+
+import Duration from "/helpers/Duration.js";
+import BezierEasing from "/helpers/BezierEasing.js";
 
 export default class Figure14Diagram extends SVGDiagram {
   constructor(...args) {
@@ -23,20 +23,31 @@ export default class Figure14Diagram extends SVGDiagram {
     };
   }
 
+  importDependencies(callback) {
+    import("/helpers/sequentialActionRunning.js").then(module => {
+      this._runActionsSequentially = module.runActionsSequentially;
+      this._waitBeforeNextAction = module.waitBeforeNextAction;
+      callback();
+    });
+  }
+
   drawThumbnail() {
     this.drawSpiral();
   }
 
   drawBeforeCaption({ onDone }) {
+    super.drawBeforeCaption();
     const animationStepDuration = Duration.threeSec;
-    this.animateAxes(animationStepDuration, onDone);
+    this.importDependencies(() => {
+      this.animateAxes(animationStepDuration, onDone);
+    });
   }
 
   drawAfterCaption() {
-    runActionsSequentially([
-      waitBeforeNextAction(1000, this._timerManager),
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(1000, this._timerManager),
       this.smoothScrollIntoView.bind(this),
-      waitBeforeNextAction(1000, this._timerManager),
+      this._waitBeforeNextAction(1000, this._timerManager),
       ({ onDone }) => {
         const spiral = this.drawSpiral();
         spiral.animateStroke("10s", "linear");
@@ -46,12 +57,12 @@ export default class Figure14Diagram extends SVGDiagram {
   }
 
   animateAxes(animationStepDuration, onAllDone) {
-    runActionsSequentially([
-      waitBeforeNextAction(500, this._timerManager),
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(500, this._timerManager),
       this.draw2DXY.bind(this, animationStepDuration),
       this.shiftPerspective.bind(this, animationStepDuration),
       this.drawLabels.bind(this),
-      waitBeforeNextAction(1000, this._timerManager)
+      this._waitBeforeNextAction(1000, this._timerManager)
     ], onAllDone);
   }
 
@@ -123,7 +134,7 @@ export default class Figure14Diagram extends SVGDiagram {
   }
 
   drawLabels({ onDone }) {
-    runActionsSequentially([
+    this._runActionsSequentially([
       this.drawLabel.bind(this, "X", { x: 257, y: 207 }, true),
       this.drawLabel.bind(this, "Y", { x: 207, y: 262 }, true),
       this.drawLabel.bind(this, "Time", { x: 157, y: 36 }, true)

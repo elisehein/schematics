@@ -1,8 +1,6 @@
 import { SVGDiagram } from "../Diagram.js";
 import WaveCoordinates, { WavePeaks } from "./Figure20WaveCoordinates.js";
 import RowBarDrawing from "./Figure20RowBarDrawing.js";
-
-import { randomIntBetween } from "/helpers/random.js";
 import Duration from "/helpers/Duration.js";
 
 export default class Figure20Diagram extends SVGDiagram {
@@ -14,8 +12,9 @@ export default class Figure20Diagram extends SVGDiagram {
   importDependencies(callback) {
     Promise.all([
       import("./Figure20Animations.js"),
-      import("./Figure20PointerEvents.js")
-    ]).then(modules => callback(modules[0].default, modules[1].default));
+      import("./Figure20PointerEvents.js"),
+      import("/helpers/random.js")
+    ]).then(modules => callback(modules[0].default, modules[1].default, modules[2]));
   }
 
   drawThumbnail() {
@@ -34,12 +33,13 @@ export default class Figure20Diagram extends SVGDiagram {
     );
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
 
-    this.importDependencies((Animations, PointerEvents) => {
+    this.importDependencies((Animations, PointerEvents, random) => {
       this._pointerEvents = new PointerEvents(this.svgNode);
       this._animations = new Animations(
         this._timerManager,
         this.setTranslationForEachBar.bind(this)
       );
+      this._randomIntBetween = random.randomIntBetween;
 
       this.drawAndAnimate();
     });
@@ -109,7 +109,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWavesRandomly() {
-    const randomDelay = new Duration({ milliseconds: randomIntBetween(100, 1000) });
+    const randomDelay = new Duration({ milliseconds: this._randomIntBetween(100, 1000) });
 
     this._timerManager.setTimeout(() => {
       if (Math.random() > 0.2) {
@@ -122,11 +122,11 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWaveOnRandomRow() {
-    const randomRow = randomIntBetween(0, this._drawing.numberOfRows - 1);
+    const randomRow = this._randomIntBetween(0, this._drawing.numberOfRows - 1);
     const peaksOnRow = this.peaksPerRow[randomRow].length;
     const minDurationMS = peaksOnRow * 500;
     const randomDuration = new Duration({
-      milliseconds: minDurationMS + randomIntBetween(500, 2000)
+      milliseconds: minDurationMS + this._randomIntBetween(500, 2000)
     });
     this.animateFullWaveLifecycle(randomDuration, randomRow);
   }
