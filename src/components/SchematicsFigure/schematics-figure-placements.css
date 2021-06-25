@@ -110,16 +110,16 @@
     }
 
     &__diagram-container {
-      grid-column: 3 / -1;
+      grid-column: 3 / -3;
       grid-row: 2 / -2;
       opacity: .8;
     }
 
     &__figcaption {
-      grid-column: 2 / -1;
+      grid-column: 2 / -2;
       grid-row: 2 / -2;
       align-self: center;
-      line-height: 7.65vh; /* Needs to be fine-tuned for each screen size */
+      justify-self: center;
     }
   }
 

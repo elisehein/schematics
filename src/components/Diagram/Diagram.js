@@ -117,4 +117,8 @@ export class HTMLDiagram extends Diagram {
   get divContainerNode() {
     return this.querySelector("div.diagram");
   }
+
+  get replacesCaption() {
+    return false;
+  }
 }

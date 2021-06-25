@@ -27,14 +27,12 @@ export default class Figure20Diagram extends SVGDiagram {
     this.setWavePeaks({ peaks: this.peaksPerRow[0], rowIndex: 0 });
   }
 
-  drawBeforeCaption({ onDone }) {
+  drawAfterCaption() {
     this._drawing = new RowBarDrawing(this.svgSize, this._svgShapeFactory);
     this._waves = new WaveCoordinates(
       this._waveScaleFactor, this._drawing.barGap, this._drawing.barsPerRow, this.svgSize
     );
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
-    this._bars = this.drawBars();
-    this.positionBarsForWaveAnimations();
 
     this.importDependencies((Animations, PointerEvents) => {
       this._pointerEvents = new PointerEvents(this.svgNode);
@@ -43,14 +41,17 @@ export default class Figure20Diagram extends SVGDiagram {
         this.setTranslationForEachBar.bind(this)
       );
 
-      this.animateWavesRandomly();
-      this.bindPointerEventsToWaveMovements();
-
-      // onDone()
+      this.drawAndAnimate();
     });
   }
 
-  drawAfterCaption() {
+  drawAndAnimate() {
+    this._timerManager.setTimeout(() => {
+      this._bars = this.drawBars();
+      this.positionBarsForWaveAnimations();
+      this.animateWavesRandomly();
+      this.bindPointerEventsToWaveMovements();
+    }, 1000);
   }
 
   drawBars() {
@@ -281,6 +282,10 @@ export default class Figure20Diagram extends SVGDiagram {
 
   get peaksPerRow() {
     return this._drawing.peaksPerRow.map(peaks => new WavePeaks(peaks));
+  }
+
+  get replacesCaption() {
+    return true;
   }
 }
 
