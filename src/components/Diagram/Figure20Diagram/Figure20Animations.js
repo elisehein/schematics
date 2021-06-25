@@ -1,4 +1,5 @@
 import animateWithEasing from "/helpers/animateWithEasing.js";
+import BezierEasing from "/helpers/BezierEasing.js";
 
 export default class Figure20RowAnimations {
   constructor(timerManager, applyTranslationsToRowBars) {
@@ -33,7 +34,7 @@ export default class Figure20RowAnimations {
   }
 
   animateBarTranslations(targetRow, barTranslationGetter, options, onDone = () => {}) {
-    const { duration, easing } = options;
+    const { duration, easing = BezierEasing.linear } = options;
     if (this._inProgressAnimationTracker.isTargetAnimating(targetRow)) {
       onDone();
       return;

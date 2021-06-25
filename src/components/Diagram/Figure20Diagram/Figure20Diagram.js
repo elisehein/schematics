@@ -139,23 +139,16 @@ export default class Figure20Diagram extends SVGDiagram {
     const initialPeaks = this.peaksPerRow[rowIndex].adjustedBy(this.svgSize * -1);
     const { final: finalPeaks } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initialPeaks, finalPeaks);
-    const options = {
-      duration: new Duration({ seconds: 4 }),
-      easing: BezierEasing.linear
-    };
+    const duration = new Duration({ seconds: 4 });
     this._timerManager.setTimeout(() => {
-      this.animateTravellingWaves(initialPeaks, travelData, options, rowIndex, onDone);
+      this.animateTravellingWaves(initialPeaks, travelData, { duration }, rowIndex, onDone);
     }, delay.ms);
   }
 
   animateFullWaveLifecycle(duration, rowIndex) {
     const { initial, final } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initial, final);
-    const options = {
-      duration,
-      easing: BezierEasing.linear
-    };
-    this.animateTravellingWaves(initial, travelData, options, rowIndex);
+    this.animateTravellingWaves(initial, travelData, { duration }, rowIndex);
   }
 
   getWaveTravelDataWithOverlapAdjustment(
@@ -268,13 +261,10 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWaveFormationFromCurrentPosition(peaks, rowIndex) {
-    const options = {
-      duration: new Duration({ milliseconds: 200 }),
-      easing: BezierEasing.linear
-    };
+    const duration = new Duration({ milliseconds: 200 });
     const initial = this.getCurrentTranslations(rowIndex);
     const final = this._waves.getTranslationsForWaves(peaks);
-    this._animations.animateBetweenTranslations(rowIndex, initial, final, options);
+    this._animations.animateBetweenTranslations(rowIndex, initial, final, { duration });
   }
 
   dissolveWavesAndRestartRandomAnimation() {
@@ -282,7 +272,6 @@ export default class Figure20Diagram extends SVGDiagram {
     this._pointerEnteredButNotMovedYet = false;
 
     const duration = new Duration({ milliseconds: 200 });
-    const options = { duration, easing: BezierEasing.linear };
     const extraTranslations = this.peaksPerRow.map(peaks => (
       this._waves.getDistanceToOverlapBars({
         numberOfPeaks: 0,
@@ -290,7 +279,7 @@ export default class Figure20Diagram extends SVGDiagram {
       }).min
     ));
 
-    this.dissolveWavesAfterIncreasingDelay(extraTranslations, options, () => {
+    this.dissolveWavesAfterIncreasingDelay(extraTranslations, { duration }, () => {
       this.animateWavesRandomly();
     });
   }
