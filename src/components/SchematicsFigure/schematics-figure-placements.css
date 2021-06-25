@@ -110,7 +110,7 @@
     }
 
     &__diagram-container {
-      grid-column: 3 / -3;
+      grid-column: 1 / -1;
       grid-row: 2 / -2;
       opacity: .8;
     }
@@ -120,6 +120,13 @@
       grid-row: 2 / -2;
       align-self: center;
       justify-self: center;
+    }
+
+    @media (--layout-aside-always-visible) {
+      &__diagram-container {
+        grid-column: 3 / -3;
+        grid-row: 2 / -2;
+      }
     }
   }
 
