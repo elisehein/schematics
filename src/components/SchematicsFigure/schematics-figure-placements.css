@@ -103,12 +103,6 @@
   }
 
   &--20 &__figure {
-    /* This is the only figure that has overflowing elements on the x-axis,
-     * which is why we must constrain the width to be proportional to the height. */
-    .diagram {
-      width: auto;
-    }
-
     &__diagram-container {
       grid-column: 1 / -1;
       grid-row: 2 / -2;

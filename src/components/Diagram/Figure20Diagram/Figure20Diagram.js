@@ -88,7 +88,17 @@ export default class Figure20Diagram extends SVGDiagram {
       const translation = translationGetter(index);
       bar.node.setAttribute("transform", `translate(${translation} 0)`);
       bar.node.dataset.translation = translation; // For easier reference later
+      this.toggleBarVisibility(bar, translation);
     });
+  }
+
+  toggleBarVisibility(bar, translation) {
+    const barX = parseFloat(bar.node.dataset.x) + translation;
+    if (barX < 0 || barX > this.svgSize) {
+      bar.node.style.visibility = "hidden";
+    } else {
+      bar.node.style.visibility = "visible";
+    }
   }
 
   positionBarsForWaveAnimations() {

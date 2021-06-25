@@ -83,7 +83,6 @@ export default class RowBarDrawing {
     for (let rowIndex = 0; rowIndex < numberOfRows; rowIndex += 1) {
       const barsForRow = [];
       const groupNode = this._svgShapeFactory.getGroupNode();
-      groupNode.dataset.rowIndex = rowIndex;
       const { top: topY, bottom: bottomY } = this._rowYs[rowIndex];
 
       for (let barIndex = 0; barIndex < barsPerRow; barIndex += 1) {
@@ -103,6 +102,7 @@ export default class RowBarDrawing {
     const lineTopPoint = { x, y: topY };
     const lineBottomPoint = { x, y: bottomY };
     const bar = this._svgShapeFactory.getLine(lineTopPoint, lineBottomPoint);
+    bar.node.dataset.x = x; // For easy access later
     bar.stroke();
     bar.node.style.strokeLinecap = "unset";
     return bar;
