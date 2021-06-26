@@ -42,8 +42,6 @@ class Diagram extends HTMLElement {
 
   drawThumbnail() {}
 
-  onCaptionPause() {}
-
   clearAllTimers() {
     this._timerManager.clearAllTimeouts();
     this._timerManager.clearAllIntervals();

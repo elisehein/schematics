@@ -123,14 +123,14 @@ export default class CaptionTyping {
       .replace(/\n/g, wrap("<br/>"));
   }
 
-  animate(captionNode, onPause, onDone) {
+  animate(captionNode, onDone) {
     if (this._timer) {
       clearTimeout(this._timer);
     }
 
     captionNode.innerHTML = this.parsedAndWrappedCaption;
     const captionChars = captionNode.querySelectorAll("span");
-    this.revealChar({ index: 0, captionChars, onPause, onDone });
+    this.revealChar({ index: 0, captionChars, onDone });
   }
 
   animateDelete(captionNode, onDone) {
@@ -142,7 +142,7 @@ export default class CaptionTyping {
     this.hideChar({ index: captionChars.length - 1, captionChars, onDone });
   }
 
-  revealChar({ index, captionChars, onPause, onDone }) {
+  revealChar({ index, captionChars, onDone }) {
     if (index >= captionChars.length) {
       onDone();
       return;
@@ -150,14 +150,10 @@ export default class CaptionTyping {
 
     const revealThisSpanAndNext = () => {
       this.makeCharVisible(index, captionChars);
-      this.revealChar({ index: index + 1, captionChars, onPause, onDone });
+      this.revealChar({ index: index + 1, captionChars, onDone });
     };
 
-    const { delay, isPause, pauseIndex } = this.getActiveDelayInfoAtSpan(index);
-
-    if (isPause) {
-      onPause(pauseIndex, delay);
-    }
+    const delay = this.getActiveDelayAtSpan(index);
 
     if (delay == 0) {
       revealThisSpanAndNext();
@@ -208,16 +204,11 @@ export default class CaptionTyping {
     }
   }
 
-  getActiveDelayInfoAtSpan(index) {
+  getActiveDelayAtSpan(index) {
     const rangeApplyingAtIndex = this.singleCharacterDelayRanges
       .filter(range => range.index <= index)
       .pop();
-    const rangeAtIndex = this.singleCharacterDelayRanges.find(range => range.index == index);
-    return {
-      delay: rangeApplyingAtIndex.delay,
-      isPause: rangeAtIndex && rangeAtIndex.isPause,
-      pauseIndex: rangeAtIndex && rangeAtIndex.pauseIndex
-    };
+    return rangeApplyingAtIndex.delay;
   }
 
   actionAndDelayFromFlag(flagString) {

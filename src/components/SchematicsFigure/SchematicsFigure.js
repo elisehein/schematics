@@ -1,4 +1,3 @@
-import { getPoetry } from "../../figureData.js";
 import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 const baseClassName = "schematics-figure__figure";
@@ -19,18 +18,22 @@ export default class SchematicsFigure extends HTMLElement {
 
   async importRenderingDependencies() {
     const modules = await Promise.all([
-      import("./CaptionTyping.js"),
+      import("./FigureCaption.js"),
       import("../Diagram/DiagramFactory.js")
     ]);
-    this.CaptionTyping = modules[0].default;
+    this.FigureCaption = modules[0].default;
     const DiagramFactory = modules[1].default;
 
     this._diagramFactory = new DiagramFactory({
       onLightUp: this.lightUpFigure.bind(this),
       onFuzzy: this.makeFigureFuzzy.bind(this),
       onJitter: this.jitterDiagram.bind(this),
-      onDeleteCaption: this.deleteCaption.bind(this),
-      onRetypeCaption: this.renderCaption.bind(this)
+      onDeleteCaption: ({ onDone }) => {
+        this._captionElement.deleteCaption({ onDone });
+      },
+      onRetypeCaption: ({ onDone }) => {
+        this._captionElement.animateCaption({ onDone });
+      }
     });
   }
 
@@ -41,12 +44,11 @@ export default class SchematicsFigure extends HTMLElement {
 
     await this.importRenderingDependencies();
     this._diagramElement = await this.renderDiagram();
-    this._captionTyping = new this.CaptionTyping(getPoetry(this.num));
-    this.renderA11yCaption();
+    this._captionElement = this.renderCaption();
 
     this._diagramElement.drawBeforeCaption({ onDone: () => {
       this._diagramElement.drawAlongsideCaption();
-      this.renderCaption({ onDone: () => {
+      this._captionElement.animateCaption({ onDone: () => {
         if (this._diagramElement.replacesCaption) {
           this.hideCaption(() => this._diagramElement.drawAfterCaption());
         } else {
@@ -72,8 +74,8 @@ export default class SchematicsFigure extends HTMLElement {
   cleanUpCurrentFigure(num) {
     this.classList.remove(this.className(num));
 
-    if (this._captionTyping) {
-      this._captionTyping.cancelCurrentSession();
+    if (this._captionElement) {
+      this._captionElement.cleanUp();
     }
 
     if (this._diagramElement) {
@@ -82,12 +84,11 @@ export default class SchematicsFigure extends HTMLElement {
 
     clearTimeout(this._lightUpTimer);
     clearTimeout(this._fuzzyTimer);
+    clearTimeout(this._hideCaptionTimer);
     this.figureNode.classList.remove(figureVariationClassName("light-up"));
     this.figureNode.classList.remove(figureVariationClassName("fuzzy"));
     this.figcaptionNode.classList.remove(figureElementClassName("figcaption--hidden"));
 
-    this.animatedFigcaptionNode.innerHTML = "";
-    this.visuallyHiddenFigcaptionNode.innerHTML = "";
     this.diagramContainerNode.innerHTML = "";
   }
 
@@ -168,38 +169,16 @@ export default class SchematicsFigure extends HTMLElement {
     }
   }
 
-  // eslint-disable-next-line consistent-return
   async renderDiagram() {
-    if (!Number.isInteger(this.num)) {
-      return null;
-    }
-
     const diagramElement = await this._diagramFactory(this.num);
     this.diagramContainerNode.replaceChildren(diagramElement);
     return diagramElement;
   }
 
-  renderCaption({ onDone }) {
-    if (!Number.isInteger(this.num)) {
-      return;
-    }
-
-    const onPause = (index, duration) => this._diagramElement.onCaptionPause(index, duration);
-    this._captionTyping.animate(this.animatedFigcaptionNode, onPause, onDone);
-  }
-
-  deleteCaption({ onDone }) {
-    if (!Number.isInteger(this.num)) {
-      return;
-    }
-
-    this._captionTyping.animateDelete(this.animatedFigcaptionNode, onDone);
-  }
-
-  renderA11yCaption() {
-    // We never want to force screen reader users to wait until the diagram has animated before they
-    // can hear the caption.
-    this.visuallyHiddenFigcaptionNode.innerText = this._captionTyping.fullCaption;
+  renderCaption() {
+    const captionElement = new this.FigureCaption(this.num);
+    this.figcaptionNode.replaceChildren(captionElement);
+    return captionElement;
   }
 
   className(num) {
@@ -212,14 +191,6 @@ export default class SchematicsFigure extends HTMLElement {
 
   get figcaptionNode() {
     return this.querySelector("figcaption");
-  }
-
-  get animatedFigcaptionNode() {
-    return this.querySelector(`.${figureElementClassName("figcaption__animated")}`);
-  }
-
-  get visuallyHiddenFigcaptionNode() {
-    return this.querySelector(`.${figureElementClassName("figcaption__visually-hidden")}`);
   }
 
   get diagramContainerNode() {
