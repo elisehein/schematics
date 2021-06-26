@@ -20,7 +20,7 @@ but feel[PAUSE:SHORT] had I stayed,
   },
   20: {
     a11yDescription: "An illustration of the propagation of sound waves across arrays of vertical lines.",
-    a11yThumbnailDescription: "Ten parallel vertical lines.",
+    a11yThumbnailDescription: "A row of parallel vertical lines that cluster closes together in the middle.",
     poetry: `[TYPE:NORMAL]You [TYPE:SLOW]lay out [TYPE:NORMAL][PAUSE:MEDIUM]some newspaper.
 [TYPE:SLOW][PAUSE:LONG]We lie [PAUSE:SHORT]on[TYPE:FAST] it.
 [TYPE:SLOWEST][PAUSE:LONG]The [TYPE:NORMAL]fairy[TYPE:SLOW]tale music,

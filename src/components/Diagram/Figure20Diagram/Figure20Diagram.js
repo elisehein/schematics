@@ -296,10 +296,6 @@ export default class Figure20Diagram extends SVGDiagram {
   get peaksPerRow() {
     return this._drawing.peaksPerRow.map(peaks => new WavePeaks(peaks));
   }
-
-  get replacesCaption() {
-    return true;
-  }
 }
 
 customElements.define("figure-20-diagram", Figure20Diagram);

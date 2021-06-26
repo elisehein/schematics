@@ -104,33 +104,26 @@
 
   &--20 &__figure {
     &__diagram-container {
-      grid-column: 1 / -1;
-      grid-row: 2 / -2;
+      grid-column: 1 / span 6;
+      grid-row: 2 / span 4;
       opacity: .8;
     }
 
     &__figcaption {
-      grid-column: 1 / -1;
-      grid-row: 2 / -2;
+      grid-column: 4 / -1;
+      grid-row: 6 / -1;
       align-self: center;
     }
 
-    @media (min-width: 30em) {
-      &__figcaption {
-        grid-column: 2 / -1;
-      }
-    }
-
-    @media (min-width: 48em) {
-      &__figcaption {
-        grid-column: 3 / -1;
-      }
-    }
-
-    @media (--layout-aside-always-visible) {
+    @media (--layout-full-screen-figure-with-full-size-logo), (min-width: 78em) {
       &__diagram-container {
-        grid-column: 3 / -3;
-        grid-row: 2 / -2;
+        grid-column: 1 / span 4;
+        grid-row: 2 / span 5;
+      }
+
+      &__figcaption {
+        grid-column: 5 / -1;
+        grid-row: 3 / -1;
       }
     }
   }

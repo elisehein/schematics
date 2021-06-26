@@ -42,8 +42,6 @@ class Diagram extends HTMLElement {
 
   drawThumbnail() {}
 
-  onCaptionPause() {}
-
   clearAllTimers() {
     this._timerManager.clearAllTimeouts();
     this._timerManager.clearAllIntervals();
@@ -127,9 +125,5 @@ export class HTMLDiagram extends Diagram {
 
   get divContainerNode() {
     return this.querySelector("div.diagram");
-  }
-
-  get replacesCaption() {
-    return false;
   }
 }
