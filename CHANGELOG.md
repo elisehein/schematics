@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Refactored
 
 * Added convenience `milliseconds()` and `seconds()` properties on the `Number` prototype to initialise `Duration`s.
+* Separated `FigureCaption` into its own element which allows for additional animations on the caption to be run after it's been typed in.
 
 ## [1.1.0] – 2021-06-18
 
