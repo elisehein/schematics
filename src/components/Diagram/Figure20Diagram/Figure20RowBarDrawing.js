@@ -141,7 +141,7 @@ export default class RowBarDrawing {
       id,
       from: "1 0",
       to: "1 1",
-      dur: 1,
+      dur: 2,
       begin: "indefinite",
       fill: "freeze",
       calcMode: "spline",
