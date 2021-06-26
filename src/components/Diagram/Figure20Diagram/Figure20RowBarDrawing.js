@@ -145,7 +145,7 @@ export default class RowBarDrawing {
       begin: "indefinite",
       fill: "freeze",
       calcMode: "spline",
-      keySplines: BezierEasing.easeOutCubic.smilString
+      keySplines: BezierEasing.easeInCubic.smilString
     });
     animatableNode.beginAnimation(id, () => {
       document.getElementById(id).remove();
