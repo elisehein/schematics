@@ -54,7 +54,7 @@ export default class Figure20Diagram extends SVGDiagram {
       const { bars, groupNodes } = this.drawBars();
       this._bars = bars;
       this.positionBarsForWaveAnimations();
-      this._drawing.animateRowAppearances(groupNodes, () => {
+      this._drawing.animateRowAppearances(groupNodes, this._timerManager, () => {
         this.animateWavesRandomly();
         this.bindPointerEventsToWaveMovements();
       });

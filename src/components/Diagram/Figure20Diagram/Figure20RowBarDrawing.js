@@ -85,7 +85,7 @@ export default class RowBarDrawing {
     for (let rowIndex = 0; rowIndex < numberOfRows; rowIndex += 1) {
       const barsForRow = [];
       const { top: topY, bottom: bottomY } = this._rowYs[rowIndex];
-      const groupNode = this.getRowGroupNode(initiallyScaledDown, topY);
+      const groupNode = this.getRowGroupNode(initiallyScaledDown);
 
       for (let barIndex = 0; barIndex < barsPerRow; barIndex += 1) {
         const bar = this.drawBar(topY, bottomY, barXGetter(barIndex));
@@ -100,13 +100,13 @@ export default class RowBarDrawing {
     return { bars, groupNodes };
   }
 
-  getRowGroupNode(initiallyScaledDown, topY) {
+  getRowGroupNode(initiallyScaledDown) {
     const groupNode = this._svgShapeFactory.getGroupNode();
-    groupNode.setAttribute(
-      "transform-origin", `50% ${topY + (this.singleRowHeight / 2)}`
-    );
+    groupNode.style.transformOrigin = "center center";
+    groupNode.style.transformBox = "fill-box";
+
     if (initiallyScaledDown) {
-      groupNode.setAttribute("transform", "scale(1 0)");
+      groupNode.style.transform = "scaleY(0)";
     }
 
     return groupNode;
@@ -122,37 +122,19 @@ export default class RowBarDrawing {
     return bar;
   }
 
-  animateRowAppearances(groupNodes, onDone) {
-    const animate = animatable => {
-      groupNodes.forEach((node, index) => {
-        this.animateScaleAppear(node, index, animatable, onDone);
+  animateRowAppearances(groupNodes, timerManager, onDone) {
+    const duration = (2).seconds();
+    groupNodes.forEach(node => {
+      node.style.transition = `transform ${duration.s}s ${BezierEasing.easeInCubic.cssString}`;
+    });
+
+    groupNodes[0].addEventListener("transitionend", onDone, { once: true });
+
+    // The new transform needs to be set asynchronously for the transition to work on Safari
+    timerManager.setTimeout(() => {
+      groupNodes.forEach(node => {
+        node.style.transform = "scaleY(1)";
       });
-    };
-
-    import("/components/SVGShapes/SVGShapeFeatures.js").then(module => {
-      animate(module.animatable);
-    });
-  }
-
-  animateScaleAppear(node, index, animatable, onDone) {
-    const animatableNode = animatable({ node });
-    const id = `scale-appear-${index}`;
-    animatableNode.animateTransform("scale", {
-      id,
-      from: "1 0",
-      to: "1 1",
-      dur: 2,
-      begin: "indefinite",
-      fill: "freeze",
-      calcMode: "spline",
-      keySplines: BezierEasing.easeInCubic.smilString
-    });
-    animatableNode.beginAnimation(id, () => {
-      document.getElementById(id).remove();
-      node.setAttribute("transform", "scale(1 1)");
-      if (index == 0) {
-        onDone();
-      }
     });
   }
 
