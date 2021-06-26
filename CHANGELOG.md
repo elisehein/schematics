@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Dynamic imports for diagram drawing (import as few modules as possible to draw the thumbnail, until we actually need to draw the full figure).
 * Dynamic imports in the diagram factory. This has the effect of allowing the previews element to load first before fetchig thumbnails, and it allows for only the requested figure modules to be loaded when navigating directly to an individual figure.
 
+### Changed
+
+* Make the body background *slightly* lighter for *slightly* increased contrast.
+
 ### Refactored
 
 * Added convenience `milliseconds()` and `seconds()` properties on the `Number` prototype to initialise `Duration`s.
