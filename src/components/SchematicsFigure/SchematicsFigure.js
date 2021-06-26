@@ -1,8 +1,5 @@
 import { getPoetry } from "../../figureData.js";
-import DiagramFactory  from "../Diagram/DiagramFactory.js";
 import transitionWithClasses from "/helpers/transitionWithClasses.js";
-
-import CaptionTyping from "./CaptionTyping.js";
 
 const baseClassName = "schematics-figure__figure";
 const figureElementClassName = addition => `${baseClassName}__${addition}`;
@@ -12,6 +9,22 @@ export default class SchematicsFigure extends HTMLElement {
   constructor(num) {
     super();
     this.num = num || this.getAttribute("num");
+  }
+
+  connectedCallback() {
+    this.classList.add("schematics-figure");
+    this.innerHTML = document.getElementById("schematics-figure-template").innerHTML;
+    this.renderFigure();
+  }
+
+  async importRenderingDependencies() {
+    const modules = await Promise.all([
+      import("./CaptionTyping.js"),
+      import("../Diagram/DiagramFactory.js")
+    ]);
+    this.CaptionTyping = modules[0].default;
+    const DiagramFactory = modules[1].default;
+
     this._diagramFactory = new DiagramFactory({
       onLightUp: this.lightUpFigure.bind(this),
       onFuzzy: this.makeFigureFuzzy.bind(this),
@@ -21,20 +34,14 @@ export default class SchematicsFigure extends HTMLElement {
     });
   }
 
-  connectedCallback() {
-    this.classList.add("schematics-figure");
-    this.innerHTML = document.getElementById("schematics-figure-template").innerHTML;
-    this.renderFigure();
-  }
-
   async renderFigure() {
-    this._diagramElement = await this.renderDiagram();
-
-    if (!this._diagramElement) {
+    if (!Number.isInteger(this.num)) {
       return;
     }
 
-    this._captionTyping = new CaptionTyping(getPoetry(this.num));
+    await this.importRenderingDependencies();
+    this._diagramElement = await this.renderDiagram();
+    this._captionTyping = new this.CaptionTyping(getPoetry(this.num));
     this.renderA11yCaption();
 
     this._diagramElement.drawBeforeCaption({ onDone: () => {

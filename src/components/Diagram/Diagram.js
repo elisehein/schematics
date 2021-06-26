@@ -23,12 +23,15 @@ class Diagram extends HTMLElement {
     }
   }
 
-  drawBeforeCaption({ onDone = () => {} } = {}) {
-    import("/helpers/smoothScroll.js").then(module => {
-      this._smoothScroll = module.default;
-      this.scrollIntoView();
-      onDone();
-    });
+  async drawBeforeCaption({ onDone = () => {} } = {}) {
+    if (this._isThumbnail) {
+      return;
+    }
+
+    const module = await import("/helpers/smoothScroll.js");
+    this._smoothScroll = module.default;
+    this.scrollIntoView();
+    onDone();
   }
 
   drawAlongsideCaption() {}
