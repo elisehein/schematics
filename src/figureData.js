@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 export const directives = {
   TYPE: "TYPE",
   PAUSE: "PAUSE"

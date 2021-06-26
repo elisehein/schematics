@@ -1,15 +1,9 @@
 import { orderedFigures } from "../../figureData.js";
-import DiagramFactory from "../Diagram/DiagramFactory.js";
 import transitionWithClasses from "/helpers/transitionWithClasses.js";
 
 const transitioningClassName = "schematics-figure-previews--transitioning";
 
 export default class SchematicsFigurePreviews extends HTMLElement {
-  constructor() {
-    super();
-    this._diagramFactory = new DiagramFactory();
-  }
-
   connectedCallback() {
     const itemTemplate = document.getElementById("schematics-figure-preview-template");
 
@@ -64,13 +58,17 @@ export default class SchematicsFigurePreviews extends HTMLElement {
   // when the previews element is actually show()n. It may have already been on the page
   // to avoid layout shifts, but if it's about to get hidden in favour of a different view,
   // no point in rendering the diagrams.
-  renderThumbnailsIfNeeded() {
+  async renderThumbnailsIfNeeded() {
+    const module = await import("../Diagram/DiagramFactory.js");
+    const DiagramFactory = module.default;
+    const diagramFactory = new DiagramFactory();
+
     const renderThumbnail = async num => {
       if (this.thumbnailExists(num)) {
         return;
       }
 
-      const diagramElement = await this._diagramFactory(num, true);
+      const diagramElement = await diagramFactory(num, true);
       diagramElement.classList.add(this.thumbnailClassName);
       this.getAnchor(num).appendChild(diagramElement);
     };
