@@ -111,8 +111,9 @@
 
     &__figcaption {
       grid-column: 4 / -1;
-      grid-row: 6 / -1;
+      grid-row: 5 / -1;
       align-self: center;
+      padding-left: var(--triple-baseline);
     }
 
     @media (--layout-full-screen-figure-with-full-size-logo), (min-width: 78em) {
