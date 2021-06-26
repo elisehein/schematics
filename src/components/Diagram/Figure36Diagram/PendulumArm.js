@@ -8,7 +8,9 @@ export default function PendulumArm(shapeFactory, anchorPoint, initialAngle, len
   const arm = drawArm(anchorPoint, initialAngle, length, shapeFactory.getLine.bind(shapeFactory));
   groupNode.appendChild(arm.node);
 
-  const circle = drawEndOfArmCircle(length, anchorPoint, initialAngle, radius, shapeFactory.getCircle.bind(shapeFactory));
+  const circle = drawEndOfArmCircle(
+    length, anchorPoint, initialAngle, radius, shapeFactory.getCircle.bind(shapeFactory)
+  );
   groupNode.appendChild(circle.node);
 
   const self = { node: groupNode, arm, circle };
