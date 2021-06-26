@@ -6,17 +6,16 @@ export default class Figure43Diagram extends HTMLDiagram {
     super(43, ...args);
   }
 
-  importDependencies(callback) {
-    import("/helpers/random.js").then(random => {
-      this._randomIntBetween = random.randomIntBetween;
-      callback();
-    });
+  async importDependencies() {
+    const random = await import("/helpers/random.js");
+    this._randomIntBetween = random.randomIntBetween;
   }
 
-  drawBeforeCaption({ onDone }) {
+  async drawBeforeCaption({ onDone }) {
     super.drawBeforeCaption();
     this.divContainerNode.innerHTML = cubeMarkup;
-    this.importDependencies(() => this.makeFuzzyAtRandomIntervals());
+    await this.importDependencies();
+    this.makeFuzzyAtRandomIntervals();
     this._timerManager.setTimeout(onDone, 1000);
   }
 

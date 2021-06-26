@@ -23,24 +23,21 @@ export default class Figure14Diagram extends SVGDiagram {
     };
   }
 
-  importDependencies(callback) {
-    import("/helpers/sequentialActionRunning.js").then(module => {
-      this._runActionsSequentially = module.runActionsSequentially;
-      this._waitBeforeNextAction = module.waitBeforeNextAction;
-      callback();
-    });
+  async importDependencies() {
+    const module = await import("/helpers/sequentialActionRunning.js");
+    this._runActionsSequentially = module.runActionsSequentially;
+    this._waitBeforeNextAction = module.waitBeforeNextAction;
   }
 
   drawThumbnail() {
     this.drawSpiral();
   }
 
-  drawBeforeCaption({ onDone }) {
+  async drawBeforeCaption({ onDone }) {
     super.drawBeforeCaption();
     const animationStepDuration = Duration.threeSec;
-    this.importDependencies(() => {
-      this.animateAxes(animationStepDuration, onDone);
-    });
+    await this.importDependencies();
+    this.animateAxes(animationStepDuration, onDone);
   }
 
   drawAfterCaption() {

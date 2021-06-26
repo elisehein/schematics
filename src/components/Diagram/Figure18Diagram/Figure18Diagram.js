@@ -10,17 +10,16 @@ export default class Figure18Diagram extends SVGDiagram {
     super(18, ...args);
   }
 
-  importDependencies(callback) {
-    Promise.all([
+  async importDependencies() {
+    const modules = await Promise.all([
       import("./Figure18DiagramGridCoordinateSystem.js"),
       import("/helpers/sequentialActionRunning.js")
-    ]).then(modules => {
-      const Grid = modules[0].default;
-      this._grid = new Grid();
-      this._runActionsSequentially = modules[1].runActionsSequentially;
-      this._waitBeforeNextAction = modules[1].waitBeforeNextAction;
-      callback();
-    });
+    ]);
+
+    const Grid = modules[0].default;
+    this._grid = new Grid();
+    this._runActionsSequentially = modules[1].runActionsSequentially;
+    this._waitBeforeNextAction = modules[1].waitBeforeNextAction;
   }
 
   drawThumbnail() {
@@ -33,17 +32,16 @@ export default class Figure18Diagram extends SVGDiagram {
     });
   }
 
-  drawAfterCaption() {
+  async drawAfterCaption() {
     super.drawAfterCaption();
 
-    this.importDependencies(() => {
-      this._runActionsSequentially([
-        this._waitBeforeNextAction(1000, this._timerManager),
-        this.smoothScrollIntoView.bind(this),
-        this._waitBeforeNextAction(1000, this._timerManager),
-        this.drawBoxWithOptions.bind(this, firstBox)
-      ]);
-    });
+    await this.importDependencies();
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(1000, this._timerManager),
+      this.smoothScrollIntoView.bind(this),
+      this._waitBeforeNextAction(1000, this._timerManager),
+      this.drawBoxWithOptions.bind(this, firstBox)
+    ]);
   }
 
   drawBoxWithOptions(boxText, boxOriginPoint, animated = true, { onDone } = {}) {

@@ -9,14 +9,21 @@ export default class Figure20Diagram extends SVGDiagram {
     this._waveScaleFactor = 1.2;
   }
 
-  importDependencies(callback) {
-    Promise.all([
+  async importDependencies() {
+    const modules = await Promise.all([
       import("./Figure20Animations.js"),
       import("./Figure20PointerEvents.js"),
       import("/helpers/random.js")
-    ]).then(modules => {
-      callback(modules[0].default, modules[1].default, modules[2]);
-    });
+    ]);
+    const Animations = modules[0].default;
+    const PointerEvents = modules[1].default;
+
+    this._pointerEvents = new PointerEvents(this.svgNode);
+    this._animations = new Animations(
+      this._timerManager,
+      this.setTranslationForEachBar.bind(this)
+    );
+    this._randomIntBetween = modules[2].randomIntBetween;
   }
 
   drawThumbnail() {
@@ -29,23 +36,15 @@ export default class Figure20Diagram extends SVGDiagram {
     this.setWavePeaks({ peaks: this.peaksPerRow[0], rowIndex: 0 });
   }
 
-  drawAfterCaption() {
+  async drawAfterCaption() {
     this._drawing = new RowBarDrawing(this.svgSize, this._svgShapeFactory);
     this._waves = new WaveCoordinates(
       this._waveScaleFactor, this._drawing.barGap, this._drawing.barsPerRow, this.svgSize
     );
     this._peaksForRowWaveAnimations = this.precalculatePeaksForRowWaveAnimations();
 
-    this.importDependencies((Animations, PointerEvents, random) => {
-      this._pointerEvents = new PointerEvents(this.svgNode);
-      this._animations = new Animations(
-        this._timerManager,
-        this.setTranslationForEachBar.bind(this)
-      );
-      this._randomIntBetween = random.randomIntBetween;
-
-      this.drawAndAnimate();
-    });
+    await this.importDependencies();
+    this.drawAndAnimate();
   }
 
   drawAndAnimate() {

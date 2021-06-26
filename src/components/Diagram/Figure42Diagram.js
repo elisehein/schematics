@@ -58,31 +58,29 @@ export default class Figure42Diagram extends SVGDiagram {
     this._reverseAxisAnimationDuration = new Duration({ seconds: 2.2 });
   }
 
-  importDependencies(callback) {
-    Promise.all([
+  async importDependencies() {
+    const modules = await Promise.all([
       import("/helpers/sequentialActionRunning.js"),
       import("/helpers/random.js"),
       import("/components/SVGShapes/SVGShapeFeatures.js")
-    ]).then(modules => {
-      this._runActionsSequentially = modules[0].runActionsSequentially;
-      this._waitBeforeNextAction = modules[0].waitBeforeNextAction;
-      this._randomIntBetween = modules[1].randomIntBetween;
-      this._animatable = modules[2].animatable;
-      callback();
-    });
+    ]);
+
+    this._runActionsSequentially = modules[0].runActionsSequentially;
+    this._waitBeforeNextAction = modules[0].waitBeforeNextAction;
+    this._randomIntBetween = modules[1].randomIntBetween;
+    this._animatable = modules[2].animatable;
   }
 
-  drawBeforeCaption({ onDone }) {
+  async drawBeforeCaption({ onDone }) {
     super.drawBeforeCaption();
-    this.importDependencies(() => {
-      this.drawStars();
-      this._runActionsSequentially([
-        this._waitBeforeNextAction(1000, this._timerManager),
-        this.animateTemperatureOnXAxis.bind(this, false),
-        this.animateMagnitudeOnYAxis.bind(this, false),
-        this._waitBeforeNextAction(2000, this._timerManager)
-      ], onDone);
-    });
+    await this.importDependencies();
+    this.drawStars();
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(1000, this._timerManager),
+      this.animateTemperatureOnXAxis.bind(this, false),
+      this.animateMagnitudeOnYAxis.bind(this, false),
+      this._waitBeforeNextAction(2000, this._timerManager)
+    ], onDone);
   }
 
   drawAfterCaption() {
