@@ -180,16 +180,15 @@
         }
       }
 
-      &--hiding {
-        animation:
-          text-shadow-flicker var(--jitter-animation-duration) ease-out,
-          jitter var(--jitter-animation-duration),
-          fade var(--micro-interaction-animation-duration) ease-out calc(var(--jitter-animation-duration) - var(--micro-interaction-animation-duration)) reverse;
+      &--disappearing {
+        animation: fade var(--micro-interaction-animation-duration) ease-out 1.3s reverse;
         animation-fill-mode: forwards;
       }
 
-      &--hidden {
-        display: none;
+      &--disappearing &__character {
+        animation:
+          text-shadow-flicker .8s ease-out,
+          blink .4s cubic-bezier(0, .55, .45, 1) .3s 3;
       }
     }
 

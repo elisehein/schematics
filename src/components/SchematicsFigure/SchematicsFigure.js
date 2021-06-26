@@ -49,26 +49,9 @@ export default class SchematicsFigure extends HTMLElement {
     this._diagramElement.drawBeforeCaption({ onDone: () => {
       this._diagramElement.drawAlongsideCaption();
       this._captionElement.animateCaption({ onDone: () => {
-        if (this._diagramElement.replacesCaption) {
-          this.hideCaption(() => this._diagramElement.drawAfterCaption());
-        } else {
-          this._diagramElement.drawAfterCaption();
-        }
+        this._diagramElement.drawAfterCaption();
       } });
     } });
-  }
-
-  hideCaption(onDone) {
-    const hide = () => {
-      transitionWithClasses(this.figcaptionNode, [
-        figureElementClassName("figcaption--hiding")
-      ], () => {
-        this.figcaptionNode.classList.add(figureElementClassName("figcaption--hidden"));
-        onDone();
-      });
-    };
-
-    this._hideCaptionTimer = setTimeout(hide, 3000);
   }
 
   cleanUpCurrentFigure(num) {

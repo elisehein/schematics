@@ -18,7 +18,7 @@ const captionAnimationPauseDurations = {
 };
 
 export default class CaptionTyping {
-  constructor(unparsedCaption) {
+  constructor(unparsedCaption, timerManager) {
     this.defaultDelay = 0;
     // eslint-disable-next-line no-useless-escape
     this.flagRegex = /\[[^\[]*\]/g;
@@ -28,6 +28,8 @@ export default class CaptionTyping {
     this._unparsedCaption = unparsedCaption;
     this.parsedAndWrappedCaption = parsedAndWrappedCaption;
     this.singleCharacterDelayRanges = singleCharacterDelayRanges;
+
+    this._timerManager = timerManager;
   }
 
   parse(unparsedCaption) {
@@ -124,19 +126,14 @@ export default class CaptionTyping {
   }
 
   animate(captionNode, onDone) {
-    if (this._timer) {
-      clearTimeout(this._timer);
-    }
-
+    this._timerManager.clearTimeout(this._timer);
     captionNode.innerHTML = this.parsedAndWrappedCaption;
     const captionChars = captionNode.querySelectorAll("span");
     this.revealChar({ index: 0, captionChars, onDone });
   }
 
   animateDelete(captionNode, onDone) {
-    if (this._timer) {
-      clearTimeout(this._timer);
-    }
+    this._timerManager.clearTimeout(this._timer);
 
     const captionChars = captionNode.querySelectorAll("span");
     this.hideChar({ index: captionChars.length - 1, captionChars, onDone });
@@ -158,7 +155,8 @@ export default class CaptionTyping {
     if (delay == 0) {
       revealThisSpanAndNext();
     } else {
-      this._timer = setTimeout(() => revealThisSpanAndNext(), delay);
+      this._timer = this._timerManager
+        .setTimeout(() => revealThisSpanAndNext(), delay);
     }
   }
 
@@ -173,7 +171,8 @@ export default class CaptionTyping {
       this.hideChar({ index: index - 1, captionChars, onDone });
     };
 
-    this._timer = setTimeout(() => hideThisSpanAndPrevious(), 100);
+    this._timer = this._timerManager
+      .setTimeout(() => hideThisSpanAndPrevious(), 100);
   }
 
   makeCharVisible(index, captionChars) {
@@ -227,12 +226,6 @@ export default class CaptionTyping {
     }
 
     return { action, delay };
-  }
-
-  cancelCurrentSession() {
-    if (this._timer) {
-      clearTimeout(this._timer);
-    }
   }
 
   get fullCaption() {
