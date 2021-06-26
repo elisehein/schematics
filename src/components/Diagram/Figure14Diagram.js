@@ -1,7 +1,9 @@
 import { SVGDiagram } from "./Diagram.js";
 
-import Duration from "/helpers/Duration.js";
 import BezierEasing from "/helpers/BezierEasing.js";
+
+import { registerDurationConvenienceInits } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 export default class Figure14Diagram extends SVGDiagram {
   constructor(...args) {
@@ -35,7 +37,7 @@ export default class Figure14Diagram extends SVGDiagram {
 
   async drawBeforeCaption({ onDone }) {
     super.drawBeforeCaption();
-    const animationStepDuration = Duration.threeSec;
+    const animationStepDuration = (3).seconds();
     await this.importDependencies();
     this.animateAxes(animationStepDuration, onDone);
   }
@@ -64,7 +66,7 @@ export default class Figure14Diagram extends SVGDiagram {
   }
 
   draw2DXY(duration, { onDone }) {
-    this._figureBehavior.onLightUp(Duration.oneSec);
+    this._figureBehavior.onLightUp((1).seconds());
     this._yAxis.axis = this.drawAxis();
     this._xAxis.axis = this.drawAxis();
     this.animateAxisDrawing(this._yAxis.axis, this._yAxis.coords2D, duration);

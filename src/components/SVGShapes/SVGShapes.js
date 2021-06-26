@@ -123,7 +123,9 @@ function styleText(node, fontSize, isThumbnailSize) {
   }
 }
 
-export function TypingText(strokeable, isThumbnailSize, text, { x, y }, animationDuration, fontSize = 10) {
+export function TypingText(
+  strokeable, isThumbnailSize, text, { x, y }, animationDuration, fontSize = 10
+) {
   // eslint-disable-next-line id-length
   const g = createSVGElement("g");
   const id = `text-path-${Math.round(x)}-${Math.round(y)}`;

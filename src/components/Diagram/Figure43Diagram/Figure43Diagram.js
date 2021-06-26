@@ -1,5 +1,7 @@
 import { HTMLDiagram } from "../Diagram.js";
-import Duration from "/helpers/Duration.js";
+
+import { registerDurationConvenienceInits } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 export default class Figure43Diagram extends HTMLDiagram {
   constructor(...args) {
@@ -24,8 +26,8 @@ export default class Figure43Diagram extends HTMLDiagram {
   }
 
   makeFuzzyAtRandomIntervals() {
-    const randomDelay = new Duration({ seconds: this._randomIntBetween(0, 5) });
-    const randomDuration = new Duration({ milliseconds: this._randomIntBetween(1500, 4000) });
+    const randomDelay = this._randomIntBetween(0, 5).seconds();
+    const randomDuration = this._randomIntBetween(1500, 4000).milliseconds();
 
     this._timerManager.setTimeout(() => {
       this._figureBehavior.onFuzzy(randomDuration, { onDone: () => {

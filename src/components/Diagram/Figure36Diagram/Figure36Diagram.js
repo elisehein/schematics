@@ -2,7 +2,9 @@ import { SVGDiagram } from "../Diagram.js";
 import PendulumArm from "./PendulumArm.js";
 
 import BezierEasing from "/helpers/BezierEasing.js";
-import Duration from "/helpers/Duration.js";
+
+import Duration, { registerDurationConvenienceInits } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 export default class Figure36Diagram extends SVGDiagram {
   constructor(...args) {
@@ -13,7 +15,7 @@ export default class Figure36Diagram extends SVGDiagram {
     this._initialAngle = 30;
     this._arrowOffsetAngle = 10;
 
-    this._swingDuration = Duration.twoSec;
+    this._swingDuration = (2).seconds();
     this._swingEasing = new BezierEasing(0.4, 0, 0.6, 1);
     this._totalSwings = 30;
   }
@@ -51,7 +53,7 @@ export default class Figure36Diagram extends SVGDiagram {
     this._runActionsSequentially([
       this._waitBeforeNextAction(1000, this._timerManager),
       this._arrow.appearInSteps.bind(
-        this._arrow, new Duration({ milliseconds: 3000 }), this._timerManager
+        this._arrow, (3).seconds(), this._timerManager
       ),
       this._waitBeforeNextAction(1000, this._timerManager)
     ], onDone);
@@ -121,11 +123,9 @@ export default class Figure36Diagram extends SVGDiagram {
 
   lightUpJustBeforeNextSwing(index) {
     // 11 is a magic number – the final swing where the swinging pendulum still reaches the echo
-    const lightUpDuration = new Duration({
-      milliseconds: 1000 - ((index - 1) * 100)
-    }); // Gradually less time to light up
+    const lightUpDuration = (1000 - ((index - 1) * 100)).milliseconds();
     const msUntilJustBeforeNextSwing = this._swingDuration.ms - (lightUpDuration.ms / 2);
-    const lightUpDelay = new Duration({ milliseconds: msUntilJustBeforeNextSwing });
+    const lightUpDelay = msUntilJustBeforeNextSwing.milliseconds();
     this._timerManager.setTimeout(() => {
       this._figureBehavior.onLightUp(lightUpDuration);
     }, lightUpDelay.ms);

@@ -1,7 +1,9 @@
 import { SVGDiagram } from "../Diagram.js";
 import WaveCoordinates, { WavePeaks } from "./Figure20WaveCoordinates.js";
 import RowBarDrawing from "./Figure20RowBarDrawing.js";
-import Duration from "/helpers/Duration.js";
+
+import { registerDurationConvenienceInits  } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 export default class Figure20Diagram extends SVGDiagram {
   constructor(...args) {
@@ -110,7 +112,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWavesRandomly() {
-    const randomDelay = new Duration({ milliseconds: this._randomIntBetween(100, 1000) });
+    const randomDelay = this._randomIntBetween(100, 1000).milliseconds();
 
     this._timerManager.setTimeout(() => {
       if (Math.random() > 0.2) {
@@ -126,18 +128,14 @@ export default class Figure20Diagram extends SVGDiagram {
     const randomRow = this._randomIntBetween(0, this._drawing.numberOfRows - 1);
     const peaksOnRow = this.peaksPerRow[randomRow].length;
     const minDurationMS = peaksOnRow * 500;
-    const randomDuration = new Duration({
-      milliseconds: minDurationMS + this._randomIntBetween(500, 2000)
-    });
+    const randomDuration = (minDurationMS + this._randomIntBetween(500, 2000)).milliseconds();
     this.animateFullWaveLifecycle(randomDuration, randomRow);
   }
 
   animateOriginalWavesInParallel(onDone) {
     const animate = () => {
       this.forEachRow(rowIndex => {
-        const delay = new Duration({
-          milliseconds: (this._drawing.numberOfRows - 1 - rowIndex) * 150
-        });
+        const delay = ((this._drawing.numberOfRows - 1 - rowIndex) * 150).milliseconds();
         this.animateOriginalWavePeaks(rowIndex, delay, () => {
           if (rowIndex == 0) {
             onDone();
@@ -146,15 +144,14 @@ export default class Figure20Diagram extends SVGDiagram {
       });
     };
 
-    const timeout = new Duration({ seconds: 4 });
-    this._animations.waitForAnimationsToFinish(timeout, animate);
+    this._animations.waitForAnimationsToFinish((4).seconds(), animate);
   }
 
   animateOriginalWavePeaks(rowIndex, delay, onDone) {
     const initial = this.peaksPerRow[rowIndex].adjustedBy(this.svgSize * -1);
     const { final } = this._peaksForRowWaveAnimations[rowIndex];
     const travelData = this.getWaveTravelDataWithOverlapAdjustment(initial, final);
-    const duration = new Duration({ seconds: 4 });
+    const duration = (4).seconds();
     this._timerManager.setTimeout(() => {
       this.animateTravellingWaves(initial, travelData, { duration }, rowIndex, onDone);
     }, delay.ms);
@@ -228,7 +225,7 @@ export default class Figure20Diagram extends SVGDiagram {
   }
 
   animateWaveFormationFromCurrentPosition(peaks, rowIndex) {
-    const duration = new Duration({ milliseconds: 200 });
+    const duration = (200).milliseconds();
     const initial = this.getCurrentTranslations(rowIndex);
     const final = this._waves.getTranslationsForWaves(peaks);
     this._animations.animateBetweenTranslations(rowIndex, initial, final, { duration });
@@ -237,7 +234,7 @@ export default class Figure20Diagram extends SVGDiagram {
   dissolveWavesAndRestartRandomAnimation() {
     this.stopAllRowAnimations();
 
-    const duration = new Duration({ milliseconds: 200 });
+    const duration = (200).milliseconds();
     const extraTranslations = this.peaksPerRow.map(peaks => (
       this._waves.getDistanceToOverlapBars({
         numberOfPeaks: 0,

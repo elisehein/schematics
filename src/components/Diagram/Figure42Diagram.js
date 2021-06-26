@@ -1,7 +1,8 @@
-import BezierEasing from "/helpers/BezierEasing.js";
-import Duration from "/helpers/Duration.js";
-
 import { SVGDiagram } from "./Diagram.js";
+import BezierEasing from "/helpers/BezierEasing.js";
+
+import { registerDurationConvenienceInits } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 const commonAnimationProps = duration => ({
   fill: "freeze",
@@ -54,8 +55,8 @@ export default class Figure42Diagram extends SVGDiagram {
     super(42, ...args);
 
     this._stars = [];
-    this._axisAnimationDuration = new Duration({ seconds: 5 });
-    this._reverseAxisAnimationDuration = new Duration({ seconds: 2.2 });
+    this._axisAnimationDuration = (5).seconds();
+    this._reverseAxisAnimationDuration = (2.2).seconds();
   }
 
   async importDependencies() {
@@ -88,8 +89,8 @@ export default class Figure42Diagram extends SVGDiagram {
       this._waitBeforeNextAction(3000, this._timerManager),
       ({ onDone }) => {
         this._figureBehavior.onDeleteCaption({ onDone: () => {} });
-        this._figureBehavior.onLightUp(Duration.oneSec);
-        this._figureBehavior.onJitter(Duration.oneSec, { onDone });
+        this._figureBehavior.onLightUp((1).seconds());
+        this._figureBehavior.onJitter((1).seconds(), { onDone });
       },
       this.animateMagnitudeOnYAxis.bind(this, true),
       this.animateTemperatureOnXAxis.bind(this, true),
@@ -277,7 +278,7 @@ export default class Figure42Diagram extends SVGDiagram {
   }
 
   lightUpWithDelay(delayFactor, duration) {
-    const lightUpDuration = new Duration({ milliseconds: duration.ms * ((1 - delayFactor) * 2) });
+    const lightUpDuration = (duration.ms * ((1 - delayFactor) * 2)).milliseconds();
     this._timerManager.setTimeout(() => {
       this._figureBehavior.onLightUp(lightUpDuration);
     }, duration.ms * delayFactor);

@@ -1,4 +1,4 @@
-import Duration from "./Duration.js";
+import Duration, { registerDurationConvenienceInits } from "./Duration.js";
 
 describe("Duration", () => {
   test("converts to seconds correctly", () => {
@@ -27,4 +27,9 @@ describe("Duration", () => {
   test("throws an error when initialising with neither seconds nor milliseconds", () => {
     expect(() => new Duration({ sec: 3 })).toThrow();
   });
+
+  test("can register convenience initialisers on the Number prototype", () => {
+    registerDurationConvenienceInits();
+    expect((3).seconds().ms).toEqual(3000);
+  })
 });

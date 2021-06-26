@@ -3,11 +3,15 @@ import { createSVGElement } from "../../SVGShapes/SVGShapes.js";
 import { targetSideTouchPoints } from "./data.js";
 import { randomIntBetween } from "/helpers/random.js";
 
-export default function Figure18BoxedText(shapeFactory, text, fontSize, { x, y, width, height }, animated, targetSideTouchPoint) {
+export default function Figure18BoxedText(
+  shapeFactory, text, fontSize, { x, y, width, height }, animated, targetSideTouchPoint
+) {
   // eslint-disable-next-line id-length
   const g = createSVGElement("g");
 
-  const rect = getRectAsPathWithOriginPoint(shapeFactory, { x, y, width, height, originPoint: targetSideTouchPoint });
+  const rect = getRectAsPathWithOriginPoint(shapeFactory, {
+    x, y, width, height, originPoint: targetSideTouchPoint
+  });
   g.appendChild(rect.node);
 
   const sizerText = shapeFactory.getText(text, { x: 0, y: 0 }, fontSize);
@@ -18,7 +22,9 @@ export default function Figure18BoxedText(shapeFactory, text, fontSize, { x, y, 
   const textX = x + (width / 2.0) - (textSize.width / 2.0);
 
   const typingDuration = animated ? randomIntBetween(5, 1.2) / 10.0 : 0;
-  const textShape = shapeFactory.getTypingText(text, { x: textX, y: textY }, typingDuration, fontSize);
+  const textShape = shapeFactory.getTypingText(
+    text, { x: textX, y: textY }, typingDuration, fontSize
+  );
 
   g.appendChild(textShape.node);
 
@@ -50,16 +56,22 @@ function getRectAsPathWithOriginPoint(shapeFactory, { x, y, width, height, origi
 
   switch (originPoint) {
     case targetSideTouchPoints.TOP_SIDE_MIDDLE:
-      d = getPathD(topMiddlePoint, topRightCorner, bottomRightCorner, bottomLeftCorner, topLeftCorner);
+      d = getPathD(
+        topMiddlePoint, topRightCorner, bottomRightCorner, bottomLeftCorner, topLeftCorner
+      );
       break;
     case targetSideTouchPoints.BOTTOM_SIDE_LEFT:
       d = getPathD(bottomLeftCorner, bottomRightCorner, topRightCorner, topLeftCorner);
       break;
     case targetSideTouchPoints.BOTTOM_SIDE_MIDDLE:
-      d = getPathD(bottomMiddlePoint, bottomRightCorner, topRightCorner, topLeftCorner, bottomLeftCorner);
+      d = getPathD(
+        bottomMiddlePoint, bottomRightCorner, topRightCorner, topLeftCorner, bottomLeftCorner
+      );
       break;
     case targetSideTouchPoints.LEFT_SIDE_MIDDLE:
-      d = getPathD(leftMiddlePoint, topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner);
+      d = getPathD(
+        leftMiddlePoint, topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner
+      );
       break;
     case targetSideTouchPoints.RIGHT_SIDE_TOP:
     default:

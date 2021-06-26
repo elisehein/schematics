@@ -2,7 +2,9 @@ import { getA11yDescription, getA11yThumbnailDescription } from "../../figureDat
 import TimerManager from "../../helpers/TimerManager.js";
 import SVGShapeFactory from "../SVGShapes/SVGShapeFactory.js";
 import BezierEasing from "/helpers/BezierEasing.js";
-import Duration from "../../helpers/Duration.js";
+
+import { registerDurationConvenienceInits } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 class Diagram extends HTMLElement {
   constructor(num, isThumbnail, figureBehaviorCallbacks = {}) {
@@ -51,7 +53,7 @@ class Diagram extends HTMLElement {
    * main all the way to the left will bring the diagram into view.
    */
   smoothScrollIntoView({ onDone }) {
-    const duration = new Duration({ milliseconds: 700 });
+    const duration = (700).milliseconds();
     this._smoothScroll(
       document.querySelector("main"), 0, 0, duration, BezierEasing.easeOutCubic, { onDone }
     );

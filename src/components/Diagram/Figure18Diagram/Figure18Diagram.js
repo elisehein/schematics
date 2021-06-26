@@ -1,7 +1,9 @@
 import { SVGDiagram } from "../Diagram.js";
 import data from "./data.js";
 import BoxedText from "./Figure18BoxedText.js";
-import Duration from "../../../helpers/Duration.js";
+
+import { registerDurationConvenienceInits  } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 const firstBox = "good?";
 
@@ -181,7 +183,7 @@ export default class Figure18Diagram extends SVGDiagram {
   }
 
   animateBasedOnLength(path, lightUp = true, onDone = () => {}) {
-    const duration = new Duration({ seconds: path.getLength() / 30 * 0.15 });
+    const duration = (path.getLength() / 30 * 0.15).seconds();
     if (lightUp) {
       this._figureBehavior.onLightUp(duration);
     }
