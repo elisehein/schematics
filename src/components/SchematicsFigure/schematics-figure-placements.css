@@ -102,6 +102,33 @@
     }
   }
 
+  &--20 &__figure {
+    &__diagram-container {
+      grid-column: 1 / span 6;
+      grid-row: 2 / span 4;
+      opacity: .8;
+    }
+
+    &__figcaption {
+      grid-column: 4 / -1;
+      grid-row: 5 / -1;
+      align-self: center;
+      padding-left: var(--triple-baseline);
+    }
+
+    @media (--layout-full-screen-figure-with-full-size-logo), (min-width: 78em) {
+      &__diagram-container {
+        grid-column: 1 / span 4;
+        grid-row: 2 / span 5;
+      }
+
+      &__figcaption {
+        grid-column: 5 / -1;
+        grid-row: 3 / -1;
+      }
+    }
+  }
+
   &--36 &__figure {
     &__diagram-container {
       grid-column: 2 / -1;

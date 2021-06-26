@@ -3,6 +3,7 @@ export default function Duration({ seconds, milliseconds }) {
     throw new Error();
   }
 
+  // eslint-disable-next-line no-undefined
   if (milliseconds == undefined && seconds == undefined) {
     throw new Error();
   }
@@ -17,6 +18,14 @@ export default function Duration({ seconds, milliseconds }) {
   });
 }
 
-Duration.oneSec = new Duration({ seconds: 1 });
-Duration.twoSec = new Duration({ seconds: 2 });
-Duration.threeSec = new Duration({ seconds: 3 });
+/* eslint-disable no-extend-native */
+export function registerDurationConvenienceInits() {
+  Number.prototype.seconds = function() {
+    return new Duration({ seconds: this });
+  };
+
+  Number.prototype.milliseconds = function() {
+    return new Duration({ milliseconds: this });
+  };
+}
+/* eslint-enable no-extend-native */

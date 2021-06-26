@@ -1,6 +1,5 @@
 export const strokeable = (isThumbnail, { node }) => ({
   stroke(strokeWidth = 1, strokeColor = "currentcolor") {
-    node.style.fill = "transparent";
     node.style.stroke = strokeColor;
     node.style.strokeLinecap = "round";
     node.style.strokeWidth = isThumbnail && strokeWidth !== 0 ? 5 : strokeWidth;
@@ -27,7 +26,6 @@ export const strokeable = (isThumbnail, { node }) => ({
 export const fillable = ({ node }) => ({
   fill() {
     node.style.fill = "currentcolor";
-    node.style.stroke = "transparent";
   }
 });
 
@@ -80,7 +78,9 @@ export const animatable = ({ node }) => ({
     node.appendChild(animate);
   },
 
-  animateTransform(type, { from, to, values, keyTimes, calcMode, keySplines, dur, begin, repeatCount, fill, additive, id }) {
+  animateTransform(type, {
+    from, to, values, keyTimes, calcMode, keySplines, dur, begin, repeatCount, fill, additive, id
+  }) {
     const animate = document.createElementNS("http://www.w3.org/2000/svg", "animateTransform");
     animate.setAttribute("attributeName", "transform");
     animate.setAttribute("attributeType", "XML");

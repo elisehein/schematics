@@ -9,6 +9,7 @@ import { fillable, animatable, havingLength, withOptionalArrowHead, havingIntrin
 export function Line(strokeable, ...points) {
   const node = createSVGElement("polyline");
   node.setAttribute("points", points.map(({ x, y }) => `${x},${y}`).join(" "));
+  resetStyles(node);
 
   const self = { node };
 
@@ -31,6 +32,8 @@ export function Ellipse(strokeable, cx, cy, rx, ry) {
   node.setAttribute("rx", rx);
   node.setAttribute("ry", ry);
 
+  resetStyles(node);
+
   const self = { node };
 
   return Object.assign(
@@ -48,6 +51,8 @@ export function Circle(strokeable, cx, cy, r) {
   node.setAttribute("cy", cy);
   node.setAttribute("r", r);
 
+  resetStyles(node);
+
   const self = { node };
 
   return Object.assign(
@@ -62,6 +67,7 @@ export function Circle(strokeable, cx, cy, r) {
 // eslint-disable-next-line id-length
 export function Path(strokeable, d) {
   const node = createSVGElement("path");
+  resetStyles(node);
 
   if (d) {
     node.setAttribute("d", d);
@@ -117,7 +123,9 @@ function styleText(node, fontSize, isThumbnailSize) {
   }
 }
 
-export function TypingText(strokeable, isThumbnailSize, text, { x, y }, animationDuration, fontSize = 10) {
+export function TypingText(
+  strokeable, isThumbnailSize, text, { x, y }, animationDuration, fontSize = 10
+) {
   // eslint-disable-next-line id-length
   const g = createSVGElement("g");
   const id = `text-path-${Math.round(x)}-${Math.round(y)}`;
@@ -156,4 +164,9 @@ export function TypingText(strokeable, isThumbnailSize, text, { x, y }, animatio
 
 export function createSVGElement(elementName) {
   return document.createElementNS("http://www.w3.org/2000/svg", elementName);
+}
+
+function resetStyles(node) {
+  node.setAttribute("stroke", "transparent");
+  node.setAttribute("fill", "transparent");
 }

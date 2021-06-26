@@ -53,7 +53,7 @@
 }
 
 @keyframes jitter {
-  0% { transform: translateX(.1em) translateY(.07em);}
+  0% { transform: translateX(.1em) translateY(.07em); }
   10% { transform: translateX(.04em) translateY(.01em); }
 
   20% {
@@ -95,6 +95,11 @@
     position: relative;
     color: hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-lightness) + 5%), 1);
     transition: color var(--color-scheme-transition-duration) var(--color-scheme-transition-easing);
+    will-change: opacity;
+
+    /* Scanlines look awful when accidentally selected, and hide the whole diagram on Safari. */
+    user-select: none;
+    -webkit-user-select: none;
 
     &--showing {
       animation: fade var(--figure-appear-transition-duration) ease-in;
@@ -115,6 +120,7 @@
       align-items: center;
       justify-content: center;
       filter: var(--schematics-figure-shadow-filter);
+      will-change: transform, filter, color;
       transition-property: filter, color;
       transition-duration: var(--jitter-animation-duration);
 
@@ -148,16 +154,13 @@
       animation: fuzzy var(--schematics-figure-fuzzy-duration, 1s) ease-in-out;
     }
 
-    &--fuzzy &__figcaption {
-      animation: fuzzy-text var(--schematics-figure-fuzzy-duration, 1s) ease-in-out;
-    }
-
     &__figcaption {
       font-size: var(--ms2);
       line-height: var(--double-baseline);
       letter-spacing: var(--schematics-letter-spacing);
       text-shadow: var(--schematics-text-shadow);
       z-index: 1;
+      will-change: text-shadow, color, transform, filter;
 
       &__character {
         position: relative;
@@ -180,6 +183,17 @@
           }
         }
       }
+
+      &--disappearing {
+        animation: fade var(--micro-interaction-animation-duration) ease-out 1.3s reverse;
+        animation-fill-mode: forwards;
+      }
+
+      &--disappearing &__character {
+        animation:
+          text-shadow-flicker .8s ease-out,
+          blink .4s cubic-bezier(0, .55, .45, 1) .3s 3;
+      }
     }
 
     &--showing &__figcaption {
@@ -194,6 +208,10 @@
 
     &--light-up &__figcaption {
       animation: light-up-text var(--schematics-figure-light-up-duration) var(--schematics-figure-light-up-easing);
+    }
+
+    &--fuzzy &__figcaption {
+      animation: fuzzy-text var(--schematics-figure-fuzzy-duration, 1s) ease-in-out;
     }
 
     /* To ensure both the caption and figure are able to receive pointer events */

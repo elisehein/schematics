@@ -1,9 +1,10 @@
 import { getA11yDescription, getA11yThumbnailDescription } from "../../figureData.js";
 import TimerManager from "../../helpers/TimerManager.js";
 import SVGShapeFactory from "../SVGShapes/SVGShapeFactory.js";
-import smoothScroll from "/helpers/smoothScroll.js";
 import BezierEasing from "/helpers/BezierEasing.js";
-import Duration from "../../helpers/Duration.js";
+
+import { registerDurationConvenienceInits } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 class Diagram extends HTMLElement {
   constructor(num, isThumbnail, figureBehaviorCallbacks = {}) {
@@ -24,7 +25,13 @@ class Diagram extends HTMLElement {
     }
   }
 
-  drawBeforeCaption({ onDone }) {
+  async drawBeforeCaption({ onDone = () => {} } = {}) {
+    if (this._isThumbnail) {
+      return;
+    }
+
+    const module = await import("/helpers/smoothScroll.js");
+    this._smoothScroll = module.default;
     this.scrollIntoView();
     onDone();
   }
@@ -35,8 +42,6 @@ class Diagram extends HTMLElement {
 
   drawThumbnail() {}
 
-  onCaptionPause() {}
-
   clearAllTimers() {
     this._timerManager.clearAllTimeouts();
     this._timerManager.clearAllIntervals();
@@ -46,8 +51,10 @@ class Diagram extends HTMLElement {
    * main all the way to the left will bring the diagram into view.
    */
   smoothScrollIntoView({ onDone }) {
-    const duration = new Duration({ milliseconds: 700 });
-    smoothScroll(document.querySelector("main"), 0, 0, duration, BezierEasing.easeOutCubic, { onDone });
+    const duration = (700).milliseconds();
+    this._smoothScroll(
+      document.querySelector("main"), 0, 0, duration, BezierEasing.easeOutCubic, { onDone }
+    );
   }
 
   scrollIntoView() {
@@ -76,7 +83,7 @@ export class SVGDiagram extends Diagram {
       class="${this.containerClassname} diagram--svg"
       preserveAspectRatio="xMidYMid meet"
       role="img"
-      viewbox="0 0 300 300"
+      viewbox="0 0 ${this.svgSize} ${this.svgSize}"
       aria-labelledby="${this.descID}"
       xmlns="http://www.w3.org/2000/svg">
       <desc id="${this.descID}">${this.a11yLabel}</desc>
@@ -94,6 +101,10 @@ export class SVGDiagram extends Diagram {
     return `figure-${this.num}-${this._isThumbnail ? "thumbnail-" : ""}desc`;
   }
 
+  get svgSize() {
+    return 300;
+  }
+
   addSVGChildElement(el) {
     if (this.svgNode) {
       this.svgNode.appendChild(el);
@@ -103,9 +114,11 @@ export class SVGDiagram extends Diagram {
 
 export class HTMLDiagram extends Diagram {
   connectedCallback() {
+    /* eslint-disable max-len */
     this.innerHTML = `
     <div class="${this.containerClassname} diagram--html" role="img" aria-label="${this.a11yLabel}"></div>
     `;
+    /* eslint-enable max-len */
 
     super.connectedCallback();
   }

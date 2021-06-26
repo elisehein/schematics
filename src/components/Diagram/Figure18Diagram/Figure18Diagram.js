@@ -1,16 +1,27 @@
 import { SVGDiagram } from "../Diagram.js";
 import data from "./data.js";
-import Figure18DiagramGridCoordinateSystem from "./Figure18DiagramGridCoordinateSystem.js";
 import BoxedText from "./Figure18BoxedText.js";
-import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
-import Duration from "../../../helpers/Duration.js";
+
+import { registerDurationConvenienceInits  } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 const firstBox = "good?";
 
 export default class Figure18Diagram extends SVGDiagram {
   constructor(...args) {
     super(18, ...args);
-    this._grid = new Figure18DiagramGridCoordinateSystem();
+  }
+
+  async importDependencies() {
+    const modules = await Promise.all([
+      import("./Figure18DiagramGridCoordinateSystem.js"),
+      import("/helpers/sequentialActionRunning.js")
+    ]);
+
+    const Grid = modules[0].default;
+    this._grid = new Grid();
+    this._runActionsSequentially = modules[1].runActionsSequentially;
+    this._waitBeforeNextAction = modules[1].waitBeforeNextAction;
   }
 
   drawThumbnail() {
@@ -23,13 +34,14 @@ export default class Figure18Diagram extends SVGDiagram {
     });
   }
 
-  drawAfterCaption() {
+  async drawAfterCaption() {
     super.drawAfterCaption();
 
-    runActionsSequentially([
-      waitBeforeNextAction(1000, this._timerManager),
+    await this.importDependencies();
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(1000, this._timerManager),
       this.smoothScrollIntoView.bind(this),
-      waitBeforeNextAction(1000, this._timerManager),
+      this._waitBeforeNextAction(1000, this._timerManager),
       this.drawBoxWithOptions.bind(this, firstBox)
     ]);
   }
@@ -39,7 +51,7 @@ export default class Figure18Diagram extends SVGDiagram {
     const coords = this._grid.getBoxCoords(boxData.position);
 
     if (this.boxWithOptionsExists(coords)) {
-      onDone && onDOne();
+      onDone && onDone();
       return;
     }
 
@@ -68,8 +80,8 @@ export default class Figure18Diagram extends SVGDiagram {
         return;
       }
 
-      const typingDurationSeconds = animated ? 0.2 + (index * 0.3 ): 0;
-      const labelAppearanceDelayMS = animated ? 700 + (index * 600 ) : 0;
+      const typingDurationSeconds = animated ? 0.2 + (index * 0.3) : 0;
+      const labelAppearanceDelayMS = animated ? 700 + (index * 600) : 0;
 
       this._timerManager.setTimeout(() => {
         this.drawOptionLabel(originBoxText, option, typingDurationSeconds);
@@ -80,9 +92,13 @@ export default class Figure18Diagram extends SVGDiagram {
   drawOptionLabel(originBoxText, option, animationDurationSeconds) {
     const sizerLabel = this._svgShapeFactory.getText(option.label, { x: 0, y: 0 }, 8);
     const originBoxCoords = this._grid.getBoxCoords(data[originBoxText].position);
-    const { x, y } = this._grid.getOptionLabelCoords(originBoxCoords, option.labelPosition, sizerLabel.getSize());
+    const { x, y } = this._grid.getOptionLabelCoords(
+      originBoxCoords, option.labelPosition, sizerLabel.getSize()
+    );
 
-    const label = this._svgShapeFactory.getTypingText(option.label, { x, y }, animationDurationSeconds, 8);
+    const label = this._svgShapeFactory.getTypingText(
+      option.label, { x, y }, animationDurationSeconds, 8
+    );
     this.addSVGChildElement(label.node);
 
     label.animateTyping();
@@ -90,7 +106,7 @@ export default class Figure18Diagram extends SVGDiagram {
     this._timerManager.setTimeout(() => {
       const underline = this.drawOptionLabelUnderline(x, y, label.intrinsicSize);
       this.bindOptionLabelClick(label, underline.node, originBoxText, option);
-    }, animationDurationSeconds * 1000)
+    }, animationDurationSeconds * 1000);
   }
 
   drawOptionLabelUnderline(labelX, labelY, labelSize) {
@@ -133,7 +149,7 @@ export default class Figure18Diagram extends SVGDiagram {
     const addArrowHeadAndFinish = () => {
       arrowLine.addArrowHead();
       onDone();
-    }
+    };
 
     if (animated) {
       this.animateBasedOnLength(arrowLine, false, addArrowHeadAndFinish);
@@ -150,7 +166,9 @@ export default class Figure18Diagram extends SVGDiagram {
       ...boxSize
     };
 
-    const boxedText = new BoxedText(this._svgShapeFactory, text, fontSize || 8, boxGeometry, animated, originPoint);
+    const boxedText = new BoxedText(
+      this._svgShapeFactory, text, fontSize || 8, boxGeometry, animated, originPoint
+    );
     boxedText.stroke(0.8);
     boxedText.node.setAttribute("id", this.getBoxID(coords));
 
@@ -165,7 +183,7 @@ export default class Figure18Diagram extends SVGDiagram {
   }
 
   animateBasedOnLength(path, lightUp = true, onDone = () => {}) {
-    const duration = new Duration({ seconds: path.getLength() / 30 * 0.15 });
+    const duration = (path.getLength() / 30 * 0.15).seconds();
     if (lightUp) {
       this._figureBehavior.onLightUp(duration);
     }

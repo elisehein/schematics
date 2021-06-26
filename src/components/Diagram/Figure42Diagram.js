@@ -1,11 +1,8 @@
-import { animatable } from "/components/SVGShapes/SVGShapeFeatures.js";
-
-import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
-import { randomIntBetween } from "/helpers/random.js";
-import BezierEasing from "/helpers/BezierEasing.js";
-import Duration from "/helpers/Duration.js";
-
 import { SVGDiagram } from "./Diagram.js";
+import BezierEasing from "/helpers/BezierEasing.js";
+
+import { registerDurationConvenienceInits } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 const commonAnimationProps = duration => ({
   fill: "freeze",
@@ -16,6 +13,7 @@ const commonAnimationProps = duration => ({
   keySplines: BezierEasing.easeInOutCubic.smilString
 });
 
+/* eslint-disable max-len */
 const starCoords = [
     { x: 15, allY: [29, 50, 63, 67] },
     { x: 28, allY: [70] },
@@ -43,6 +41,7 @@ const starCoords = [
     { x: 269, allY: [56] },
     { x: 286, allY: [46, 53, 191, 194, 205, 211, 215, 218, 222, 263] }
 ];
+/* eslint-enable max-len */
 
 const previewStarCoords = [
   { x: 80, allY: [167] },
@@ -56,35 +55,49 @@ export default class Figure42Diagram extends SVGDiagram {
     super(42, ...args);
 
     this._stars = [];
-    this._axisAnimationDuration = new Duration({ seconds: 5 });
-    this._reverseAxisAnimationDuration = new Duration({ seconds: 2.2 });
+    this._axisAnimationDuration = (5).seconds();
+    this._reverseAxisAnimationDuration = (2.2).seconds();
   }
 
-  drawBeforeCaption({ onDone }) {
-    this.drawStars();
+  async importDependencies() {
+    const modules = await Promise.all([
+      import("/helpers/sequentialActionRunning.js"),
+      import("/helpers/random.js"),
+      import("/components/SVGShapes/SVGShapeFeatures.js")
+    ]);
 
-    runActionsSequentially([
-      waitBeforeNextAction(1000, this._timerManager),
+    this._runActionsSequentially = modules[0].runActionsSequentially;
+    this._waitBeforeNextAction = modules[0].waitBeforeNextAction;
+    this._randomIntBetween = modules[1].randomIntBetween;
+    this._animatable = modules[2].animatable;
+  }
+
+  async drawBeforeCaption({ onDone }) {
+    super.drawBeforeCaption();
+    await this.importDependencies();
+    this.drawStars();
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(1000, this._timerManager),
       this.animateTemperatureOnXAxis.bind(this, false),
       this.animateMagnitudeOnYAxis.bind(this, false),
-      waitBeforeNextAction(2000, this._timerManager)
+      this._waitBeforeNextAction(2000, this._timerManager)
     ], onDone);
   }
 
   drawAfterCaption() {
-    runActionsSequentially([
-      waitBeforeNextAction(3000, this._timerManager),
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(3000, this._timerManager),
       ({ onDone }) => {
         this._figureBehavior.onDeleteCaption({ onDone: () => {} });
-        this._figureBehavior.onLightUp(Duration.oneSec);
-        this._figureBehavior.onJitter(Duration.oneSec, { onDone });
+        this._figureBehavior.onLightUp((1).seconds());
+        this._figureBehavior.onJitter((1).seconds(), { onDone });
       },
       this.animateMagnitudeOnYAxis.bind(this, true),
       this.animateTemperatureOnXAxis.bind(this, true),
-      waitBeforeNextAction(4000, this._timerManager),
+      this._waitBeforeNextAction(4000, this._timerManager),
       this.animateTemperatureOnXAxis.bind(this, false),
       this.animateMagnitudeOnYAxis.bind(this, false),
-      waitBeforeNextAction(2000, this._timerManager),
+      this._waitBeforeNextAction(2000, this._timerManager),
       this._figureBehavior.onRetypeCaption
     ], this.drawAfterCaption.bind(this));
   }
@@ -127,6 +140,7 @@ export default class Figure42Diagram extends SVGDiagram {
 
     const circle = this._svgShapeFactory.getEllipse(cx, cy, width, height);
     circle.fill();
+    circle.stroke(0);
 
     // Keep track of the intended coordinates as we will override them with random ones
     circle.node.dataset.cxAligned = cx;
@@ -141,7 +155,8 @@ export default class Figure42Diagram extends SVGDiagram {
 
   scatterRandomly(node, cxAligned, cyAligned, rxUnscaled, ryUnscaled) {
     const viewBox = this.querySelector("svg").viewBox.baseVal;
-    node.style.filter = `drop-shadow(0 0 ${cxAligned / viewBox.width / 10}rem var(--color-highest-contrast))`;
+    node.style.filter =
+      `drop-shadow(0 0 ${cxAligned / viewBox.width / 10}rem var(--color-highest-contrast))`;
     node.dataset.filter = node.style.filter;
 
     const scale = cyAligned / (viewBox.height / 2);
@@ -152,15 +167,15 @@ export default class Figure42Diagram extends SVGDiagram {
 
     const randomXTranslation = this.getRandomTranslationWithinBounds(cxAligned, viewBox.width, 7);
     const randomYTranslation = this.getRandomTranslationWithinBounds(cyAligned, viewBox.height, 10);
-    node.dataset.cxTranslated = cxAligned + randomXTranslation;
-    node.dataset.cyTranslated = cyAligned + randomYTranslation;
-    node.setAttribute("cx", node.dataset.cxTranslated);
-    node.setAttribute("cy", node.dataset.cyTranslated);
+    node.dataset.xTranslation = randomXTranslation;
+    node.dataset.yTranslation = randomYTranslation;
+    const transform = `translate(${randomXTranslation} ${randomYTranslation})`;
+    node.setAttribute("transform", transform);
   }
 
   getRandomTranslationWithinBounds(originalValue, bounds, inset) {
-    const randomPositiveTranslation = randomIntBetween(0, bounds - originalValue - inset);
-    const randomNegativeTranslation = randomIntBetween(0, originalValue - inset) * -1;
+    const randomPositiveTranslation = this._randomIntBetween(0, bounds - originalValue - inset);
+    const randomNegativeTranslation = this._randomIntBetween(0, originalValue - inset) * -1;
     return Math.random() > 0.5 ? randomPositiveTranslation : randomNegativeTranslation;
   }
 
@@ -169,12 +184,14 @@ export default class Figure42Diagram extends SVGDiagram {
     this.lightUpWithDelay(0.8, duration);
 
     this._stars.forEach((star, index) => {
-      const animatableStar = animatable(star);
+      const animatableStar = this._animatable(star);
       const translationAnimationID = this.xTranslationAnimationID(index, reverse);
       const existingAnimation = this.querySelector(`#${translationAnimationID}`);
 
       if (!existingAnimation) {
-        this.addXTranslationAnimation(star, animatableStar, reverse, duration, translationAnimationID);
+        this.addXTranslationAnimation(
+          star, animatableStar, reverse, duration, translationAnimationID
+        );
       }
 
       star.node.style.transition = `filter ${duration.s}s ${BezierEasing.easeInOutCubic.cssString}`;
@@ -189,11 +206,14 @@ export default class Figure42Diagram extends SVGDiagram {
   }
 
   addXTranslationAnimation(star, animatableStar, reverse, duration, animationID) {
-    const cxValues = [star.node.dataset.cxTranslated, star.node.dataset.cxAligned];
+    const values = [star.node.dataset.xTranslation, 0];
+    const transformValues = array => array.map(translation => (
+      `${translation} ${star.node.dataset.yTranslation || 0}`
+    ));
 
-    animatableStar.animateAttribute("cx", Object.assign({
+    animatableStar.animateTransform("translate", Object.assign({
       id: animationID,
-      values: (reverse ? cxValues.reverse() : cxValues).join(";")
+      values: (reverse ? transformValues(values.reverse()) : transformValues(values)).join(";")
     }, commonAnimationProps(duration)));
   }
 
@@ -202,7 +222,7 @@ export default class Figure42Diagram extends SVGDiagram {
     this.lightUpWithDelay(0.8, duration);
 
     this._stars.forEach((star, index) => {
-      const animatableStar = animatable(star);
+      const animatableStar = this._animatable(star);
       const scaleXAnimationID = this.scaleAnimationID(index, "x", reverse);
       const scaleYAnimationID = this.scaleAnimationID(index, "y", reverse);
       const translationAnimationID = this.yTranslationAnimationID(index, reverse);
@@ -214,7 +234,9 @@ export default class Figure42Diagram extends SVGDiagram {
       if (!existingScaleXAnimation || !existingScaleYAnimation || !existingTranslationAnimation) {
         this.addScaleXAnimation(star, animatableStar, reverse, duration, scaleXAnimationID);
         this.addScaleYAnimation(star, animatableStar, reverse, duration, scaleYAnimationID);
-        this.addYTranslationAnimation(star, animatableStar, reverse, duration, translationAnimationID);
+        this.addYTranslationAnimation(
+          star, animatableStar, reverse, duration, translationAnimationID
+        );
       }
 
       animatableStar.beginAnimation(scaleXAnimationID);
@@ -244,16 +266,19 @@ export default class Figure42Diagram extends SVGDiagram {
   }
 
   addYTranslationAnimation(star, animatableStar, reverse, duration, animationID) {
-    const cyValues = [star.node.dataset.cyTranslated, star.node.dataset.cyAligned];
+    const values = [star.node.dataset.yTranslation, 0];
+    const transformValues = array => array.map(translation => (
+      `0 ${translation}`
+    ));
 
-    animatableStar.animateAttribute("cy", Object.assign({
+    animatableStar.animateTransform("translate", Object.assign({
       id: animationID,
-      values: (reverse ? cyValues.reverse() : cyValues).join(";")
+      values: (reverse ? transformValues(values.reverse()) : transformValues(values)).join(";")
     }, commonAnimationProps(duration)));
   }
 
   lightUpWithDelay(delayFactor, duration) {
-    const lightUpDuration = new Duration({ milliseconds: duration.ms * ((1 - delayFactor) * 2) });
+    const lightUpDuration = (duration.ms * ((1 - delayFactor) * 2)).milliseconds();
     this._timerManager.setTimeout(() => {
       this._figureBehavior.onLightUp(lightUpDuration);
     }, duration.ms * delayFactor);

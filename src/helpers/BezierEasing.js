@@ -42,6 +42,7 @@ function pointAlongCurve(controlPoint1, controlPoint2, interval) {
 function cubicHelper(T, a, b, c, d) {
   const t2 = T * T;
   const t3 = t2 * T;
+  // eslint-disable-next-line max-len
   return a + (-a * 3 + T * (3 * a - a * T)) * T + (3 * b + T * (-6 * b + b * 3 * T)) * T + (c * 3 - c * 3 * T) * t2 + d * t3;
 }
 

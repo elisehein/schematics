@@ -1,4 +1,4 @@
-import { Line, Path, Circle, Ellipse, Text, TypingText } from "./SVGShapes.js";
+import { Line, Path, Circle, Ellipse, Text, TypingText, createSVGElement } from "./SVGShapes.js";
 import { strokeable } from "./SVGShapeFeatures.js";
 
 export default class SVGShapeFactory {
@@ -29,6 +29,10 @@ export default class SVGShapeFactory {
 
   getTypingText(...args) {
     return new TypingText(this.strokeable, this._isThumbnail, ...args);
+  }
+
+  getGroupNode() {
+    return createSVGElement("g");
   }
 }
 

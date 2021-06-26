@@ -1,6 +1,3 @@
-[data-visible-view*="about"] {
-}
-
 @keyframes slide-up {
   from { transform: translateY(5rem); }
   to { transform: translateY(0); }
@@ -26,15 +23,22 @@ about-schematics {
       fade var(--appear-animation-duration) var(--appear-animation-easing);
     animation-fill-mode: forwards;
 
-    > p:nth-of-type(1)::first-line {
+    > p:nth-of-type(1)::first-line,
+    h3 {
       font-variant: all-small-caps;
       font-weight: 700;
       letter-spacing: var(--schematics-letter-spacing);
     }
 
-    > * {
+    * {
       margin-top: var(--double-baseline);
       margin-bottom: var(--double-baseline);
+    }
+
+    h3 {
+      display: inline-block;
+      float: left;
+      margin: 0 var(--baseline) 0 0;
     }
 
     small {
@@ -59,22 +63,19 @@ about-schematics {
     font-style: italic;
   }
 
+  ul {
+    margin-top: calc(var(--baseline) * 4);
+    margin-bottom: calc(var(--baseline) * 4);
+  }
+
   li {
     position: relative;
     padding-left: var(--double-baseline);
-    margin-top: var(--baseline);
-    margin-bottom: var(--baseline);
+    margin-top: var(--triple-baseline);
+    margin-bottom: var(--triple-baseline);
 
-    &::before {
-      content: "\b7";
-      position: absolute;
-      top: 0;
-      left: 0;
-      font-size: 2em;
+    h3 {
+      margin-left: calc(var(--double-baseline) * -1);
     }
-  }
-
-  h2 {
-    font-weight: 700;
   }
 }

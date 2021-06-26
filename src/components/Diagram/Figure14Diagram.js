@@ -1,7 +1,9 @@
 import { SVGDiagram } from "./Diagram.js";
-import { runActionsSequentially, waitBeforeNextAction } from "/helpers/sequentialActionRunning.js";
-import BezierEasing from "../../helpers/BezierEasing.js";
-import Duration from "../../helpers/Duration.js";
+
+import BezierEasing from "/helpers/BezierEasing.js";
+
+import { registerDurationConvenienceInits } from "/helpers/Duration.js";
+registerDurationConvenienceInits();
 
 export default class Figure14Diagram extends SVGDiagram {
   constructor(...args) {
@@ -23,20 +25,28 @@ export default class Figure14Diagram extends SVGDiagram {
     };
   }
 
+  async importDependencies() {
+    const module = await import("/helpers/sequentialActionRunning.js");
+    this._runActionsSequentially = module.runActionsSequentially;
+    this._waitBeforeNextAction = module.waitBeforeNextAction;
+  }
+
   drawThumbnail() {
     this.drawSpiral();
   }
 
-  drawBeforeCaption({ onDone }) {
-    const animationStepDuration = Duration.threeSec;
+  async drawBeforeCaption({ onDone }) {
+    super.drawBeforeCaption();
+    const animationStepDuration = (3).seconds();
+    await this.importDependencies();
     this.animateAxes(animationStepDuration, onDone);
   }
 
   drawAfterCaption() {
-    runActionsSequentially([
-      waitBeforeNextAction(1000, this._timerManager),
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(1000, this._timerManager),
       this.smoothScrollIntoView.bind(this),
-      waitBeforeNextAction(1000, this._timerManager),
+      this._waitBeforeNextAction(1000, this._timerManager),
       ({ onDone }) => {
         const spiral = this.drawSpiral();
         spiral.animateStroke("10s", "linear");
@@ -46,17 +56,17 @@ export default class Figure14Diagram extends SVGDiagram {
   }
 
   animateAxes(animationStepDuration, onAllDone) {
-    runActionsSequentially([
-      waitBeforeNextAction(500, this._timerManager),
+    this._runActionsSequentially([
+      this._waitBeforeNextAction(500, this._timerManager),
       this.draw2DXY.bind(this, animationStepDuration),
       this.shiftPerspective.bind(this, animationStepDuration),
       this.drawLabels.bind(this),
-      waitBeforeNextAction(1000, this._timerManager)
+      this._waitBeforeNextAction(1000, this._timerManager)
     ], onAllDone);
   }
 
   draw2DXY(duration, { onDone }) {
-    this._figureBehavior.onLightUp(Duration.oneSec);
+    this._figureBehavior.onLightUp((1).seconds());
     this._yAxis.axis = this.drawAxis();
     this._xAxis.axis = this.drawAxis();
     this.animateAxisDrawing(this._yAxis.axis, this._yAxis.coords2D, duration);
@@ -70,7 +80,9 @@ export default class Figure14Diagram extends SVGDiagram {
       // Since each element should animate for the same duration, it doesn't matter which one
       // the onDone event is attached to.
       const onAxisAnimated = index == 0 ? onDone : () => {};
-      this.animateAxis(axisData.axis, axisData.coords2D, axisData.coords3D, duration, onAxisAnimated);
+      this.animateAxis(
+        axisData.axis, axisData.coords2D, axisData.coords3D, duration, onAxisAnimated
+      );
     });
   }
 
@@ -123,7 +135,7 @@ export default class Figure14Diagram extends SVGDiagram {
   }
 
   drawLabels({ onDone }) {
-    runActionsSequentially([
+    this._runActionsSequentially([
       this.drawLabel.bind(this, "X", { x: 257, y: 207 }, true),
       this.drawLabel.bind(this, "Y", { x: 207, y: 262 }, true),
       this.drawLabel.bind(this, "Time", { x: 157, y: 36 }, true)

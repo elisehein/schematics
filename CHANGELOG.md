@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2021-06-27
+
+### Added
+
+* Figure 20 ([#14](https://github.com/elisehein/schematics/pull/14), [#15](https://github.com/elisehein/schematics/pull/15))
+* Dynamic imports for diagram drawing (import as few modules as possible to draw the thumbnail, until we actually need to draw the full figure).
+* Dynamic imports in the diagram factory. This has the effect of allowing the previews element to load first before fetchig thumbnails, and it allows for only the requested figure modules to be loaded when navigating directly to an individual figure.
+
+### Changed
+
+* Make the body background *slightly* lighter for *slightly* increased contrast.
+* Improved structure on *About* page.
+* Disabled selection on `schematics-figure` to avoid accidental ugly scanlines.
+
+### Refactored
+
+* Added convenience `milliseconds()` and `seconds()` properties on the `Number` prototype to initialise `Duration`s.
+* Separated `FigureCaption` into its own element which allows for additional animations on the caption to be run after it's been typed in ([#15](https://github.com/elisehein/schematics/pull/15)).
+
 ## [1.1.0] – 2021-06-18
 
 ### Added
@@ -34,7 +53,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The initial release of Schematics including the first five figures (figs 14, 18, 36, 42, 43).
 
-[Unreleased]: https://github.com/elisehein/schematics/compare/1.1.0...staging
+[Unreleased]: https://github.com/elisehein/schematics/compare/1.2.0...staging
+[1.2.0]: https://github.com/elisehein/schematics/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/elisehein/schematics/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/elisehein/schematics/compare/c8aa7d3e4fe78a3df0a3add04f7ba1d121b7a38e...1.0.0
 
