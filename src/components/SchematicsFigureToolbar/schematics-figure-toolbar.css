@@ -61,6 +61,7 @@
   [data-active-item-index="2"] { --active-item-index: 2; }
   [data-active-item-index="3"] { --active-item-index: 3; }
   [data-active-item-index="4"] { --active-item-index: 4; }
+  [data-active-item-index="5"] { --active-item-index: 5; }
 
   ul {
     position: relative;
