@@ -45,11 +45,11 @@ export default class ViewSwitcher {
   showFigure(num) {
     const show = () => {
       document.body.dataset.visibleView = "individual-figure";
-      this._toolbar.active = num;
 
       if (this._state == viewStates.SHOWING_FIGURE) {
         this._figure.switchNum(num);
       } else {
+        this._toolbar.active = num;
         this._toolbar.show();
         this._figure.showWithNum(num);
       }
