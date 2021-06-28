@@ -9,14 +9,14 @@ const figures = {
     a11yDescription: "A line spiralling upwards along a the time axis in a 3-dimensional coordinate system.",
     a11yThumbnailDescription: "A spiral making three loops.",
     poetry: `[TYPE:NORMAL]I return [TYPE:FAST][PAUSE:SHORT]and sense,
-[PAUSE:LONG]things [PAUSE:SHORT]are\n[PAUSE:MEDIUM]not [TYPE:SLOWEST]the same[TYPE:SLOW] as[TYPE:NORMAL] before,[PAUSE:MEDIUM]
+[PAUSE:LONG]things [PAUSE:SHORT]are [PAUSE:MEDIUM]not [TYPE:SLOWEST]the same[TYPE:SLOW] as[TYPE:NORMAL] before,[PAUSE:MEDIUM]
 but feel[PAUSE:SHORT] had I stayed,
-[TYPE:SLOWEST][PAUSE:LONG]every[TYPE:SLOW]thing\n[PAUSE:MEDIUM]would likely[TYPE:NORMAL][PAUSE:MEDIUM] seem[PAUSE:MEDIUM] the same.`
+[TYPE:SLOWEST][PAUSE:LONG]every[TYPE:SLOW]thing [PAUSE:MEDIUM]would likely[TYPE:NORMAL][PAUSE:MEDIUM] seem[PAUSE:MEDIUM] the same.`
   },
   18: {
     a11yDescription: "A flow diagram for love. Good? Yes. More? Yes. Do it.",
     a11yThumbnailDescription: "A box with the question \"Good?\"",
-    poetry: "[TYPE:NORMAL]I will send [PAUSE:SHORT]you flowers[PAUSE:MEDIUM], [TYPE:SLOWEST]pearls[PAUSE:LONG],\n[TYPE:NORMAL]letters[TYPE:FAST][PAUSE:SHORT] written in[TYPE:SLOW] ink."
+    poetry: "[TYPE:NORMAL]I will send [PAUSE:SHORT]you flowers[PAUSE:MEDIUM],\n[TYPE:SLOWEST]pearls[PAUSE:LONG],\n[TYPE:NORMAL]letters[TYPE:FAST][PAUSE:SHORT] written in[TYPE:SLOW] ink."
   },
   20: {
     a11yDescription: "An illustration of the propagation of sound waves across arrays of vertical lines.",
@@ -30,8 +30,8 @@ but feel[PAUSE:SHORT] had I stayed,
     a11yDescription: "A swinging pendulum.",
     a11yThumbnailDescription: "A pendulum with two arms.",
     poetry: `[TYPE:SLOW]I miss [PAUSE:SHORT]you.[PAUSE:LONG]
-[TYPE:NORMAL]I would\n[TYPE:SLOW]reach out[PAUSE:MEDIUM]\nand[PAUSE:MEDIUM]\n[TYPE:SLOWEST]touch[TYPE:SLOW][PAUSE:SHORT] you,[PAUSE:LONG]
-[TYPE:FAST]if I[TYPE:SLOW]\ncould.`
+[TYPE:NORMAL]I would [TYPE:SLOW]reach out[PAUSE:MEDIUM] and[PAUSE:MEDIUM] [TYPE:SLOWEST]touch[TYPE:SLOW][PAUSE:SHORT] you,[PAUSE:LONG]
+[TYPE:FAST]if I[TYPE:SLOW] could.`
   },
   42: {
     a11yDescription: "A scatter plot with discrete x-axis groupings that gets denser towarsds the bottom right.",

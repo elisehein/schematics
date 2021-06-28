@@ -155,8 +155,9 @@
     }
 
     &__figcaption {
-      font-size: var(--ms2);
-      line-height: var(--double-baseline);
+      /*font-size: var(--ms4);*/ /* desktop */
+      font-size: var(--ms6); /* mobile */
+      line-height: calc(var(--baseline) * 2.5);
       letter-spacing: var(--schematics-letter-spacing);
       text-shadow: var(--schematics-text-shadow);
       z-index: 1;
@@ -172,7 +173,11 @@
 
         &--latest-visible {
           &::after {
+            overflow: visible;
+            position: absolute;
             content: "_";
+            width: 0;
+            height: 0;
             animation: blink .5s cubic-bezier(0, .55, .45, 1) infinite;
             animation-delay: .13s;
           }

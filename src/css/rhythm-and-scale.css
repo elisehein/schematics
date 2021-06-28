@@ -13,6 +13,10 @@
   --ms0: var(--base-font-size);
   --ms1: calc(var(--ms0) * var(--scale-factor));
   --ms2: calc(var(--ms1) * var(--scale-factor));
+  --ms3: calc(var(--ms2) * var(--scale-factor));
+  --ms4: calc(var(--ms3) * var(--scale-factor));
+  --ms5: calc(var(--ms4) * var(--scale-factor));
+  --ms6: calc(var(--ms5) * var(--scale-factor));
 
   @media (min-width: 40em) {
     --baseline: .9rem;
