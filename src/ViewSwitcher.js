@@ -104,16 +104,16 @@ export default class ViewSwitcher {
   /* Don't show these elements until the first requested view has
    * been rendered in order to avoid funky layout shifts */
   ensureSecondaryElementsVisible() {
-    this._asideFigures.style.visibility = "visible";
-    this._asideAbout.style.visibility = "visible";
-    this._footer.style.visibility = "visible";
+    // this._asideFigures.style.visibility = "visible";
+    // this._asideAbout.style.visibility = "visible";
+    // this._footer.style.visibility = "visible";
   }
 
   hideSecondaryElements() {
     // Use visibility to avoid layout shifts
-    this._asideAbout.style.visibility = "hidden";
-    this._asideFigures.style.visibility = "hidden";
-    this._footer.style.visibility = "hidden";
+    // this._asideAbout.style.visibility = "hidden";
+    // this._asideFigures.style.visibility = "hidden";
+    // this._footer.style.visibility = "hidden";
   }
 
   setColorScheme(scheme, onDone = () => {}) {

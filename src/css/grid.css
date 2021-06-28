@@ -99,7 +99,7 @@ main {
   }
 
   @media (--layout-aside-always-visible) {
-    grid-column: 2 / -1;
+    grid-column: 1 / -1;
     grid-row: 2;
     max-width: 100%;
     overflow-x: hidden;
