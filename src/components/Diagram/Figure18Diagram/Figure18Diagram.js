@@ -114,6 +114,7 @@ export default class Figure18Diagram extends SVGDiagram {
       { x: labelX - 1, y: labelY + 3 },
       { x: labelX + labelSize.width + 1, y: labelY + 3 }
     );
+    underline.node.style.opacity = 0;
     this.addSVGChildElement(underline.node);
     return underline;
   }
