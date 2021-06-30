@@ -796,8 +796,6 @@ about-schematics li h3 {
           visibility: visible;
         }
 .schematics-figure__figure__figcaption__character--latest-visible::after {
-            overflow: visible;
-            position: absolute;
             content: "_";
             width: 0;
             height: 0;

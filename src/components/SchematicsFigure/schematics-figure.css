@@ -175,8 +175,6 @@
 
         &--latest-visible {
           &::after {
-            overflow: visible;
-            position: absolute;
             content: "_";
             width: 0;
             height: 0;
