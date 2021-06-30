@@ -49,7 +49,8 @@
   }
 
   [data-visible-view*="individual"] & {
-    grid-template-rows: min-content 1fr;
+    grid-template-rows: min-content 1fr; /* default */
+    grid-template-rows: 1fr; /* for cube */
   }
 
   @media (--layout-full-screen-figure) {
