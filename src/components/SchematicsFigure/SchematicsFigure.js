@@ -46,12 +46,19 @@ export default class SchematicsFigure extends HTMLElement {
     this._diagramElement = await this.renderDiagram();
     this._captionElement = this.renderCaption();
 
-    this._diagramElement.drawBeforeCaption({ onDone: () => {
-      this._diagramElement.drawAlongsideCaption();
-      this._captionElement.animateCaption({ onDone: () => {
+    //setTimeout(() => {
+      //this._captionElement.animateCaption({ onDone: () => {} });
+    //}, 3000);
+
+    setTimeout(() => {
+      this._diagramElement.drawBeforeCaption({ onDone: () => {
         this._diagramElement.drawAfterCaption();
       } });
-    } });
+    }, 3000);
+
+    //this._diagramElement.drawBeforeCaption({ onDone: () => {
+      //this._captionElement.animateCaption({ onDone: () => {} });
+    //} });
   }
 
   cleanUpCurrentFigure(num) {
