@@ -836,14 +836,15 @@ about-schematics li h3 {
       z-index: 1;
     }
 .schematics-figure__figure__diagram-container {
-  grid-row: 2 / -1;
+  grid-row: 2 / -2;
   grid-column: 1 / -1;
 }
 .schematics-figure__figure__figcaption {
   grid-row: 1 / -1;
   grid-column: 1 / -1;
-  align-self: center;
-  justify-self: center;
+  /*align-self: center;*/
+  /*justify-self: center;*/
+  /*margin-left: 285px; [> fig 42 <]*/
 }
 .schematics-figure {
   /*&--14 .diagram {*/
@@ -1029,14 +1030,9 @@ about-schematics li h3 {
       /*@media (--layout-aside-always-visible) {*/
         /*padding-left: 0;*/
       /*}*/
-    /*}*/
-  /*}*/
-
-  /*&--43 &__figure {*/
-    /*&__diagram-container {*/
-      /*grid-column: 1 / -1;*/
-      /*grid-row: 1 / -1;*/
-    /*}*/
+}
+/*}*/
+.schematics-figure--43 .schematics-figure__figure {
 
     /*&__figcaption {*/
       /*grid-column: 1 / -1;*/
@@ -1044,21 +1040,21 @@ about-schematics li h3 {
       /*justify-self: center;*/
       /*align-self: center;*/
     /*}*/
-  /*}*/
-
-  /*&--42 &__figure {*/
-    /*&__diagram-container {*/
-      /*grid-column: 1 / -1;*/
-      /*grid-row: 1 / -1;*/
-    /*}*/
-
-    /*&__figcaption {*/
-      /*grid-column: 2 / span 2;*/
-      /*grid-row: 6;*/
-      /*align-self: flex-end;*/
-    /*}*/
-  /*}*/
-}
+  }
+.schematics-figure--43 .schematics-figure__figure__diagram-container {
+      grid-column: 1 / -1;
+      grid-row: 1 / -1;
+    }
+/*}*/
+.schematics-figure--42 .schematics-figure__figure__diagram-container {
+      grid-column: 1 / -1;
+      grid-row: 1 / -1;
+    }
+.schematics-figure--42 .schematics-figure__figure__figcaption {
+      grid-column: 2 / span 2;
+      grid-row: 6;
+      align-self: flex-end;
+    }
 [data-color-scheme="dark"] schematics-figure-previews {
     --preview-bg-lightness-factor: .5;
   }
