@@ -86,7 +86,7 @@ main {
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
   min-width: 100%;
-  overflow-y: hidden;
+  overflow: hidden;
 
   [data-visible-view*="previews"] &,
   [data-visible-view*="individual"] & {

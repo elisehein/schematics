@@ -61,7 +61,7 @@ body {
   width: 100vw;
   min-height: 100%;
   min-height: -webkit-fill-available;
-  overflow-x: scroll;
+  overflow-x: hidden;
   scroll-behavior: smooth;
   font-family: helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
   background-color: var(--color-page-bg);
