@@ -1302,9 +1302,9 @@ a:focus .schematics-figure-previews__item__diagram {
 /* stylelint-enable block-opening-brace-space-before */
 @keyframes random-scaling {
   0% { transform: scale(1); }
-  10% { transform: scale(1); }
-  15% { transform: scale(1.5); }
-  35% { transform: scale(.5); }
+  5% { transform: scale(1); }
+  10% { transform: scale(1.5); }
+  25% { transform: scale(.5); }
   40% { transform: scale(1); }
   60% { transform: scale(1); }
   65% { transform: scale(1.25); }
