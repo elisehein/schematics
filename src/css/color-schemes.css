@@ -5,10 +5,11 @@
   --color-white-lightness: 95%;
   --color-white: hsla(var(--hue-main), var(--sat-main), var(--color-white-lightness), 1);
 
-  --color-black-lightness: 13%;
+  --color-black-lightness: 0%; /* website 13 */
   --color-black: hsla(var(--hue-main), var(--sat-main), var(--color-black-lightness), 1);
 
-  --color-text-light-lightness: calc(var(--color-white-lightness) - 23%);
+  /*--color-text-light-lightness: calc(var(--color-white-lightness) - 23%);*/
+  --color-text-light-lightness: calc(var(--color-white-lightness) - 12%);
   --color-text-dark-lightness: var(--color-black-lightness);
 
   --color-text-light: hsla(var(--hue-main), var(--sat-main), var(--color-text-light-lightness), 1);
