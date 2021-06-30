@@ -64,7 +64,7 @@
   30% { transform: translateX(.05em) translateY(.12em); }
 
   35% {
-    filter: drop-shadow(.8rem .3rem .1rem hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-lightness) * .8), 1));
+    filter: drop-shadow(.4rem .3rem .1rem hsla(var(--hue-main), var(--sat-main), calc(var(--color-text-lightness) * .8), 1));
   }
 
   40% { filter: none; }
