@@ -115,7 +115,7 @@ export default class Figure20Diagram extends SVGDiagram {
     const randomDelay = this._randomIntBetween(100, 1000).milliseconds();
 
     this._timerManager.setTimeout(() => {
-      if (Math.random() > 0.2) {
+      if (Math.random() > 0.05) {
         this.animateWaveOnRandomRow();
         this.animateWavesRandomly();
       } else {
