@@ -17,7 +17,7 @@ export default class Figure36Diagram extends SVGDiagram {
 
     this._swingDuration = (2).seconds();
     this._swingEasing = new BezierEasing(0.4, 0, 0.6, 1);
-    this._totalSwings = 30;
+    this._totalSwings = 20;
   }
 
   async importDependencies() {
@@ -53,10 +53,25 @@ export default class Figure36Diagram extends SVGDiagram {
     this._runActionsSequentially([
       this._waitBeforeNextAction(1000, this._timerManager),
       this._arrow.appearInSteps.bind(
-        this._arrow, (3).seconds(), this._timerManager
+        this._arrow, (2).seconds(), this._timerManager
       ),
       this._waitBeforeNextAction(1000, this._timerManager)
-    ], onDone);
+    ], () => {
+      this.hideArrow();
+
+      this._swingingArm.swing(this._totalSwings, this._swingEasing, this._swingDuration, {
+        onSwing: (index, angle) => {
+          if (index == 0) {
+            this.drawPendulumArm(angle);
+          }
+
+          // Only light up on those swings where the pendulum still touches its echo
+          if (index % 2 != 0 && index <= 5) {
+            this.lightUpJustBeforeNextSwing(index);
+          }
+        }
+      });
+    });
   }
 
   drawAfterCaption() {
@@ -74,20 +89,6 @@ export default class Figure36Diagram extends SVGDiagram {
 
   enableUserTriggeredSwinging() {
     this._swingingArm.onClick(() => {
-      this.hideArrow();
-
-      this._swingingArm.swing(this._totalSwings, this._swingEasing, this._swingDuration, {
-        onSwing: (index, angle) => {
-          if (index == 0) {
-            this.drawPendulumArm(angle);
-          }
-
-          // Only light up on those swings where the pendulum still touches its echo
-          if (index % 2 != 0 && index <= 9) {
-            this.lightUpJustBeforeNextSwing(index);
-          }
-        }
-      });
     });
   }
 
