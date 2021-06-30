@@ -39,12 +39,12 @@ const flowChartData = {
       touchPoint: targetSideTouchPoints.BOTTOM_SIDE_LEFT
     }, {
       label: "no",
-      target: "stopit.",
+      target: "stop it.",
       labelPosition: labelPositions.BOTTOM_LEFT_TO_ARROW,
       touchPoint: targetSideTouchPoints.TOP_SIDE_MIDDLE
    }]
   },
-  "stopit.": {
+  "stop it.": {
     position: new Figure18DiagramGridPosition(1, 3),
     options: [{
       label: "no",
@@ -70,7 +70,7 @@ const flowChartData = {
       touchPoint: targetSideTouchPoints.LEFT_SIDE_MIDDLE
     }, {
       label: "no",
-      target: "stopit.",
+      target: "stop it.",
       labelPosition: labelPositions.BOTTOM_RIGHT_TO_ARROW,
       touchPoint: targetSideTouchPoints.TOP_SIDE_MIDDLEID
     }]
