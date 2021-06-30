@@ -45,11 +45,9 @@ export default class Figure14Diagram extends SVGDiagram {
   drawAfterCaption() {
     this._runActionsSequentially([
       this._waitBeforeNextAction(1000, this._timerManager),
-      this.smoothScrollIntoView.bind(this),
-      this._waitBeforeNextAction(1000, this._timerManager),
       ({ onDone }) => {
         const spiral = this.drawSpiral();
-        spiral.animateStroke("10s", "linear");
+        spiral.animateStroke("8s", "linear");
         onDone();
       }
     ], () => {});
