@@ -157,7 +157,9 @@
     &__figcaption {
       /*font-size: var(--ms4);*/ /* desktop */
       font-size: var(--ms6); /* mobile */
-      line-height: calc(var(--baseline) * 2.5);
+      /*line-height: calc(var(--baseline) * 2.5); /* desktop */
+      /*line-height: calc(var(--baseline) * 3); [> mobile <]*/
+      line-height: 1.352;
       letter-spacing: var(--schematics-letter-spacing);
       text-shadow: var(--schematics-text-shadow);
       z-index: 1;

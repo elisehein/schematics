@@ -779,7 +779,9 @@ about-schematics li h3 {
 .schematics-figure__figure__figcaption {
       /*font-size: var(--ms4);*/ /* desktop */
       font-size: var(--ms6); /* mobile */
-      line-height: calc(var(--baseline) * 2.5);
+      /*line-height: calc(var(--baseline) * 2.5); /* desktop */
+      /*line-height: calc(var(--baseline) * 3); [> mobile <]*/
+      line-height: 1.352;
       letter-spacing: var(--schematics-letter-spacing);
       text-shadow: var(--schematics-text-shadow);
       z-index: 1;
@@ -1400,7 +1402,7 @@ figure-42-diagram .diagram--thumbnail {
     filter: blur(.04rem);
   }
 .schematics-figure-toolbar {
-  --item-width: calc(var(--baseline) * 5);
+  --item-width: calc(var(--baseline) * 8);
   --directional-item-width: 5rem;
   --item-spacing: var(--baseline);
 
@@ -1409,8 +1411,10 @@ figure-42-diagram .diagram--thumbnail {
   --underline-height: .17rem;
 
   display: flex;
-  font-size: var(--ms0);
-  line-height: var(--triple-baseline);
+  /*font-size: var(--ms0);*/ /* original */
+  font-size: var(--ms4);
+  /*line-height: var(--triple-baseline);*/ /* original */
+  line-height: calc(var(--baseline) * 5);
   letter-spacing: var(--schematics-letter-spacing);
 }
 .schematics-figure-toolbar--transitioning {

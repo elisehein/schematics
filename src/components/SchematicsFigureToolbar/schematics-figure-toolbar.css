@@ -4,7 +4,7 @@
   (min-width: 150em) and (--layout-capped-height);
 
 .schematics-figure-toolbar {
-  --item-width: calc(var(--baseline) * 5);
+  --item-width: calc(var(--baseline) * 8);
   --directional-item-width: 5rem;
   --item-spacing: var(--baseline);
 
@@ -13,8 +13,10 @@
   --underline-height: .17rem;
 
   display: flex;
-  font-size: var(--ms0);
-  line-height: var(--triple-baseline);
+  /*font-size: var(--ms0);*/ /* original */
+  font-size: var(--ms4);
+  /*line-height: var(--triple-baseline);*/ /* original */
+  line-height: calc(var(--baseline) * 5);
   letter-spacing: var(--schematics-letter-spacing);
 
   &--transitioning {
