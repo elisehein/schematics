@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2021-08-25
+
+### Added
+
+* Added all meta tags for OG and other previews along with a preview image.
+
 ## [1.2.1] - 2021-06-27
 
 ### Fixed
@@ -59,7 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 The initial release of Schematics including the first five figures (figs 14, 18, 36, 42, 43).
 
-[Unreleased]: https://github.com/elisehein/schematics/compare/1.2.1...staging
+[Unreleased]: https://github.com/elisehein/schematics/compare/1.2.2...staging
+[1.2.2]: https://github.com/elisehein/schematics/compare/1.2.1...1.2.2
 [1.2.1]: https://github.com/elisehein/schematics/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/elisehein/schematics/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/elisehein/schematics/compare/1.0.0...1.1.0

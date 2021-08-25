@@ -1,6 +1,6 @@
 {
   "name": "schematics",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Schematics: A Love Story",
   "main": "index.html",
   "devDependencies": {
