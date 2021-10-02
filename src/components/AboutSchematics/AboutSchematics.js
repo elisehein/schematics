@@ -33,7 +33,7 @@ export default class AboutSchematics extends HTMLElement {
   </ul>
 
   <p>
-    If you're interested in stackless web development, take a look at the <a href="https://github.com/elisehein/schematics">codebase</a> for more implementation details. If you just stumbled here and don't care about JavaScript or SVG, I hope you find the visual poetry of <em>Schematics</em> as interesting as I do.
+    If you're interested in stackless web development, take a look at the <a href="https://github.com/elisehein/schematics">codebase</a> and <a href="https://elisehe.in/2021/08/22/using-the-platform.html">accompanying blog post</a> for more implementation details. If you just stumbled here and don't care about JavaScript or SVG, I hope you find the visual poetry of <em>Schematics</em> as interesting as I do.
   </p>
 
   <small>
