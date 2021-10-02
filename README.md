@@ -26,6 +26,8 @@ Those familiar with JavaScript know it’s not a language that you dip in and ou
 
 As a software engineer who’s spent the last decade trying to navigate the ecosystem all over again each time a project came up, the idea resonated. Using *Schematics* as a proof of concept playground, going stackless has been a way of rediscovering exactly what I get for free in 2021, and what value I'm adding by bringing frameworks, transpilers and bundlers to the mix.
 
+**I captured the experience of working on a framework-free, zero-build codebase in [this blog post](https://elisehe.in/2021/08/22/using-the-platform.html).**
+
 ## Dependencies
 
 In the spirit of The Stackless Way, I initially wanted to bite the bullet and, as with JS, only use vanilla CSS in this project. It was tedious, though manageable, until the first media query came along. At that point I gave up and added PostCSS because I cannot overstate the value of nested statements in responsive design.
