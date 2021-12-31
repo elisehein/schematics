@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const viewSwitcher = new ViewSwitcher(elements);
   initNav(viewSwitcher);
+
+  printCurrentYearInCopyright();
 });
 
 function initNav(viewSwitcher) {
@@ -44,3 +46,8 @@ function initNav(viewSwitcher) {
 
   nav.init();
 }
+
+function printCurrentYearInCopyright() {
+  document.getElementById("copyright-year").innerText = (new Date()).getFullYear();
+}
+
